@@ -22,6 +22,7 @@ class Joystick(object):
         # the pygame joysick object
         self.joystick = joystick
         self.joystick.init()
+        #print self.joystick.get_name()
 
         # initialize the buttons ans axes
         self.buttons = []

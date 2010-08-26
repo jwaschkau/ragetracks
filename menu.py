@@ -1,4 +1,8 @@
 # _*_ coding: UTF-8 _*_
+###################################################################
+## this module contains the menu class, which is used for the main-
+## and sub menus
+###################################################################
 
 from direct.gui.OnscreenImage import OnscreenImage
 
