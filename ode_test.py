@@ -5,7 +5,8 @@ from pandac.PandaModules import *
 class RageTracks(ShowBase):
     def __init__(self):
         ShowBase.__init__(self)
-        base.disableMouse()
+        base.setFrameRateMeter(True)
+        #base.disableMouse()
         
         #initialise the lights
         alight = AmbientLight('alight')
@@ -14,8 +15,8 @@ class RageTracks(ShowBase):
         render.setLight(alnp)
         
         #Initialise the Ode world
-        world = OdeWorld()
-        world.setGravity(0, 0, -9.81)
+        self.world = OdeWorld()
+        self.world.setGravity(0, 0, -0.5)
         
         #load the models
         
@@ -33,25 +34,31 @@ class RageTracks(ShowBase):
         self.glider.reparentTo(self.render)
         # Apply scale and position transforms on the model.
         self.glider.setScale(1, 1, 1)
-        self.glider.setPos(0, 0, 3)
+        self.glider.setPos(0, 0, 50)
         
-        myBody = OdeBody(world)
-        myBody.setPosition(self.glider.getPos(render))
-        myBody.setQuaternion(self.glider.getQuat(render))
-        myMass = OdeMass()
-        myMass.setBox(11340, 1, 1, 1)
-        myBody.setMass(myMass)
+        self.myBody = OdeBody(self.world)
+        self.myBody.setPosition(self.glider.getPos(render))
+        self.myBody.setQuaternion(self.glider.getQuat(render))
+        self.myMass = OdeMass()
+        self.myMass.setBox(11340, 1, 1, 1)
+        self.myBody.setMass(self.myMass)
         
         
         #set up the camera
         base.camera.reparentTo(self.glider)
         base.camera.setPos(0,-30,10)
-        base.camera.lookAt(self.glider)         
+        base.camera.lookAt(self.glider)
+        
+        #add physics to taskmgr
+        taskMgr.add(self.physicsTask, 'physics')       
 
-    def physicsTask(task):
-      # Step the simulation and set the new positions
-      world.quickStep(globalClock.getDt())
-      return task.cont
+    def physicsTask(self, task):
+        # Step the simulation and set the new positions
+        self.world.quickStep(globalClock.getDt())
+        
+        #set new positions
+        self.glider.setPosQuat(render, self.myBody.getPosition(), Quat(self.myBody.getQuaternion()))
+        return task.cont
 
 game = RageTracks() 
 game.run()
