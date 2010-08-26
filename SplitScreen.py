@@ -11,9 +11,9 @@ class MyApp(ShowBase):
         ShowBase.__init__(self)
         base.setFrameRateMeter(True)
        
-        self.playerCount = 7
+        self.playerCount = 6
+        print "Players:", self.playerCount
         self.cameras = self.createCamera( self.createNCameras(self.playerCount))
-           
        
         #self.camera1=self.createCamera((0.0, 0.5, 0,1))
         #self.camera1.reparentTo(self.model1)
@@ -90,24 +90,25 @@ class MyApp(ShowBase):
         return cameras
    
     def createNCameras(self,camCount):
+#Generates the Windows count and size/position 
         list = []
         times = ceil(sqrt(camCount))
         if ((times* times) - times >= camCount):
-            print times, times-1
-            for y in range(1,times ,1):
-                for x in range(1,times+1 ,1):
-                    print x, y, times
-                    print ((x-1)/times, x/times, (y-1)/(times-1), y/(times-1) )
+##Debug            print times, times-1
+            for y in range(int(times-1), 0, -1):
+                for x in range(1,int(times+1) ,1):
+##Debug                    print x, y, times
+##Debug                    print ((x-1)/times, x/times, (y-1)/(times-1), y/(times-1) )
                     list.append(((x-1)/times, x/times, (y-1)/(times-1), y/(times-1) ))
                    
         else:
-            print times, times
-            for y in range(1, times+1 ,1):
-                for x in range(1, times+1 ,1):
-                    print x, y, times
-                    print ((x-1)/times, x/times, (y-1)/times, y/times )
+##Debug            print times, times
+            for y in range(int(times), 0, -1):
+                for x in range(1, int(times+1) ,1):
+##Debug                    print x, y, times
+##Debug                    print ((x-1)/times, x/times, (y-1)/times, y/times )
                     list.append(((x-1)/times, x/times, (y-1)/times, y/times ))
-        print len(list)
+        print "SplitScreenView:",len(list)
         return list   
        
        
