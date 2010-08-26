@@ -8,37 +8,36 @@ from panda3d.core import Point3
  
 class MyApp(ShowBase):
     def __init__(self):
+        self.playerCount = 6
+        
         ShowBase.__init__(self)
         base.setFrameRateMeter(True)
-       
-        self.playerCount = 6
+        
         print "Players:", self.playerCount
+        
+##      Add all SplitScreen parts for the count of players
         self.cameras = self.createCamera( self.createNCameras(self.playerCount))
        
         #self.camera1=self.createCamera((0.0, 0.5, 0,1))
         #self.camera1.reparentTo(self.model1)
         #self.camera1.lookAt(self.model1)
-        #self.camera2=self.createCamera((0.5,1.0,0,1))
-        #self.camera2.reparentTo(self.model2)
-        #self.camera2.lookAt(self.model2)
+        
         base.camNode.setActive(False) #disable default cam
        
-       
- 
         # Disable the camera trackball controls.
         self.disableMouse()
- 
-        # Load the environment model.
+        
+        # Load the Track.
         self.environ = self.loader.loadModel("data/models/Track01")
         # Reparent the model to render.
         self.environ.reparentTo(self.render)
         # Apply scale and position transforms on the model.
         self.environ.setScale(3, 3, 3)
         self.environ.setPos(0, 0, 0)
- 
+        
         # Add the spinCameraTask procedure to the task manager.
         self.taskMgr.add(self.spinCameraTask, "SpinCameraTask")
- 
+        
         # Load and transform the panda actor.
         self.pandaActor = Actor("models/panda-model",
                                 {"walk": "models/panda-walk4"})
@@ -46,7 +45,7 @@ class MyApp(ShowBase):
         self.pandaActor.reparentTo(self.render)
         # Loop its animation.
         self.pandaActor.loop("walk")
- 
+        
         # Create the four lerp intervals needed for the panda to
         # walk back and forth.
         pandaPosInterval1 = self.pandaActor.posInterval(13,
@@ -61,7 +60,7 @@ class MyApp(ShowBase):
         pandaHprInterval2 = self.pandaActor.hprInterval(3,
                                                         Point3(0, 0, 0),
                                                         startHpr=Point3(180, 0, 0))
- 
+        
         # Create and play the sequence that coordinates the intervals.
         self.pandaPace = Sequence(pandaPosInterval1,
                                   pandaHprInterval1,
@@ -70,7 +69,7 @@ class MyApp(ShowBase):
                                   name="pandaPace")
         self.pandaPace.loop()
  
-    # Define a procedure to move the camera.
+    # Define a procedure to spin the camera.
     def spinCameraTask(self, task):
         for i in range(self.playerCount):
             angleDegrees = task.time * (i+1) *2
@@ -88,25 +87,25 @@ class MyApp(ShowBase):
             camera.setPos(0,-8,3) #set its position.
             cameras.append(camera)
         return cameras
-   
+
     def createNCameras(self,camCount):
-#Generates the Windows count and size/position 
+##      Generates the Windows count and size/position 
         list = []
         times = ceil(sqrt(camCount))
         if ((times* times) - times >= camCount):
-##Debug            print times, times-1
+            #print times, times-1 #Debug
             for y in range(int(times-1), 0, -1):
                 for x in range(1,int(times+1) ,1):
-##Debug                    print x, y, times
-##Debug                    print ((x-1)/times, x/times, (y-1)/(times-1), y/(times-1) )
+                    #print x, y, times #Debug
+                    #print ((x-1)/times, x/times, (y-1)/(times-1), y/(times-1) ) #Debug
                     list.append(((x-1)/times, x/times, (y-1)/(times-1), y/(times-1) ))
                    
         else:
-##Debug            print times, times
+            #print times, times #Debug
             for y in range(int(times), 0, -1):
                 for x in range(1, int(times+1) ,1):
-##Debug                    print x, y, times
-##Debug                    print ((x-1)/times, x/times, (y-1)/times, y/times )
+                    #print x, y, times #Debug
+                    #print ((x-1)/times, x/times, (y-1)/times, y/times ) #Debug
                     list.append(((x-1)/times, x/times, (y-1)/times, y/times ))
         print "SplitScreenView:",len(list)
         return list   
