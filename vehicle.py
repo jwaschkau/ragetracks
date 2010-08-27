@@ -1,72 +1,73 @@
 # _*_ coding: UTF-8 _*_
 ###################################################################
-## this module contains the data for one player
+## this module represents one vehicle a player can control
 ###################################################################
 
-class Player(object):
+class Vehicle(object):
     '''
     '''
-    def __init__(self, number, vehicle = None, device = None, camera = None):
+    def __init__(self):
         '''
         '''
-        self.number = number
-        self.camera = camera
-        self.vehicle = vehicle #the properties of the vehicle
-        self.device = device #The inputdevice
+        self.model = model
+        self.physics_model = phys_model
+        self.physics_mass = phys_mass
+        self.collision_model = coll_model
     
     # ---------------------------------------------------------
     
-    def setCamera(self, camera):
+    def setModel(self, model):
         '''
         '''
-        self.camera = camera
+        self.model = model
         
     # ---------------------------------------------------------
         
-    def getCamera(self):
+    def getModel(self):
         '''
         '''
-        return self.camera
-        
-    # ---------------------------------------------------------
-    
-    def setNumber(self):
-        '''
-        '''
-        self.number = number
-    
-    # ---------------------------------------------------------
-        
-    def getNumber(self):
-        '''
-        '''
-        return self.number
+        return self.model
         
     # ---------------------------------------------------------
     
-    def setVehicle(self):
+    def setPhysicsModel(self, phys_model):
         '''
         '''
-        self.vehicle = vehicle
+        self.physics_model = phys_model
+        
+    # ---------------------------------------------------------
+        
+    def getPhysicsModel(self):
+        '''
+        '''
+        return self.physics_model
+        
+    # ---------------------------------------------------------
+
+    def setPhysicsModel(self, phys_mass):
+        '''
+        '''
+        self.physics_mass = phys_mass
+        
+    # ---------------------------------------------------------
+        
+    def getPhysicsModel(self):
+        '''
+        '''
+        return self.physics_mass
         
     # ---------------------------------------------------------
     
-    def getVehicle(self):
+    def setCollisionModel(self, coll_model):
         '''
         '''
-        return self.vehicle
+        self.collision_model = coll_model
         
     # ---------------------------------------------------------
-    def setDevice(self):
-        '''
-        '''
-        self.device = device
         
-    # ---------------------------------------------------------
-    
-    def getDevice(self):
+    def getCollisionModel(self):
         '''
         '''
-        return self.device
+        return self.collision_model
         
     # ---------------------------------------------------------
