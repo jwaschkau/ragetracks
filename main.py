@@ -24,6 +24,9 @@ class Game(ShowBase):
         #Initialize needed variables and objects
         self.players = [] #holds the player objects
 
+        #Initialize the first player
+        self.addPlayer("Tastaturdevice") ##tastaturdevice übergeben
+
         # try to read the ini-file. If it fails the settings class
         # automatically contains default values
         self.settings = settings.Settings()
@@ -43,6 +46,31 @@ class Game(ShowBase):
 
     # -----------------------------------------------------------------
 
+    def addPlayer(self, device):
+        '''
+        creates a new player object, initializes it and sorts the cameras on the screen
+        '''    
+        #Create a new player object
+        self.players.append(player.Player(len(self.players), device, base.makeCamera(base.win,1)))
+        
+        #sort the cameras
+        
+    # -----------------------------------------------------------------
+    
+    def removePlayer(self, number):
+        '''
+        deletes a player object and sorts the cameras on the screem
+        '''
+        
+        #delete the player
+        for player in self.players:
+            if player.getNumber() == number:
+                self.players.remove(player)
+                
+        #sort the cameras
+            
+    # -----------------------------------------------------------------
+    
     def newGame(self):
         '''
         starts the game or goes to the next menu

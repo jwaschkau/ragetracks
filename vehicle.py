@@ -6,7 +6,7 @@
 class Vehicle(object):
     '''
     '''
-    def __init__(self):
+    def __init__(self, model = None, phys_model = None, phys_mass = None, coll_model = None):
         '''
         '''
         self.model = model
