@@ -16,7 +16,8 @@ class KeyboardDevice(object):
     def __init__(self):
         '''
         '''
-        self.keys = []
+        self.keys = {"esc": False
+                    }
 
     # ---------------------------------------------------------
 

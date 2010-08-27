@@ -24,15 +24,19 @@ class Joystick(object):
         self.joystick.init()
         #print self.joystick.get_name()
 
-        # initialize the buttons ans axes
+        # initialize the buttons axes, and cooliehats
         self.buttons = []
         self.axes = []
+        self.hats = []
 
         for i in range(self.joystick.get_numaxes()):
             self.axes.append(0.0)
 
         for i in range(self.joystick.get_numbuttons()):
             self.buttons.append(False)
+
+        for i in range(self.joystick.get_numhats()):
+            self.hats.append((0,0))
 
 # ---------------------------------------------------------
 # ---------------------------------------------------------
@@ -82,7 +86,10 @@ class JoystickDevice(object):
         this function gets the events from pygame
         '''
         # catch all joystick events from pygame
-        for e in pygame.event.get([pygame.JOYAXISMOTION, pygame.JOYBUTTONUP, pygame.JOYBUTTONDOWN]): #pygame.JOYBALLMOTION, pygame.JOYHATMOTION,
+        for e in pygame.event.get([pygame.JOYAXISMOTION, pygame.JOYBUTTONUP, pygame.JOYBUTTONDOWN, pygame.JOYHATMOTION]): #pygame.JOYBALLMOTION,
+            # cooliehat moved / for gamepads without an analog stick
+            if e.type == pygame.JOYHATMOTION:
+                self.joysticks[e.joy].buttons[e.hat] = e.value
             # button pressed
             if e.type == pygame.JOYBUTTONDOWN:
                 self.joysticks[e.joy].buttons[e.button] = True
