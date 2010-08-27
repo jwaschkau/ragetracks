@@ -20,6 +20,9 @@ class Game(ShowBase):
         '''
         '''
         ShowBase.__init__(self)
+        
+        #Initialize needed variables and objects
+        self.players = [] #holds the player objects
 
         # try to read the ini-file. If it fails the settings class
         # automatically contains default values
@@ -44,7 +47,6 @@ class Game(ShowBase):
         '''
         starts the game or goes to the next menu
         '''
-        players = []
         
         #Load the Map
         self.map = self.loader.loadModel("data/models/Track01")
@@ -53,15 +55,15 @@ class Game(ShowBase):
         self.map.setPos(0, 0, 0)
         
         #Load the Players
-        for player in players:
+        for player in self.players:
             player.vehicle.getModel().setScale(1, 1, 1)
             player.vehicle.getModel().setPos(0, 0, 3)
         
         #Load the Cameras
-        for player in players:
-            self.player.getCamera().reparentTo(player.vehicle.getModel())
-            self.player.getCamera().camera.setPos(0,-30,10)
-            self.player.getCamera().lookAt(player.vehicle.getModel())   
+        for player in self.players:
+            player.getCamera().reparentTo(player.vehicle.getModel())
+            player.getCamera().camera.setPos(0,-30,10)
+            player.getCamera().lookAt(player.vehicle.getModel())   
         
         #Load the Lights
         ambilight = AmbientLight('ambilight')
@@ -72,13 +74,13 @@ class Game(ShowBase):
         self.world = OdeWorld()
         self.world.setGravity(0, 0, -9.81)
         
-        for player in players:
-            self.player.getVehicle().setPhysicsModel(OdeBody(world))
-            self.player.getVehicle().setPhysicsModel().setPosition(self.player.getVehicle().getModel().getPos(render))
-            self.player.getVehicle().setPhysicsModel().setQuaternion(self.player.getVehicle().getModel().getQuat(render))
-            self.player.getVehicle().setPhysicsMass(OdeMass())
-            self.player.getVehicle().getPhysicsMass().setBox(11340, 1, 1, 1)
-            self.player.getVehicle().getPhysicsModel().setMass(self.player.getVehicle().getPhysicsMass())
+        for player in self.players:
+            player.getVehicle().setPhysicsModel(OdeBody(world))
+            player.getVehicle().setPhysicsModel().setPosition(self.player.getVehicle().getModel().getPos(render))
+            player.getVehicle().setPhysicsModel().setQuaternion(self.player.getVehicle().getModel().getQuat(render))
+            player.getVehicle().setPhysicsMass(OdeMass())
+            player.getVehicle().getPhysicsMass().setBox(11340, 1, 1, 1)
+            player.getVehicle().getPhysicsModel().setMass(player.getVehicle().getPhysicsMass())
         
         
         #Initialize Collisions
