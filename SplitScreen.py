@@ -73,7 +73,7 @@ class MyApp(ShowBase):
         #self.cameras[0].node().getDisplayRegion(0).setDimensions(0, 0, 0, 0)
         
         #Del one Camera 
-        #self.cameras[0].detachNode()
+        #self.cameras[0].removeNode()
         
     # Define a procedure to spin the camera.
     def spinCameraTask(self, task):
