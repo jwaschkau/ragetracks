@@ -68,7 +68,13 @@ class MyApp(ShowBase):
                                   pandaHprInterval2,
                                   name="pandaPace")
         self.pandaPace.loop()
- 
+        
+        #Change the Size of a Display Region
+        #self.cameras[0].node().getDisplayRegion(0).setDimensions(0, 0, 0, 0)
+        
+        #Del one Camera 
+        #self.cameras[0].detachNode()
+        
     # Define a procedure to spin the camera.
     def spinCameraTask(self, task):
         for i in range(self.playerCount):
