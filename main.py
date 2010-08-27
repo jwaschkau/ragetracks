@@ -4,8 +4,10 @@
 ###################################################################
 
 from direct.showbase.ShowBase import ShowBase
+from pandac.PandaModules import * #Load all PandaModules
 import menu
 import settings
+import player
 
 # -----------------------------------------------------------------
 # -----------------------------------------------------------------
@@ -30,8 +32,11 @@ class Game(ShowBase):
 
         # Add the main menu (though this is only temporary:
         # the menu should me a member-variable, not a local one)
-        m = menu.Menu()
-        m.addOption("New Game", self.newGame)
+        #m = menu.Menu()
+        #m.addOption("New Game", self.newGame)
+
+        #Start the Game for testing purpose
+        self.newGame()
 
     # -----------------------------------------------------------------
 
@@ -39,12 +44,20 @@ class Game(ShowBase):
         '''
         starts the game or goes to the next menu
         '''
-        pass
-        print "foo"
+        #Load the Map
+        #Load the Players
+        #Load the Cameras
+        #Load the Lights
+        ambilight = AmbientLight('ambilight')
+        ambilight.setColor(VBase4(0.2, 0.2, 0.2, 1))
+        render.setLight(render.attachNewNode(ambilight))
+        #Initialize Physics
+        #Initialize Collisions
+        
 
     # -----------------------------------------------------------------
 
-    def gametask(self):
+    def gametask(self, task):
         '''
         this task runs once per second if the game is running
         '''
@@ -52,7 +65,7 @@ class Game(ShowBase):
 
     # -----------------------------------------------------------------
 
-    def menutask(self):
+    def menutask(self, task):
         '''
         this task runs once per second if we are in game menu
         '''

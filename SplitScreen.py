@@ -8,7 +8,7 @@ from panda3d.core import Point3
  
 class MyApp(ShowBase):
     def __init__(self):
-        self.playerCount = 6
+        self.playerCount = 8
         
         ShowBase.__init__(self)
         base.setFrameRateMeter(True)
