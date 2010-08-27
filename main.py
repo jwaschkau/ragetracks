@@ -65,7 +65,7 @@ class Game(ShowBase):
         #delete the player
         for player in self.players:
             if player.getNumber() == number:
-                self.players.remove(player)
+                self.players.remove(player) ##all objects must be deleted!
                 
         #sort the cameras
             
