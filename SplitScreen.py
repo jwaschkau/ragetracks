@@ -6,38 +6,35 @@ class SplitScreen(object):
     def __init__(self, playerCount = 1):
         self.playerCount = playerCount
         print "Players:", self.playerCount
+##      Add all SplitScreen parts for the count of players
+##        self.cameras = self.createNCamera(self.createNCameras(self.playerCount))
         
     def todel(self):
-        
-        
-        
-##      Add all SplitScreen parts for the count of players
-        self.cameras = self.createNCamera(self.createNCameras(self.playerCount))
-        
         #Change the Size of a Display Region
         #self.cameras[0].node().getDisplayRegion(0).setDimensions(0, 0, 0, 0)
         
         #Del one Camera 
         #self.cameras[0].removeNode()
+        pass
         
-        def oneMorePlayer(player):
-            players.append(player) #Every Player must have a Camera created with CreateOneCamera
-            reRegion()
+    def oneMorePlayer(player):
+        players.append(player) #Every Player must have a Camera created with CreateOneCamera
+        reRegion()
        
-        def oneLessPlayer(player):
-            for i in range(0 , len(self.players), 1):
-                if self.players[i].getNumber() == player.getNumber():
-                    self.players[i].kill()
-                    del self.players[i]
-            reRegion()
+    def oneLessPlayer(player):
+        for i in range(0 , len(self.players), 1):
+            if self.players[i].getNumber() == player.getNumber():
+                self.players[i].kill()
+                del self.players[i]
+        reRegion()
 
-        def reRegion(players):
-            displayRegions = createNCameras(len(players))
-            for i in range(0 , len(players), 1):
-                players[i].getCamera().node().getDisplayRegion.setDimensions(displayRegions[i])
-                #JEDEM PLAYER EIENE neue REGION zuweise
+    def reRegion(players):
+        displayRegions = createNCameras(len(players))
+        for i in range(0 , len(players), 1):
+            players[i].getCamera().node().getDisplayRegion.setDimensions(displayRegions[i])
+            #JEDEM PLAYER EIENE neue REGION zuweise
         
-        
+    def Test(players):
         #TEST
         self.displayRegions = self.createNCameras(2)
         self.cameras.append(self.createOneCamera((0,0,0,0)))
@@ -49,7 +46,7 @@ class SplitScreen(object):
     '''
     Create n Cameras use only CreateOneCamera n times
     '''
-    def createNCamera(self,dispRegion):
+    def _createNCamera(self,dispRegion):
         cameras = []
         for i in dispRegion:
             cameras.append(self.createOneCamera(i))
@@ -58,7 +55,7 @@ class SplitScreen(object):
     '''
     Create one Camera for a new Player
     '''
-    def createOneCamera(self,dispRegion):
+    def _createOneCamera(self,dispRegion):
         camera=base.makeCamera(base.win,displayRegion=dispRegion)
         camera.node().getLens().setAspectRatio(3.0/4.0)
         camera.node().getLens().setFov(45) #optional.
@@ -68,7 +65,7 @@ class SplitScreen(object):
     '''
     Generates the Windows size andposition for a cont of N players
     '''
-    def createNCameras(self,camCount):
+    def _createNCameras(self,camCount):
 ##        if camCount <= 0:
 ##            pass
         list = []
