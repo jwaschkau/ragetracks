@@ -1,15 +1,9 @@
-from math import pi, sin, cos, sqrt, ceil
-
-from direct.showbase.ShowBase import ShowBase
-from direct.task import Task
-from direct.actor.Actor import Actor
-from direct.interval.IntervalGlobal import Sequence
-from panda3d.core import Point3
+from math import sqrt, ceil
  
-class SplitScreen(ShowBase):
+class SplitScreen(object):
     '''
     '''    
-    def __init__(self, playerCount, ):
+    def __init__(self, playerCount = 1):
         self.playerCount = playerCount
         print "Players:", self.playerCount
         
@@ -99,5 +93,5 @@ class SplitScreen(ShowBase):
        
        
 #Only for Test 
-app = SplitScreen()
-app.run()
+#app = SplitScreen()
+#app.run()

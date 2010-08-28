@@ -8,11 +8,9 @@ from pandac.PandaModules import * #Load all PandaModules
 import menu
 import settings
 import player
-<<<<<<< TREE
 import splitScreen
-=======
 import vehicledata #holds the data of vehicles
->>>>>>> MERGE-SOURCE
+
 
 # -----------------------------------------------------------------
 # -----------------------------------------------------------------
