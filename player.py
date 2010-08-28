@@ -3,16 +3,18 @@
 ## this module contains the data for one player
 ###################################################################
 import vehicle
+import vehicledata
 
 class Player(object):
     '''
     '''
-    def __init__(self, number, device = None, camera = None):
+    def __init__(self, main, number, device = None, camera = None, vehicledata = vehicledata.VehicleData()):
         '''
         '''
+        self.main = main
         self.number = number
         self.camera = camera
-        self.vehicle = vehicle.Vehicle() #the properties of the vehicle
+        self.vehicle = vehicle.Vehicle(self.main, vehicledata) #the properties of the vehicle
         self.device = device #The inputdevice
         
         #Initialize the camera

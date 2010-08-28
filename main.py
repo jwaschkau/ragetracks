@@ -8,7 +8,11 @@ from pandac.PandaModules import * #Load all PandaModules
 import menu
 import settings
 import player
+<<<<<<< TREE
 import splitScreen
+=======
+import vehicledata #holds the data of vehicles
+>>>>>>> MERGE-SOURCE
 
 # -----------------------------------------------------------------
 # -----------------------------------------------------------------
@@ -24,6 +28,7 @@ class Game(ShowBase):
         
         #Initialize needed variables and objects
         self.players = [] #holds the player objects
+        self.vehicledata = vehicledata.VehicleData()
 
         #Initialize the first player
         self.addPlayer("Tastaturdevice") ##tastaturdevice übergeben
@@ -52,7 +57,7 @@ class Game(ShowBase):
         creates a new player object, initializes it and sorts the cameras on the screen
         '''    
         #Create a new player object
-        self.players.append(player.Player(len(self.players), device, base.makeCamera(base.win,1)))
+        self.players.append(self,player.Player(len(self.players), device, base.makeCamera(base.win,1), self.vehicledata))
         
         #sort the cameras
         #self.splitScreen.reRegion(self.players)
@@ -84,30 +89,36 @@ class Game(ShowBase):
         self.map.setScale(10, 10, 10)
         self.map.setPos(0, 0, 0)
         
+        #Initialize Physics
+        self.world = OdeWorld()
+        self.world.setGravity(0, 0, -9.81) 
+        
+        #Initialize Collisions
+        self.space = OdeSimpleSpace()
+        ##use autocollision?
+        
         #Load the Players
-        for player in self.players:
-            player.getVehicle().setScale(1, 1, 1)
-            player.getVehicle().setPos(0, 0, 3)
+        ##probably unnecessary because the players are already initialized at this point
         
         #Load the Lights
         ambilight = AmbientLight('ambilight')
         ambilight.setColor(VBase4(0.2, 0.2, 0.2, 1))
-        render.setLight(render.attachNewNode(ambilight))
+        render.setLight(render.attachNewNode(ambilight))       
         
-        #Initialize Physics
-        self.world = OdeWorld()
-        self.world.setGravity(0, 0, -9.81)
+        #load physics
+        #the following code should be executed in the vehicle-class
         
-        for player in self.players:
-            player.getVehicle().setPhysicsModel(OdeBody(world))
-            player.getVehicle().setPhysicsModel().setPosition(self.player.getVehicle().getModel().getPos(render))
-            player.getVehicle().setPhysicsModel().setQuaternion(self.player.getVehicle().getModel().getQuat(render))
-            player.getVehicle().setPhysicsMass(OdeMass())
-            player.getVehicle().getPhysicsMass().setBox(11340, 1, 1, 1)
-            player.getVehicle().getPhysicsModel().setMass(player.getVehicle().getPhysicsMass())
+        #for player in self.players:
+        #    player.getVehicle().setPhysicsModel(OdeBody(world))
+        #    player.getVehicle().setPhysicsModel().setPosition(self.player.getVehicle().getModel().getPos(render))
+        #    player.getVehicle().setPhysicsModel().setQuaternion(self.player.getVehicle().getModel().getQuat(render))
+        #    player.getVehicle().setPhysicsMass(OdeMass())
+        #    player.getVehicle().getPhysicsMass().setBox(11340, 1, 1, 1)
+        #    player.getVehicle().getPhysicsModel().setMass(player.getVehicle().getPhysicsMass())
         
         
         #Initialize Collisions
+        #this should be executed in the vehicle-class
 
         
 

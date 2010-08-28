@@ -6,13 +6,17 @@
 class Vehicle(object):
     '''
     '''
-    def __init__(self, model = None, phys_model = None, phys_mass = None, coll_model = None):
+    def __init__(self, main, vehicledata, name = "standard"):
         '''
         '''
-        self.model = model
-        self.physics_model = phys_model
-        self.physics_mass = phys_mass
-        self.collision_model = coll_model
+        self.main = main
+        self.model = None
+        self.physics_model = None
+        self.physics_mass = None
+        self.collision_model = None
+        self.vehicledata = vehicledata #holds information about the available vehicles
+        
+        self.setVehicle(name)
         
     # ---------------------------------------------------------
     
@@ -20,7 +24,11 @@ class Vehicle(object):
         '''
         Choose what vehicle the player has chosen. This method initializes all data of this vehicle
         '''
-        pass
+        vehicle = self.vehicledata.getVehicle(name)
+        self.model = self.main.loader.loadModel(vehicle["model_path"])
+        self.physics_model = None
+        self.physics_mass = None
+        self.collision_model = None
       
     # ---------------------------------------------------------
     
