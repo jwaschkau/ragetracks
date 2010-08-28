@@ -83,6 +83,6 @@ class Player(object):
         '''
         return self.device
         #Del one Camera 
-        #self.cameras[0].removeNode()
+        self.cameras.node().removeNode()
         
     # ---------------------------------------------------------
