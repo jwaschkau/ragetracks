@@ -10,8 +10,9 @@ class VehicleData(object):
         self.vehicles = {}
         self.vehicles = {
                         "standard":{
-                                "modelpath":"data/models/vehicle01",
-                                
+                                "model_path":"data/models/vehicle01",
+                                "model_scale":(1,1,1),
+                                "mass_box":((1000,1,1,1),)
                                 
                                 },
                                 
@@ -23,7 +24,7 @@ class VehicleData(object):
         '''
         returns all data of the choosen vehicle
         '''
-        pass
+        return self.vehicles["standard"]
         
     # ---------------------------------------------------------
     
