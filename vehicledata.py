@@ -9,10 +9,10 @@ class VehicleData(object):
     def __init__(self):
         self.vehicles = {}
         self.vehicles = {
-                        "standard":{
-                                "model_path":"data/models/vehicle01",
-                                "model_scale":(1,1,1),
-                                "mass_box":((1000,1,1,1),)
+                        "standard":{#name of the vehicle
+                                "model_path":"data/models/vehicle01",#path to the model
+                                "model_scale":(1,1,1),#scale of the model
+                                "mass_box":((1000,1,1,1),)#allocation of the mass from the vehicle
                                 
                                 },
                                 

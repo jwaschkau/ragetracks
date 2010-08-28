@@ -8,18 +8,20 @@ import vehicledata
 class Player(object):
     '''
     '''
-    def __init__(self, number, device = None, camera = None, vehicledata = vehicledata.VehicleData()):
+    def __init__(self, number, ode_world, ode_space, device = None, camera = None, vehicledata = vehicledata.VehicleData()):
         '''
         '''
+        self.ode_world = ode_world
+        self.ode_space = ode_space
         self.number = number
         self.camera = camera
-        self.vehicle = vehicle.Vehicle(vehicledata) #the properties of the vehicle
+        self.vehicle = vehicle.Vehicle(vehicledata, self.ode_world, self.ode_space) #the properties of the vehicle
         self.device = device #The inputdevice
         
         #Initialize the camera
-        self.camera.reparentTo(self.vehicle.getModel())
-        self.camera.setPos(0,-30,10)
-        self.camera.lookAt(self.vehicle.getModel()) 
+        #self.camera.reparentTo(self.vehicle.getModel())
+        #self.camera.setPos(0,-30,10)
+        #self.camera.lookAt(self.vehicle.getModel()) 
     
     # ---------------------------------------------------------
     
@@ -80,6 +82,7 @@ class Player(object):
     
     def destroy(self):
         '''
+        destroys all objects of the player-object
         '''
         return self.device
         #Del one Camera 
