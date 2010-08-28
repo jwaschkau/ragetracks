@@ -86,14 +86,8 @@ class Game(ShowBase):
         
         #Load the Players
         for player in self.players:
-            player.vehicle.getModel().setScale(1, 1, 1)
-            player.vehicle.getModel().setPos(0, 0, 3)
-        
-        #Load the Cameras
-        for player in self.players:
-            player.getCamera().reparentTo(player.vehicle.getModel())
-            player.getCamera().camera.setPos(0,-30,10)
-            player.getCamera().lookAt(player.vehicle.getModel())   
+            player.getVehicle().setScale(1, 1, 1)
+            player.getVehicle().setPos(0, 0, 3)
         
         #Load the Lights
         ambilight = AmbientLight('ambilight')

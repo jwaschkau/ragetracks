@@ -13,7 +13,23 @@ class Vehicle(object):
         self.physics_model = phys_model
         self.physics_mass = phys_mass
         self.collision_model = coll_model
+        
+    # ---------------------------------------------------------
     
+    def setVehicle(self, name):
+        '''
+        Choose what vehicle the player has chosen. This method initializes all data of this vehicle
+        '''
+        pass
+      
+    # ---------------------------------------------------------
+    
+    def getVehicle(self):
+        '''
+        Gives back a dictionary with information about the chosen vehicle
+        '''
+        pass 
+   
     # ---------------------------------------------------------
     
     def setModel(self, model):
@@ -69,5 +85,18 @@ class Vehicle(object):
         '''
         '''
         return self.collision_model
+        
+    # ---------------------------------------------------------
+    
+    def setPos(self, x, y, z):
+        '''
+        '''
+        model.setPos(x,y,z)
+        
+    # ---------------------------------------------------------
+    def setScale(self, x, y, z):
+        '''
+        '''
+        model.setScale(x,y,z)
         
     # ---------------------------------------------------------
