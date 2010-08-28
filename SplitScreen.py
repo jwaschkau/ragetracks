@@ -6,9 +6,15 @@ from direct.actor.Actor import Actor
 from direct.interval.IntervalGlobal import Sequence
 from panda3d.core import Point3
  
-class MyApp(ShowBase):
+class SplitScreen(ShowBase):
+    '''
+    '''
+    #def __init__(self):
+    #    test()
+    
+    
     def __init__(self):
-        self.playerCount = 1
+        self.playerCount = 16
         
         ShowBase.__init__(self)
         base.setFrameRateMeter(True)
@@ -16,7 +22,7 @@ class MyApp(ShowBase):
         print "Players:", self.playerCount
         
 ##      Add all SplitScreen parts for the count of players
-        self.cameras = self.createCamera( self.createNCameras(self.playerCount))
+        self.cameras = self.createNCamera( self.createNCameras(self.playerCount))
        
         #self.camera1=self.createCamera((0.0, 0.5, 0,1))
         #self.camera1.reparentTo(self.model1)
@@ -76,7 +82,7 @@ class MyApp(ShowBase):
         #self.cameras[0].removeNode()
         
         def oneMorePlayer(player):
-            players.append(player)
+            players.append(player) #Every Player must have a Camera created with CreateOneCamera
             reRegion()
        
         def oneLessPlayer(player):
@@ -87,12 +93,21 @@ class MyApp(ShowBase):
                     del self.players[i]
             reRegion()
 
-        def reRegion(self, players, win):
+        def reRegion(players):
             displayRegions = createNCameras(len(players))
             for i in range(0 , len(players), 1):
                 players[i].getCamera().node().getDisplayRegion.setDimensions(displayRegions[i])
                 #JEDEM PLAYER EIENE neue REGION zuweise
         
+        
+        #TEST
+        self.displayRegions = self.createNCameras(2)
+        self.cameras.append(self.createOneCamera((0,0,0,0)))
+        #for i in range(2):
+        self.cameras[0].node().getDisplayRegion(0).setDimensions(self.displayRegions[0][0], self.displayRegions[0][1], self.displayRegions[0][2], self.displayRegions[0][3])
+        self.cameras[1].node().getDisplayRegion(0).setDimensions(self.displayRegions[1][0], self.displayRegions[1][1], self.displayRegions[1][2], self.displayRegions[1][3])
+            
+    
     # Define a procedure to spin the camera.
     def spinCameraTask(self, task):
         for i in range(self.playerCount):
@@ -102,18 +117,31 @@ class MyApp(ShowBase):
             self.cameras[i].setHpr(angleDegrees, 0, 0)
         return Task.cont
 
-    def createCamera(self,dispRegion):
+    '''
+    Create n Cameras use only CreateOneCamera n times
+    '''
+    def createNCamera(self,dispRegion):
         cameras = []
         for i in dispRegion:
-            camera=base.makeCamera(base.win,displayRegion=i)
-            camera.node().getLens().setAspectRatio(3.0/4.0)
-            camera.node().getLens().setFov(45) #optional.
-            camera.setPos(0,-8,3) #set its position.
-            cameras.append(camera)
+            cameras.append(self.createOneCamera(i))
         return cameras
+    
+    '''
+    Create one Camera for a new Player
+    '''
+    def createOneCamera(self,dispRegion):
+        camera=base.makeCamera(base.win,displayRegion=dispRegion)
+        camera.node().getLens().setAspectRatio(3.0/4.0)
+        camera.node().getLens().setFov(45) #optional.
+        camera.setPos(0,-8,3) #set its position.
+        return camera
 
+    '''
+    Generates the Windows size andposition for a cont of N players
+    '''
     def createNCameras(self,camCount):
-##      Generates the Windows count and size/position 
+##        if camCount <= 0:
+##            pass
         list = []
         times = ceil(sqrt(camCount))
         if ((times* times) - times >= camCount):
@@ -135,6 +163,6 @@ class MyApp(ShowBase):
         return list   
        
        
- 
-app = MyApp()
+#Only for Test 
+app = SplitScreen()
 app.run()

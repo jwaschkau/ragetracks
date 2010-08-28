@@ -8,6 +8,7 @@ from pandac.PandaModules import * #Load all PandaModules
 import menu
 import settings
 import player
+import splitScreen
 
 # -----------------------------------------------------------------
 # -----------------------------------------------------------------
@@ -54,6 +55,7 @@ class Game(ShowBase):
         self.players.append(player.Player(len(self.players), device, base.makeCamera(base.win,1)))
         
         #sort the cameras
+        #self.splitScreen.reRegion(self.players)
         
     # -----------------------------------------------------------------
     
