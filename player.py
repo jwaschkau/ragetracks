@@ -8,19 +8,18 @@ import vehicledata
 class Player(object):
     '''
     '''
-    def __init__(self, main, number, device = None, camera = None, vehicledata = vehicledata.VehicleData()):
+    def __init__(self, number, device = None, camera = None, vehicledata = vehicledata.VehicleData()):
         '''
         '''
-        self.main = main
         self.number = number
         self.camera = camera
-        self.vehicle = vehicle.Vehicle(self.main, vehicledata) #the properties of the vehicle
+        self.vehicle = vehicle.Vehicle(vehicledata) #the properties of the vehicle
         self.device = device #The inputdevice
         
         #Initialize the camera
         self.camera.reparentTo(self.vehicle.getModel())
         self.camera.setPos(0,-30,10)
-        self.camera.lookAt(player.vehicle.getModel()) 
+        self.camera.lookAt(self.vehicle.getModel()) 
     
     # ---------------------------------------------------------
     

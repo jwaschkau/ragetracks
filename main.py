@@ -55,7 +55,7 @@ class Game(ShowBase):
         creates a new player object, initializes it and sorts the cameras on the screen
         '''    
         #Create a new player object
-        self.players.append(self,player.Player(len(self.players), device, base.makeCamera(base.win,1), self.vehicledata))
+        self.players.append(player.Player(len(self.players), device, base.makeCamera(base.win,1), self.vehicledata))
         
         #sort the cameras
         #self.splitScreen.reRegion(self.players)

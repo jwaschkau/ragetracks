@@ -6,10 +6,9 @@
 class Vehicle(object):
     '''
     '''
-    def __init__(self, main, vehicledata, name = "standard"):
+    def __init__(self, vehicledata, name = "standard"):
         '''
         '''
-        self.main = main
         self.model = None
         self.physics_model = None
         self.physics_mass = None
@@ -25,7 +24,7 @@ class Vehicle(object):
         Choose what vehicle the player has chosen. This method initializes all data of this vehicle
         '''
         vehicle = self.vehicledata.getData(name)
-        self.model = self.main.loader.loadModel(vehicle["model_path"])
+        self.model = loader.loadModel(vehicle["model_path"])#self.main.loader.loadModel(vehicle["model_path"])
         self.physics_model = None
         self.physics_mass = None
         self.collision_model = None
