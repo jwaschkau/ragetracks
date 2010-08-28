@@ -14,6 +14,11 @@ class Player(object):
         self.camera = camera
         self.vehicle = vehicle.Vehicle() #the properties of the vehicle
         self.device = device #The inputdevice
+        
+        #Initialize the camera
+        self.camera.reparentTo(self.vehicle.getModel())
+        self.camera.setPos(0,-30,10)
+        self.camera.lookAt(player.vehicle.getModel()) 
     
     # ---------------------------------------------------------
     
