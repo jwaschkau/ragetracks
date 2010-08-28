@@ -75,6 +75,24 @@ class MyApp(ShowBase):
         #Del one Camera 
         #self.cameras[0].removeNode()
         
+        def oneMorePlayer(player):
+            players.append(player)
+            reRegion()
+       
+        def oneLessPlayer(player):
+            for i in range(0 , len(self.players), 1):
+                #vill allen playern eine UUID geben?
+                if self.players[i] == player:
+                    self.players[i].kill()
+                    del self.players[i]
+            reRegion()
+
+        def reRegion(self, players, win):
+            displayRegions = createNCameras(len(players))
+            for i in range(0 , len(players), 1):
+                players[i].getCamera().node().getDisplayRegion.setDimensions(displayRegions[i])
+                #JEDEM PLAYER EIENE neue REGION zuweise
+        
     # Define a procedure to spin the camera.
     def spinCameraTask(self, task):
         for i in range(self.playerCount):

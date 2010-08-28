@@ -71,3 +71,12 @@ class Player(object):
         return self.device
         
     # ---------------------------------------------------------
+    
+    def destroy(self):
+        '''
+        '''
+        return self.device
+        #Del one Camera 
+        #self.cameras[0].removeNode()
+        
+    # ---------------------------------------------------------
