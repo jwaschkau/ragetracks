@@ -31,7 +31,7 @@ class Game(ShowBase):
         
         #Initialize Physics (ODE)
         self.world = OdeWorld()
-        self.world.setGravity(0, 0, -0.05) 
+        self.world.setGravity(0, 0, -0.5) 
         
         #Initialize Collisions (ODE)
         self.space = OdeSimpleSpace()
@@ -57,12 +57,12 @@ class Game(ShowBase):
 
         # Add the main menu (though this is only temporary:
         # the menu should me a member-variable, not a local one)
-        m = menu.Menu()
-        m.addOption("NewGame", self.newGame)
+        #m = menu.Menu()
+        #m.addOption("NewGame", self.newGame)
         #m.addOption("AddPlayer", self.addPlayer)
 
         #Start the Game for testing purpose
-        #self.newGame()
+        self.newGame()
 
     # -----------------------------------------------------------------
 
@@ -106,7 +106,8 @@ class Game(ShowBase):
         self.map.setPos(0, 0, 0)
         
         #add collision with the map
-        OdeTriMeshGeom(self.space, OdeTriMeshData(self.map, True))
+        #OdeTriMeshGeom(self.space, OdeTriMeshData(self.map, True))
+        groundGeom = OdePlaneGeom(self.space, Vec4(0, 0, 1, 0))
 
         
         #Load the Players
