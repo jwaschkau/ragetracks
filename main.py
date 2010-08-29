@@ -5,7 +5,7 @@
 
 from direct.showbase.ShowBase import ShowBase
 from pandac.PandaModules import * #Load all PandaModules
-import menu
+import menu3D
 import settings
 import player
 import splitScreen
@@ -61,7 +61,8 @@ class Game(ShowBase):
 
         # Add the main menu (though this is only temporary:
         # the menu should me a member-variable, not a local one)
-        #m = menu.Menu()
+        m = menu3D.Menu()
+        
         #m.addOption("NewGame", self.newGame)
         #m.addOption("AddPlayer", self.addPlayer)
 
