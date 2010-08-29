@@ -23,6 +23,9 @@ class Settings(object):
         self.height = 600
 
         self.fullscreen = False
+        self._input_settings = {"keyboard" : {},
+                                "joysticks" : {}
+                                }
 
     # ---------------------------------------------------------
 
@@ -52,6 +55,17 @@ class Settings(object):
         self.width = int(config["application"]["resolution"][0])
         self.height = int(config["application"]["resolution"][1])
         self.fullscreen = bool(int(config["application"]["fullscreen"]))
+
+        self._input_settings = {"joysticks": config["joysticks"],
+                                "keyboard": config["keyboard"]
+                                }
+
+    # ---------------------------------------------------------
+
+    def getInputSettings(self):
+        '''
+        '''
+        return self._input_settings
 
     # ---------------------------------------------------------
 
