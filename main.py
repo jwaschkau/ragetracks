@@ -9,7 +9,6 @@ import menu
 import settings
 import player
 import splitScreen
-import vehicledata #holds the data of vehicles
 
 
 # -----------------------------------------------------------------
@@ -27,7 +26,6 @@ class Game(ShowBase):
         
         #Initialize needed variables and objects
         self.players = [] #holds the player objects
-        self.vehicledata = vehicledata.VehicleData()
         
         #Initialize Physics (ODE)
         self.world = OdeWorld()
@@ -75,7 +73,7 @@ class Game(ShowBase):
         creates a new player object, initializes it and sorts the cameras on the screen
         '''    
         #Create a new player object
-        self.players.append(player.Player(len(self.players),self.world, self.space, device, base.makeCamera(base.win,1), self.vehicledata))
+        self.players.append(player.Player(len(self.players),self.world, self.space, device, base.makeCamera(base.win,1)))
         
         #sort the cameras
         #self.splitScreen.reRegion(self.players)
