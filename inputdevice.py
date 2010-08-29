@@ -3,6 +3,7 @@
 ## this module holds the keyboard and joystick devices
 ###########################################################
 
+import pygame
 import keyboarddevice
 import joystickdevice
 
@@ -132,16 +133,16 @@ class InputDevice(object):
 class InputDevices(object):
     '''
     '''
-    def __init__(self, keyboard, joysticks, settings):
+    def __init__(self, panda_eventhandler, settings):
         '''
         @param keyboard: = (KeyboardDevice) keyboard
         @param joysticks: = (JoystickDevices) joysicks
         '''
-        self.id = 0
-        self.keyboard = keyboard
-        self.joysticks = joysticks
 
-        self.devices = []
+        self.keyboard = keyboarddevice.KeyboardDevice(panda_eventhandler)
+        self.joysticks = joystickdevice.JoystickDevices()
+
+        self.devices = [InputDevice(self.keyboard, settings)]
 
         for joystick in self.joysticks.getJoysticks():
             self.devices.append(InputDevice(joystick, settings))
@@ -151,7 +152,6 @@ class InputDevices(object):
     def fetchEvents(self):
         '''
         '''
-        self.keyboard.fetchEvents()
         self.joysticks.fetchEvents()
 
         for device in self.devices:
@@ -163,6 +163,8 @@ class InputDevices(object):
 
 if __name__ == "__main__":
 
+    from direct.showbase.ShowBase import ShowBase
+    sb = ShowBase()
 
     import time
     import settings
@@ -170,8 +172,15 @@ if __name__ == "__main__":
     conf = settings.Settings()
     conf.loadSettings("user/config.ini")
 
-    i = InputDevices(keyboarddevice.KeyboardDevice(), joystickdevice.JoystickDevices(), conf.getInputSettings())
+    # init pygame and its joystick module
+    pygame.init()
+    pygame.joystick.init()
+
+    i = InputDevices(sb, conf.getInputSettings())
 
     while True:
         i.fetchEvents()
         time.sleep(1)
+
+    pygame.joystick.quit()
+    pygame.quit()

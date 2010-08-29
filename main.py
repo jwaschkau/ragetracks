@@ -7,8 +7,10 @@ from direct.showbase.ShowBase import ShowBase
 from pandac.PandaModules import * #Load all PandaModules
 import menu
 import settings
+import inputdevice
 import player
 import splitScreen
+import vehicledata #holds the data of vehicles
 
 
 # -----------------------------------------------------------------
@@ -23,25 +25,33 @@ class Game(ShowBase):
         '''
         ShowBase.__init__(self)
         base.setFrameRateMeter(True) #Show the Framerate
-        
+
+        # load the settings
+        self.settings = settings.Settings()
+        self.settings.loadSettings("user/config.ini")
+
+        # initialize the input devices
+        self.devices = inputdevice.InputDevice(self, self.settings.getInputSettings())
+
         #Initialize needed variables and objects
         self.players = [] #holds the player objects
-        
+        self.vehicledata = vehicledata.VehicleData()
+
         #Initialize Physics (ODE)
         self.world = OdeWorld()
-        self.world.setGravity(0, 0, -0.5) 
-        
-        
+        self.world.setGravity(0, 0, -0.5)
+
+
         self.deltaTimeAccumulator = 0.0 #this variable is necessary to track the time for the physics
         self.stepSize = 1.0 / 60.0 # This stepSize makes the simulation run at 60 frames per second
-        
+
         #Initialize Collisions (ODE)
         self.space = OdeSimpleSpace()
         #Initialize the surface-table, it defines how objects interact with each other
         self.world.initSurfaceTable(1)
         self.world.setSurfaceEntry(0, 0, 150, 0.0, 9.1, 0.9, 0.00001, 0.0, 0.002)
         self.space.setAutoCollideWorld(self.world)##use autocollision?
-        
+
         self.contactgroup = OdeJointGroup()
         self.space.setAutoCollideJointGroup(self.contactgroup)
 
@@ -71,59 +81,59 @@ class Game(ShowBase):
     def addPlayer(self, device):
         '''
         creates a new player object, initializes it and sorts the cameras on the screen
-        '''    
+        '''
         #Create a new player object
-        self.players.append(player.Player(len(self.players),self.world, self.space, device, base.makeCamera(base.win,1)))
-        
+        self.players.append(player.Player(len(self.players),self.world, self.space, device, base.makeCamera(base.win,1), self.vehicledata))
+
         #sort the cameras
         #self.splitScreen.reRegion(self.players)
-        
+
     # -----------------------------------------------------------------
-    
+
     def removePlayer(self, number):
         '''
         deletes a player object and sorts the cameras on the screem
         '''
-        
+
         #delete the player
         for player in self.players:
             if player.getNumber() == number:
                 self.players.remove(player) ##all objects must be deleted!
-                
+
         #sort the cameras
-            
+
     # -----------------------------------------------------------------
-    
+
     def newGame(self):
         '''
         starts the game or goes to the next menu
         '''
-        
+
         print "bla"
-        
+
         #Load the Map
         self.map = self.loader.loadModel("data/models/Track01")
         self.map.reparentTo(self.render)
         self.map.setScale(10, 10, 10)
         self.map.setPos(0, 0, 0)
-        
+
         #add collision with the map
         #OdeTriMeshGeom(self.space, OdeTriMeshData(self.map, True))
         groundGeom = OdePlaneGeom(self.space, Vec4(0, 0, 1, 0))
 
-        
+
         #Load the Players
         ##probably unnecessary because the players are already initialized at this point
-        
+
         #Load the Lights
         ambilight = AmbientLight('ambilight')
         ambilight.setColor(VBase4(0.2, 0.2, 0.2, 1))
-        render.setLight(render.attachNewNode(ambilight))       
-        
+        render.setLight(render.attachNewNode(ambilight))
+
         #start the gametask
         taskMgr.add(self.gameTask, "gameTask")
 
-        
+
 
     # -----------------------------------------------------------------
 
@@ -133,7 +143,7 @@ class Game(ShowBase):
         '''
         #calculate the physics
         self.space.autoCollide() # Setup the contact joints
-        
+
         self.deltaTimeAccumulator += globalClock.getDt()
         while self.deltaTimeAccumulator > self.stepSize:
             # Remove a stepSize from the accumulator until

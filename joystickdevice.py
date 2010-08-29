@@ -5,13 +5,11 @@
 ## gamepad devices
 ##############################################################
 
-import generaldevice
-
-# ---------------------------------------------------------
-# ---------------------------------------------------------
-# ---------------------------------------------------------
-
 import pygame
+
+# ---------------------------------------------------------
+# ---------------------------------------------------------
+# ---------------------------------------------------------
 
 class JoystickDevice(object):
     '''
@@ -72,7 +70,7 @@ class JoystickDevice(object):
 # ---------------------------------------------------------
 # ---------------------------------------------------------
 
-class JoystickDevices(generaldevice.GeneralDevice):
+class JoystickDevices():
     '''
     This class holds all connected Joystick and gamepad devices
     '''
@@ -80,9 +78,6 @@ class JoystickDevices(generaldevice.GeneralDevice):
         '''
         initializes the joysticks
         '''
-        # init pygame and its joystick module
-        pygame.init()
-        pygame.joystick.init()
 
         # we need a list for our joysticks
         self.joysticks = []
@@ -141,10 +136,13 @@ class JoystickDevices(generaldevice.GeneralDevice):
 
 
 if __name__ == "__main__":
+    # init pygame and its joystick module
+    pygame.init()
+    pygame.joystick.init()
+
     j = JoystickDevices()
     while True:
         j.fetchEvents()
-
 
     pygame.joystick.quit()
     pygame.quit()
