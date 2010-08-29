@@ -23,6 +23,7 @@ class Game(ShowBase):
         '''
         '''
         ShowBase.__init__(self)
+        base.setFrameRateMeter(True) #Show the Framerate
         
         #Initialize needed variables and objects
         self.players = [] #holds the player objects
@@ -34,7 +35,10 @@ class Game(ShowBase):
         
         #Initialize Collisions (ODE)
         self.space = OdeSimpleSpace()
-        ##use autocollision? -->then the collision map must be created
+        #Initialize the surface-table, it defines how objects interact with each other
+        self.world.initSurfaceTable(1)
+        self.world.setSurfaceEntry(0, 0, 150, 0.0, 9.1, 0.9, 0.00001, 0.0, 0.002)
+        self.space.setAutoCollideWorld(self.world)##use autocollision?
 
         #Initialize the first player
         self.addPlayer("Tastaturdevice") ##pass the device for the first player (probably the keyboard)
@@ -103,37 +107,26 @@ class Game(ShowBase):
         ambilight.setColor(VBase4(0.2, 0.2, 0.2, 1))
         render.setLight(render.attachNewNode(ambilight))       
         
-        #load physics
-        #the following code should be executed in the vehicle-class
-        
-        #for player in self.players:
-        #    player.getVehicle().setPhysicsModel(OdeBody(world))
-        #    player.getVehicle().setPhysicsModel().setPosition(self.player.getVehicle().getModel().getPos(render))
-        #    player.getVehicle().setPhysicsModel().setQuaternion(self.player.getVehicle().getModel().getQuat(render))
-        #    player.getVehicle().setPhysicsMass(OdeMass())
-        #    player.getVehicle().getPhysicsMass().setBox(11340, 1, 1, 1)
-        #    player.getVehicle().getPhysicsModel().setMass(player.getVehicle().getPhysicsMass())
-        
-        
-        #Initialize Collisions
-        #this should be executed in the vehicle-class
+        #start the gametask
+        taskMgr.add(self.gameTask, "gameTask")
 
         
 
     # -----------------------------------------------------------------
 
-    def gametask(self, task):
+    def gameTask(self, task):
         '''
         this task runs once per second if the game is running
         '''
         #calculate the physics
+        self.space.autoCollide() # Setup the contact joints
         self.world.quickStep(globalClock.getDt())   # Step the simulation and set the new positions
-        for player in players:                      # set new positions
-            player.getVehicle().getModel().setPosQuat(render, player.getVehicle().physicsModel().getPosition(), Quat(player.getVehicle().physicsModel().getQuaternion()))
+        for player in self.players:                      # set new positions
+            player.getVehicle().getModel().setPosQuat(render, player.getVehicle().getPhysicsModel().getPosition(), Quat(player.getVehicle().getPhysicsModel().getQuaternion()))
         return task.cont
     # -----------------------------------------------------------------
 
-    def menutask(self, task):
+    def menuTask(self, task):
         '''
         this task runs once per second if we are in game menu
         '''

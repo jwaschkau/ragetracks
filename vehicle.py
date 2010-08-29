@@ -43,7 +43,7 @@ class Vehicle(object):
             self.physics_model.setMass(self.physics_mass)
         
         #Initialize the collision-model of the vehicle
-        self.collision_model = None
+        self.collision_model = OdeTriMeshGeom(self.ode_space, OdeTriMeshData(self.model, True))
       
     # ---------------------------------------------------------
     
@@ -83,14 +83,14 @@ class Vehicle(object):
         
     # ---------------------------------------------------------
 
-    def setPhysicsModel(self, phys_mass):
+    def setPhysicsMass(self, phys_mass):
         '''
         '''
         self.physics_mass = phys_mass
         
     # ---------------------------------------------------------
         
-    def getPhysicsModel(self):
+    def getPhysicsMass(self):
         '''
         '''
         return self.physics_mass
