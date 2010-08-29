@@ -171,6 +171,9 @@ class InputDevices(object):
         @param joysticks: = (JoystickDevices) joysicks
         '''
 
+        pygame.init()
+        pygame.joystick.init()
+
         self.keyboard = keyboarddevice.KeyboardDevice()
         self.joysticks = joystickdevice.JoystickDevices()
 
@@ -193,7 +196,16 @@ class InputDevices(object):
 
     # ---------------------------------------------------------
 
+    def closeDevices(self):
+        '''
+        '''
+        pygame.joystick.quit()
+        pygame.quit()
 
+# ---------------------------------------------------------
+# ---------------------------------------------------------
+# ---------------------------------------------------------
+# ---------------------------------------------------------
 
 if __name__ == "__main__":
 
@@ -206,14 +218,10 @@ if __name__ == "__main__":
     conf = settings.Settings()
     conf.loadSettings("user/config.ini")
 
-    # init pygame and its joystick module
-    pygame.init()
-    pygame.joystick.init()
 
     i = InputDevices(conf.getInputSettings())
 
     taskMgr.add(i.fetchEvents, "fetchEvents")
     run()
 
-    pygame.joystick.quit()
-    pygame.quit()
+
