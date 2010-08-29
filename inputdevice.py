@@ -155,9 +155,6 @@ class InputDevice(object):
             self.boost = self.device.keys[self.settings["boost"]]
             self.use_item = self.device.keys[self.settings["use_item"]]
 
-            print self.directions, " - boost:", self.boost, " - use_item:", self.use_item
-            #print self.device.keys[self.settings["up"]]
-
     # ---------------------------------------------------------
 
 # ---------------------------------------------------------
