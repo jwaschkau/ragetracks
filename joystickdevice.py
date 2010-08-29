@@ -5,13 +5,15 @@
 ## gamepad devices
 ##############################################################
 
+import generaldevice
+
 # ---------------------------------------------------------
 # ---------------------------------------------------------
 # ---------------------------------------------------------
 
 import pygame
 
-class Joystick(object):
+class JoystickDevice(object):
     '''
     This class represents a joystick and holds the pygame data
     '''
@@ -38,11 +40,39 @@ class Joystick(object):
         for i in range(self.joystick.get_numhats()):
             self.hats.append((0,0))
 
+    # ---------------------------------------------------------
+
+    def getAxisCount(self):
+        '''
+        '''
+        return len(self.axes)
+
+    # ---------------------------------------------------------
+
+    def getHatCount(self):
+        '''
+        '''
+        return len(self.hats)
+
+    # ---------------------------------------------------------
+
+    def getButtonCount(self):
+        '''
+        '''
+        return len(self.buttons)
+
+    # ---------------------------------------------------------
+
+    def getName(self):
+        '''
+        '''
+        return self.joystick.get_name()
+
 # ---------------------------------------------------------
 # ---------------------------------------------------------
 # ---------------------------------------------------------
 
-class JoystickDevice(object):
+class JoystickDevices(generaldevice.GeneralDevice):
     '''
     This class holds all connected Joystick and gamepad devices
     '''
@@ -59,7 +89,14 @@ class JoystickDevice(object):
 
         # fill the list
         for num in range(pygame.joystick.get_count()):
-            self.joysticks.append(Joystick(pygame.joystick.Joystick(num)))
+            self.joysticks.append(JoystickDevice(pygame.joystick.Joystick(num)))
+
+    # ---------------------------------------------------------
+
+    def getJoysticks(self):
+        '''
+        '''
+        return self.joysticks
 
     # ---------------------------------------------------------
 
@@ -104,7 +141,7 @@ class JoystickDevice(object):
 
 
 if __name__ == "__main__":
-    j = JoystickDevice()
+    j = JoystickDevices()
     while True:
         j.fetchEvents()
 

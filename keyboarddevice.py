@@ -4,12 +4,13 @@
 ## and holds the information about all (un-) pressed keys
 ##############################################################
 
+import generaldevice
 
 # ---------------------------------------------------------
 # ---------------------------------------------------------
 # ---------------------------------------------------------
 
-class KeyboardDevice(object):
+class KeyboardDevice(generaldevice.GeneralDevice):
     '''
     This class holds data about the keyboard
     '''
