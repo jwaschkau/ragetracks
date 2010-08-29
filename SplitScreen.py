@@ -43,29 +43,31 @@ class SplitScreen(object):
         self.cameras[1].node().getDisplayRegion(0).setDimensions(self.displayRegions[1][0], self.displayRegions[1][1], self.displayRegions[1][2], self.displayRegions[1][3])
             
     
-    '''
-    Create n Cameras use only CreateOneCamera n times
-    '''
     def _createNCamera(self,dispRegion):
+        '''
+        Create n Cameras use only CreateOneCamera n times
+        '''
         cameras = []
         for i in dispRegion:
             cameras.append(self.createOneCamera(i))
         return cameras
     
-    '''
-    Create one Camera for a new Player
-    '''
+
     def _createOneCamera(self,dispRegion):
+        '''
+        Create one Camera for a new Player
+        '''
         camera=base.makeCamera(base.win,displayRegion=dispRegion)
         camera.node().getLens().setAspectRatio(3.0/4.0)
         camera.node().getLens().setFov(45) #optional.
         camera.setPos(0,-8,3) #set its position.
         return camera
 
-    '''
-    Generates the Windows size andposition for a cont of N players
-    '''
+
     def _createNCameras(self,camCount):
+        '''
+        Generates the Windows size andposition for a cont of N players
+        '''
 ##        if camCount <= 0:
 ##            pass
         list = []

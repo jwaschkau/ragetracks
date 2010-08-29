@@ -57,11 +57,12 @@ class Game(ShowBase):
 
         # Add the main menu (though this is only temporary:
         # the menu should me a member-variable, not a local one)
-        #m = menu.Menu()
-        #m.addOption("New Game", self.newGame)
+        m = menu.Menu()
+        m.addOption("NewGame", self.newGame)
+        #m.addOption("AddPlayer", self.addPlayer)
 
         #Start the Game for testing purpose
-        self.newGame()
+        #self.newGame()
 
     # -----------------------------------------------------------------
 
@@ -95,6 +96,8 @@ class Game(ShowBase):
         '''
         starts the game or goes to the next menu
         '''
+        
+        print "bla"
         
         #Load the Map
         self.map = self.loader.loadModel("data/models/Track01")
