@@ -83,8 +83,7 @@ class Player(object):
         '''
         destroys all objects of the player-object
         '''
-        return self.device
         #Del one Camera 
-        self.cameras.node().removeNode()
+        self.camera.node().removeNode()
         
     # ---------------------------------------------------------
