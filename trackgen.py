@@ -13,12 +13,12 @@ import bitmap24
 
 '''
 - es gibt 4 Quadranten
-- es wird eine Reihenfolge festgelegt, in welcher Reihenfolge die übrigen Quadranten durchfahren werden.
+- es wird eine Reihenfolge festgelegt, in welcher Reihenfolge die Ã¼brigen Quadranten durchfahren werden.
 - in jedem Quadranten gibt es 4 "Major-Points", die den groben Streckenverlauf festlegen.
-* zwischen den "Major-Points" werden "Minor-Points" interpoliert, die Kurven glätten und zusätzliche Details festlegen.
-* Bei Überschneidungen wird eine der beiden Strecken nach oben oder unten verschoben
+* zwischen den "Major-Points" werden "Minor-Points" interpoliert, die Kurven glÃ¤tten und zusÃ¤tzliche Details festlegen.
+* Bei Ãœberschneidungen wird eine der beiden Strecken nach oben oder unten verschoben
 * seitliche Neigung der Strecke wird festgelegt (besonders in Kurven)
-* Tiles werden entlang der Strecke platziert (Straßenstücke, Tunnel usw.)
+* Tiles werden entlang der Strecke platziert (StraÃŸenstÃ¼cke, Tunnel usw.)
 * Environment (Skybox, fliegende Deko, Wolkenkratzer usw.) wird geladen
 '''
 
@@ -79,7 +79,7 @@ class Track(object):
         q4_size = ((0, self.__size[1]/2),(self.__size[0]/2, self.__size[1]))
 
 
-        # Die einzelnen Quadranten mit den Major-Points füllen
+        # Die einzelnen Quadranten mit den Major-Points fÃ¼llen
         for i in range(4):
             q1.append((random.randint(q1_size[0][0], q1_size[1][0]), random.randint(q1_size[0][1], q1_size[1][1]), random.randint(0, self.__size[2])))
 
@@ -93,11 +93,11 @@ class Track(object):
             q4.append((random.randint(q4_size[0][0], q4_size[1][0]), random.randint(q4_size[0][1], q4_size[1][1]), random.randint(0, self.__size[2])))
 
 
-        # Zufällige Reihenfolge der Quadranten festlegen
+        # ZufÃ¤llige Reihenfolge der Quadranten festlegen
         points=[q1,q2,q3,q4]
         random.shuffle(points)
 
-        # Die einzelnen Quadranten in zufälliger Reihenfolge in die Map einfügen
+        # Die einzelnen Quadranten in zufÃ¤lliger Reihenfolge in die Map einfÃ¼gen
         self.__points.extend(points[0])
         self.__points.extend(points[1])
         self.__points.extend(points[2])
