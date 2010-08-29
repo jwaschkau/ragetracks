@@ -33,6 +33,10 @@ class Game(ShowBase):
         self.world = OdeWorld()
         self.world.setGravity(0, 0, -0.5) 
         
+        
+        self.deltaTimeAccumulator = 0.0 #this variable is necessary to track the time for the physics
+        self.stepSize = 1.0 / 60.0 # This stepSize makes the simulation run at 60 frames per second
+        
         #Initialize Collisions (ODE)
         self.space = OdeSimpleSpace()
         #Initialize the surface-table, it defines how objects interact with each other
@@ -131,7 +135,14 @@ class Game(ShowBase):
         '''
         #calculate the physics
         self.space.autoCollide() # Setup the contact joints
-        self.world.quickStep(globalClock.getDt())   # Step the simulation and set the new positions
+        
+        self.deltaTimeAccumulator += globalClock.getDt()
+        while self.deltaTimeAccumulator > self.stepSize:
+            # Remove a stepSize from the accumulator until
+            # the accumulated time is less than the stepsize
+            self.deltaTimeAccumulator -= self.stepSize
+            # Step the simulation
+            self.world.quickStep(self.stepSize)
         for player in self.players:                      # set new positions
             player.getVehicle().getModel().setPosQuat(render, player.getVehicle().getPhysicsModel().getPosition(), Quat(player.getVehicle().getPhysicsModel().getQuaternion()))
         self.contactgroup.empty() # Clear the contact joints
