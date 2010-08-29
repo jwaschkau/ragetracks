@@ -30,6 +30,7 @@ class Vehicle(object):
         vehicle = self.vehicledata.getData(name)
         self.model = loader.loadModel(vehicle["model_path"])
         self.model.reparentTo(render)
+        self.model.setPos(0,0,5)
         
         #Initialize the physics-simulation for the vehicle
         self.physics_model = OdeBody(self.ode_world)
@@ -44,6 +45,7 @@ class Vehicle(object):
         
         #Initialize the collision-model of the vehicle
         self.collision_model = OdeTriMeshGeom(self.ode_space, OdeTriMeshData(self.model, True))
+        self.collision_model.setBody(self.physics_model)
       
     # ---------------------------------------------------------
     

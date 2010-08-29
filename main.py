@@ -31,7 +31,7 @@ class Game(ShowBase):
         
         #Initialize Physics (ODE)
         self.world = OdeWorld()
-        self.world.setGravity(0, 0, -9.81) 
+        self.world.setGravity(0, 0, -0.05) 
         
         #Initialize Collisions (ODE)
         self.space = OdeSimpleSpace()
@@ -39,6 +39,9 @@ class Game(ShowBase):
         self.world.initSurfaceTable(1)
         self.world.setSurfaceEntry(0, 0, 150, 0.0, 9.1, 0.9, 0.00001, 0.0, 0.002)
         self.space.setAutoCollideWorld(self.world)##use autocollision?
+        
+        self.contactgroup = OdeJointGroup()
+        self.space.setAutoCollideJointGroup(self.contactgroup)
 
         #Initialize the first player
         self.addPlayer("Tastaturdevice") ##pass the device for the first player (probably the keyboard)
@@ -99,6 +102,10 @@ class Game(ShowBase):
         self.map.setScale(10, 10, 10)
         self.map.setPos(0, 0, 0)
         
+        #add collision with the map
+        OdeTriMeshGeom(self.space, OdeTriMeshData(self.map, True))
+
+        
         #Load the Players
         ##probably unnecessary because the players are already initialized at this point
         
@@ -123,6 +130,7 @@ class Game(ShowBase):
         self.world.quickStep(globalClock.getDt())   # Step the simulation and set the new positions
         for player in self.players:                      # set new positions
             player.getVehicle().getModel().setPosQuat(render, player.getVehicle().getPhysicsModel().getPosition(), Quat(player.getVehicle().getPhysicsModel().getQuaternion()))
+        self.contactgroup.empty() # Clear the contact joints
         return task.cont
     # -----------------------------------------------------------------
 
