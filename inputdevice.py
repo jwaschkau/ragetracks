@@ -3,6 +3,7 @@
 ## this module holds the keyboard and joystick devices
 ###########################################################
 
+from panda3d.core import *
 import pygame
 import keyboarddevice
 import joystickdevice
@@ -33,7 +34,22 @@ class InputDevice(object):
 
         # Keyboard settings are always available
         else:
-            self.settings = settings["keyboard"]
+            #self.settings = settings["keyboard"]
+            self.settings = {}
+            self.settings["boost"]      = "space"
+            self.settings["use_item"]   = "lalt"
+            self.settings["up"]         = "arrow_up"
+            self.settings["down"]       = "arrow_down"
+            self.settings["left"]       = "arrow_left"
+            self.settings["right"]      = "arrow_right"
+
+
+            self.device.keys[self.settings["up"]] = False
+            self.device.keys[self.settings["down"]] = False
+            self.device.keys[self.settings["left"]] = False
+            self.device.keys[self.settings["right"]] = False
+            self.device.keys[self.settings["boost"]] = False
+            self.device.keys[self.settings["use_item"]] = False
 
     # ---------------------------------------------------------
 
@@ -90,38 +106,57 @@ class InputDevice(object):
     def noticeAction(self):
         '''
         '''
-        ## first get the direction:
-        # from axis
-        if self.settings["directions"][0] == "AXIS":
-            self.directions[0] = self.device.axes[self.settings["directions"][1]]
-        # or from cooliehat
-        elif self.settings["directions"][0] == "HAT":
-            self.directions[0] = self.device.hats[self.settings["directions"][1]]
+        if type(self.device) == joystickdevice.JoystickDevice:
+            ## first get the direction:
+            # from axis
+            if self.settings["directions"][0] == "AXIS":
+                self.directions[0] = self.device.axes[self.settings["directions"][1]]
+            # or from cooliehat
+            elif self.settings["directions"][0] == "HAT":
+                self.directions[0] = self.device.hats[self.settings["directions"][1]]
 
 
-        # then get the acceleration
-        # from buttons
-        if self.settings["accelerator"][0] == self.settings["brake"][0] == "BUTTON":
-            value = 0
-            if self.device.buttons[self.settings["accelerator"][1]]:
-                value += 1
-            if self.device.buttons[self.settings["brake"][1]]:
-                value -= 1
-            self.directions[1] = value
-        # from axis
-        elif self.settings["accelerator"][0] == self.settings["brake"][0] == "AXIS":
-            self.directions[1] = -self.device.axes[self.settings["accelerator"][1]]
-        # or from cooliehat
-        elif self.settings["accelerator"][0] == self.settings["brake"][0] == "HAT":
-            self.directions[1] = self.device.hats[self.settings["accelerator"][1]]
+            # then get the acceleration
+            # from buttons
+            if self.settings["accelerator"][0] == self.settings["brake"][0] == "BUTTON":
+                value = 0
+                if self.device.buttons[self.settings["accelerator"][1]]:
+                    value += 1
+                if self.device.buttons[self.settings["brake"][1]]:
+                    value -= 1
+                self.directions[1] = value
+            # from axis
+            elif self.settings["accelerator"][0] == self.settings["brake"][0] == "AXIS":
+                self.directions[1] = -self.device.axes[self.settings["accelerator"][1]]
+            # or from cooliehat
+            elif self.settings["accelerator"][0] == self.settings["brake"][0] == "HAT":
+                self.directions[1] = self.device.hats[self.settings["accelerator"][1]]
 
 
-        # then get boost and item button values
-        self.boost = self.device.buttons[self.settings["boost"][1]]
-        self.use_item = self.device.buttons[self.settings["use_item"][1]]
+            # then get boost and item button values
+            self.boost = self.device.buttons[self.settings["boost"][1]]
+            self.use_item = self.device.buttons[self.settings["use_item"][1]]
+        else:
+            acceleration = 0
+            direction = 0
+            if self.device.keys[self.settings["up"]]:
+                acceleration += 1
+            if self.device.keys[self.settings["down"]]:
+                acceleration -= 1
 
+            if self.device.keys[self.settings["left"]]:
+                direction -= 1
+            if self.device.keys[self.settings["right"]]:
+                direction += 1
 
-        print self.directions, " - boost:", self.boost, " - use_item:", self.use_item
+            self.directions[0] = direction
+            self.directions[1] = acceleration
+
+            self.boost = self.device.keys[self.settings["boost"]]
+            self.use_item = self.device.keys[self.settings["use_item"]]
+
+            print self.directions, " - boost:", self.boost, " - use_item:", self.use_item
+            #print self.device.keys[self.settings["up"]]
 
     # ---------------------------------------------------------
 
@@ -133,13 +168,13 @@ class InputDevice(object):
 class InputDevices(object):
     '''
     '''
-    def __init__(self, panda_eventhandler, settings):
+    def __init__(self, settings):
         '''
         @param keyboard: = (KeyboardDevice) keyboard
         @param joysticks: = (JoystickDevices) joysicks
         '''
 
-        self.keyboard = keyboarddevice.KeyboardDevice(panda_eventhandler)
+        self.keyboard = keyboarddevice.KeyboardDevice()
         self.joysticks = joystickdevice.JoystickDevices()
 
         self.devices = [InputDevice(self.keyboard, settings)]
@@ -149,13 +184,15 @@ class InputDevices(object):
 
     # ---------------------------------------------------------
 
-    def fetchEvents(self):
+    def fetchEvents(self, task):
         '''
         '''
         self.joysticks.fetchEvents()
 
         for device in self.devices:
             device.noticeAction()
+
+        return task.cont
 
     # ---------------------------------------------------------
 
@@ -176,11 +213,10 @@ if __name__ == "__main__":
     pygame.init()
     pygame.joystick.init()
 
-    i = InputDevices(sb, conf.getInputSettings())
+    i = InputDevices(conf.getInputSettings())
 
-    while True:
-        i.fetchEvents()
-        time.sleep(1)
+    taskMgr.add(i.fetchEvents, "fetchEvents")
+    run()
 
     pygame.joystick.quit()
     pygame.quit()

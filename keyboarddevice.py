@@ -4,6 +4,8 @@
 ## and holds the information about all (un-) pressed keys
 ##############################################################
 
+from panda3d.core import *
+from direct.showbase.ShowBase import ShowBase
 
 # ---------------------------------------------------------
 # ---------------------------------------------------------
@@ -13,11 +15,9 @@ class KeyboardDevice():
     '''
     This class holds data about the keyboard
     '''
-    def __init__(self, panda_eventhandler):
+    def __init__(self):
         '''
         '''
-        self.handler = panda_eventhandler
-        self.handler.accept("key_up", self.setKey, ["arrow_up", True])
 
         base.buttonThrowers[0].node().setButtonUpEvent("button-up")
         base.buttonThrowers[0].node().setButtonDownEvent("button")
@@ -32,17 +32,18 @@ class KeyboardDevice():
         '''
         '''
         self.keys[key] = value
+        #print [key, self.keys[key]]
 
     # ---------------------------------------------------------
 
 
 if __name__ == "__main__":
 
-    from panda3d.core import *
-    from direct.showbase.ShowBase import ShowBase
+    #from panda3d.core import *
+    #from direct.showbase.ShowBase import ShowBase
     sb = ShowBase()
 
-    k = KeyboardDevice(sb)
+    k = KeyboardDevice()
 
     run()
 

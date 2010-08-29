@@ -31,7 +31,7 @@ class Game(ShowBase):
         self.settings.loadSettings("user/config.ini")
 
         # initialize the input devices
-        self.devices = inputdevice.InputDevice(self, self.settings.getInputSettings())
+        self.devices = inputdevice.InputDevice(self.settings.getInputSettings())
 
         #Initialize needed variables and objects
         self.players = [] #holds the player objects
