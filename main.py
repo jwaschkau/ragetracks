@@ -51,8 +51,8 @@ class Game(ShowBase):
         # Add the main menu (though this is only temporary:
         # the menu should me a member-variable, not a local one)
         m = menu.Menu()
-        m.addOption("New Game", self.newGame)
-        m.addOption("AddPlayer", self.addPlayer)
+        m.addOption("NewGame", self.newGame)
+        #m.addOption("AddPlayer", self.addPlayer)
 
         #Start the Game for testing purpose
         #self.newGame()

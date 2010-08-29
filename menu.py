@@ -18,35 +18,33 @@ class Menu(object):
         '''
         self.selection = 0
         self.options = []
+        self.imagesDB = {#{name:[[unselected, selected],pos,scale]}
+        "NewGame":[["data/sprites/menu/newGame.png","data/sprites/menu/newGameSelected.png"],(0,0,0),(.6, 1, .06)]  
+        }       
+        self.selected = 0
 
     # -----------------------------------------------------------------
 
     def addOption(self, name, function):
         '''
         '''
-        self.image = OnscreenImage(image = "data/sprites/menu/newGame.png", pos = (0, 0, 0), scale = (.6, 1, .06))
-        self.options.append((name, function))
+        image = OnscreenImage(self.imagesDB[name][0][0],self.imagesDB[name][1], self.imagesDB[name][2])
+        imageSelected = OnscreenImage(self.imagesDB[name][0][1],self.imagesDB[name][1], self.imagesDB[name][2])
+        self.options.append((name, function, image, imageSelected))
 
     # -----------------------------------------------------------------
 
     def hideMenu(self):
         '''
         '''
-        self.image.destroy()
+        self.options.destroy()
         pass
-        '''
-        '''
-        for i in range(len(self.options)):
-#            self.images[i].destroy()
-            self.texts[i].destroy()
-
-        self.images = []
-        self.texts = []
 
     # -----------------------------------------------------------------
 
     def selectNext(self):
         '''
+        Kopie aus Hasenspiel
         '''
         old = self.selected
         self.selected += 1
@@ -62,6 +60,7 @@ class Menu(object):
 
     def selectPrev(self):
         '''
+        Kopie aus Hasenspiel
         '''
         old = self.selected
         self.selected -= 1
@@ -81,6 +80,7 @@ class Menu(object):
         # call the function behind the selected option
         self.options[self.selection][1]()
         '''
+        Kopie aus Hasenspiel
         '''
         i %= len(self.options)
         old = self.selected
