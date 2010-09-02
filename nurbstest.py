@@ -4,7 +4,19 @@
 ###################################################################
 
 from direct.showbase.ShowBase import ShowBase
+from panda3d.core import *
 from pandac.PandaModules import * #Load all PandaModules
+
+
+def getNurbs(points):
+    '''
+    '''
+    curve = NurbsCurve()
+    for point in points:
+        curve.appendCv(point[0],point[1],point[2])
+    curve.appendCv(points[0][0],points[0][1],points[0][2])
+    curve.recompute()
+    return curve
 
 # -----------------------------------------------------------------
 # -----------------------------------------------------------------
@@ -19,17 +31,22 @@ class Game(ShowBase):
         ShowBase.__init__(self)
         base.setFrameRateMeter(True) #Show the Framerate
 
-        #curve = NurbsCurve()
-        #curve.appendCv(0,0,0)
-        #curve.appendCv(10,10,10)
-        #curve.appendCv(50,60,10)
-        #curve.appendCv(10,-60,50)
-        #curve.recompute()
+        curve = NurbsCurve()
+        curve.appendCv(0,0,0)
+        curve.appendCv(10,10,10)
+        curve.appendCv(50,60,10)
+        curve.appendCv(10,-60,50)
+        curve.recompute()
+        point = Vec3(0,0,0)
+
+        for i in xrange(0,10):
+            curve.getPoint(i*.1, point)
+            print point
         #curve.writeEgg("test.egg")
 
-        mdl = loader.loadModel("test.egg")
-        mdl = loader.loadModel("data/models/vehicle01.egg")
-        mdl.reparentTo(render)
+        #mdl = loader.loadModel("test.egg")
+        #mdl = loader.loadModel("data/models/vehicle01.egg")
+        #mdl.reparentTo(render)
 
 
 # -----------------------------------------------------------------

@@ -5,6 +5,9 @@
 
 import random
 import bitmap24
+import nurbstest
+import copy
+from panda3d.core import *
 
 # ---------------------------------------------------------
 # ---------------------------------------------------------
@@ -126,8 +129,45 @@ class Track(object):
         bmp.drawLine(self.__points[0][0], self.__points[0][1], self.__points[-1][0], self.__points[-1][1])
         bmp.drawDigit(0, self.__points[0][0], self.__points[0][1], (255,0,0))
 
-        bmp.writeBitmap("test.bmp")
+        bmp.writeBitmap("test1.bmp")
         # =======================================
+
+
+
+
+        ####
+        #### INTERPOLATION DURCH NURBS
+
+
+        curve = nurbstest.getNurbs(self.__points)
+
+        # ================= TEST ================
+        # === Strecke in Bitmap visualisieren ===
+        # =======================================
+        bmp = bitmap24.Bitmap24("", self.__size[0]+1, self.__size[1]+1)
+
+        last = None
+
+        point = Vec3(0,0,0)
+
+        for i in xrange(0,1000):
+            curve.getPoint(i*.1, point)
+
+            if last == None:
+                last = copy.deepcopy(point)
+                continue
+
+            if point.getZ() != 0:
+                rgb = int((point.getZ() / 255.0)*200)
+
+            bmp.drawLine(last.getX(), last.getY(), point.getX(), point.getY(), (rgb,rgb,rgb) )
+
+            last = copy.deepcopy(point)
+
+        #bmp.drawLine(self.__points[0][0], self.__points[0][1], self.__points[-1][0], self.__points[-1][1])
+        bmp.drawDigit(0, self.__points[0][0], self.__points[0][1], (255,0,0))
+
+        bmp.writeBitmap("test2.bmp")
 
 
 # -------------------------------------------------------------------------------------
