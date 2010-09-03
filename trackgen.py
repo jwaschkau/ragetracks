@@ -19,7 +19,7 @@ from panda3d.core import *
 - es wird eine Reihenfolge festgelegt, in welcher Reihenfolge die übrigen Quadranten durchfahren werden.
 - in jedem Quadranten gibt es 4 "Major-Points", die den groben Streckenverlauf festlegen.
 * zwischen den "Major-Points" werden "Minor-Points" interpoliert, die Kurven glätten und zusätzliche Details festlegen.
-* Bei Überschneidungen wird eine der beiden Strecken nach oben oder unten verschoben
+* Bei Ueberschneidungen wird eine der beiden Strecken nach oben oder unten verschoben
 * seitliche Neigung der Strecke wird festgelegt (besonders in Kurven)
 * Tiles werden entlang der Strecke platziert (Straßenstücke, Tunnel usw.)
 * Environment (Skybox, fliegende Deko, Wolkenkratzer usw.) wird geladen
