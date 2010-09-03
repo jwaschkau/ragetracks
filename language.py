@@ -3,10 +3,27 @@
 ## this module loads a language file
 ###########################################################
 
-import os.path
+import os, os.path
 from configobj import ConfigObj
 
 # ---------------------------------------------------------
+# ---------------------------------------------------------
+# ---------------------------------------------------------
+# ---------------------------------------------------------
+
+def getAvailableLanguages():
+    '''
+    @return: returns a list with all available language names
+    '''
+    files = os.listdir("data/language")
+    names = []
+    for f in files:
+        if f[-5:] == ".lang":
+            names.append(f[:-5])
+
+    return names
+
+
 # ---------------------------------------------------------
 # ---------------------------------------------------------
 # ---------------------------------------------------------
@@ -76,6 +93,9 @@ class Language(object):
 
 # Test the module
 if __name__ == "__main__":
+    print "Avalilable languages:", getAvailableLanguages()
+
     lang = Language("german")
-    print lang["menu"]["new_game"]
-    print lang.getLanguageName()
+    print "Chosen language: ", lang.getLanguageName()
+    print "\n"
+    print "new_game in this language:", lang["menu"]["new_game"]
