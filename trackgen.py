@@ -164,7 +164,6 @@ class Track(object):
 
             last = copy.deepcopy(point)
 
-        #bmp.drawLine(self.__points[0][0], self.__points[0][1], self.__points[-1][0], self.__points[-1][1])
         bmp.drawDigit(0, self.__points[0][0], self.__points[0][1], (255,0,0))
 
         bmp.writeBitmap("test2.bmp")

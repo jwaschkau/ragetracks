@@ -14,7 +14,6 @@ def getNurbs(points):
     curve = NurbsCurve()
     for point in points:
         curve.appendCv(point[0],point[1],point[2])
-    curve.appendCv(points[0][0],points[0][1],points[0][2])
     curve.recompute()
     return curve
 
