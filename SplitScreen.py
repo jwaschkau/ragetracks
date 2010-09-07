@@ -90,7 +90,7 @@ class SplitScreen(object):
         print "SplitScreenView:",len(list)
         return list   
        
-       
+if __name__ == "__main__":
 #Only for Test 
-#app = SplitScreen()
-#app.run()
+    app = SplitScreen(8)
+    app.run()
