@@ -4,6 +4,7 @@
 ##############################################################
 
 import random
+import math
 import bitmap24
 import nurbstest
 import copy
@@ -19,7 +20,7 @@ from panda3d.core import *
 - es wird eine Reihenfolge festgelegt, in welcher Reihenfolge die übrigen Quadranten durchfahren werden.
 - in jedem Quadranten gibt es 4 "Major-Points", die den groben Streckenverlauf festlegen.
 * zwischen den "Major-Points" werden "Minor-Points" interpoliert, die Kurven glätten und zusätzliche Details festlegen.
-* Bei Überschneidungen wird eine der beiden Strecken nach oben oder unten verschoben
+* Bei Ueberschneidungen wird eine der beiden Strecken nach oben oder unten verschoben
 * seitliche Neigung der Strecke wird festgelegt (besonders in Kurven)
 * Tiles werden entlang der Strecke platziert (Straßenstücke, Tunnel usw.)
 * Environment (Skybox, fliegende Deko, Wolkenkratzer usw.) wird geladen
@@ -28,6 +29,71 @@ from panda3d.core import *
 # -------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------
+
+class StraightLine(object):
+    '''
+    This class implements a 3-dimensional straight line (in German: Gerade)
+    '''
+    def __init__(self, vec1, vec2):
+        '''
+        @param vec1: (Vec3) the first vector to define the line (not a directional vector, but a positional one)
+        @param vec2: (Vec3) the second vector to define the line (not a directional vector, but a positional one)
+        the directional vector is computed automatically
+        '''
+
+        self.posvec = vec1
+        self.dirvec = vec2-vec1
+
+    # -------------------------------------------------------------------------------------
+
+    def getPosVec(self):
+        '''
+        @return: (Vec3) returns the position vector of the line
+        '''
+        return self.posvec
+
+    # -------------------------------------------------------------------------------------
+
+    def getDirVec(self):
+        '''
+        @return: (Vec3) returns the direction vector of the line
+        '''
+        return self.dirvec
+
+    # -------------------------------------------------------------------------------------
+
+    def getDistance(self, other):
+        '''
+        this method returns the distance between this line and the one given
+        by the parameter other
+        @param other: (StraightLine) the other line
+        '''
+        a = self.posvec
+        b = other.getPosVec()
+        n = self.dirvec.cross(other.getDirVec())
+
+        d = (n[0]*a[0])+(n[1]*a[1])+(n[2]*a[2])
+
+        return abs((n.dot(b)-d)/(n.length()))
+
+    # -------------------------------------------------------------------------------------
+
+    def getAngle(self, other):
+        '''
+        this method returns the angle between this line and the given one
+        @param other: (StraightLine) the other line
+        '''
+        a = self.dirvec
+        b = other.getDirVec()
+
+
+        return math.degrees(math.acos(a.dot(b)/(a.length()*b.length())))
+
+
+# -------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------
+
 
 class Track(object):
     '''
@@ -164,7 +230,6 @@ class Track(object):
 
             last = copy.deepcopy(point)
 
-        #bmp.drawLine(self.__points[0][0], self.__points[0][1], self.__points[-1][0], self.__points[-1][1])
         bmp.drawDigit(0, self.__points[0][0], self.__points[0][1], (255,0,0))
 
         bmp.writeBitmap("test2.bmp")
@@ -174,5 +239,12 @@ class Track(object):
 # -------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------
 
-m = Track(800,600)
-m.generateTrack()
+if __name__ == "__main__":
+    #m = Track(800,600)
+    #m.generateTrack()
+    l1 = StraightLine(Vec3(0,0,0), Vec3(-0.1,0.2,1))
+    l2 = StraightLine(Vec3(0,0,0), Vec3(1,0,0))
+
+    print l1.getAngle(l2)
+
+
