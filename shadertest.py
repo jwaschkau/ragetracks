@@ -42,8 +42,8 @@ class GlowDemo(DirectObject):
         # Check video card capabilities.
 
         if (base.win.getGsg().getSupportsBasicShaders() == 0):
-            addTitle("Glow Filter: Video driver reports that shaders are not supported.")
-            return
+            raise StandardError("Glow Filter: Video driver reports that shaders are not supported.")
+            #return
 
         #create the shader that will determime what parts of the scene will glow
         glowShader=loader.loadShader("data/shaders/glowShader.sha")

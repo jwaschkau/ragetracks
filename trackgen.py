@@ -17,12 +17,12 @@ from panda3d.core import *
 
 '''
 - es gibt 4 Quadranten
-- es wird eine Reihenfolge festgelegt, in welcher Reihenfolge die übrigen Quadranten durchfahren werden.
+- es wird eine Reihenfolge festgelegt, in welcher Reihenfolge die uebrigen Quadranten durchfahren werden.
 - in jedem Quadranten gibt es 4 "Major-Points", die den groben Streckenverlauf festlegen.
-* zwischen den "Major-Points" werden "Minor-Points" interpoliert, die Kurven glätten und zusätzliche Details festlegen.
+* zwischen den "Major-Points" werden "Minor-Points" interpoliert, die Kurven glaetten und zusaetzliche Details festlegen.
 * Bei Ueberschneidungen wird eine der beiden Strecken nach oben oder unten verschoben
 * seitliche Neigung der Strecke wird festgelegt (besonders in Kurven)
-* Tiles werden entlang der Strecke platziert (Straßenstücke, Tunnel usw.)
+* Tiles werden entlang der Strecke platziert (Strassenstuecke, Tunnel usw.)
 * Environment (Skybox, fliegende Deko, Wolkenkratzer usw.) wird geladen
 '''
 
@@ -42,6 +42,7 @@ class StraightLine(object):
         '''
 
         self.posvec = vec1
+        self.posvec2 = vec2
         self.dirvec = vec2-vec1
 
     # -------------------------------------------------------------------------------------
@@ -59,6 +60,48 @@ class StraightLine(object):
         @return: (Vec3) returns the direction vector of the line
         '''
         return self.dirvec
+
+    # -------------------------------------------------------------------------------------
+
+    def get2DLineFunction(self):
+        '''
+        @return: (tuple) the mathematical function constants (m, b) [m -> slope, b -> y axis collision]
+        '''
+        x1 = self.posvec[0]
+        y1 = self.posvec[1]
+
+        x2 = self.posvec2[0]
+        y2 = self.posvec2[1]
+
+        m = float(y2-y1)/(x2-x1)
+        b = y1-m*x1
+
+        return m,b
+
+
+
+    # -------------------------------------------------------------------------------------
+
+    def crossesLine(self, other):
+        '''
+        '''
+        m1,b1 = self.get2DLineFunction()
+        m2,b2 = other.get2DLineFunction()
+
+        #
+        try:
+            x = (b2-b1)/(m1-m2)
+            y = m1*x+b1
+        except:
+            return false
+
+
+        #xa1 =
+        #xa2
+
+        #if
+
+
 
     # -------------------------------------------------------------------------------------
 
@@ -90,6 +133,15 @@ class StraightLine(object):
         return math.degrees(math.acos(a.dot(b)/(a.length()*b.length())))
 
 
+
+
+# -------------------------------------------------------------------------------------
+
+def getAngle(a, b):
+    '''
+    '''
+    return math.degrees(math.acos(a.dot(b)/(a.length()*b.length())))
+
 # -------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------
@@ -104,7 +156,8 @@ class Track(object):
         the constructor creates an empty track
         '''
         self.setSize(size_x, size_y, max_height)
-        self.__points = []
+        self.points = []
+        self.curve = None
 
     # -------------------------------------------------------------------------------------
 
@@ -133,6 +186,14 @@ class Track(object):
 
     # -------------------------------------------------------------------------------------
 
+    def getCurve(self):
+        '''
+        '''
+        return self.curve
+
+
+    # -------------------------------------------------------------------------------------
+
     def generateTrack(self):
         '''
         generates a random track
@@ -148,7 +209,7 @@ class Track(object):
         q4_size = ((0, self.__size[1]/2),(self.__size[0]/2, self.__size[1]))
 
 
-        # Die einzelnen Quadranten mit den Major-Points füllen
+        # Die einzelnen Quadranten mit den Major-Points fuellen
         for i in range(4):
             q1.append((random.randint(q1_size[0][0], q1_size[1][0]), random.randint(q1_size[0][1], q1_size[1][1]), random.randint(0, self.__size[2])))
 
@@ -162,77 +223,76 @@ class Track(object):
             q4.append((random.randint(q4_size[0][0], q4_size[1][0]), random.randint(q4_size[0][1], q4_size[1][1]), random.randint(0, self.__size[2])))
 
 
-        # Zufällige Reihenfolge der Quadranten festlegen
+        # Zufaellige Reihenfolge der Quadranten festlegen
         points=[q1,q2,q3,q4]
         random.shuffle(points)
 
-        # Die einzelnen Quadranten in zufälliger Reihenfolge in die Map einfügen
-        self.__points.extend(points[0])
-        self.__points.extend(points[1])
-        self.__points.extend(points[2])
-        self.__points.extend(points[3])
-
-
-        # ================= TEST ================
-        # === Strecke in Bitmap visualisieren ===
-        # =======================================
-        bmp = bitmap24.Bitmap24("", self.__size[0]+1, self.__size[1]+1)
-
-        last = None
-        for i in(self.__points):
-
-            if last == None:
-                last = i
-                continue
-
-            if i[2] != 0:
-                rgb = int((i[2] / 255.0)*200)
-
-            bmp.drawLine(last[0], last[1], i[0], i[1], (rgb,rgb,rgb) )
-
-            last = i
-
-        bmp.drawLine(self.__points[0][0], self.__points[0][1], self.__points[-1][0], self.__points[-1][1])
-        bmp.drawDigit(0, self.__points[0][0], self.__points[0][1], (255,0,0))
-
-        bmp.writeBitmap("test1.bmp")
-        # =======================================
-
-
+        # Die einzelnen Quadranten in zufaelliger Reihenfolge in die Map einfuegen
+        self.points.extend(points[0])
+        self.points.extend(points[1])
+        self.points.extend(points[2])
+        self.points.extend(points[3])
 
 
         ####
         #### INTERPOLATION DURCH NURBS
 
 
-        curve = nurbstest.getNurbs(self.__points)
+        self.curve = nurbstest.getNurbs(self.points)
 
-        # ================= TEST ================
-        # === Strecke in Bitmap visualisieren ===
-        # =======================================
-        bmp = bitmap24.Bitmap24("", self.__size[0]+1, self.__size[1]+1)
 
-        last = None
-
-        point = Vec3(0,0,0)
-
-        for i in xrange(0,1000):
-            curve.getPoint(i*.1, point)
-
-            if last == None:
-                last = copy.deepcopy(point)
-                continue
-
-            if point.getZ() != 0:
-                rgb = int((point.getZ() / 255.0)*200)
-
-            bmp.drawLine(last.getX(), last.getY(), point.getX(), point.getY(), (rgb,rgb,rgb) )
-
-            last = copy.deepcopy(point)
-
-        bmp.drawDigit(0, self.__points[0][0], self.__points[0][1], (255,0,0))
-
-        bmp.writeBitmap("test2.bmp")
+#        # ================= TEST ================
+#        # === Strecke in Bitmap visualisieren ===
+#        # =======================================
+#        bmp = bitmap24.Bitmap24("", self.__size[0]+1, self.__size[1]+1)
+#
+#        last = None
+#        for i in(self.points):
+#
+#            if last == None:
+#                last = i
+#                continue
+#
+#            if i[2] != 0:
+#                rgb = int((i[2] / 255.0)*200)
+#
+#            bmp.drawLine(last[0], last[1], i[0], i[1], (rgb,rgb,rgb) )
+#
+#            last = i
+#
+#        bmp.drawLine(self.points[0][0], self.points[0][1], self.points[-1][0], self.points[-1][1])
+#        bmp.drawDigit(0, self.points[0][0], self.points[0][1], (255,0,0))
+#
+#        bmp.writeBitmap("test1.bmp")
+#        # =======================================
+#
+#
+#        # ================= TEST ================
+#        # === Strecke in Bitmap visualisieren ===
+#        # =======================================
+#        bmp = bitmap24.Bitmap24("", self.__size[0]+1, self.__size[1]+1)
+#
+#        last = None
+#
+#        point = Vec3(0,0,0)
+#
+#        for i in xrange(0,1000):
+#            curve.getPoint(i*.1, point)
+#
+#            if last == None:
+#                last = copy.deepcopy(point)
+#                continue
+#
+#            if point.getZ() != 0:
+#                rgb = int((point.getZ() / 255.0)*200)
+#
+#            bmp.drawLine(last.getX(), last.getY(), point.getX(), point.getY(), (rgb,rgb,rgb) )
+#
+#            last = copy.deepcopy(point)
+#
+#        bmp.drawDigit(0, self.points[0][0], self.points[0][1], (255,0,0))
+#
+#        bmp.writeBitmap("test2.bmp")
 
 
 # -------------------------------------------------------------------------------------
@@ -240,11 +300,20 @@ class Track(object):
 # -------------------------------------------------------------------------------------
 
 if __name__ == "__main__":
+    p1 = Vec3(1,2,3)
+    p2 = Vec3(2,3,4)
+    p3 = Vec3(5,4,1)
+
+    a = p2-p1
+    b = p3-p2
+
+    print getAngle(a,b)
     #m = Track(800,600)
     #m.generateTrack()
-    l1 = StraightLine(Vec3(0,0,0), Vec3(-0.1,0.2,1))
-    l2 = StraightLine(Vec3(0,0,0), Vec3(1,0,0))
+    #l1 = StraightLine(Vec3(0,0,0), Vec3(-0.1,0.2,1))
+    #l2 = StraightLine(Vec3(0,0,0), Vec3(1,0,0))
 
-    print l1.getAngle(l2)
+    #print l1.getAngle(l2)
+
 
 
