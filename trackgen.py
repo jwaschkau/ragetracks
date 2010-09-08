@@ -10,6 +10,9 @@ import nurbstest
 import copy
 from panda3d.core import *
 
+
+MIN_DIST = 20
+
 # ---------------------------------------------------------
 # ---------------------------------------------------------
 # ---------------------------------------------------------
@@ -41,6 +44,14 @@ class StraightLine(object):
         the directional vector is computed automatically
         '''
 
+        if type(vec1) == tuple:
+            vec1 = Vec3(vec1[0], vec1[1], vec1[2])
+        if type(vec2) == tuple:
+            vec2 = Vec3(vec2[0], vec2[1], vec2[2])
+
+        if type(vec1) != type(vec2) != Vec3:
+            raise TypeError("vec1 and vec2 have to be of type 'Vec3' or 'tuple'")
+
         self.posvec = vec1
         self.posvec2 = vec2
         self.dirvec = vec2-vec1
@@ -52,6 +63,14 @@ class StraightLine(object):
         @return: (Vec3) returns the position vector of the line
         '''
         return self.posvec
+
+    # -------------------------------------------------------------------------------------
+
+    def getPosVec2(self):
+        '''
+        @return: (Vec3) returns the second position vector of the line
+        '''
+        return self.posvec2
 
     # -------------------------------------------------------------------------------------
 
@@ -73,51 +92,154 @@ class StraightLine(object):
         x2 = self.posvec2[0]
         y2 = self.posvec2[1]
 
-        m = float(y2-y1)/(x2-x1)
+        try:
+            m = float(y2-y1)/(x2-x1)
+        except:
+            m = 0
         b = y1-m*x1
 
         return m,b
 
 
+    # -------------------------------------------------------------------------------------
+
+    def getZbyXY(self,x,y):
+        '''
+        '''
+        z = self.posvec[2]+(self.dirvec[2]*((float(x)-self.posvec[0])/self.dirvec[0]))
+        z2 = self.posvec[2]+(self.dirvec[2]*((float(x)-self.posvec[1])/self.dirvec[1]))
+        #try:
+        return z
+        #except:
+        #    return self.posvec[2]+(self.dirvec[2]*((x-self.posvec[1])/(self.dirvec[1])))
 
     # -------------------------------------------------------------------------------------
 
     def crossesLine(self, other):
         '''
+        @return: (bool) returns True if the line self and other have a crossing point in 2d space (x-y) and are very near in 3d space
         '''
         m1,b1 = self.get2DLineFunction()
         m2,b2 = other.get2DLineFunction()
 
-        #
+        # if this fails, the lines are parallel
         try:
             x = (b2-b1)/(m1-m2)
             y = m1*x+b1
         except:
-            return false
+            return False
 
 
-        #xa1 =
-        #xa2
+        xa1 = self.posvec[0]
+        xa2 = self.posvec2[0]
+        ya1 = self.posvec[1]
+        ya2 = self.posvec2[1]
 
-        #if
+        xfits = False
+        yfits = False
 
+        # x must be between the first and second x value of one ofthe lines
+        if xa1 < x and xa2 > x:
+            xfits = True
+        elif xa1 > x and xa2 < x:
+            xfits = True
 
+        # if x doesn't fit, it doesn't matter, if y fits
+        if xfits:
+            # y must also be between the first and second y value of one of the lines
+            if ya1 < y and ya2 > y:
+                yfits = True
+            elif ya1 > y and ya2 < y:
+                yfits = True
+            else:
+                yfits = False
 
-    # -------------------------------------------------------------------------------------
+            # if y fits, the graphs collide in 2d space and we have to check the 3d distance
+            if yfits:
+                z1 = self.getZbyXY(x,y)
+                z2 = other.getZbyXY(x,y)
+#                print z1, z2
+                print x,y
+                dist = abs(z2-z1)
 
-    def getDistance(self, other):
-        '''
-        this method returns the distance between this line and the one given
-        by the parameter other
-        @param other: (StraightLine) the other line
-        '''
-        a = self.posvec
-        b = other.getPosVec()
-        n = self.dirvec.cross(other.getDirVec())
+                #if dist < MIN_DIST:
+                #    return True
+                #else:
+                #    return False
+                return False
+            else:
+                return False
 
-        d = (n[0]*a[0])+(n[1]*a[1])+(n[2]*a[2])
+        else:
+            return False
 
-        return abs((n.dot(b)-d)/(n.length()))
+#    # -------------------------------------------------------------------------------------
+#
+#    def crossesLine2D(self, other):
+#        '''
+#        @return: (bool) returns True if the line self and other have a crossing point in 2d space (x-y)
+#        '''
+#        m1,b1 = self.get2DLineFunction()
+#        m2,b2 = other.get2DLineFunction()
+#
+#        # if this fails, the lines are parallel
+#        try:
+#            x = (b2-b1)/(m1-m2)
+#            y = m1*x+b1
+#        except:
+#            return False
+#
+#
+#        xa1 = self.posvec[0]
+#        xa2 = self.posvec2[0]
+#        ya1 = self.posvec[1]
+#        ya2 = self.posvec2[1]
+#
+#        xfits = False
+#        yfits = False
+#
+#        # x must be between the first and second x value of one ofthe lines
+#        if xa1 < x and xa2 > x:
+#            xfits = True
+#        elif xa1 > x and xa2 < x:
+#            xfits = True
+#
+#        # if x doesn't fit, it doesn't matter, if y fits
+#        if xfits:
+#            # y must also be between the first and second y value of one of the lines
+#            if ya1 < y and ya2 > y:
+#                yfits = True
+#            elif ya1 > y and ya2 < y:
+#                yfits = True
+#            else:
+#                yfits = False
+#
+#            # if y fits, the graphs collide in 2d space
+#            return yfits
+#
+#        else:
+#            return False
+#
+#
+#    # -------------------------------------------------------------------------------------
+#
+#    def getDistance(self, other):
+#        '''
+#        this method returns the distance between this line and the one given
+#        by the parameter other
+#        @param other: (StraightLine) the other line
+#        '''
+#        a = self.posvec
+#        b = other.getPosVec()
+#        n = self.dirvec.cross(other.getDirVec())
+#
+#        d = (n[0]*a[0])+(n[1]*a[1])+(n[2]*a[2])
+#
+#        try:
+#            return abs((n.dot(b)-d)/(n.length()))
+#        except:
+#            vec = b-a
+#            return vec.length()
 
     # -------------------------------------------------------------------------------------
 
@@ -136,6 +258,8 @@ class StraightLine(object):
 
 
 # -------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------
 
 def getAngle(a, b):
     '''
@@ -151,7 +275,7 @@ class Track(object):
     '''
     This class represents a Track
     '''
-    def __init__(self, size_x, size_y, max_height=230):
+    def __init__(self, size_x, size_y, max_height=2300):
         '''
         the constructor creates an empty track
         '''
@@ -161,7 +285,7 @@ class Track(object):
 
     # -------------------------------------------------------------------------------------
 
-    def setSize(self, size_x, size_y, max_height=60):
+    def setSize(self, size_x, size_y, max_height=1000):
         '''
         sets the size of the map. This only works if the map is not generated, yet.
         @param size_x: (int) maximum x-coordinates of the map
@@ -194,9 +318,8 @@ class Track(object):
 
     # -------------------------------------------------------------------------------------
 
-    def generateTrack(self):
+    def generatePoints(self):
         '''
-        generates a random track
         '''
         q1 = [] # Quadranten 1 - 4
         q2 = []
@@ -233,66 +356,87 @@ class Track(object):
         self.points.extend(points[2])
         self.points.extend(points[3])
 
+    # -------------------------------------------------------------------------------------
+
+    def generateTrack(self):
+        '''
+        generates a random track --> sets the attribute self.curve
+        '''
+        track_is_ok = False
+
+        # generate new tracks until a track seems to be allright
+        while not track_is_ok:
+            self.generatePoints()
+            max_index = len(self.points)-1
+            track_is_ok = True
+
+            # check each line (between two points) for collisions
+            for i in xrange(max_index):
+                for j in xrange(i+1, max_index-2):
+                    line1 = StraightLine(self.points[i], self.points[j])
+                    line2 = StraightLine(self.points[j+1], self.points[j+2])
+                    # if the lines cross / are too near, we have to generate a new map
+                    if line1.crossesLine(line2):
+                        track_is_ok = False
+
 
         ####
         #### INTERPOLATION DURCH NURBS
-
-
         self.curve = nurbstest.getNurbs(self.points)
 
 
-#        # ================= TEST ================
-#        # === Strecke in Bitmap visualisieren ===
-#        # =======================================
-#        bmp = bitmap24.Bitmap24("", self.__size[0]+1, self.__size[1]+1)
-#
-#        last = None
-#        for i in(self.points):
-#
-#            if last == None:
-#                last = i
-#                continue
-#
-#            if i[2] != 0:
-#                rgb = int((i[2] / 255.0)*200)
-#
-#            bmp.drawLine(last[0], last[1], i[0], i[1], (rgb,rgb,rgb) )
-#
-#            last = i
-#
-#        bmp.drawLine(self.points[0][0], self.points[0][1], self.points[-1][0], self.points[-1][1])
-#        bmp.drawDigit(0, self.points[0][0], self.points[0][1], (255,0,0))
-#
-#        bmp.writeBitmap("test1.bmp")
-#        # =======================================
-#
-#
-#        # ================= TEST ================
-#        # === Strecke in Bitmap visualisieren ===
-#        # =======================================
-#        bmp = bitmap24.Bitmap24("", self.__size[0]+1, self.__size[1]+1)
-#
-#        last = None
-#
-#        point = Vec3(0,0,0)
-#
-#        for i in xrange(0,1000):
-#            curve.getPoint(i*.1, point)
-#
-#            if last == None:
-#                last = copy.deepcopy(point)
-#                continue
-#
-#            if point.getZ() != 0:
-#                rgb = int((point.getZ() / 255.0)*200)
-#
-#            bmp.drawLine(last.getX(), last.getY(), point.getX(), point.getY(), (rgb,rgb,rgb) )
-#
-#            last = copy.deepcopy(point)
-#
-#        bmp.drawDigit(0, self.points[0][0], self.points[0][1], (255,0,0))
-#
-#        bmp.writeBitmap("test2.bmp")
+        # ================= TEST ================
+        # === Strecke in Bitmap visualisieren ===
+        # =======================================
+        bmp = bitmap24.Bitmap24("", self.__size[0]+1, self.__size[1]+1)
+
+        last = None
+        for i in(self.points):
+
+            if last == None:
+                last = i
+                continue
+
+            if i[2] != 0:
+                rgb = int((float(i[2])/self.__size[2])*200)
+
+            bmp.drawLine(last[0], last[1], i[0], i[1], (rgb,rgb,rgb) )
+
+            last = i
+
+        bmp.drawLine(self.points[0][0], self.points[0][1], self.points[-1][0], self.points[-1][1])
+        bmp.drawDigit(0, self.points[0][0], self.points[0][1], (255,0,0))
+
+        bmp.writeBitmap("test1.bmp")
+        # =======================================
+
+
+        # ================= TEST ================
+        # === Strecke in Bitmap visualisieren ===
+        # =======================================
+        bmp = bitmap24.Bitmap24("", self.__size[0]+1, self.__size[1]+1)
+
+        last = None
+
+        point = Vec3(0,0,0)
+
+        for i in xrange(0,1000):
+            self.curve.getPoint(i*.1, point)
+
+            if last == None:
+                last = copy.deepcopy(point)
+                continue
+
+            if point.getZ() != 0:
+                rgb = int((float(point.getZ())/self.__size[2])*200)
+
+            bmp.drawLine(last.getX(), last.getY(), point.getX(), point.getY(), (rgb,rgb,rgb) )
+
+            last = copy.deepcopy(point)
+
+        bmp.drawDigit(0, self.points[0][0], self.points[0][1], (255,0,0))
+
+        bmp.writeBitmap("test2.bmp")
 
 
 # -------------------------------------------------------------------------------------
@@ -300,19 +444,19 @@ class Track(object):
 # -------------------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    p1 = Vec3(1,2,3)
-    p2 = Vec3(2,3,4)
-    p3 = Vec3(5,4,1)
+#    p1 = Vec3(1,2,3)
+#    p2 = Vec3(2,3,4)
+#    p3 = Vec3(5,4,1)
+#
+#    a = p2-p1
+#    b = p3-p2
+#
+#    print getAngle(a,b)
+    m = Track(800,600)
+    m.generateTrack()
 
-    a = p2-p1
-    b = p3-p2
-
-    print getAngle(a,b)
-    #m = Track(800,600)
-    #m.generateTrack()
-    #l1 = StraightLine(Vec3(0,0,0), Vec3(-0.1,0.2,1))
-    #l2 = StraightLine(Vec3(0,0,0), Vec3(1,0,0))
-
+    #l1 = StraightLine(Vec3(1,1,200), Vec3(3,20,200))
+    #l2 = StraightLine(Vec3(1,1,300), Vec3(3,3,300))
     #print l1.getAngle(l2)
 
 
