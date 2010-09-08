@@ -25,6 +25,7 @@ class Game(ShowBase):
         ShowBase.__init__(self)
         base.setFrameRateMeter(True) #Show the Framerate
 
+
         # load the settings
         self.settings = settings.Settings()
         self.settings.loadSettings("user/config.ini")
@@ -113,11 +114,13 @@ class Game(ShowBase):
         self.map = self.loader.loadModel("data/models/Track01")
         self.map.reparentTo(self.render)
         self.map.setScale(10, 10, 10)
-        self.map.setPos(0, 0, 0)
+        self.map.setPos(0, 10, -5)
 
         #add collision with the map
         #OdeTriMeshGeom(self.space, OdeTriMeshData(self.map, True))
-        groundGeom = OdePlaneGeom(self.space, Vec4(0, 0, 1, 0))
+        groundGeom = OdePlaneGeom(self.space, Vec4(0, 0, 1, -5))
+        groundGeom.setCollideBits(BitMask32(0x00000000))
+        groundGeom.setCategoryBits(BitMask32(0x00000001))
 
 
         #Load the Players

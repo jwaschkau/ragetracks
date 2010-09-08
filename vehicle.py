@@ -4,6 +4,7 @@
 ###################################################################
 
 from pandac.PandaModules import * #Load all PandaModules
+from wiregeom import WireGeom
 
 class Vehicle(object):
     '''
@@ -28,7 +29,7 @@ class Vehicle(object):
         '''
         self.model = loader.loadModel("data/models/vehicle01")
         self.model.reparentTo(render)
-        self.model.setPos(0,0,5)
+        self.model.setPos(0,25,0)
         
         #Initialize the physics-simulation for the vehicle
         self.physics_model = OdeBody(self.ode_world)
@@ -43,6 +44,35 @@ class Vehicle(object):
         #Initialize the collision-model of the vehicle
         self.collision_model = OdeTriMeshGeom(self.ode_space, OdeTriMeshData(self.model, True))
         self.collision_model.setBody(self.physics_model)
+        self.collision_model.setCollideBits(BitMask32(0x00000001))
+        self.collision_model.setCategoryBits(BitMask32(0x00000001))
+
+##        experimental code for the floating effect and visualization of that        
+##        #Add collision-rays for the floating effect
+        self.front_left = OdeRayGeom(self.ode_space, 4)
+        self.front_left.setCollideBits(BitMask32(0x00000000))
+        self.front_left.setCategoryBits(BitMask32(0x00000000))
+##        self.front_right = OdeRayGeom(self.ode_space, 4)
+##        self.back_left= OdeRayGeom(self.ode_space, 4)
+##        self.back_right = OdeRayGeom(self.ode_space, 4)
+##        
+##        #self.front_left.set(Vec3(position) + Vec3(relative position), Vec3(direction))
+        self.front_left.set(self.collision_model.getPosition() + Vec3(1,1,0), Vec3(0,0,-1))
+##        self.front_right.set(self.collision_model.getPosition() + Vec3(1,-1,0), Vec3(0,0,-1))
+##        self.back_left.set(self.collision_model.getPosition() + Vec3(-1,1,0), Vec3(0,0,-1))
+##        self.back_right.set(self.collision_model.getPosition() + Vec3(-1,-1,0), Vec3(0,0,-1))
+##        
+##        print self.collision_model.getQuaternion().getX()    
+##        print self.collision_model.getQuaternion().getY()   
+##        print self.collision_model.getQuaternion().getZ()       
+##        print self.collision_model.getQuaternion().getUp()      
+##        print self.collision_model.getQuaternion().getRight()        
+##        print self.collision_model.getQuaternion().getHpr()
+##        
+        ray = WireGeom().generate ('ray', length=3.0)
+        ray.setPos (1 , 1, 0)
+        ray.setHpr (self.collision_model.getQuaternion().getHpr()[0] , self.collision_model.getQuaternion().getHpr()[1]  , self.collision_model.getQuaternion().getHpr()[2] )
+        ray.reparentTo( self.model )
       
     # ---------------------------------------------------------
     
