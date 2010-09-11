@@ -11,7 +11,7 @@ import copy
 from panda3d.core import *
 
 
-MIN_DIST = 20
+MIN_DIST = 60
 
 # ---------------------------------------------------------
 # ---------------------------------------------------------
@@ -28,6 +28,17 @@ MIN_DIST = 20
 * Tiles werden entlang der Strecke platziert (Strassenstuecke, Tunnel usw.)
 * Environment (Skybox, fliegende Deko, Wolkenkratzer usw.) wird geladen
 '''
+# -------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------
+
+def getAngle(a, b):
+    '''
+    @param a: (Vec3) the first vector
+    @param b: (Vec3) the second vector
+    @return: (float) the angle between the two vectors a and b
+    '''
+    return math.degrees(math.acos(a.dot(b)/(a.length()*b.length())))
 
 # -------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------
@@ -93,30 +104,30 @@ class StraightLine(object):
         y2 = self.posvec2[1]
 
         try:
-            m = float(y2-y1)/(x2-x1)
+            m = (y2-y1)/(x2-x1)
         except:
             m = 0
-        b = y1-m*x1
+
+        b = y1-(m*x1)
 
         return m,b
-
 
     # -------------------------------------------------------------------------------------
 
     def getZbyXY(self,x,y):
         '''
+        @param x: (float) / (int) x-value
+        @param y: (float) / (int) y-value
+        @return: (float) the z-value at the given x and y components
         '''
-        z = self.posvec[2]+(self.dirvec[2]*((float(x)-self.posvec[0])/self.dirvec[0]))
-        z2 = self.posvec[2]+(self.dirvec[2]*((float(x)-self.posvec[1])/self.dirvec[1]))
-        #try:
+        z = self.posvec[2]+(self.dirvec[2]*((float(x)-self.posvec[0])/self.dirvec[0])) # !!! sometimes zero division
         return z
-        #except:
-        #    return self.posvec[2]+(self.dirvec[2]*((x-self.posvec[1])/(self.dirvec[1])))
 
     # -------------------------------------------------------------------------------------
 
     def crossesLine(self, other):
         '''
+        @param other: (StaightLine) the other line to check if it crosses this one
         @return: (bool) returns True if the line self and other have a crossing point in 2d space (x-y) and are very near in 3d space
         '''
         m1,b1 = self.get2DLineFunction()
@@ -129,142 +140,43 @@ class StraightLine(object):
         except:
             return False
 
+        a1x = self.posvec[0]
+        a1y = self.posvec[1]
+        a2x = self.posvec2[0]
+        a2y = self.posvec2[1]
 
-        xa1 = self.posvec[0]
-        xa2 = self.posvec2[0]
-        ya1 = self.posvec[1]
-        ya2 = self.posvec2[1]
+        # if the crossing point is on the lines inside the interval of the two given points
+        # it must be also on the other line
+        if ( (a1x < x < a2x) or (a1x > x > a2x) ) and ( (a1y < y < a2y) or (a1y > y > a2y) ):
 
-        xfits = False
-        yfits = False
+            # calculate the distance between the lines:
+            self_z = self.getZbyXY(x,y)
+            other_z = other.getZbyXY(x,y)
 
-        # x must be between the first and second x value of one ofthe lines
-        if xa1 < x and xa2 > x:
-            xfits = True
-        elif xa1 > x and xa2 < x:
-            xfits = True
+            dist = abs(other_z - self_z)
 
-        # if x doesn't fit, it doesn't matter, if y fits
-        if xfits:
-            # y must also be between the first and second y value of one of the lines
-            if ya1 < y and ya2 > y:
-                yfits = True
-            elif ya1 > y and ya2 < y:
-                yfits = True
-            else:
-                yfits = False
-
-            # if y fits, the graphs collide in 2d space and we have to check the 3d distance
-            if yfits:
-                z1 = self.getZbyXY(x,y)
-                z2 = other.getZbyXY(x,y)
-#                print z1, z2
-                print x,y
-                dist = abs(z2-z1)
-
-                #if dist < MIN_DIST:
-                #    return True
-                #else:
-                #    return False
-                return False
+            # if the distance is smaller than the minimum distance, we can't use the map
+            if dist < MIN_DIST:
+                return True
             else:
                 return False
-
         else:
             return False
 
-#    # -------------------------------------------------------------------------------------
-#
-#    def crossesLine2D(self, other):
-#        '''
-#        @return: (bool) returns True if the line self and other have a crossing point in 2d space (x-y)
-#        '''
-#        m1,b1 = self.get2DLineFunction()
-#        m2,b2 = other.get2DLineFunction()
-#
-#        # if this fails, the lines are parallel
-#        try:
-#            x = (b2-b1)/(m1-m2)
-#            y = m1*x+b1
-#        except:
-#            return False
-#
-#
-#        xa1 = self.posvec[0]
-#        xa2 = self.posvec2[0]
-#        ya1 = self.posvec[1]
-#        ya2 = self.posvec2[1]
-#
-#        xfits = False
-#        yfits = False
-#
-#        # x must be between the first and second x value of one ofthe lines
-#        if xa1 < x and xa2 > x:
-#            xfits = True
-#        elif xa1 > x and xa2 < x:
-#            xfits = True
-#
-#        # if x doesn't fit, it doesn't matter, if y fits
-#        if xfits:
-#            # y must also be between the first and second y value of one of the lines
-#            if ya1 < y and ya2 > y:
-#                yfits = True
-#            elif ya1 > y and ya2 < y:
-#                yfits = True
-#            else:
-#                yfits = False
-#
-#            # if y fits, the graphs collide in 2d space
-#            return yfits
-#
-#        else:
-#            return False
-#
-#
-#    # -------------------------------------------------------------------------------------
-#
-#    def getDistance(self, other):
-#        '''
-#        this method returns the distance between this line and the one given
-#        by the parameter other
-#        @param other: (StraightLine) the other line
-#        '''
-#        a = self.posvec
-#        b = other.getPosVec()
-#        n = self.dirvec.cross(other.getDirVec())
-#
-#        d = (n[0]*a[0])+(n[1]*a[1])+(n[2]*a[2])
-#
-#        try:
-#            return abs((n.dot(b)-d)/(n.length()))
-#        except:
-#            vec = b-a
-#            return vec.length()
 
     # -------------------------------------------------------------------------------------
 
     def getAngle(self, other):
         '''
-        this method returns the angle between this line and the given one
-        @param other: (StraightLine) the other line
+        @param other: (StraightLine) the other line to determine the angle to
+        @return: (float) the angle between this line and the other one
         '''
         a = self.dirvec
         b = other.getDirVec()
 
 
-        return math.degrees(math.acos(a.dot(b)/(a.length()*b.length())))
+        return getAngle(a, b)
 
-
-
-
-# -------------------------------------------------------------------------------------
-# -------------------------------------------------------------------------------------
-# -------------------------------------------------------------------------------------
-
-def getAngle(a, b):
-    '''
-    '''
-    return math.degrees(math.acos(a.dot(b)/(a.length()*b.length())))
 
 # -------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------
@@ -278,6 +190,9 @@ class Track(object):
     def __init__(self, size_x, size_y, max_height=2300):
         '''
         the constructor creates an empty track
+        @param size_x: (int) maximum x-coordinates
+        @param size_y: (int) maximum y-coordinates
+        @param max_height: (int) maximum z-coordinates
         '''
         self.setSize(size_x, size_y, max_height)
         self.points = []
@@ -297,7 +212,7 @@ class Track(object):
             raise TypeError("size_x, size_y and max_height have to be of type 'int'")
 
         # set the size
-        self.__size = (size_x, size_y, max_height)
+        self.size = (size_x, size_y, max_height)
 
     # -------------------------------------------------------------------------------------
 
@@ -306,51 +221,56 @@ class Track(object):
         returns the map size
         @return: (size_x, size_y, max_height) - all of type integer
         '''
-        return self.__size
+        return self.size
 
     # -------------------------------------------------------------------------------------
 
     def getCurve(self):
         '''
+        the returned curve is an interpolated one, computed out of the randomly generated Points
+        @return: (NurbsCurve) the interpolated curve [a panda class]
         '''
         return self.curve
-
 
     # -------------------------------------------------------------------------------------
 
     def generatePoints(self):
         '''
+        this method generates some random points and stores them in a member variable
+        -> sets the attribute self.points
         '''
-        q1 = [] # Quadranten 1 - 4
+        # we have make four parts out of our coordinate system, so that every Part has got a piece of road
+        q1 = []
         q2 = []
         q3 = []
         q4 = []
 
-        q1_size = ((0, 0),(self.__size[0]/2, self.__size[1]/2)) # Abmessungen vom ersten Quadranten ((x1, y1), (x2, y2))
-        q2_size = ((self.__size[0]/2, 0),(self.__size[0], self.__size[1]/2))
-        q3_size = ((self.__size[0]/2, self.__size[1]/2),(self.__size[0], self.__size[1]))
-        q4_size = ((0, self.__size[1]/2),(self.__size[0]/2, self.__size[1]))
+        # size of the parts
+        q1_size = ((0, 0),(self.size[0]/2, self.size[1]/2))
+        q2_size = ((self.size[0]/2, 0),(self.size[0], self.size[1]/2))
+        q3_size = ((self.size[0]/2, self.size[1]/2),(self.size[0], self.size[1]))
+        q4_size = ((0, self.size[1]/2),(self.size[0]/2, self.size[1]))
 
 
-        # Die einzelnen Quadranten mit den Major-Points fuellen
+        # fill the parts with random points
         for i in range(4):
-            q1.append((random.randint(q1_size[0][0], q1_size[1][0]), random.randint(q1_size[0][1], q1_size[1][1]), random.randint(0, self.__size[2])))
-
-        for i in range(4):
-            q2.append((random.randint(q2_size[0][0], q2_size[1][0]), random.randint(q2_size[0][1], q2_size[1][1]), random.randint(0, self.__size[2])))
+            q1.append((random.randint(q1_size[0][0], q1_size[1][0]), random.randint(q1_size[0][1], q1_size[1][1]), random.randint(0, self.size[2])))
 
         for i in range(4):
-            q3.append((random.randint(q3_size[0][0], q3_size[1][0]), random.randint(q3_size[0][1], q3_size[1][1]), random.randint(0, self.__size[2])))
+            q2.append((random.randint(q2_size[0][0], q2_size[1][0]), random.randint(q2_size[0][1], q2_size[1][1]), random.randint(0, self.size[2])))
 
         for i in range(4):
-            q4.append((random.randint(q4_size[0][0], q4_size[1][0]), random.randint(q4_size[0][1], q4_size[1][1]), random.randint(0, self.__size[2])))
+            q3.append((random.randint(q3_size[0][0], q3_size[1][0]), random.randint(q3_size[0][1], q3_size[1][1]), random.randint(0, self.size[2])))
+
+        for i in range(4):
+            q4.append((random.randint(q4_size[0][0], q4_size[1][0]), random.randint(q4_size[0][1], q4_size[1][1]), random.randint(0, self.size[2])))
 
 
-        # Zufaellige Reihenfolge der Quadranten festlegen
+        # the parts are randomly patched together
         points=[q1,q2,q3,q4]
         random.shuffle(points)
 
-        # Die einzelnen Quadranten in zufaelliger Reihenfolge in die Map einfuegen
+        # and stored in a member variable
         self.points.extend(points[0])
         self.points.extend(points[1])
         self.points.extend(points[2])
@@ -360,9 +280,12 @@ class Track(object):
 
     def generateTrack(self):
         '''
-        generates a random track --> sets the attribute self.curve
+        generates a curve out of the points
+        -> sets the attribute self.curve
         '''
         track_is_ok = False
+
+        n = 0
 
         # generate new tracks until a track seems to be allright
         while not track_is_ok:
@@ -378,6 +301,8 @@ class Track(object):
                     # if the lines cross / are too near, we have to generate a new map
                     if line1.crossesLine(line2):
                         track_is_ok = False
+                        print i
+                        n += 1
 
 
         ####
@@ -388,7 +313,7 @@ class Track(object):
         # ================= TEST ================
         # === Strecke in Bitmap visualisieren ===
         # =======================================
-        bmp = bitmap24.Bitmap24("", self.__size[0]+1, self.__size[1]+1)
+        bmp = bitmap24.Bitmap24("", self.size[0]+1, self.size[1]+1)
 
         last = None
         for i in(self.points):
@@ -398,7 +323,7 @@ class Track(object):
                 continue
 
             if i[2] != 0:
-                rgb = int((float(i[2])/self.__size[2])*200)
+                rgb = int((float(i[2])/self.size[2])*200)
 
             bmp.drawLine(last[0], last[1], i[0], i[1], (rgb,rgb,rgb) )
 
@@ -414,7 +339,7 @@ class Track(object):
         # ================= TEST ================
         # === Strecke in Bitmap visualisieren ===
         # =======================================
-        bmp = bitmap24.Bitmap24("", self.__size[0]+1, self.__size[1]+1)
+        bmp = bitmap24.Bitmap24("", self.size[0]+1, self.size[1]+1)
 
         last = None
 
@@ -428,7 +353,7 @@ class Track(object):
                 continue
 
             if point.getZ() != 0:
-                rgb = int((float(point.getZ())/self.__size[2])*200)
+                rgb = int((float(point.getZ())/self.size[2])*200)
 
             bmp.drawLine(last.getX(), last.getY(), point.getX(), point.getY(), (rgb,rgb,rgb) )
 
