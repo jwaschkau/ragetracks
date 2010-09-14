@@ -5,6 +5,7 @@
 
 from pandac.PandaModules import * #Load all PandaModules
 from wiregeom import WireGeom
+from collisionray import CollisionRay
 
 class Vehicle(object):
     '''
@@ -12,6 +13,7 @@ class Vehicle(object):
     def __init__(self, ode_world, ode_space, name = "standard"):
         '''
         '''
+
         self.ode_world = ode_world
         self.ode_space = ode_space
         self.model = None
@@ -44,35 +46,14 @@ class Vehicle(object):
         #Initialize the collision-model of the vehicle
         self.collision_model = OdeTriMeshGeom(self.ode_space, OdeTriMeshData(self.model, True))
         self.collision_model.setBody(self.physics_model)
-        self.collision_model.setCollideBits(BitMask32(0x00000001))
-        self.collision_model.setCategoryBits(BitMask32(0x00000001))
+        self.collision_model.setCollideBits(1)
+        self.collision_model.setCategoryBits(0)
 
-##        experimental code for the floating effect and visualization of that        
-##        #Add collision-rays for the floating effect
-        self.front_left = OdeRayGeom(self.ode_space, 4)
-        self.front_left.setCollideBits(BitMask32(0x00000000))
-        self.front_left.setCategoryBits(BitMask32(0x00000000))
-##        self.front_right = OdeRayGeom(self.ode_space, 4)
-##        self.back_left= OdeRayGeom(self.ode_space, 4)
-##        self.back_right = OdeRayGeom(self.ode_space, 4)
-##        
-##        #self.front_left.set(Vec3(position) + Vec3(relative position), Vec3(direction))
-        self.front_left.set(self.collision_model.getPosition() + Vec3(1,1,0), Vec3(0,0,-1))
-##        self.front_right.set(self.collision_model.getPosition() + Vec3(1,-1,0), Vec3(0,0,-1))
-##        self.back_left.set(self.collision_model.getPosition() + Vec3(-1,1,0), Vec3(0,0,-1))
-##        self.back_right.set(self.collision_model.getPosition() + Vec3(-1,-1,0), Vec3(0,0,-1))
-##        
-##        print self.collision_model.getQuaternion().getX()    
-##        print self.collision_model.getQuaternion().getY()   
-##        print self.collision_model.getQuaternion().getZ()       
-##        print self.collision_model.getQuaternion().getUp()      
-##        print self.collision_model.getQuaternion().getRight()        
-##        print self.collision_model.getQuaternion().getHpr()
-##        
-        ray = WireGeom().generate ('ray', length=3.0)
-        ray.setPos (1 , 1, 0)
-        ray.setHpr (self.collision_model.getQuaternion().getHpr()[0] , self.collision_model.getQuaternion().getHpr()[1]  , self.collision_model.getQuaternion().getHpr()[2] )
-        ray.reparentTo( self.model )
+        #Add collision-rays for the floating effect
+        self.front_left = CollisionRay(Vec3(-2,2,0), Vec3(0,0,1), self.ode_space, parent = self.collision_model, length = 4.0)
+        self.front_right = CollisionRay(Vec3(2,2,0), Vec3(0,0,1), self.ode_space, parent = self.collision_model, length = 4.0)
+        self.back_left= CollisionRay(Vec3(-2,-3,0), Vec3(0,0,1), self.ode_space, parent = self.collision_model, length = 4.0)
+        self.back_right = CollisionRay(Vec3(2,-3,0), Vec3(0,0,1), self.ode_space, parent = self.collision_model, length = 4.0)
       
     # ---------------------------------------------------------
     
@@ -152,3 +133,16 @@ class Vehicle(object):
         model.setScale(x,y,z)
         
     # ---------------------------------------------------------
+    def doStep(self):
+        '''
+        Needs to get executed every Ode-Step
+        '''
+        self.front_left.doStep()
+        self.front_right.doStep()
+        self.back_left.doStep()
+        self.back_right.doStep()
+        
+    
+    # ---------------------------------------------------------
+    def getCollisionRays(self):
+        return self.front_left.getRay(), self.front_right.getRay(), self.back_left.getRay() ,self.back_right.getRay()

@@ -25,7 +25,6 @@ class Game(ShowBase):
         ShowBase.__init__(self)
         base.setFrameRateMeter(True) #Show the Framerate
 
-
         # load the settings
         self.settings = settings.Settings()
         self.settings.loadSettings("user/config.ini")
@@ -39,8 +38,6 @@ class Game(ShowBase):
         #Initialize Physics (ODE)
         self.world = OdeWorld()
         self.world.setGravity(0, 0, -0.5)
-
-
         self.deltaTimeAccumulator = 0.0 #this variable is necessary to track the time for the physics
         self.stepSize = 1.0 / 60.0 # This stepSize makes the simulation run at 60 frames per second
 
@@ -49,10 +46,13 @@ class Game(ShowBase):
         #Initialize the surface-table, it defines how objects interact with each other
         self.world.initSurfaceTable(1)
         self.world.setSurfaceEntry(0, 0, 150, 0.0, 9.1, 0.9, 0.00001, 0.0, 0.002)
-        self.space.setAutoCollideWorld(self.world)##use autocollision?
-
+        self.space.setAutoCollideWorld(self.world) 
         self.contactgroup = OdeJointGroup()
         self.space.setAutoCollideJointGroup(self.contactgroup)
+        
+        #set up the collision event
+        self.space.setCollisionEvent("ode-collision")
+        base.accept("ode-collision", self.onCollision) 
 
         #Initialize the first player
         self.addPlayer("Tastaturdevice") ##pass the device for the first player (probably the keyboard)
@@ -119,9 +119,8 @@ class Game(ShowBase):
         #add collision with the map
         #OdeTriMeshGeom(self.space, OdeTriMeshData(self.map, True))
         groundGeom = OdePlaneGeom(self.space, Vec4(0, 0, 1, -5))
-        groundGeom.setCollideBits(BitMask32(0x00000000))
-        groundGeom.setCategoryBits(BitMask32(0x00000001))
-
+        groundGeom.setCollideBits(0)
+        groundGeom.setCategoryBits(3)
 
         #Load the Players
         ##probably unnecessary because the players are already initialized at this point
@@ -137,7 +136,28 @@ class Game(ShowBase):
 
 
     # -----------------------------------------------------------------
+    
+    def onCollision(self, entry):
+        '''
+        Handles Collision-Events
+        '''
 
+        geom1 = entry.getGeom1()
+        geom2 = entry.getGeom2()
+        body1 = entry.getBody1()
+        body2 = entry.getBody2()
+       
+        print geom1, geom2
+        
+        #Handles the collision-rays from the players
+        for player in self.players:
+            for ray in player.getVehicle().getCollisionRays():
+                if geom1 == ray or geom2 == ray:
+                    print "ray collided"
+                    #entry.getContactPoints(): 
+               
+    # -----------------------------------------------------------------
+             
     def gameTask(self, task):
         '''
         this task runs once per second if the game is running
@@ -152,6 +172,8 @@ class Game(ShowBase):
             self.deltaTimeAccumulator -= self.stepSize
             # Step the simulation
             self.world.quickStep(self.stepSize)
+            for player in self.players:                  # refresh player specific things (rays)
+                player.doStep()
         for player in self.players:                      # set new positions
             player.getVehicle().getModel().setPosQuat(render, player.getVehicle().getPhysicsModel().getPosition(), Quat(player.getVehicle().getPhysicsModel().getQuaternion()))
         self.contactgroup.empty() # Clear the contact joints
