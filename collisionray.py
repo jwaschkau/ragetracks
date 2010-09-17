@@ -40,8 +40,10 @@ class CollisionRay(object):
         Calculates the new position of the ray, relative to the collision-model, 
         needs to be executed everytime ode.quickStep gets executed
         '''
+        
+        ##Verrechnung mit der Richtung fehlt --> Die Positionsbestimmung ist auch noch nicht richtig, da sie auch vom Winkel abhängt!!!
         self.ray.set(self.parent.getPosition() + self.position, 
-                    self.parent.getQuaternion().getRight() + self.direction)
+                    self.parent.getQuaternion().getRight())
             
         if self.debug:
             self.drawray.setPos (self.position[0] + self.parent.getPosition()[0], 
