@@ -33,6 +33,7 @@ class Menu(object):
             print child
         print self.menuNode.find(self.menu[0][0] + "*")
         print render.ls()
+        base.camera.setPosition(0,0,0)
         
     # -----------------------------------------------------------------
 

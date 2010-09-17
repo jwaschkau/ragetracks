@@ -8,7 +8,7 @@ from pandac.PandaModules import * #Load all PandaModules
 class Vehicle(object):
     '''
     '''
-    def __init__(self, vehicledata, ode_world, ode_space, name = "standard"):
+    def __init__(self, ode_world, ode_space, name = "standard"):
         '''
         '''
         self.ode_world = ode_world
@@ -17,7 +17,6 @@ class Vehicle(object):
         self.physics_model = None
         self.physics_mass = None
         self.collision_model = None
-        self.vehicledata = vehicledata #holds information about the available vehicles
         
         self.setVehicle(name)
         
@@ -27,8 +26,7 @@ class Vehicle(object):
         '''
         Choose what vehicle the player has chosen. This method initializes all data of this vehicle
         '''
-        vehicle = self.vehicledata.getData(name)
-        self.model = loader.loadModel(vehicle["model_path"])
+        self.model = loader.loadModel("data/models/vehicle01")
         self.model.reparentTo(render)
         self.model.setPos(0,0,5)
         
@@ -39,9 +37,8 @@ class Vehicle(object):
         
         #Initialize the mass of the vehicle
         self.physics_mass = OdeMass()
-        for i in vehicle["mass_box"]:
-            self.physics_mass.setBox(i[0], i[1], i[2], i[3])
-            self.physics_model.setMass(self.physics_mass)
+        self.physics_mass.setBox(1000,1,1,1)
+        self.physics_model.setMass(self.physics_mass)
         
         #Initialize the collision-model of the vehicle
         self.collision_model = OdeTriMeshGeom(self.ode_space, OdeTriMeshData(self.model, True))

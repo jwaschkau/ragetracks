@@ -3,19 +3,18 @@
 ## this module contains the data for one player
 ###################################################################
 import vehicle
-import vehicledata
 
 class Player(object):
     '''
     '''
-    def __init__(self, number, ode_world, ode_space, device = None, camera = None, vehicledata = vehicledata.VehicleData()):
+    def __init__(self, number, ode_world, ode_space, device = None, camera = None):
         '''
         '''
         self.ode_world = ode_world
         self.ode_space = ode_space
         self.number = number
         self.camera = camera
-        self.vehicle = vehicle.Vehicle(vehicledata, self.ode_world, self.ode_space) #the properties of the vehicle
+        self.vehicle = vehicle.Vehicle(self.ode_world, self.ode_space) #the properties of the vehicle
         self.device = device #The inputdevice
         
         #Initialize the camera
@@ -84,8 +83,7 @@ class Player(object):
         '''
         destroys all objects of the player-object
         '''
-        return self.device
         #Del one Camera 
-        self.cameras.node().removeNode()
+        self.camera.node().removeNode()
         
     # ---------------------------------------------------------
