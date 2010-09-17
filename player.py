@@ -87,3 +87,12 @@ class Player(object):
         self.camera.node().removeNode()
         
     # ---------------------------------------------------------
+    
+    def doStep(self):
+        '''
+        Needs to get executed every Ode-Step
+        '''
+        self.vehicle.doStep()
+        
+    
+    # ---------------------------------------------------------

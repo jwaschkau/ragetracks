@@ -4,6 +4,8 @@
 ###################################################################
 
 from pandac.PandaModules import * #Load all PandaModules
+from wiregeom import WireGeom
+from collisionray import CollisionRay
 
 class Vehicle(object):
     '''
@@ -11,6 +13,7 @@ class Vehicle(object):
     def __init__(self, ode_world, ode_space, name = "standard"):
         '''
         '''
+
         self.ode_world = ode_world
         self.ode_space = ode_space
         self.model = None
@@ -28,7 +31,7 @@ class Vehicle(object):
         '''
         self.model = loader.loadModel("data/models/vehicle01")
         self.model.reparentTo(render)
-        self.model.setPos(0,0,5)
+        self.model.setPos(0,25,0)
         
         #Initialize the physics-simulation for the vehicle
         self.physics_model = OdeBody(self.ode_world)
@@ -43,6 +46,14 @@ class Vehicle(object):
         #Initialize the collision-model of the vehicle
         self.collision_model = OdeTriMeshGeom(self.ode_space, OdeTriMeshData(self.model, True))
         self.collision_model.setBody(self.physics_model)
+        self.collision_model.setCollideBits(1)
+        self.collision_model.setCategoryBits(0)
+
+        #Add collision-rays for the floating effect
+        self.front_left = CollisionRay(Vec3(-2,2,0), Vec3(0,0,1), self.ode_space, parent = self.collision_model, length = 4.0)
+        self.front_right = CollisionRay(Vec3(2,2,0), Vec3(0,0,1), self.ode_space, parent = self.collision_model, length = 4.0)
+        self.back_left= CollisionRay(Vec3(-2,-3,0), Vec3(0,0,1), self.ode_space, parent = self.collision_model, length = 4.0)
+        self.back_right = CollisionRay(Vec3(2,-3,0), Vec3(0,0,1), self.ode_space, parent = self.collision_model, length = 4.0)
       
     # ---------------------------------------------------------
     
@@ -122,3 +133,16 @@ class Vehicle(object):
         model.setScale(x,y,z)
         
     # ---------------------------------------------------------
+    def doStep(self):
+        '''
+        Needs to get executed every Ode-Step
+        '''
+        self.front_left.doStep()
+        self.front_right.doStep()
+        self.back_left.doStep()
+        self.back_right.doStep()
+        
+    
+    # ---------------------------------------------------------
+    def getCollisionRays(self):
+        return self.front_left.getRay(), self.front_right.getRay(), self.back_left.getRay() ,self.back_right.getRay()
