@@ -120,7 +120,13 @@ class StraightLine(object):
         @param y: (float) / (int) y-value
         @return: (float) the z-value at the given x and y components
         '''
-        z = self.posvec[2]+(self.dirvec[2]*((float(x)-self.posvec[0])/self.dirvec[0])) # !!! sometimes zero division
+        try:
+            z = self.posvec[2]+(self.dirvec[2]*((float(x)-self.posvec[0])/self.dirvec[0])) # !!! sometimes zero division
+        except:
+            try:
+                z = self.posvec[2]+(self.dirvec[2]*((float(y)-self.posvec[1])/self.dirvec[1])) # !!! sometimes zero division
+            except:
+                raise StandardError("Sorry, but this error will cause the end of the world")
         return z
 
     # -------------------------------------------------------------------------------------
