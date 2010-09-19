@@ -109,8 +109,6 @@ class Game(ShowBase):
         starts the game or goes to the next menu
         '''
 
-        print "bla"
-
         #Load the Map
         self.map = self.loader.loadModel("data/models/Track01")
         self.map.reparentTo(self.render)
@@ -147,8 +145,6 @@ class Game(ShowBase):
         geom2 = entry.getGeom2()
         body1 = entry.getBody1()
         body2 = entry.getBody2()
-       
-        print geom1, geom2
         
         #Handles the collision-rays from the players
         for player in self.players:
