@@ -301,7 +301,7 @@ class Track(object):
                     # if the lines cross / are too near, we have to generate a new map
                     if line1.crossesLine(line2):
                         track_is_ok = False
-                        print i
+                        #print i
                         n += 1
 
 
@@ -362,7 +362,21 @@ class Track(object):
         bmp.drawDigit(0, self.points[0][0], self.points[0][1], (255,0,0))
 
         bmp.writeBitmap("test2.bmp")
+        
+    # -------------------------------------------------------------------------------------
 
+    def getInterpolatedPoints(self, resolution):
+        '''
+        
+        '''
+        pointlist = []
+        point = Vec3(0,0,0)
+        xres = 0.01*resolution
+        for i in xrange(0,resolution):
+            self.curve.getPoint(i*xres, point)
+            pointlist.append(Vec3(point))
+            
+        return pointlist
 
 # -------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------
@@ -379,6 +393,8 @@ if __name__ == "__main__":
 #    print getAngle(a,b)
     m = Track(800,600)
     m.generateTrack()
+    a = m.getInterpolatedPoints(100)
+    print a
 
     #l1 = StraightLine(Vec3(1,1,200), Vec3(3,20,200))
     #l2 = StraightLine(Vec3(1,1,300), Vec3(3,3,300))
