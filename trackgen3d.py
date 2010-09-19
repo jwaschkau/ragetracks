@@ -7,6 +7,7 @@
 #They are the midpoints of the Street
 
 from panda3d.core import * 
+from trackgen import Track
 
 def thickness(tupelOfTupel):
     '''
@@ -49,3 +50,5 @@ tuple1 = ((1.0,2.0,3.0),(3.0,4.0,5.0),(6.0,4.0,2.0),(8.0,3.0,6.0),(4.0,7.0,2.0))
 tuple2 = ((-2.0, -3.0, 0.0),(1.0, -5.0, 0.0),(4.0, -4.0, 0.0),(6.0, 0.0, 0.0),(3.0, 4.0, 0.0),(-2.0, 6.0, 0.0),(-7.0, 3.0, 0.0),(-8.0, -2.0, 0.0))
 tuple3 = ((10.0,10.0,0.0),(10.0,-10.0,0.0),(-10.0,-10.0,0.0),(-10.0,10.0,0.0))
 thickness(tuple1)
+m = Track(800,600)
+m.generateTrack()
