@@ -63,9 +63,9 @@ class Track3d(object):
         #for every Street Point create one Vertex by x*varthickness+Center and high+Center
         for i in range (len(track_points)):
             for j in range (len(street_data)):
-                self.varthickness[i][0]*street_data[j][0]   #x
-                self.varthickness[i][1]*street_data[j][0]   #y
-                self.varthickness[i][2]+street_data[j][1]   #z
+                track_points[i][0] + (self.varthickness[i][0]*street_data[j][0])   #x
+                track_points[i][0] + (self.varthickness[i][1]*street_data[j][0])   #y
+                track_points[i][0] + (self.varthickness[i][2]+street_data[j][1])   #z
         pass
 
 #Test
@@ -76,7 +76,7 @@ tuple3 = ((10.0,10.0,0.0),(10.0,-10.0,0.0),(-10.0,-10.0,0.0),(-10.0,10.0,0.0))
 #Test with real Data
 m = Track(800,600)
 m.generateTrack()
-tuple4 = m.getInterpolatedPoints(100)
+tuple4 = m.getInterpolatedPoints(1000)
 print tuple4
 streetData = (Vec2(1,1),Vec2(5,1),Vec2(6,2))
 
