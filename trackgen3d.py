@@ -6,7 +6,7 @@
 #Input is a Tupel with Tupel of (x,y,z)
 #They are the midpoints of the Street
 
-
+from panda3d.core import * 
 
 def thickness(tupelOfTupel):
     '''
@@ -23,7 +23,7 @@ def thickness(tupelOfTupel):
     
     #Normalizing the Vector
     for i in varthickness:
-        pass
+        i.normalize()
         ##TODO
         #normalizing(i)
     #Creating the Vertex
@@ -38,10 +38,10 @@ def thickness(tupelOfTupel):
     return varthickness
 
 def calcTheVector(pre, now, past):
-    vector1 = (pre[0] - now[0], pre[1] - now[1])    ##BUG!!!!!!!!!!!!!!!! Wie rum???
-    vector2 = (past[0] - now[0], past[1] - now[1])  ##BUG!!!!!!!!!!!!!!!!
+    vector1 = (pre[0] - now[0], pre[1] - now[1])
+    vector2 = (past[0] - now[0], past[1] - now[1])
     high = pre[2] - past[2]
-    return ((vector1[1] + vector2[1])/2.0),((vector1[0] + vector2[0])/2.0), high
+    return Vec3(((vector1[1] + vector2[1])/2.0),((vector1[0] + vector2[0])/2.0), high)
 
 
 #Test
