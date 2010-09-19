@@ -43,13 +43,15 @@ class Track3d(object):
         high = pre[2] - past[2]
         return Vec3(((vector1[1] + vector2[1])/2.0),((vector1[0] + vector2[0])/2.0), high)
 
-    def getVarthickness():
+    def getVarthickness(self):
         return self.varthickness
 
 #Test
 tuple1 = ((1.0,2.0,3.0),(3.0,4.0,5.0),(6.0,4.0,2.0),(8.0,3.0,6.0),(4.0,7.0,2.0))
 tuple2 = ((-2.0, -3.0, 0.0),(1.0, -5.0, 0.0),(4.0, -4.0, 0.0),(6.0, 0.0, 0.0),(3.0, 4.0, 0.0),(-2.0, 6.0, 0.0),(-7.0, 3.0, 0.0),(-8.0, -2.0, 0.0))
 tuple3 = ((10.0,10.0,0.0),(10.0,-10.0,0.0),(-10.0,-10.0,0.0),(-10.0,10.0,0.0))
+
+#Test with real Data
 m = Track(800,600)
 m.generateTrack()
 tuple4 = m.getInterpolatedPoints(100)
