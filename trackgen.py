@@ -11,7 +11,7 @@ import copy
 from panda3d.core import *
 
 
-MIN_DIST = 60
+MIN_DIST = 10
 
 # ---------------------------------------------------------
 # ---------------------------------------------------------
@@ -343,10 +343,14 @@ class Track(object):
 
         last = None
 
+        resolution = 100
+        
         point = Vec3(0,0,0)
+        length = self.curve.getMaxT()
+        print length
 
-        for i in xrange(0,1000):
-            self.curve.getPoint(i*.1, point)
+        for i in xrange(0,resolution):
+            self.curve.getPoint(i*(length/resolution), point)
 
             if last == None:
                 last = copy.deepcopy(point)
@@ -356,6 +360,7 @@ class Track(object):
                 rgb = int((float(point.getZ())/self.size[2])*200)
 
             bmp.drawLine(last.getX(), last.getY(), point.getX(), point.getY(), (rgb,rgb,rgb) )
+            #bmp.writeBitmap("test/"+str(i)+".bmp")
 
             last = copy.deepcopy(point)
 
@@ -371,7 +376,10 @@ class Track(object):
         '''
         pointlist = []
         point = Vec3(0,0,0)
-        xres = 0.01*resolution
+        
+        length = self.curve.getMaxT()
+        
+        xres = length/resolution
         for i in xrange(0,resolution):
             self.curve.getPoint(i*xres, point)
             pointlist.append(Vec3(point))
@@ -393,8 +401,9 @@ if __name__ == "__main__":
 #    print getAngle(a,b)
     m = Track(800,600)
     m.generateTrack()
-    a = m.getInterpolatedPoints(100)
-    print a
+    a = m.getInterpolatedPoints(200)
+    #print a
+    #print len(a)
 
     #l1 = StraightLine(Vec3(1,1,200), Vec3(3,20,200))
     #l2 = StraightLine(Vec3(1,1,300), Vec3(3,3,300))
