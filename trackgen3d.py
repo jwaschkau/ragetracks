@@ -26,8 +26,10 @@ class Track3d(object):
         #Normalizing the Vector
         for i in self.varthickness:
             i.normalize()
+        #Flip the Street to double sided
+        street_data = self.flipToDoubleSided(street_data)
         #Creating the Vertex
-        ##TODO
+        self.creatingVertex(track_points, street_data)
         #Conect the Vertex
         ##TODO
         #?Show the Mesh
@@ -45,6 +47,26 @@ class Track3d(object):
 
     def getVarthickness(self):
         return self.varthickness
+    
+
+    def flipToDoubleSided(self, street_data):
+        #Flipps only the x with *-1 to the negativ side
+        new_street_data = street_data
+        for i in range (len(street_data)):
+            new_street_data = new_street_data + (Vec2(((street_data[i][0]*(-1)),(street_data[i][1]))),)
+        print new_street_data
+        return new_street_data
+
+
+    def creatingVertex(self, track_points, street_data):
+        #Math: self.varthickness are the midd points
+        #for every Street Point create one Vertex by x*varthickness+Center and high+Center
+        for i in range (len(track_points)):
+            for j in range (len(street_data)):
+                self.varthickness[i][0]*street_data[j][0]   #x
+                self.varthickness[i][1]*street_data[j][0]   #y
+                self.varthickness[i][2]+street_data[j][1]   #z
+        pass
 
 #Test
 tuple1 = ((1.0,2.0,3.0),(3.0,4.0,5.0),(6.0,4.0,2.0),(8.0,3.0,6.0),(4.0,7.0,2.0))
