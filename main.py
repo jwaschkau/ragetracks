@@ -57,7 +57,7 @@ class Game(ShowBase):
         base.accept("ode-collision", self.onCollision) 
 
         #Initialize the first player
-        self.addPlayer("Tastaturdevice") ##pass the device for the first player (probably the keyboard)
+        self.addPlayer(self.devices.devices[0]) ##pass the device for the first player (probably the keyboard)
 
         # try to read the ini-file. If it fails the settings class
         # automatically contains default values
