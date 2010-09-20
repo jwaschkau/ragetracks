@@ -40,7 +40,7 @@ class Track3d(object):
         self.creatingVertex(track_points, street_data)
         #Connect the Vertex
         prim = GeomTriangles(Geom.UHStatic)
-        self.connectVertex(prim, self.vdata)
+        self.connectVertex(prim, self.vdata, len(street_data))
         #?Show the Mesh
         ##TODO
         ##Debugprint
@@ -82,15 +82,20 @@ class Track3d(object):
 ##                track_points[i][2] + (self.varthickness[i][2]+street_data[j][1])   #z
         print "Final Vertex:", liste
 
-    def connectVertex(self, prim, vdata):
-        print "Dir", dir(vdata)
-        print vdata.getNumRows()
-        pass
-##        for i in range (len(vdata)):
-##            prim.addVertex(0)
-##            prim.addVertex(1)
-##            prim.addVertex(2)
-##            prim.closePrimitive()
+    def connectVertex(self, prim, vdata, j):
+        #j = len(street_Data)
+        print "Vertex:", vdata.getNumRows()
+        print type(j)
+        for i in range (vdata.getNumRows()):
+            prim.addVertex(i)
+            prim.addVertex(i+1)
+            prim.addVertex(i+j+1)
+            prim.closePrimitive()
+            
+            prim.addVertex(i)
+            prim.addVertex(i+j)
+            prim.addVertex(i+j+1)
+            prim.closePrimitive()
 
 
 #Test
