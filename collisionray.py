@@ -9,7 +9,7 @@ from wiregeom import WireGeom
 class CollisionRay(object):
     '''
     '''
-    def __init__(self, position, direction, ode_space, length = 1.0, parent = None ,debug = True, collide_bits = 2, category_bits = 0 ):
+    def __init__(self, position, direction, ode_space, length = 1.0, parent = None ,debug = False, collide_bits = 2, category_bits = 0 ):
         '''
         '''
         self.ode_space = ode_space
@@ -41,7 +41,7 @@ class CollisionRay(object):
         '''
         
         ##the calculation of the position seems to be broken
-        relative_vec = self.parent.getRotation().xform(self.direction)	
+        relative_vec = self.parent.getRotation().xform(self.direction)
         self.ray.set(self.parent.getPosition() + self.position, 
                     relative_vec)
         

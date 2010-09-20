@@ -31,7 +31,7 @@ class Vehicle(object):
         '''
         self.model = loader.loadModel("data/models/vehicle01")
         self.model.reparentTo(render)
-        self.model.setPos(0,30,0)
+        self.model.setPos(0,30,25)
         
         #Initialize the physics-simulation for the vehicle
         self.physics_model = OdeBody(self.ode_world)
@@ -40,7 +40,7 @@ class Vehicle(object):
         
         #Initialize the mass of the vehicle
         self.physics_mass = OdeMass()
-        self.physics_mass.setBox(100,1,1,1)
+        self.physics_mass.setBox(5000,1,1,1)
         self.physics_model.setMass(self.physics_mass)
         
         #Initialize the collision-model of the vehicle
@@ -50,10 +50,10 @@ class Vehicle(object):
         self.collision_model.setCategoryBits(0)
 
         #Add collision-rays for the floating effect
-        self.front_left = CollisionRay(Vec3(-2,4,0), Vec3(0,0,-1), self.ode_space, parent = self.collision_model, length = 10.0)
-        self.front_right = CollisionRay(Vec3(2,4,0), Vec3(0,0,-1), self.ode_space, parent = self.collision_model, length = 10.0)
-        self.back_left= CollisionRay(Vec3(-2,-4,0), Vec3(0,0,-1), self.ode_space, parent = self.collision_model, length = 10.0)
-        self.back_right = CollisionRay(Vec3(2,-4,0), Vec3(0,0,-1), self.ode_space, parent = self.collision_model, length = 10.0)
+        self.front_left = CollisionRay(Vec3(-3,5,0), Vec3(0,0,-1), self.ode_space, parent = self.collision_model, length = 14.0)
+        self.front_right = CollisionRay(Vec3(3,5,0), Vec3(0,0,-1), self.ode_space, parent = self.collision_model, length = 14.0)
+        self.back_left= CollisionRay(Vec3(-3,-5,0), Vec3(0,0,-1), self.ode_space, parent = self.collision_model, length = 14.0)
+        self.back_right = CollisionRay(Vec3(3,-5,0), Vec3(0,0,-1), self.ode_space, parent = self.collision_model, length = 14.0)
       
     # ---------------------------------------------------------
     
