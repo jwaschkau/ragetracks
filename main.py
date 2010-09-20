@@ -154,17 +154,25 @@ class Game(ShowBase):
                     force_pos = ray.getPosition()
                     contact = entry.getContactPoint(0)
                     force_dir = force_pos - contact
-                    if force_dir[0] == 0:
-                        force_dir[0] = 0.001
-                    if force_dir[1] == 0:
-                        force_dir[1] = 0.001
-                    if force_dir[2] == 0:
-                        force_dir[2] = 0.001
+
                     
                     if force_dir.length() < (ray.getLength() / 2):
+                        if force_dir[0] == 0:
+                            force_dir[0] = 0.001
+                        if force_dir[1] == 0:
+                            force_dir[1] = 0.001
+                        if force_dir[2] == 0:
+                            force_dir[2] = 0.001
                         force_dir = Vec3(0,0,self.TRACK_GRIP/force_dir[2])             
                     else:
-                        force_dir = Vec3(0,0,-force_dir[2]*(self.TRACK_GRIP/85))
+                        force_dir = contact - force_pos
+                        if force_dir[0] == 0:
+                            force_dir[0] = 0.001
+                        if force_dir[1] == 0:
+                            force_dir[1] = 0.001
+                        if force_dir[2] == 0:
+                            force_dir[2] = 0.001
+                        force_dir = Vec3(0,0,self.TRACK_GRIP/force_dir[2])
                                    
                     player.getVehicle().getPhysicsModel().addForceAtPos(force_dir, force_pos) 
     # -----------------------------------------------------------------
