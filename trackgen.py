@@ -283,8 +283,8 @@ class Track(object):
         self.points.extend(points[3])
         
         dir = self.points[1] - self.points[0]
-        dir.normalize()
-        self.points.append(self.points[0]+(dir*-200))
+        dir = dir.normalize()
+        self.points.append(self.points[0]+(dir*(-200)))
         self.points.append(Vec3(self.points[0]))
 
     # -------------------------------------------------------------------------------------
