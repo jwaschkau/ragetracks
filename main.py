@@ -24,6 +24,7 @@ class Game(ShowBase):
         '''
         ShowBase.__init__(self)
         base.setFrameRateMeter(True) #Show the Framerate
+        base.camNode.setActive(False) #disable default cam 
 
         # load the settings
         self.settings = settings.Settings()
