@@ -28,10 +28,9 @@ class CollisionRay(object):
             self.drawray.setPos (self.position[0] + self.parent.getPosition()[0], 
                             self.position[1]  + self.parent.getPosition()[1], 
                             self.position[2] + self.parent.getPosition()[2])
-            ##Verrechnung mit der Richtung fehlt
-            self.drawray.setHpr (self.parent.getQuaternion().getHpr()[0] , 
-                            self.parent.getQuaternion().getHpr()[1]  , 
-                            self.parent.getQuaternion().getHpr()[2] )
+            
+            relative_vec = self.parent.getRotation().xform(self.direction)
+            self.drawray.setHpr (Quat(0.0, relative_vec[2], relative_vec[1], relative_vec[0],).getHpr())
         
     # ---------------------------------------------------------
     
@@ -41,18 +40,18 @@ class CollisionRay(object):
         needs to be executed everytime ode.quickStep gets executed
         '''
         
-        ##Verrechnung mit der Richtung fehlt --> Die Positionsbestimmung ist auch noch nicht richtig, da sie auch vom Winkel abhängt!!!
+        ##the calculation of the position seems to be broken
+        relative_vec = self.parent.getRotation().xform(self.direction)	
         self.ray.set(self.parent.getPosition() + self.position, 
-                    self.parent.getQuaternion().getRight())
-            
+                    relative_vec)
+        
         if self.debug:
             self.drawray.setPos (self.position[0] + self.parent.getPosition()[0], 
                             self.position[1]  + self.parent.getPosition()[1], 
                             self.position[2] + self.parent.getPosition()[2])
-            ##Verrechnung mit der Richtung fehlt
-            self.drawray.setHpr (self.parent.getQuaternion().getHpr()[0], 
-                            self.parent.getQuaternion().getHpr()[1], 
-                            self.parent.getQuaternion().getHpr()[2])
+            
+            self.drawray.setHpr (Quat(0.0, relative_vec[2], relative_vec[1], relative_vec[0],).getHpr())
+
         
     # ---------------------------------------------------------
     
