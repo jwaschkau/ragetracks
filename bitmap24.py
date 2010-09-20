@@ -275,7 +275,7 @@ class Bitmap24(object):
         x = int(x)
         y = int(y)
         if x >= self.__width or y >= self.__height:
-            raise ValueError("die Angegebene Position ist auﬂerhalb des Bildes")
+            return #raise ValueError("die Angegebene Position ist auﬂerhalb des Bildes")
         pos = self.convertCoords(x,y)
 
         # hier kˆnnte es einen Indexfehler geben
@@ -285,7 +285,7 @@ class Bitmap24(object):
             self.__image_data[pos-1] = chr(color[1])
             self.__image_data[pos-2] = chr(color[2])
         except:
-            raise ValueError("die Angegebene Position ist auﬂerhalb des Bildes")
+            pass #raise ValueError("die Angegebene Position ist auﬂerhalb des Bildes")
 
     ###########################################################
     ###########################################################

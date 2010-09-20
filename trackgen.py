@@ -6,12 +6,11 @@
 import random
 import math
 import bitmap24
-import nurbstest
 import copy
 from panda3d.core import *
 
 
-MIN_DIST = 10
+MIN_DIST = 30
 
 # ---------------------------------------------------------
 # ---------------------------------------------------------
@@ -245,6 +244,7 @@ class Track(object):
         this method generates some random points and stores them in a member variable
         -> sets the attribute self.points
         '''
+        self.points = []
         # we have make four parts out of our coordinate system, so that every Part has got a piece of road
         q1 = []
         q2 = []
@@ -260,16 +260,16 @@ class Track(object):
 
         # fill the parts with random points
         for i in range(4):
-            q1.append((random.randint(q1_size[0][0], q1_size[1][0]), random.randint(q1_size[0][1], q1_size[1][1]), random.randint(0, self.size[2])))
+            q1.append(Vec3(random.randint(q1_size[0][0], q1_size[1][0]), random.randint(q1_size[0][1], q1_size[1][1]), random.randint(0, self.size[2])))
 
         for i in range(4):
-            q2.append((random.randint(q2_size[0][0], q2_size[1][0]), random.randint(q2_size[0][1], q2_size[1][1]), random.randint(0, self.size[2])))
+            q2.append(Vec3(random.randint(q2_size[0][0], q2_size[1][0]), random.randint(q2_size[0][1], q2_size[1][1]), random.randint(0, self.size[2])))
 
         for i in range(4):
-            q3.append((random.randint(q3_size[0][0], q3_size[1][0]), random.randint(q3_size[0][1], q3_size[1][1]), random.randint(0, self.size[2])))
+            q3.append(Vec3(random.randint(q3_size[0][0], q3_size[1][0]), random.randint(q3_size[0][1], q3_size[1][1]), random.randint(0, self.size[2])))
 
         for i in range(4):
-            q4.append((random.randint(q4_size[0][0], q4_size[1][0]), random.randint(q4_size[0][1], q4_size[1][1]), random.randint(0, self.size[2])))
+            q4.append(Vec3(random.randint(q4_size[0][0], q4_size[1][0]), random.randint(q4_size[0][1], q4_size[1][1]), random.randint(0, self.size[2])))
 
 
         # the parts are randomly patched together
@@ -281,6 +281,11 @@ class Track(object):
         self.points.extend(points[1])
         self.points.extend(points[2])
         self.points.extend(points[3])
+        
+        dir = self.points[1] - self.points[0]
+        dir.normalize()
+        self.points.append(self.points[0]+(dir*-200))
+        self.points.append(Vec3(self.points[0]))
 
     # -------------------------------------------------------------------------------------
 
@@ -301,19 +306,31 @@ class Track(object):
 
             # check each line (between two points) for collisions
             for i in xrange(max_index):
+                if not track_is_ok:
+                    break
                 for j in xrange(i+1, max_index-2):
                     line1 = StraightLine(self.points[i], self.points[j])
                     line2 = StraightLine(self.points[j+1], self.points[j+2])
                     # if the lines cross / are too near, we have to generate a new map
                     if line1.crossesLine(line2):
                         track_is_ok = False
+                        break
                         #print i
-                        n += 1
+                        #n += 1
 
 
         ####
         #### INTERPOLATION DURCH NURBS
-        self.curve = nurbstest.getNurbs(self.points)
+        self.curve = NurbsCurve()
+        for point in self.points:
+            self.curve.appendCv(point[0],point[1],point[2])
+        self.curve.recompute()
+        tangent = Vec3(0,0,0)
+        self.curve.getTangent(0, tangent)
+        self.curve.adjustPoint(0, self.points[-1][0], self.points[-1][1], self.points[-1][2])
+        self.curve.adjustPt(self.curve.getMaxT(), self.points[-1][0], self.points[-1][1], self.points[-1][2], tangent[0], tangent[1], tangent[2])
+        self.curve.recompute()
+        
 
 
         # ================= TEST ================
@@ -335,9 +352,9 @@ class Track(object):
 
             last = i
 
-        bmp.drawLine(self.points[0][0], self.points[0][1], self.points[-1][0], self.points[-1][1])
+        #bmp.drawLine(self.points[0][0], self.points[0][1], self.points[-1][0], self.points[-1][1])
         bmp.drawDigit(0, self.points[0][0], self.points[0][1], (255,0,0))
-
+        bmp.drawPixel(self.points[-2][0], self.points[-2][1], (0,255,0))
         bmp.writeBitmap("test1.bmp")
         # =======================================
 
@@ -371,6 +388,7 @@ class Track(object):
             last = copy.deepcopy(point)
 
         bmp.drawDigit(0, self.points[0][0], self.points[0][1], (255,0,0))
+        bmp.drawPixel(self.points[-2][0], self.points[-2][1], (0,255,0))
 
         bmp.writeBitmap("test2.bmp")
         
