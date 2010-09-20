@@ -34,18 +34,19 @@ class Game(ShowBase):
 
         #Initialize needed variables and objects
         self.players = [] #holds the player objects
+        self.TRACK_GRIP = 2250
 
         #Initialize Physics (ODE)
         self.world = OdeWorld()
-        self.world.setGravity(0, 0, -0.5)
+        self.world.setGravity(0, 0, -1.0)
         self.deltaTimeAccumulator = 0.0 #this variable is necessary to track the time for the physics
-        self.stepSize = 1.0 / 60.0 # This stepSize makes the simulation run at 60 frames per second
+        self.stepSize = 1.0 / 90.0 # This stepSize makes the simulation run at 60 frames per second
 
         #Initialize Collisions (ODE)
         self.space = OdeSimpleSpace()
         #Initialize the surface-table, it defines how objects interact with each other
         self.world.initSurfaceTable(1)
-        self.world.setSurfaceEntry(0, 0, 150, 0.0, 9.1, 0.9, 0.00001, 0.0, 0.002)
+        self.world.setSurfaceEntry(0, 0, 1500, 0.0, 0.0, 0.009, 0.00001, 0.0, 0.000002)
         self.space.setAutoCollideWorld(self.world) 
         self.contactgroup = OdeJointGroup()
         self.space.setAutoCollideJointGroup(self.contactgroup)
@@ -68,7 +69,7 @@ class Game(ShowBase):
 
         # Add the main menu (though this is only temporary:
         # the menu should me a member-variable, not a local one)
-        m = menu3D.Menu()
+        #m = menu3D.Menu()
         
         #m.addOption("NewGame", self.newGame)
         #m.addOption("AddPlayer", self.addPlayer)
@@ -113,11 +114,11 @@ class Game(ShowBase):
         self.map = self.loader.loadModel("data/models/Track01")
         self.map.reparentTo(self.render)
         self.map.setScale(10, 10, 10)
-        self.map.setPos(0, 10, -5)
+        self.map.setPos(0, 10, -7)
 
         #add collision with the map
         #OdeTriMeshGeom(self.space, OdeTriMeshData(self.map, True))
-        groundGeom = OdePlaneGeom(self.space, Vec4(0, 0, 1, -5))
+        groundGeom = OdePlaneGeom(self.space, Vec4(0, 0, 1, -7))
         groundGeom.setCollideBits(0)
         groundGeom.setCategoryBits(3)
 
@@ -150,9 +151,22 @@ class Game(ShowBase):
         for player in self.players:
             for ray in player.getVehicle().getCollisionRays():
                 if geom1 == ray or geom2 == ray:
-                    print "ray collided"
-                    #entry.getContactPoints(): 
-               
+                    force_pos = ray.getPosition()
+                    contact = entry.getContactPoint(0)
+                    force_dir = force_pos - contact
+                    if force_dir[0] == 0:
+                        force_dir[0] = 0.001
+                    if force_dir[1] == 0:
+                        force_dir[1] = 0.001
+                    if force_dir[2] == 0:
+                        force_dir[2] = 0.001
+                    
+                    if force_dir.length() < (ray.getLength() / 2):
+                        force_dir = Vec3(0,0,self.TRACK_GRIP/force_dir[2])             
+                    else:
+                        force_dir = Vec3(0,0,-force_dir[2]*(self.TRACK_GRIP/85))
+                                   
+                    player.getVehicle().getPhysicsModel().addForceAtPos(force_dir, force_pos) 
     # -----------------------------------------------------------------
              
     def gameTask(self, task):
