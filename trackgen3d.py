@@ -42,7 +42,7 @@ class Track3d(object):
         prim = GeomTriangles(Geom.UHStatic)
         self.connectVertex(prim, self.vdata, len(street_data))
         #?Show the Mesh
-        ##TODO
+        self.showMesh(self.vdata, prim)
         ##Debugprint
         print "Thickness Vectors:", self.varthickness
         #return List
@@ -71,8 +71,14 @@ class Track3d(object):
         #Math: self.varthickness are the midd points
         #for every Street Point create one Vertex by x*varthickness+Center and high+Center
         liste = []
+        street_data_length = len(street_data)
+        print street_data_length
         for i in range (len(track_points)):
-            for j in range (len(street_data)):
+            for j in range (street_data_length):
+                if (j % street_data_length) == 0:
+                    print j
+                    break
+                print j
                 self.vertex.addData3f((track_points[i][0] + (self.varthickness[i][0]*street_data[j][0]), track_points[i][1] + (self.varthickness[i][1]*street_data[j][0]), track_points[i][2] + (self.varthickness[i][2]+street_data[j][1])))
                 self.normal.addData3f(0, 0, 1)
                 self.color.addData4f(0, 0, 1, 1)
@@ -80,12 +86,10 @@ class Track3d(object):
 ##                track_points[i][0] + (self.varthickness[i][0]*street_data[j][0])   #x
 ##                track_points[i][1] + (self.varthickness[i][1]*street_data[j][0])   #y
 ##                track_points[i][2] + (self.varthickness[i][2]+street_data[j][1])   #z
-        print "Final Vertex:", liste
 
     def connectVertex(self, prim, vdata, j):
         #j = len(street_Data)
         print "Vertex:", vdata.getNumRows()
-        print type(j)
         for i in range (vdata.getNumRows()):
             prim.addVertex(i)
             prim.addVertex(i+1)
@@ -97,6 +101,14 @@ class Track3d(object):
             prim.addVertex(i+j+1)
             prim.closePrimitive()
 
+    def showMesh(self, vdata, prim):
+        geom = Geom(vdata)
+        geom.addPrimitive(prim)
+         
+        node = GeomNode('name')
+        node.addGeom(geom)
+         
+        nodePath = self.render.attachNewNode(node)
 
 #Test
 tuple1 = ((1.0,2.0,3.0),(3.0,4.0,5.0),(6.0,4.0,2.0),(8.0,3.0,6.0),(4.0,7.0,2.0))
@@ -106,7 +118,7 @@ tuple3 = ((10.0,10.0,0.0),(10.0,-10.0,0.0),(-10.0,-10.0,0.0),(-10.0,10.0,0.0))
 #Test with real Data
 m = Track(800,600, 50)
 m.generateTrack()
-tuple4 = m.getInterpolatedPoints(50)
+tuple4 = m.getInterpolatedPoints(100)
 print "Imput Centers:", tuple4
 streetData = (Vec2(1,1),Vec2(5,1),Vec2(6,2))
 
