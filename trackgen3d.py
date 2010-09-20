@@ -8,9 +8,17 @@
 
 from panda3d.core import * 
 from trackgen import Track
+from pandac.PandaModules import GeomVertexFormat, Geom, GeomVertexWriter, GeomTristrips, GeomNode
 
 class Track3d(object):
     varthickness = []  #Generate the Vector for thickness of the road
+
+    #Vertex Vars
+    vdata = GeomVertexData('name', GeomVertexFormat.getV3n3c4t2(), Geom.UHStatic) 
+    vertex = GeomVertexWriter(vdata, 'vertex')
+    normal = GeomVertexWriter(vdata, 'normal')
+    color = GeomVertexWriter(vdata, 'color')
+    texcoord = GeomVertexWriter(vdata, 'texcoord')
 
     def __init__(self, track_points, street_data):
         '''
@@ -30,8 +38,9 @@ class Track3d(object):
         street_data = self.flipToDoubleSided(street_data)
         #Creating the Vertex
         self.creatingVertex(track_points, street_data)
-        #Conect the Vertex
-        ##TODO
+        #Connect the Vertex
+        prim = GeomTriangles(Geom.UHStatic)
+        self.connectVertex(prim, self.vdata)
         #?Show the Mesh
         ##TODO
         ##Debugprint
@@ -64,11 +73,25 @@ class Track3d(object):
         liste = []
         for i in range (len(track_points)):
             for j in range (len(street_data)):
-                liste.append((track_points[i][0] + (self.varthickness[i][0]*street_data[j][0]), track_points[i][1] + (self.varthickness[i][1]*street_data[j][0]), track_points[i][2] + (self.varthickness[i][2]+street_data[j][1])))
+                self.vertex.addData3f((track_points[i][0] + (self.varthickness[i][0]*street_data[j][0]), track_points[i][1] + (self.varthickness[i][1]*street_data[j][0]), track_points[i][2] + (self.varthickness[i][2]+street_data[j][1])))
+                self.normal.addData3f(0, 0, 1)
+                self.color.addData4f(0, 0, 1, 1)
+                self.texcoord.addData2f(1, 0)
 ##                track_points[i][0] + (self.varthickness[i][0]*street_data[j][0])   #x
 ##                track_points[i][1] + (self.varthickness[i][1]*street_data[j][0])   #y
 ##                track_points[i][2] + (self.varthickness[i][2]+street_data[j][1])   #z
         print "Final Vertex:", liste
+
+    def connectVertex(self, prim, vdata):
+        print "Dir", dir(vdata)
+        print vdata.getNumRows()
+        pass
+##        for i in range (len(vdata)):
+##            prim.addVertex(0)
+##            prim.addVertex(1)
+##            prim.addVertex(2)
+##            prim.closePrimitive()
+
 
 #Test
 tuple1 = ((1.0,2.0,3.0),(3.0,4.0,5.0),(6.0,4.0,2.0),(8.0,3.0,6.0),(4.0,7.0,2.0))
@@ -76,7 +99,7 @@ tuple2 = ((-2.0, -3.0, 0.0),(1.0, -5.0, 0.0),(4.0, -4.0, 0.0),(6.0, 0.0, 0.0),(3
 tuple3 = ((10.0,10.0,0.0),(10.0,-10.0,0.0),(-10.0,-10.0,0.0),(-10.0,10.0,0.0))
 
 #Test with real Data
-m = Track(80,60, 50)
+m = Track(800,600, 50)
 m.generateTrack()
 tuple4 = m.getInterpolatedPoints(50)
 print "Imput Centers:", tuple4
