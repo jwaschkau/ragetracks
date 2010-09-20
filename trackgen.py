@@ -155,10 +155,13 @@ class StraightLine(object):
         if ( (a1x < x < a2x) or (a1x > x > a2x) ) and ( (a1y < y < a2y) or (a1y > y > a2y) ):
 
             # calculate the distance between the lines:
-            self_z = self.getZbyXY(x,y)
-            other_z = other.getZbyXY(x,y)
+            try:
+                self_z = self.getZbyXY(x,y)
+                other_z = other.getZbyXY(x,y)
 
-            dist = abs(other_z - self_z)
+                dist = abs(other_z - self_z)
+            except:
+                return True
 
             # if the distance is smaller than the minimum distance, we can't use the map
             if dist < MIN_DIST:
