@@ -35,7 +35,7 @@ class Track3d(object):
         #?Show the Mesh
         ##TODO
         ##Debugprint
-        print self.varthickness
+        print "Thickness Vectors:", self.varthickness
         #return List
         #return self.varthickness
 
@@ -54,19 +54,21 @@ class Track3d(object):
         new_street_data = street_data
         for i in range (len(street_data)):
             new_street_data = new_street_data + (Vec2(((street_data[i][0]*(-1)),(street_data[i][1]))),)
-        print new_street_data
+        print "Street Data:", new_street_data
         return new_street_data
 
 
     def creatingVertex(self, track_points, street_data):
         #Math: self.varthickness are the midd points
         #for every Street Point create one Vertex by x*varthickness+Center and high+Center
+        liste = []
         for i in range (len(track_points)):
             for j in range (len(street_data)):
-                track_points[i][0] + (self.varthickness[i][0]*street_data[j][0])   #x
-                track_points[i][0] + (self.varthickness[i][1]*street_data[j][0])   #y
-                track_points[i][0] + (self.varthickness[i][2]+street_data[j][1])   #z
-        pass
+                liste.append((track_points[i][0] + (self.varthickness[i][0]*street_data[j][0]), track_points[i][1] + (self.varthickness[i][1]*street_data[j][0]), track_points[i][2] + (self.varthickness[i][2]+street_data[j][1])))
+##                track_points[i][0] + (self.varthickness[i][0]*street_data[j][0])   #x
+##                track_points[i][1] + (self.varthickness[i][1]*street_data[j][0])   #y
+##                track_points[i][2] + (self.varthickness[i][2]+street_data[j][1])   #z
+        print "Final Vertex:", liste
 
 #Test
 tuple1 = ((1.0,2.0,3.0),(3.0,4.0,5.0),(6.0,4.0,2.0),(8.0,3.0,6.0),(4.0,7.0,2.0))
@@ -74,10 +76,10 @@ tuple2 = ((-2.0, -3.0, 0.0),(1.0, -5.0, 0.0),(4.0, -4.0, 0.0),(6.0, 0.0, 0.0),(3
 tuple3 = ((10.0,10.0,0.0),(10.0,-10.0,0.0),(-10.0,-10.0,0.0),(-10.0,10.0,0.0))
 
 #Test with real Data
-m = Track(800,600)
+m = Track(80,60, 50)
 m.generateTrack()
-tuple4 = m.getInterpolatedPoints(1000)
-print tuple4
+tuple4 = m.getInterpolatedPoints(50)
+print "Imput Centers:", tuple4
 streetData = (Vec2(1,1),Vec2(5,1),Vec2(6,2))
 
 Track3d(tuple4, streetData)
