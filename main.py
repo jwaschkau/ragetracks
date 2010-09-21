@@ -11,7 +11,6 @@ import inputdevice
 import player
 import splitScreen
 
-
 # -----------------------------------------------------------------
 # -----------------------------------------------------------------
 # -----------------------------------------------------------------
@@ -23,6 +22,7 @@ class Game(ShowBase):
         '''
         '''
         ShowBase.__init__(self)
+        #PStatClient.connect() #activate to start performance measuring with pstats
         base.setFrameRateMeter(True) #Show the Framerate
         base.camNode.setActive(False) #disable default cam 
 
@@ -35,8 +35,9 @@ class Game(ShowBase):
 
         #Initialize needed variables and objects
         self.players = [] #holds the player objects
-        self.TRACK_GRIP = 20000.0
-        self.FRICTION = 5000
+        self.TRACK_GRIP = 0.5
+        self.LINEAR_FRICTION = 0.9
+        self.ANGULAR_FRICTION = 0.9
         #self.splitScreen = splitScreen.SplitScreen(0)
 
         #Initialize Physics (ODE)
@@ -49,7 +50,7 @@ class Game(ShowBase):
         self.space = OdeSimpleSpace()
         #Initialize the surface-table, it defines how objects interact with each other
         self.world.initSurfaceTable(1)
-        self.world.setSurfaceEntry(0, 0, 1500, 0.0, 0.0, 0.009, 0.00001, 0.0, 0.000002)
+        self.world.setSurfaceEntry(0, 0, 150, 0.0, 9.1, 0.9, 0.00001, 0.0, 0.002)
         self.space.setAutoCollideWorld(self.world) 
         self.contactgroup = OdeJointGroup()
         self.space.setAutoCollideJointGroup(self.contactgroup)
@@ -151,44 +152,29 @@ class Game(ShowBase):
         body2 = entry.getBody2()
         
         #Handles the collision-rays from the players
-##        for player in self.players:
-##            for ray in player.getVehicle().getCollisionRays():
-##                if geom1 == ray or geom2 == ray:
-##                    force_pos = ray.getPosition()
-##                    contact = entry.getContactPoint(0)
-##                    force_dir = force_pos - contact
-##                    acceleration = (ray.getLength()) - force_dir.length()
-##                    stabilizer = (force_dir.length())
-##                    print "acc: ", acceleration
-##                    print "stab: ", stabilizer
-##                    force_dir.normalize()
-##                    force1_dir = Vec3(force_dir[0]*acceleration*self.TRACK_GRIP,force_dir[1]*acceleration*self.TRACK_GRIP,force_dir[2]*acceleration*self.TRACK_GRIP)  
-##                    #print "force1: ", force_dir
-##                    force2_dir = (Vec3(-(force_dir[0]*stabilizer*self.TRACK_GRIP),-(force_dir[1]*stabilizer*self.TRACK_GRIP),-(force_dir[2]*stabilizer*self.TRACK_GRIP))) 
-##                    #print "force2: ", force2_dir
-##                    player.getVehicle().getPhysicsModel().addForceAtPos(force1_dir, force_pos)
-##                    player.getVehicle().getPhysicsModel().addForceAtPos(force2_dir, force_pos)
-##                    print "force: ", force1_dir, force2_dir
-                    
         for player in self.players:
             for ray in player.getVehicle().getCollisionRays():
                 if geom1 == ray or geom2 == ray:
                     force_pos = ray.getPosition()
                     contact = entry.getContactPoint(0)
                     force_dir = force_pos - contact
-                    acceleration = ((ray.getLength() / 2)-force_dir.length())
-                    acceleration = (acceleration/abs(acceleration))*(acceleration**2)
+                    acceleration = (ray.getLength()-force_dir.length())#*self.TRACK_GRIP
+##                    #acceleration = (acceleration/abs(acceleration))*(acceleration**2) #logarithmic force
+##                    if acceleration < -0.2 and acceleration > 0.2:
+##                        acceleration = 0
+##                    else:
+##                        acceleration = (acceleration/abs(acceleration))*(acceleration**2) #logarithmic force
+                    #print acceleration
                     if force_dir.length() < (ray.getLength() / 2):
                         force_dir.normalize()
-                        force_dir = Vec3(force_dir[0]*acceleration*self.TRACK_GRIP,force_dir[1]*acceleration*self.TRACK_GRIP,force_dir[2]*acceleration*self.TRACK_GRIP) 
+                        force_dir = Vec3(force_dir[0]*acceleration,force_dir[1]*acceleration,force_dir[2]*acceleration) 
                     else:
                         force_dir.normalize()
-                        force_dir = Vec3(force_dir[0]*acceleration*self.TRACK_GRIP,force_dir[1]*acceleration*self.TRACK_GRIP,force_dir[2]*acceleration*self.TRACK_GRIP) 
-                    #print force_dir
-                    
+                        force_dir = Vec3(force_dir[0]*acceleration,force_dir[1]*acceleration,force_dir[2]*acceleration)
+                    #print acceleration
                     player.getVehicle().getPhysicsModel().addForceAtPos(force_dir, force_pos)
-                    #player.getVehicle().getPhysicsModel().setForce(force_dir)
-    # -----------------------------------------------------------------
+   
+ # -----------------------------------------------------------------
              
     def gameTask(self, task):
         '''
@@ -197,19 +183,14 @@ class Game(ShowBase):
         #calculate the physics
         self.space.autoCollide() # Setup the contact joints
 
-        self.deltaTimeAccumulator += globalClock.getDt()
-        while self.deltaTimeAccumulator > self.stepSize:
-            # Remove a stepSize from the accumulator until
-            # the accumulated time is less than the stepsize
-            # Step the simulation
-            for player in self.players:                  # refresh player specific things (rays)
-                player.doStep()
+        self.deltaTimeAccumulator += globalClock.getDt()  
+        while self.deltaTimeAccumulator > self.stepSize: # Step the simulation
+            for player in self.players:  
+                player.doStep() #refresh player specific things (rays) 
                 #calculate airresistance
-                velocity = player.getVehicle().getPhysicsModel().getLinearVel()
-                player.getVehicle().getPhysicsModel().addForce(-(Vec3(self.FRICTION * velocity[0],self.FRICTION * velocity[1],self.FRICTION * velocity[2])))      
-                #torque = player.getVehicle().getPhysicsModel().getAngularVel()
-                #player.getVehicle().getPhysicsModel().addTorque(-(Vec3(self.FRICTION * torque[0],self.FRICTION * torque[1],self.FRICTION * torque[2])))
-            self.deltaTimeAccumulator -= self.stepSize
+                player.getVehicle().getPhysicsModel().addForce(player.getVehicle().getPhysicsModel().getLinearVel()*-self.LINEAR_FRICTION)  
+                player.getVehicle().getPhysicsModel().addTorque(player.getVehicle().getPhysicsModel().getAngularVel()*-self.ANGULAR_FRICTION)    
+            self.deltaTimeAccumulator -= self.stepSize # Remove a stepSize from the accumulator until the accumulated time is less than the stepsize
             self.world.quickStep(self.stepSize)
         for player in self.players:                      # set new positions
             player.getVehicle().getModel().setPosQuat(render, player.getVehicle().getPhysicsModel().getPosition(), Quat(player.getVehicle().getPhysicsModel().getQuaternion()))
