@@ -155,10 +155,11 @@ class Game(ShowBase):
         for player in self.players:
             for ray in player.getVehicle().getCollisionRays():
                 if geom1 == ray or geom2 == ray:
+                    player.getVehicle().getPhysicsModel().setGravityMode(0) #disable gravity if on the track
                     force_pos = ray.getPosition()
                     contact = entry.getContactPoint(0)
                     force_dir = force_pos - contact
-                    acceleration = (ray.getLength()-force_dir.length())#*self.TRACK_GRIP
+                    acceleration = (ray.getLength()/2-force_dir.length())#*self.TRACK_GRIP
 ##                    #acceleration = (acceleration/abs(acceleration))*(acceleration**2) #logarithmic force
 ##                    if acceleration < -0.2 and acceleration > 0.2:
 ##                        acceleration = 0
@@ -171,7 +172,7 @@ class Game(ShowBase):
                     else:
                         force_dir.normalize()
                         force_dir = Vec3(force_dir[0]*acceleration,force_dir[1]*acceleration,force_dir[2]*acceleration)
-                    #print acceleration
+                    print acceleration
                     player.getVehicle().getPhysicsModel().addForceAtPos(force_dir, force_pos)
    
  # -----------------------------------------------------------------
@@ -194,6 +195,7 @@ class Game(ShowBase):
             self.world.quickStep(self.stepSize)
         for player in self.players:                      # set new positions
             player.getVehicle().getModel().setPosQuat(render, player.getVehicle().getPhysicsModel().getPosition(), Quat(player.getVehicle().getPhysicsModel().getQuaternion()))
+            player.getVehicle().getPhysicsModel().setGravityMode(1) #enable gravity
         self.contactgroup.empty() # Clear the contact joints
         return task.cont
     # -----------------------------------------------------------------
