@@ -9,6 +9,176 @@
 from panda3d.core import * 
 from trackgen import Track
 from pandac.PandaModules import GeomVertexFormat, Geom, GeomVertexWriter, GeomTristrips, GeomNode
+import xml.dom.minidom as dom
+from xml.dom.minidom import Document
+
+# -------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------
+
+class StreetData(object):
+    '''
+    describes the shape of the road e.g. |__/\__|
+    '''
+    def __init__(self, *args, **kwds):
+        '''
+        '''
+        self.points = []
+        self.name = "street part"
+        self.author = "Rage Tracks Team"
+        self.mirrored = True
+        print kwds.keys()
+        for arg in args:
+            if type(arg) == Vec2:
+                self.points.append(arg)
+        
+        if "name" in kwds.keys():
+            self.name = str(kwds["name"])
+        
+        if "author" in kwds.keys():
+            self.author = str(kwds["author"])
+        
+        if "mirrored" in kwds.keys():
+            self.mirrored = bool(kwds["mirrored"])
+        
+        # if the points should be mirrored, we'll do it
+        if self.mirrored:
+            self.mirrorPoints()
+        
+    # -------------------------------------------------------------------------------------
+
+    def addPoint(self, x, y):
+        '''
+        adds a point to the road
+        notice: the points are connected in the same order, they're added
+        @param x: (float) x-coordinate
+        @param y: (float) y-coordinate
+        '''
+        self.points.append(Vec2(x,y))
+    
+    # -------------------------------------------------------------------------------------
+
+    def readFile(self, filename):
+        '''
+        reads the shape out of a file
+        @param filename: (str) the filename
+        '''
+        
+        # open file
+        xmlfile = dom.parse(filename)
+        
+        # create the root element
+        xml = xmlfile.getElementsByTagName("xml").item(0)
+        self.name = xml.getAttribute("name") # read name and author out of root
+        self.author = xml.getAttribute("author")
+        
+        # check if the points should be mirrored
+        mirrored = xml.getAttribute("mirrored")
+        if mirrored == "False":
+            self.mirrored = False
+        else:
+            self.mirrored = True
+        
+        # read out the points
+        points = xml.getElementsByTagName("point")
+        pointcount = points.length
+        for i in xrange(pointcount):
+            point = points.item(i)
+            x = float(point.getAttribute("x"))
+            y = float(point.getAttribute("y"))
+            self.points.append(Vec2(x, y))
+    
+        # if the points should be mirrored, we'll do it
+        if self.mirrored:
+            self.mirrorPoints()
+
+    
+    # -------------------------------------------------------------------------------------
+    
+    def mirrorPoints(self):
+        '''
+        mirrors the point at y axis
+        '''
+        pointlist = []
+        for point in self.points:
+            if point.getX() >= 0:
+                pointlist.append(point)
+                if point.getX() != 0:
+                    pointlist.insert(0,Vec2(point.getX()*-1,point.getY()))
+        self.points = pointlist
+    
+    # -------------------------------------------------------------------------------------
+    
+    def writeFile(self, filename):
+        '''
+        writes the shape into a file
+        @param filename: (str) the filename
+        '''
+        # create the document
+        doc = Document()
+
+        # chreate the root element
+        xml = doc.createElement("xml")
+        
+        # the name, author and information if the points are mirrored
+        xml.setAttribute("mirrored", str(self.mirrored))
+        xml.setAttribute("name", self.name)
+        xml.setAttribute("author", self.author)
+        doc.appendChild(xml)
+
+        # insert the points
+        points = doc.createElement("points")
+        
+        for point in self.points:
+            print point
+            p = doc.createElement("point")
+            p.setAttribute("x", str(point.getX()))
+            p.setAttribute("y", str(point.getY()))
+            points.appendChild(p)
+
+        xml.appendChild(points)
+
+        # write it into a file
+        f = file(filename, "w")
+        doc.writexml(f, addindent="   ", newl="\n")
+        f.close()
+    
+        
+    # -------------------------------------------------------------------------------------
+    
+    def __str__(self):
+            '''
+            returns a string representation e.g. for printing
+            '''
+            return str(self.points)
+        
+    # -------------------------------------------------------------------------------------
+    
+    def __getitem__(self, index):
+        '''
+        this method is used for indexing like street_data[1]
+        '''
+        return self.points[index]
+    
+    # -------------------------------------------------------------------------------------
+    
+    def __len__(self):
+        '''
+        returns the count of the points
+        '''
+        return len(self.points)
+    
+    # -------------------------------------------------------------------------------------
+    
+    def getLength(self):
+        '''
+        returns the count of the points
+        '''
+        return len(self.points)
+    
+# -------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------
 
 class Track3d(object):
     varthickness = []  #Generate the Vector for thickness of the road
@@ -20,7 +190,7 @@ class Track3d(object):
         '''
         '''
         #street_data = (Vec2(4.0,4.0), Vec2(10.0,10.0), Vec2(10.0,0.0), Vec2(4.0,0.0), Vec2(0.0,-1.0))
-        street_data = (Vec2(4.0,0.0), Vec2(10.0,0.0)) #, Vec2(15.0,0.0)
+        street_data = StreetData(Vec2(4.0,0.0), Vec2(10.0,0.0), mirrored=True) #, Vec2(15.0,0.0)
         
         self.vdata = GeomVertexData('name', GeomVertexFormat.getV3n3c4t2(), Geom.UHStatic) 
         #self.vdata = GeomVertexData('name', GeomVertexFormat.getV3c4t2(), Geom.UHStatic) 
@@ -50,8 +220,6 @@ class Track3d(object):
         for i in self.varthickness:
             i.normalize()
             print i.length()
-        #Flip the Street to double sided
-        street_data = self.flipToDoubleSided(street_data)
         #Creating the Vertex
         self.creatingVertex(track_points, street_data)
         #Connect the Vertex
@@ -73,15 +241,6 @@ class Track3d(object):
     def getVarthickness(self):
         return self.varthickness
     
-
-    def flipToDoubleSided(self, street_data):
-        #Flipps only the x with *-1 to the negativ side
-        new_street_data = street_data
-        for i in range (len(street_data)):
-            new_street_data =  (Vec2(((street_data[i][0]*(-1)),(street_data[i][1]))),) + new_street_data
-        print "Street Data:", new_street_data
-        return new_street_data
-
 
     def creatingVertex(self, track_points, street_data):
         #Math: self.varthickness are the midd points

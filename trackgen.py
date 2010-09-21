@@ -322,8 +322,7 @@ class Track(object):
                         #n += 1
 
 
-        ####
-        #### INTERPOLATION DURCH NURBS
+        # INTERPOLATION DURCH NURBS
         self.curve = NurbsCurve()
         for point in self.points:
             self.curve.appendCv(point[0],point[1],point[2])
@@ -336,64 +335,64 @@ class Track(object):
         
 
 
-        # ================= TEST ================
-        # === Strecke in Bitmap visualisieren ===
-        # =======================================
-        bmp = bitmap24.Bitmap24("", self.size[0]+1, self.size[1]+1)
-
-        last = None
-        for i in(self.points):
-
-            if last == None:
-                last = i
-                continue
-
-            if i[2] != 0:
-                rgb = int((float(i[2])/self.size[2])*200)
-
-            bmp.drawLine(last[0], last[1], i[0], i[1], (rgb,rgb,rgb) )
-
-            last = i
-
-        #bmp.drawLine(self.points[0][0], self.points[0][1], self.points[-1][0], self.points[-1][1])
-        bmp.drawDigit(0, self.points[0][0], self.points[0][1], (255,0,0))
-        bmp.drawPixel(self.points[-2][0], self.points[-2][1], (0,255,0))
-        bmp.writeBitmap("test1.bmp")
-        # =======================================
-
-
-        # ================= TEST ================
-        # === Strecke in Bitmap visualisieren ===
-        # =======================================
-        bmp = bitmap24.Bitmap24("", self.size[0]+1, self.size[1]+1)
-
-        last = None
-
-        resolution = 100
-        
-        point = Vec3(0,0,0)
-        length = self.curve.getMaxT()
-        print length
-
-        for i in xrange(0,resolution):
-            self.curve.getPoint(i*(length/resolution), point)
-
-            if last == None:
-                last = copy.deepcopy(point)
-                continue
-
-            if point.getZ() != 0:
-                rgb = int((float(point.getZ())/self.size[2])*200)
-
-            bmp.drawLine(last.getX(), last.getY(), point.getX(), point.getY(), (rgb,rgb,rgb) )
-            #bmp.writeBitmap("test/"+str(i)+".bmp")
-
-            last = copy.deepcopy(point)
-
-        bmp.drawDigit(0, self.points[0][0], self.points[0][1], (255,0,0))
-        bmp.drawPixel(self.points[-2][0], self.points[-2][1], (0,255,0))
-
-        bmp.writeBitmap("test2.bmp")
+##        # ================= TEST ================
+##        # === Strecke in Bitmap visualisieren ===
+##        # =======================================
+##        bmp = bitmap24.Bitmap24("", self.size[0]+1, self.size[1]+1)
+##
+##        last = None
+##        for i in(self.points):
+##
+##            if last == None:
+##                last = i
+##                continue
+##
+##            if i[2] != 0:
+##                rgb = int((float(i[2])/self.size[2])*200)
+##
+##            bmp.drawLine(last[0], last[1], i[0], i[1], (rgb,rgb,rgb) )
+##
+##            last = i
+##
+##        #bmp.drawLine(self.points[0][0], self.points[0][1], self.points[-1][0], self.points[-1][1])
+##        bmp.drawDigit(0, self.points[0][0], self.points[0][1], (255,0,0))
+##        bmp.drawPixel(self.points[-2][0], self.points[-2][1], (0,255,0))
+##        bmp.writeBitmap("test1.bmp")
+##        # =======================================
+##
+##
+##        # ================= TEST ================
+##        # === Strecke in Bitmap visualisieren ===
+##        # =======================================
+##        bmp = bitmap24.Bitmap24("", self.size[0]+1, self.size[1]+1)
+##
+##        last = None
+##
+##        resolution = 100
+##        
+##        point = Vec3(0,0,0)
+##        length = self.curve.getMaxT()
+##        print length
+##
+##        for i in xrange(0,resolution):
+##            self.curve.getPoint(i*(length/resolution), point)
+##
+##            if last == None:
+##                last = copy.deepcopy(point)
+##                continue
+##
+##            if point.getZ() != 0:
+##                rgb = int((float(point.getZ())/self.size[2])*200)
+##
+##            bmp.drawLine(last.getX(), last.getY(), point.getX(), point.getY(), (rgb,rgb,rgb) )
+##            #bmp.writeBitmap("test/"+str(i)+".bmp")
+##
+##            last = copy.deepcopy(point)
+##
+##        bmp.drawDigit(0, self.points[0][0], self.points[0][1], (255,0,0))
+##        bmp.drawPixel(self.points[-2][0], self.points[-2][1], (0,255,0))
+##
+##        bmp.writeBitmap("test2.bmp")
         
     # -------------------------------------------------------------------------------------
 
