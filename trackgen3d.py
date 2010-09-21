@@ -20,13 +20,30 @@ class StreetData(object):
     '''
     describes the shape of the road e.g. |__/\__|
     '''
-    def __init__(self):
+    def __init__(self, *args, **kwds):
         '''
         '''
         self.points = []
-        self.name = "street part1"
-        self.author = "Rage Tracks Team1"
+        self.name = "street part"
+        self.author = "Rage Tracks Team"
         self.mirrored = True
+        print kwds.keys()
+        for arg in args:
+            if type(arg) == Vec2:
+                self.points.append(arg)
+        
+        if "name" in kwds.keys():
+            self.name = str(kwds["name"])
+        
+        if "author" in kwds.keys():
+            self.author = str(kwds["author"])
+        
+        if "mirrored" in kwds.keys():
+            self.mirrored = bool(kwds["mirrored"])
+        
+        # if the points should be mirrored, we'll do it
+        if self.mirrored:
+            self.mirrorPoints()
         
     # -------------------------------------------------------------------------------------
 
@@ -73,14 +90,22 @@ class StreetData(object):
     
         # if the points should be mirrored, we'll do it
         if self.mirrored:
-            pointlist = []
-            for point in self.points:
-                if point.getX() >= 0:
-                    pointlist.append(point)
-                    if point.getX() != 0:
-                        pointlist.insert(0,Vec2(point.getX()*-1,point.getY()))
-            self.points = pointlist
+            self.mirrorPoints()
 
+    
+    # -------------------------------------------------------------------------------------
+    
+    def mirrorPoints(self):
+        '''
+        mirrors the point at y axis
+        '''
+        pointlist = []
+        for point in self.points:
+            if point.getX() >= 0:
+                pointlist.append(point)
+                if point.getX() != 0:
+                    pointlist.insert(0,Vec2(point.getX()*-1,point.getY()))
+        self.points = pointlist
     
     # -------------------------------------------------------------------------------------
     
@@ -165,7 +190,7 @@ class Track3d(object):
         '''
         '''
         #street_data = (Vec2(4.0,4.0), Vec2(10.0,10.0), Vec2(10.0,0.0), Vec2(4.0,0.0), Vec2(0.0,-1.0))
-        street_data = (Vec2(4.0,0.0), Vec2(10.0,0.0)) #, Vec2(15.0,0.0)
+        street_data = StreetData(Vec2(4.0,0.0), Vec2(10.0,0.0), mirrored=True) #, Vec2(15.0,0.0)
         
         self.vdata = GeomVertexData('name', GeomVertexFormat.getV3n3c4t2(), Geom.UHStatic) 
         #self.vdata = GeomVertexData('name', GeomVertexFormat.getV3c4t2(), Geom.UHStatic) 
@@ -195,8 +220,6 @@ class Track3d(object):
         for i in self.varthickness:
             i.normalize()
             print i.length()
-        #Flip the Street to double sided
-        street_data = self.flipToDoubleSided(street_data)
         #Creating the Vertex
         self.creatingVertex(track_points, street_data)
         #Connect the Vertex
@@ -218,15 +241,6 @@ class Track3d(object):
     def getVarthickness(self):
         return self.varthickness
     
-
-    def flipToDoubleSided(self, street_data):
-        #Flipps only the x with *-1 to the negativ side
-        new_street_data = street_data
-        for i in range (len(street_data)):
-            new_street_data =  (Vec2(((street_data[i][0]*(-1)),(street_data[i][1]))),) + new_street_data
-        print "Street Data:", new_street_data
-        return new_street_data
-
 
     def creatingVertex(self, track_points, street_data):
         #Math: self.varthickness are the midd points
