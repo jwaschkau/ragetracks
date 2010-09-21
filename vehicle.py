@@ -34,8 +34,8 @@ class Vehicle(object):
         
         self.model = loader.loadModel("data/models/vehicle01")
         self.model.reparentTo(render)
-        self.model.setPos(0,30,10)
-        self.model.setHpr(0,0,0)
+        self.model.setPos(0,30,100)
+        self.model.setHpr(0,0,10)
         
         #Initialize the physics-simulation for the vehicle
         self.physics_model = OdeBody(self.ode_world)
@@ -48,7 +48,9 @@ class Vehicle(object):
         self.physics_model.setMass(self.physics_mass)
         
         #Initialize the collision-model of the vehicle
-        self.collision_model = OdeTriMeshGeom(self.ode_space, OdeTriMeshData(self.model, True))
+        ##for use with blender models
+        ##self.collision_model = OdeTriMeshGeom(self.ode_space, OdeTriMeshData(self.model, True))
+        self.collision_model = OdeBoxGeom(self.ode_space, 4,8,4)
         self.collision_model.setBody(self.physics_model)
         self.collision_model.setCollideBits(1)
         self.collision_model.setCategoryBits(0)
