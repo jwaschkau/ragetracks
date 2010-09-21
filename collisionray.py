@@ -9,7 +9,7 @@ from wiregeom import WireGeom
 class CollisionRay(object):
     '''
     '''
-    def __init__(self, position, direction, ode_space, length = 1.0, parent = None ,debug = True, collide_bits = 2, category_bits = 0 ):
+    def __init__(self, position, direction, ode_space, length = 1.0, parent = None ,debug = False, collide_bits = 2, category_bits = 0 ):
         '''
         '''
         self.ode_space = ode_space
@@ -39,12 +39,11 @@ class CollisionRay(object):
         needs to be executed everytime ode.quickStep gets executed
         '''
         
-        ##the calculation of the position seems to be broken
         relative_pos = self.parent.getQuaternion().xform(self.position)
         relative_vec = self.parent.getQuaternion().xform(self.direction)
         self.ray.set(self.parent.getPosition() + relative_pos, 
                     relative_vec)
-        #print "par: ",self.parent.getPosition(),"rel: ", relative_pos,"real: ",self.position
+
         if self.debug:
             self.drawray.setPos (self.parent.getPosition() + relative_pos)
             self.drawray.setHpr(Quat(0.0,relative_vec[0]/2,relative_vec[1]/2,relative_vec[2]/2).getHpr())

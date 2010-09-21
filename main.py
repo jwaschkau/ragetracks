@@ -79,8 +79,8 @@ class Game(ShowBase):
         
         #m.addOption("NewGame", self.newGame)
         #m.addOption("AddPlayer", self.addPlayer)
-        self.track = trackgen3d.Track3d(10, 800, 600, 50)
-        nodePath = self.render.attachNewNode(self.track.createMesh())
+        #self.track = trackgen3d.Track3d(10, 800, 600, 50)
+        #nodePath = self.render.attachNewNode(self.track.createMesh())
 
         #Start the Game for testing purpose
         self.newGame()
