@@ -25,12 +25,11 @@ class CollisionRay(object):
         if self.debug:
             self.drawray = WireGeom().generate ('ray', length=length)
             self.drawray.reparentTo(render)
-            self.drawray.setPos (self.position[0] + self.parent.getPosition()[0], 
-                            self.position[1]  + self.parent.getPosition()[1], 
-                            self.position[2] + self.parent.getPosition()[2])
             
-            relative_vec = self.parent.getRotation().xform(self.direction)
-            self.drawray.setHpr (Quat(0.0, relative_vec[2], relative_vec[1], relative_vec[0],).getHpr())
+            relative_pos = self.parent.getQuaternion().xform(self.position)
+            relative_vec = self.parent.getQuaternion().xform(self.direction)
+            self.drawray.setPos (self.parent.getPosition() + relative_pos)
+            self.drawray.setHpr (0,180,0)
         
     # ---------------------------------------------------------
     
@@ -41,16 +40,15 @@ class CollisionRay(object):
         '''
         
         ##the calculation of the position seems to be broken
-        relative_vec = self.parent.getRotation().xform(self.direction)	
-        self.ray.set(self.parent.getPosition() + self.position, 
+        relative_pos = self.parent.getQuaternion().xform(self.position)
+        relative_vec = self.parent.getQuaternion().xform(self.direction)
+        self.ray.set(self.parent.getPosition() + relative_pos, 
                     relative_vec)
-        
+        #print "par: ",self.parent.getPosition(),"rel: ", relative_pos,"real: ",self.position
         if self.debug:
-            self.drawray.setPos (self.position[0] + self.parent.getPosition()[0], 
-                            self.position[1]  + self.parent.getPosition()[1], 
-                            self.position[2] + self.parent.getPosition()[2])
-            
-            self.drawray.setHpr (Quat(0.0, relative_vec[2], relative_vec[1], relative_vec[0],).getHpr())
+            self.drawray.setPos (self.parent.getPosition() + relative_pos)
+            self.drawray.setHpr(Quat(0.0,relative_vec[0]/2,relative_vec[1]/2,relative_vec[2]/2).getHpr())
+##            self.drawray.setHpr(Quat(Vec4(0,0,relative_vec[2],relative_vec[1])).getHpr())
 
         
     # ---------------------------------------------------------
