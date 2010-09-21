@@ -76,11 +76,19 @@ class Game(ShowBase):
         # Add the main menu (though this is only temporary:
         # the menu should me a member-variable, not a local one)
         #m = menu3D.Menu()
-        
+                
+        #LICHT
+        plight = PointLight('plight')
+        plight.setColor(VBase4(0.2, 0.2, 0.2, 1))
+        plnp = render.attachNewNode(plight)
+        plnp.setPos(10, 20, 0)
+        render.setLight(plnp)
+
         #m.addOption("NewGame", self.newGame)
         #m.addOption("AddPlayer", self.addPlayer)
-        #self.track = trackgen3d.Track3d(10, 800, 600, 50)
-        #nodePath = self.render.attachNewNode(self.track.createMesh())
+        self.track = trackgen3d.Track3d(10, 800, 600, 50)
+        nodePath = self.render.attachNewNode(self.track.createMesh())
+        #nodePath.setTwoSided(True)
 
         #Start the Game for testing purpose
         self.newGame()
