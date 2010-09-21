@@ -32,6 +32,7 @@ class Game(ShowBase):
 
         # initialize the input devices
         self.devices = inputdevice.InputDevices(self.settings.getInputSettings())
+        taskMgr.add(self.devices.fetchEvents, "fetchEvents")
 
         #Initialize needed variables and objects
         self.players = [] #holds the player objects
@@ -160,7 +161,7 @@ class Game(ShowBase):
                     contact = entry.getContactPoint(0)
                     force_dir = force_pos - contact
                     acceleration = (ray.getLength()/2-force_dir.length())#*self.TRACK_GRIP
-##                    #acceleration = (acceleration/abs(acceleration))*(acceleration**2) #logarithmic force
+                    ##acceleration = (acceleration/abs(acceleration))*(acceleration**2) #logarithmic force
 ##                    if acceleration < -0.2 and acceleration > 0.2:
 ##                        acceleration = 0
 ##                    else:
@@ -168,12 +169,12 @@ class Game(ShowBase):
                     #print acceleration
                     if force_dir.length() < (ray.getLength() / 2):
                         force_dir.normalize()
-                        force_dir = Vec3(force_dir[0]*acceleration,force_dir[1]*acceleration,force_dir[2]*acceleration) 
+                        force_dir = Vec3(force_dir[0]*acceleration,force_dir[1]*acceleration,force_dir[2]*acceleration)
+                        player.getVehicle().getPhysicsModel().addForceAtPos(force_dir, force_pos) 
                     else:
                         force_dir.normalize()
                         force_dir = Vec3(force_dir[0]*acceleration,force_dir[1]*acceleration,force_dir[2]*acceleration)
-                    print acceleration
-                    player.getVehicle().getPhysicsModel().addForceAtPos(force_dir, force_pos)
+                        player.getVehicle().getPhysicsModel().addForce(force_dir)
    
  # -----------------------------------------------------------------
              
@@ -188,6 +189,14 @@ class Game(ShowBase):
         while self.deltaTimeAccumulator > self.stepSize: # Step the simulation
             for player in self.players:  
                 player.doStep() #refresh player specific things (rays) 
+                
+                #get the player input and set the forces
+                if player.getDevice().boost:
+                    player.getVehicle().setBoost()
+                if player.getDevice().directions[0] != 0 or player.getDevice().directions[1] != 0:
+                    player.getVehicle().setDirection(player.getDevice().directions)
+                
+                
                 #calculate airresistance
                 player.getVehicle().getPhysicsModel().addForce(player.getVehicle().getPhysicsModel().getLinearVel()*-self.LINEAR_FRICTION)  
                 player.getVehicle().getPhysicsModel().addTorque(player.getVehicle().getPhysicsModel().getAngularVel()*-self.ANGULAR_FRICTION)    

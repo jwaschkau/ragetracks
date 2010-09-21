@@ -29,6 +29,9 @@ class Vehicle(object):
         '''
         Choose what vehicle the player has chosen. This method initializes all data of this vehicle
         '''
+        self.boost_strength = 100
+        self.control_strength = 0.1
+        
         self.model = loader.loadModel("data/models/vehicle01")
         self.model.reparentTo(render)
         self.model.setPos(0,30,10)
@@ -51,10 +54,10 @@ class Vehicle(object):
         self.collision_model.setCategoryBits(0)
 
         #Add collision-rays for the floating effect
-        self.front_left = CollisionRay(Vec3(-2,4,-1), Vec3(0,0,-1), self.ode_space, parent = self.collision_model, length = 10.0)
-        self.front_right = CollisionRay(Vec3(2,4,-1), Vec3(0,0,-1), self.ode_space, parent = self.collision_model, length = 10.0)
-        self.back_left= CollisionRay(Vec3(-2,-4,-1), Vec3(0,0,-1), self.ode_space, parent = self.collision_model, length = 10.0)
-        self.back_right = CollisionRay(Vec3(2,-4,-1), Vec3(0,0,-1), self.ode_space, parent = self.collision_model, length = 10.0)
+        self.front_left = CollisionRay(Vec3(-2,4,-1), Vec3(0,0,-1), self.ode_space, parent = self.collision_model, length = 14.0)
+        self.front_right = CollisionRay(Vec3(2,4,-1), Vec3(0,0,-1), self.ode_space, parent = self.collision_model, length = 14.0)
+        self.back_left= CollisionRay(Vec3(-2,-4,-1), Vec3(0,0,-1), self.ode_space, parent = self.collision_model, length = 14.0)
+        self.back_right = CollisionRay(Vec3(2,-4,-1), Vec3(0,0,-1), self.ode_space, parent = self.collision_model, length = 14.0)
       
     # ---------------------------------------------------------
     
@@ -132,6 +135,23 @@ class Vehicle(object):
         '''
         '''
         model.setScale(x,y,z)
+        
+    # ---------------------------------------------------------
+    
+    def setBoost(self):
+        '''
+        Boosts the vehicle by indicated strength
+        '''
+        direction = self.collision_model.getQuaternion().xform(Vec3(0,1,0))
+        self.physics_model.addForce(direction*self.boost_strength)
+        
+    def setDirection(self, dir):
+        '''
+        Boosts the vehicle by indicated strength
+        '''
+        rel_direction = self.collision_model.getQuaternion().xform(Vec3(0,dir[0],dir[1]))
+        rel_position = self.collision_model.getQuaternion().xform(Vec3(-5,0,0))
+        self.physics_model.addForceAtPos( rel_position, rel_direction*self.control_strength)
         
     # ---------------------------------------------------------
     def doStep(self):
