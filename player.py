@@ -17,6 +17,10 @@ class Player(object):
         self.vehicle = vehicle.Vehicle(self.ode_world, self.ode_space) #the properties of the vehicle
         self.device = device #The inputdevice
         
+        self.camera.reparentTo(self.vehicle.getModel())
+        self.camera.setPos(0,-40,5)
+        self.camera.lookAt(self.vehicle.getModel())
+        
         #Initialize the camera
         #self.camera.reparentTo(self.vehicle.getModel())
         #self.camera.setPos(0,-30,10)
@@ -96,3 +100,6 @@ class Player(object):
         
     
     # ---------------------------------------------------------
+    
+    if __name__ == "__main__":
+        import main
