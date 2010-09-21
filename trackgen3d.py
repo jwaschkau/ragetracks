@@ -9,6 +9,151 @@
 from panda3d.core import * 
 from trackgen import Track
 from pandac.PandaModules import GeomVertexFormat, Geom, GeomVertexWriter, GeomTristrips, GeomNode
+import xml.dom.minidom as dom
+from xml.dom.minidom import Document
+
+# -------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------
+
+class StreetData(object):
+    '''
+    describes the shape of the road e.g. |__/\__|
+    '''
+    def __init__(self):
+        '''
+        '''
+        self.points = []
+        self.name = "street part1"
+        self.author = "Rage Tracks Team1"
+        self.mirrored = True
+        
+    # -------------------------------------------------------------------------------------
+
+    def addPoint(self, x, y):
+        '''
+        adds a point to the road
+        notice: the points are connected in the same order, they're added
+        @param x: (float) x-coordinate
+        @param y: (float) y-coordinate
+        '''
+        self.points.append(Vec2(x,y))
+    
+    # -------------------------------------------------------------------------------------
+
+    def readFile(self, filename):
+        '''
+        reads the shape out of a file
+        @param filename: (str) the filename
+        '''
+        
+        # open file
+        xmlfile = dom.parse(filename)
+        
+        # create the root element
+        xml = xmlfile.getElementsByTagName("xml").item(0)
+        self.name = xml.getAttribute("name") # read name and author out of root
+        self.author = xml.getAttribute("author")
+        
+        # check if the points should be mirrored
+        mirrored = xml.getAttribute("mirrored")
+        if mirrored == "False":
+            self.mirrored = False
+        else:
+            self.mirrored = True
+        
+        # read out the points
+        points = xml.getElementsByTagName("point")
+        pointcount = points.length
+        for i in xrange(pointcount):
+            point = points.item(i)
+            x = float(point.getAttribute("x"))
+            y = float(point.getAttribute("y"))
+            self.points.append(Vec2(x, y))
+    
+        # if the points should be mirrored, we'll do it
+        if self.mirrored:
+            pointlist = []
+            for point in self.points:
+                if point.getX() >= 0:
+                    pointlist.append(point)
+                    if point.getX() != 0:
+                        pointlist.insert(0,Vec2(point.getX()*-1,point.getY()))
+            self.points = pointlist
+
+    
+    # -------------------------------------------------------------------------------------
+    
+    def writeFile(self, filename):
+        '''
+        writes the shape into a file
+        @param filename: (str) the filename
+        '''
+        # create the document
+        doc = Document()
+
+        # chreate the root element
+        xml = doc.createElement("xml")
+        
+        # the name, author and information if the points are mirrored
+        xml.setAttribute("mirrored", str(self.mirrored))
+        xml.setAttribute("name", self.name)
+        xml.setAttribute("author", self.author)
+        doc.appendChild(xml)
+
+        # insert the points
+        points = doc.createElement("points")
+        
+        for point in self.points:
+            print point
+            p = doc.createElement("point")
+            p.setAttribute("x", str(point.getX()))
+            p.setAttribute("y", str(point.getY()))
+            points.appendChild(p)
+
+        xml.appendChild(points)
+
+        # write it into a file
+        f = file(filename, "w")
+        doc.writexml(f, addindent="   ", newl="\n")
+        f.close()
+    
+        
+    # -------------------------------------------------------------------------------------
+    
+    def __str__(self):
+            '''
+            returns a string representation e.g. for printing
+            '''
+            return str(self.points)
+        
+    # -------------------------------------------------------------------------------------
+    
+    def __getitem__(self, index):
+        '''
+        this method is used for indexing like street_data[1]
+        '''
+        return self.points[index]
+    
+    # -------------------------------------------------------------------------------------
+    
+    def __len__(self):
+        '''
+        returns the count of the points
+        '''
+        return len(self.points)
+    
+    # -------------------------------------------------------------------------------------
+    
+    def getLength(self):
+        '''
+        returns the count of the points
+        '''
+        return len(self.points)
+    
+# -------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------
 
 class Track3d(object):
     varthickness = []  #Generate the Vector for thickness of the road
