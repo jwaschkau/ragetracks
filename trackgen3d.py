@@ -14,16 +14,27 @@ class Track3d(object):
     varthickness = []  #Generate the Vector for thickness of the road
 
     #Vertex Vars
-    vdata = GeomVertexData('name', GeomVertexFormat.getV3n3c4t2(), Geom.UHStatic) 
-    vertex = GeomVertexWriter(vdata, 'vertex')
-    normal = GeomVertexWriter(vdata, 'normal')
-    color = GeomVertexWriter(vdata, 'color')
-    texcoord = GeomVertexWriter(vdata, 'texcoord')
 
-    def __init__(self, track_points, street_data):
+
+    def __init__(self, res, x, y, z = 50):
         '''
         '''
+        street_data = (Vec2(1,1),Vec2(5,1),Vec2(6,2))
         
+        self.vdata = GeomVertexData('name', GeomVertexFormat.getV3n3c4t2(), Geom.UHStatic) 
+        self.vertex = GeomVertexWriter(self.vdata, 'vertex')
+        self.normal = GeomVertexWriter(self.vdata, 'normal')
+        self.color = GeomVertexWriter(self.vdata, 'color')
+        self.texcoord = GeomVertexWriter(self.vdata, 'texcoord')
+        self.prim = GeomTriangles(Geom.UHStatic)
+        
+        
+        m = Track(x,y, z)
+        m.generateTrack()
+        track_points = m.getInterpolatedPoints(res)
+        print "Imput Centers:", track_points
+        
+    
         for i in range(len(track_points)-1):
             if i == 0:
                 self.varthickness.append(self.calcTheVector(track_points[len(track_points)-1],track_points[i],track_points[i+1]))
@@ -39,10 +50,9 @@ class Track3d(object):
         #Creating the Vertex
         self.creatingVertex(track_points, street_data)
         #Connect the Vertex
-        prim = GeomTriangles(Geom.UHStatic)
-        self.connectVertex(prim, self.vdata, len(street_data))
+        self.connectVertex(len(street_data))
         #?Show the Mesh
-        self.showMesh(self.vdata, prim)
+        #self.CreateMesh(self.vdata, self.prim)
         ##Debugprint
         print "Thickness Vectors:", self.varthickness
         #return List
@@ -70,10 +80,9 @@ class Track3d(object):
     def creatingVertex(self, track_points, street_data):
         #Math: self.varthickness are the midd points
         #for every Street Point create one Vertex by x*varthickness+Center and high+Center
-        liste = []
         street_data_length = len(street_data)
         for i in range (len(track_points)):
-            for j in range (street_data_length-2):
+            for j in range (street_data_length): ###WARUM war hier -2!!!!!!!!!!!!!!
                     self.vertex.addData3f((track_points[i][0] + (self.varthickness[i][0]*street_data[j][0]), track_points[i][1] + (self.varthickness[i][1]*street_data[j][0]), track_points[i][2] + (self.varthickness[i][2]+street_data[j][1])))
                     self.normal.addData3f(0, 0, 1)
                     self.color.addData4f(0, 0, 1, 1)
@@ -82,42 +91,45 @@ class Track3d(object):
 ##                track_points[i][1] + (self.varthickness[i][1]*street_data[j][0])   #y
 ##                track_points[i][2] + (self.varthickness[i][2]+street_data[j][1])   #z
 
-    def connectVertex(self, prim, vdata, j):
+    def connectVertex(self, j):
         #j = len(street_Data)
-        print "Vertex:", vdata.getNumRows()
-        for i in range (vdata.getNumRows()):
-            prim.addVertex(i)
-            prim.addVertex(i+1)
-            prim.addVertex(i+j+1)
-            prim.closePrimitive()
-            
-            prim.addVertex(i)
-            prim.addVertex(i+j)
-            prim.addVertex(i+j+1)
-            prim.closePrimitive()
-        print prim
+        print "Vertex:", self.vdata.getNumRows()
+        for i in range (self.vdata.getNumRows()-(j+1)): #-j??????  oder +-1
+            if (i+1) % j != 0:
+                self.prim.addVertex(i)
+                self.prim.addVertex(i+1)
+                self.prim.addVertex(i+j+1)
+                self.prim.closePrimitive()
+                
+                self.prim.addVertex(i)
+                self.prim.addVertex(i+j)
+                self.prim.addVertex(i+j+1)
+                self.prim.closePrimitive()
+            else:
+                print i
+        print self.prim
 
-    def showMesh(self, vdata, prim):
-        geom = Geom(vdata)
-        geom.addPrimitive(prim)
+
+
+    def createMesh(self):
+        geom = Geom(self.vdata)
+        geom.addPrimitive(self.prim)
          
         node = GeomNode('name')
         node.addGeom(geom)
          
-        nodePath = self.render.attachNewNode(node)
+        #nodePath = self.render.attachNewNode(node)
+        return node
 
-#Test
-tuple1 = ((1.0,2.0,3.0),(3.0,4.0,5.0),(6.0,4.0,2.0),(8.0,3.0,6.0),(4.0,7.0,2.0))
-tuple2 = ((-2.0, -3.0, 0.0),(1.0, -5.0, 0.0),(4.0, -4.0, 0.0),(6.0, 0.0, 0.0),(3.0, 4.0, 0.0),(-2.0, 6.0, 0.0),(-7.0, 3.0, 0.0),(-8.0, -2.0, 0.0))
-tuple3 = ((10.0,10.0,0.0),(10.0,-10.0,0.0),(-10.0,-10.0,0.0),(-10.0,10.0,0.0))
 
-#Test with real Data
-m = Track(800,600, 50)
-m.generateTrack()
-tuple4 = m.getInterpolatedPoints(10)
-print "Imput Centers:", tuple4
-streetData = (Vec2(1,1),Vec2(5,1),Vec2(6,2))
+if __name__ == "__main__":
+    #Test
+    tuple1 = ((1.0,2.0,3.0),(3.0,4.0,5.0),(6.0,4.0,2.0),(8.0,3.0,6.0),(4.0,7.0,2.0))
+    tuple2 = ((-2.0, -3.0, 0.0),(1.0, -5.0, 0.0),(4.0, -4.0, 0.0),(6.0, 0.0, 0.0),(3.0, 4.0, 0.0),(-2.0, 6.0, 0.0),(-7.0, 3.0, 0.0),(-8.0, -2.0, 0.0))
+    tuple3 = ((10.0,10.0,0.0),(10.0,-10.0,0.0),(-10.0,-10.0,0.0),(-10.0,10.0,0.0))
 
-Track3d(tuple4, streetData)
+
+
+    Track3d(10, 800, 600, 50)
 
 
