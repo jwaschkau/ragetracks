@@ -38,7 +38,7 @@ class Game(ShowBase):
         #Initialize needed variables and objects
         self.players = [] #holds the player objects
         self.TRACK_GRIP = 0.5
-        self.LINEAR_FRICTION = 0.9
+        self.LINEAR_FRICTION = 0.99
         self.ANGULAR_FRICTION = 0.9
         #self.splitScreen = splitScreen.SplitScreen(0)
 
@@ -207,10 +207,13 @@ class Game(ShowBase):
                 if player.getDevice().directions[0] != 0 or player.getDevice().directions[1] != 0:
                     player.getVehicle().setDirection(player.getDevice().directions)
                 
+                linear_velocity = player.getVehicle().getPhysicsModel().getLinearVel()
+                angular_velocity = player.getVehicle().getPhysicsModel().getAngularVel()               
                 
-                #calculate airresistance
-                player.getVehicle().getPhysicsModel().addForce(player.getVehicle().getPhysicsModel().getLinearVel()*-self.LINEAR_FRICTION)  
-                player.getVehicle().getPhysicsModel().addTorque(player.getVehicle().getPhysicsModel().getAngularVel()*-self.ANGULAR_FRICTION)    
+                #calculate airresistance to get energy out of the ode-system
+                player.getVehicle().getPhysicsModel().addForce(linear_velocity*-self.LINEAR_FRICTION)  
+                player.getVehicle().getPhysicsModel().addTorque(angular_velocity*-self.ANGULAR_FRICTION)    
+                
             self.deltaTimeAccumulator -= self.stepSize # Remove a stepSize from the accumulator until the accumulated time is less than the stepsize
             self.world.quickStep(self.stepSize)
         for player in self.players:                      # set new positions
@@ -232,10 +235,8 @@ class Game(ShowBase):
 # -----------------------------------------------------------------
 # -----------------------------------------------------------------
 
-# this code is only executed if the module is executed and not imported
-if __name__ == "__main__":
-    game = Game()
-    game.run()
+game = Game()
+game.run()
 
 
 

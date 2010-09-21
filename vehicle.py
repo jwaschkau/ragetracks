@@ -20,8 +20,12 @@ class Vehicle(object):
         self.physics_model = None
         self.physics_mass = None
         self.collision_model = None
+        self.speed = 0.0 #the actual speed of the vehicle (forward direction)
+        self.direction = Vec3(0,0,0) #the direction the car is heading
+        self.boost_strength = 0.0 #the boost propertys of the vehicle
+        self.control_strength = 0.0 #impact of the steering
         
-        self.setVehicle(name)
+        self.setVehicle(name) #set the initial vehicle
         
     # ---------------------------------------------------------
     
@@ -29,13 +33,13 @@ class Vehicle(object):
         '''
         Choose what vehicle the player has chosen. This method initializes all data of this vehicle
         '''
-        self.boost_strength = 100
+        self.boost_strength = 100.0
         self.control_strength = 0.1
         
         self.model = loader.loadModel("data/models/vehicle01")
         self.model.reparentTo(render)
         self.model.setPos(0,30,100)
-        self.model.setHpr(0,0,10)
+        self.model.setHpr(0,0,0)
         
         #Initialize the physics-simulation for the vehicle
         self.physics_model = OdeBody(self.ode_world)
@@ -151,15 +155,25 @@ class Vehicle(object):
         '''
         Boosts the vehicle by indicated strength
         '''
-        rel_direction = self.collision_model.getQuaternion().xform(Vec3(0,dir[0],dir[1]))
-        rel_position = self.collision_model.getQuaternion().xform(Vec3(-5,0,0))
-        self.physics_model.addForceAtPos( rel_position, rel_direction*self.control_strength)
+        rel_direction = self.collision_model.getQuaternion().xform(Vec3(dir[1],0,dir[0]))
+        rel_position = self.collision_model.getQuaternion().xform(Vec3(5,0,0))
+        force = Vec3(rel_direction[0]*self.direction[0]*self.control_strength*self.speed,rel_direction[1]*self.direction[1]*self.control_strength*self.speed,rel_direction[2]*self.direction[2]*self.control_strength*self.speed)
+        self.physics_model.addTorque(-rel_direction*self.control_strength*self.speed)
         
     # ---------------------------------------------------------
     def doStep(self):
         '''
         Needs to get executed every Ode-Step
         '''
+        #refresh variables
+        linear_velocity = self.physics_model.getLinearVel()
+        self.direction = self.collision_model.getQuaternion().xform(Vec3(0,1,0)) 
+        xy_direction = self.collision_model.getQuaternion().xform(Vec3(1,1,0)) 
+        self.speed = Vec3(linear_velocity[0]*xy_direction[0],linear_velocity[1]*xy_direction[1],linear_velocity[2]*xy_direction[2]).length()
+        #calculate delayed velocity changes
+        self.physics_model.addForce(self.direction*(self.speed))#+linear_velocity)
+        
+        #refresh the positions of the collisionrays
         self.front_left.doStep()
         self.front_right.doStep()
         self.back_left.doStep()
@@ -169,3 +183,6 @@ class Vehicle(object):
     # ---------------------------------------------------------
     def getCollisionRays(self):
         return self.front_left.getRay(), self.front_right.getRay(), self.back_left.getRay() ,self.back_right.getRay()
+    
+if __name__ == "__main__":
+    import main
