@@ -38,7 +38,7 @@ class Game(ShowBase):
         #Initialize needed variables and objects
         self.players = [] #holds the player objects
         self.TRACK_GRIP = 0.5
-        self.LINEAR_FRICTION = 0.99
+        self.LINEAR_FRICTION = 0.9
         self.ANGULAR_FRICTION = 0.9
         #self.splitScreen = splitScreen.SplitScreen(0)
 
@@ -86,9 +86,9 @@ class Game(ShowBase):
 
         #m.addOption("NewGame", self.newGame)
         #m.addOption("AddPlayer", self.addPlayer)
-        self.track = trackgen3d.Track3d(100, 800, 600, 50)
-        nodePath = self.render.attachNewNode(self.track.createMesh())
-        nodePath.setTwoSided(True)
+        #self.track = trackgen3d.Track3d(100, 800, 600, 50)
+        #nodePath = self.render.attachNewNode(self.track.createMesh())
+        #nodePath.setTwoSided(True)
         #base.toggleWireframe() 
 
         #Start the Game for testing purpose
