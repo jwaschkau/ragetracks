@@ -23,7 +23,8 @@ class Vehicle(object):
         self.speed = 0.0 #the actual speed of the vehicle (forward direction)
         self.direction = Vec3(0,0,0) #the direction the car is heading
         self.boost_strength = 0.0 #the boost propertys of the vehicle
-        self.control_strength = 0.0 #impact of the steering
+        self.control_strength = 0.0 #impact on the steering behaviour
+        self.grip_strength = 0.0 #impact on the steering behaviour
         
         self.setVehicle(name) #set the initial vehicle
         
@@ -35,6 +36,7 @@ class Vehicle(object):
         '''
         self.boost_strength = 100.0
         self.control_strength = 0.1
+        self.grip_strength = 2
         
         self.model = loader.loadModel("data/models/vehicle01")
         self.model.reparentTo(render)
@@ -157,8 +159,8 @@ class Vehicle(object):
         '''
         rel_direction = self.collision_model.getQuaternion().xform(Vec3(dir[1],0,dir[0]))
         rel_position = self.collision_model.getQuaternion().xform(Vec3(5,0,0))
-        force = Vec3(rel_direction[0]*self.direction[0]*self.control_strength*self.speed,rel_direction[1]*self.direction[1]*self.control_strength*self.speed,rel_direction[2]*self.direction[2]*self.control_strength*self.speed)
-        self.physics_model.addTorque(-rel_direction*self.control_strength*self.speed)
+        #force = Vec3(rel_direction[0]*self.direction[0]*self.control_strength*self.speed,rel_direction[1]*self.direction[1]*self.control_strength*self.speed,rel_direction[2]*self.direction[2]*self.control_strength*self.speed)
+        self.physics_model.addTorque(-rel_direction+self.direction*self.control_strength)
         
     # ---------------------------------------------------------
     def doStep(self):
@@ -170,8 +172,12 @@ class Vehicle(object):
         self.direction = self.collision_model.getQuaternion().xform(Vec3(0,1,0)) 
         xy_direction = self.collision_model.getQuaternion().xform(Vec3(1,1,0)) 
         self.speed = Vec3(linear_velocity[0]*xy_direction[0],linear_velocity[1]*xy_direction[1],linear_velocity[2]*xy_direction[2]).length()
+        
         #calculate delayed velocity changes
-        self.physics_model.addForce(self.direction*(self.speed))#+linear_velocity)
+        linear_velocity.normalize()
+        self.direction.normalize()
+        self.physics_model.addForce(self.direction*(self.speed*self.grip_strength))#+linear_velocity)
+        self.physics_model.addForce(-linear_velocity*(self.speed*self.grip_strength))#+linear_velocity)
         
         #refresh the positions of the collisionrays
         self.front_left.doStep()
