@@ -180,7 +180,11 @@ class InputDevices(object):
         self.devices = [InputDevice(self.keyboard, settings)]
 
         for joystick in self.joysticks.getJoysticks():
-            self.devices.append(InputDevice(joystick, settings))
+            try:
+                dev = InputDevice(joystick, settings)
+            except:
+                continue
+            self.devices.append(dev)
 
     # ---------------------------------------------------------
 
