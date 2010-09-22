@@ -129,7 +129,8 @@ class Canvas(wx.Window):
         self.SetBackgroundColour(wx.Colour(255,255,255))
         
         self.Bind(wx.EVT_PAINT, self.onPaint)
-        self.Bind(wx.EVT_RIGHT_UP, self.onMouse)
+        self.Bind(wx.EVT_LEFT_DOWN, self.onLeftDown)
+        self.Bind(wx.EVT_RIGHT_UP, self.onAddPoint)
         self.Bind(wx.EVT_MOUSEWHEEL, self.onZoom)
         self.Bind(wx.EVT_SIZE, self.onSize)
         
@@ -236,7 +237,7 @@ class Canvas(wx.Window):
         
     # -----------------------------------------------------------------
 
-    def onMouse(self, evt):
+    def onAddPoint(self, evt):
         '''
         '''
         w,h = self.GetClientSizeTuple()
@@ -246,6 +247,31 @@ class Canvas(wx.Window):
         self.shape.addPoint(x,y)
         self.Refresh()
         
+    # -----------------------------------------------------------------
+
+    def onLeftDown(self, evt):
+        '''
+        '''
+        # check if there is a poit under the click
+        w,h = self.GetClientSizeTuple()
+        x,y = evt.GetPositionTuple()
+        x,y = self.getLogicalPosition(x,y,w,h)
+        
+        x = float("%.1f"%(x))
+        y = float("%.1f"%(y))
+
+        hit_a_point = False
+        
+        for point in self.shape:
+            px = float("%.1f"%(point.getX()))
+            py = float("%.1f"%(point.getY()))
+            if px == x and py == y:
+                hit_a_point = True
+                break
+            
+        if hit_a_point:
+            print "hit a point"
+    
     # -----------------------------------------------------------------
 
 # -----------------------------------------------------------------
