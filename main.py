@@ -81,14 +81,15 @@ class Game(ShowBase):
         plight = PointLight('plight')
         plight.setColor(VBase4(0.2, 0.2, 0.2, 1))
         plnp = render.attachNewNode(plight)
-        plnp.setPos(10, 20, 0)
+        plnp.setPos(100, 100, 0)
         render.setLight(plnp)
 
         #m.addOption("NewGame", self.newGame)
         #m.addOption("AddPlayer", self.addPlayer)
-        self.track = trackgen3d.Track3d(10, 800, 600, 50)
+        self.track = trackgen3d.Track3d(100, 800, 600, 50)
         nodePath = self.render.attachNewNode(self.track.createMesh())
-        #nodePath.setTwoSided(True)
+        nodePath.setTwoSided(True)
+        #base.toggleWireframe() 
 
         #Start the Game for testing purpose
         self.newGame()

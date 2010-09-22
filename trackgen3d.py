@@ -180,18 +180,16 @@ class StreetData(object):
 # -------------------------------------------------------------------------------------
 
 class Track3d(object):
-    varthickness = []  #Generate the Vector for thickness of the road
-
-    #Vertex Vars
-
-
+    '''
+    Generate the 3d Mesh aut of the StreetData and the 2dTrack
+    '''
     def __init__(self, res, x, y, z = 50):
         '''
         '''
         #street_data = (Vec2(4.0,4.0), Vec2(10.0,10.0), Vec2(10.0,0.0), Vec2(4.0,0.0), Vec2(0.0,-1.0))
-        street_data = StreetData(Vec2(4.0,0.0), Vec2(10.0,0.0), mirrored=True) #, Vec2(15.0,0.0)
+        street_data = StreetData(Vec2(10.0,1.0), Vec2(10.0,-5.0), Vec2(4.0,-5.0), Vec2(0.0,-5.0), mirrored=True) #, Vec2(15.0,0.0)
         
-        self.vdata = GeomVertexData('name', GeomVertexFormat.getV3n3c4t2(), Geom.UHStatic) 
+        self.vdata = GeomVertexData('street', GeomVertexFormat.getV3n3c4t2(), Geom.UHStatic) 
         #self.vdata = GeomVertexData('name', GeomVertexFormat.getV3c4t2(), Geom.UHStatic) 
 
         self.vertex = GeomVertexWriter(self.vdata, 'vertex')
@@ -204,9 +202,9 @@ class Track3d(object):
         m = Track(x, y, z)
         m.generateTrack()
         track_points = m.getInterpolatedPoints(res)
-        track_points = ((1.0,3.0,1.0),(1.0,10.0,1.0),(1.0,15.0,1),(1.0,20.0,1.0),(1.0,25.0,1.0),(1.0,30.0,1.0)) #,(1.0,10.0,0.0)
+        #track_points = ((1.0,1.0,1.0),(2.0,5.0,1.0),(3.0,10.0,1.0)) #,(1.0,10.0,0.0)
         #print "Imput Centers:", track_points
-        
+        self.varthickness = []  #Generate the Vector for thickness of the road
     
         for i in range(len(track_points)-1):
             if i == 0:
@@ -214,6 +212,8 @@ class Track3d(object):
                 continue
             self.varthickness.append(self.calcTheVector(track_points[i-1],track_points[i],track_points[i+1]))
         self.varthickness.append(self.calcTheVector(track_points[len(track_points)-2],track_points[len(track_points)-1],track_points[0]))
+        
+        print "varthickness", self.varthickness
         
         #Normalizing the Vector
         for i in self.varthickness:
@@ -227,19 +227,22 @@ class Track3d(object):
         #self.CreateMesh(self.vdata, self.prim)
         ##Debugprint
         #print "Thickness Vectors:", self.varthickness
-        #return List
-        #return self.varthickness
+
+# -------------------------------------------------------------------------------------
 
     def calcTheVector(self, pre, now, past):
         vector1 = (pre[0] - now[0], pre[1] - now[1])
-        vector2 = (past[0] - now[0], past[1] - now[1])
+        vector2 = (now[0] - past[0], now[1] - past[1]) 
         high = pre[2] - past[2]
         print "calcTheVector", Vec3(((vector1[1] + vector2[1])/2.0),((vector1[0] + vector2[0])/2.0), high)
         return Vec3(((vector1[1] + vector2[1])/2.0),((vector1[0] + vector2[0])/2.0), high)
 
+# -------------------------------------------------------------------------------------
+
     def getVarthickness(self):
         return self.varthickness
     
+# -------------------------------------------------------------------------------------
 
     def creatingVertex(self, track_points, street_data):
         #Math: self.varthickness are the midd points
@@ -257,6 +260,8 @@ class Track3d(object):
 ##                track_points[i][1] + (self.varthickness[i][1]*street_data[j][0])   #y
 ##                track_points[i][2] + (self.varthickness[i][2]+street_data[j][1])   #z
 
+# -------------------------------------------------------------------------------------
+
     def connectVertex(self, j):
         #j = len(street_Data)
         print "Vertex:", self.vdata.getNumRows()
@@ -268,32 +273,38 @@ class Track3d(object):
                 self.prim.closePrimitive()
                 
                 self.prim.addVertex(i)
-                self.prim.addVertex(i+j)
                 self.prim.addVertex(i+j+1)
+                self.prim.addVertex(i+j)
                 self.prim.closePrimitive()
         #print self.prim
-
-
+        
+# -------------------------------------------------------------------------------------
 
     def createMesh(self):
         geom = Geom(self.vdata)
         geom.addPrimitive(self.prim)
         
-        node = GeomNode('name')
+        node = GeomNode('street')
         node.addGeom(geom)
          
         #nodePath = self.render.attachNewNode(node)
         return node
 
 
+# -------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------
+
 if __name__ == "__main__":
+    import main
     #Test
-    tuple1 = ((1.0,1.0,0.0),(1.0,4.0,0.0),(1.0,10.0,0.0))
-    tuple2 = ((-2.0, -3.0, 0.0),(1.0, -5.0, 0.0),(4.0, -4.0, 0.0),(6.0, 0.0, 0.0),(3.0, 4.0, 0.0),(-2.0, 6.0, 0.0),(-7.0, 3.0, 0.0),(-8.0, -2.0, 0.0))
-    tuple3 = ((10.0,10.0,0.0),(10.0,-10.0,0.0),(-10.0,-10.0,0.0),(-10.0,10.0,0.0))
+##    tuple1 = ((1.0,1.0,0.0),(1.0,4.0,0.0),(1.0,10.0,0.0))
+##    tuple2 = ((-2.0, -3.0, 0.0),(1.0, -5.0, 0.0),(4.0, -4.0, 0.0),(6.0, 0.0, 0.0),(3.0, 4.0, 0.0),(-2.0, 6.0, 0.0),(-7.0, 3.0, 0.0),(-8.0, -2.0, 0.0))
+##    tuple3 = ((10.0,10.0,0.0),(10.0,-10.0,0.0),(-10.0,-10.0,0.0),(-10.0,10.0,0.0))
+##
+##
+##
+##    Track3d(100, 800, 600, 50)
 
-
-
-    Track3d(100, 800, 600, 50)
 
   
