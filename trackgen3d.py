@@ -181,17 +181,17 @@ class StreetData(object):
 
 class Track3d(object):
     '''
-    Generate the 3d Mesh aut of the StreetData and the 2dTrack
+    Generate the 3d Mesh out of the StreetData and the 2dTrack
     '''
     def __init__(self, res, x, y, z = 50):
         '''
         '''
         #street_data = (Vec2(4.0,4.0), Vec2(10.0,10.0), Vec2(10.0,0.0), Vec2(4.0,0.0), Vec2(0.0,-1.0))
-        street_data = StreetData(Vec2(10.0,1.0), Vec2(10.0,-5.0), Vec2(4.0,-5.0), Vec2(0.0,-5.0), mirrored=True) #, Vec2(15.0,0.0)
+        street_data = StreetData(Vec2(15.0,1.0), Vec2(15.0,-5.0), Vec2(0.0,-5.0), mirrored=True) #, Vec2(15.0,0.0)
         
         self.vdata = GeomVertexData('street', GeomVertexFormat.getV3n3c4t2(), Geom.UHStatic) 
         #self.vdata = GeomVertexData('name', GeomVertexFormat.getV3c4t2(), Geom.UHStatic) 
-
+        
         self.vertex = GeomVertexWriter(self.vdata, 'vertex')
         self.normal = GeomVertexWriter(self.vdata, 'normal')
         self.color = GeomVertexWriter(self.vdata, 'color')
@@ -205,7 +205,7 @@ class Track3d(object):
         #track_points = ((1.0,1.0,1.0),(2.0,5.0,1.0),(3.0,10.0,1.0)) #,(1.0,10.0,0.0)
         #print "Imput Centers:", track_points
         self.varthickness = []  #Generate the Vector for thickness of the road
-    
+        
         for i in range(len(track_points)-1):
             if i == 0:
                 self.varthickness.append(self.calcTheVector(track_points[len(track_points)-1],track_points[i],track_points[i+1]))

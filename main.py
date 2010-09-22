@@ -43,10 +43,10 @@ class Game(ShowBase):
         #self.splitScreen = splitScreen.SplitScreen(0)
         
         #Create the Track
-        self.track = trackgen3d.Track3d(10, 800, 600, 50)
+        self.track = trackgen3d.Track3d(1000, 800, 600, 100)
         nodePath = self.render.attachNewNode(self.track.createMesh())
         nodePath.setTwoSided(True)
-        #base.toggleWireframe() 
+        base.toggleWireframe() 
 
         #Initialize Physics (ODE)
         self.world = OdeWorld()
