@@ -44,7 +44,7 @@ class StreetData(object):
         # if the points should be mirrored, we'll do it
         if self.mirrored:
             self.mirrorPoints()
-        
+    
     # -------------------------------------------------------------------------------------
 
     def addPoint(self, x, y):
@@ -109,6 +109,18 @@ class StreetData(object):
     
     # -------------------------------------------------------------------------------------
     
+    def demirrorPoints(self):
+        '''
+        mirrors the point at y axis
+        '''
+        pointlist = []
+        for point in self.points:
+            if point.getX() >= 0:
+                pointlist.append(point)
+        self.points = pointlist
+    
+    # -------------------------------------------------------------------------------------
+    
     def writeFile(self, filename):
         '''
         writes the shape into a file
@@ -129,6 +141,9 @@ class StreetData(object):
         # insert the points
         points = doc.createElement("points")
         
+        if self.mirrored:
+            self.demirrorPoints()
+        
         for point in self.points:
             p = doc.createElement("point")
             p.setAttribute("x", str(point.getX()))
@@ -141,6 +156,9 @@ class StreetData(object):
         f = file(filename, "w")
         doc.writexml(f, addindent="   ", newl="\n")
         f.close()
+        
+        if self.mirrored:
+            self.mirrorPoints()
     
         
     # -------------------------------------------------------------------------------------
