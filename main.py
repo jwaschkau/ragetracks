@@ -41,6 +41,12 @@ class Game(ShowBase):
         self.LINEAR_FRICTION = 0.9
         self.ANGULAR_FRICTION = 0.9
         #self.splitScreen = splitScreen.SplitScreen(0)
+        
+        #Create the Track
+        self.track = trackgen3d.Track3d(10, 800, 600, 50)
+        nodePath = self.render.attachNewNode(self.track.createMesh())
+        nodePath.setTwoSided(True)
+        #base.toggleWireframe() 
 
         #Initialize Physics (ODE)
         self.world = OdeWorld()
@@ -86,10 +92,6 @@ class Game(ShowBase):
 
         #m.addOption("NewGame", self.newGame)
         #m.addOption("AddPlayer", self.addPlayer)
-        self.track = trackgen3d.Track3d(10, 800, 600, 50)
-        nodePath = self.render.attachNewNode(self.track.createMesh())
-        nodePath.setTwoSided(True)
-        #base.toggleWireframe() 
 
         #Start the Game for testing purpose
         self.newGame()
