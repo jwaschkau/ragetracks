@@ -213,12 +213,9 @@ class Track3d(object):
             self.varthickness.append(self.calcTheVector(track_points[i-1],track_points[i],track_points[i+1]))
         self.varthickness.append(self.calcTheVector(track_points[len(track_points)-2],track_points[len(track_points)-1],track_points[0]))
         
-        print "varthickness", self.varthickness
-        
         #Normalizing the Vector
         for i in self.varthickness:
             i.normalize()
-            print i.length()
         #Creating the Vertex
         self.creatingVertex(track_points, street_data)
         #Connect the Vertex
@@ -234,7 +231,6 @@ class Track3d(object):
         vector1 = (pre[0] - now[0], pre[1] - now[1])
         vector2 = (now[0] - past[0], now[1] - past[1]) 
         high = pre[2] - past[2]
-        print "calcTheVector", Vec3(((vector1[1] + vector2[1])/2.0),((vector1[0] + vector2[0])/2.0), high)
         return Vec3(((vector1[1] + vector2[1])/2.0),((vector1[0] + vector2[0])/2.0), high)
 
 # -------------------------------------------------------------------------------------
@@ -249,10 +245,9 @@ class Track3d(object):
         #for every Street Point create one Vertex by x*varthickness+Center and high+Center
         street_data_length = len(street_data)
         for i in range (len(track_points)):
-            print "###########"
+            
             for j in range (street_data_length): ###WARUM war hier -2!!!!!!!!!!!!!!
                     self.vertex.addData3f((track_points[i][0] + (self.varthickness[i][0]*street_data[j][0]), track_points[i][1] + (self.varthickness[i][1]*street_data[j][0]), track_points[i][2] + (self.varthickness[i][2]+street_data[j][1])))
-                    print track_points[i][0] + (self.varthickness[i][0]*street_data[j][0]), track_points[i][0] , self.varthickness[i][0], street_data[j][0]
                     self.normal.addData3f(0, 0, 1)
                     self.color.addData4f(i, j, 1, 1)
                     self.texcoord.addData2f(1, 0)
@@ -264,7 +259,6 @@ class Track3d(object):
 
     def connectVertex(self, j):
         #j = len(street_Data)
-        print "Vertex:", self.vdata.getNumRows()
         for i in range (self.vdata.getNumRows()-(j+1)): #-j??????  oder +-1
             if (i+1) % j != 0:
                 self.prim.addVertex(i)
