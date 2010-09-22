@@ -27,7 +27,7 @@ class StreetData(object):
         self.name = "street part"
         self.author = "Rage Tracks Team"
         self.mirrored = True
-        print kwds.keys()
+        
         for arg in args:
             if type(arg) == Vec2:
                 self.points.append(arg)
@@ -63,7 +63,7 @@ class StreetData(object):
         reads the shape out of a file
         @param filename: (str) the filename
         '''
-        
+        self.points = []
         # open file
         xmlfile = dom.parse(filename)
         
@@ -130,7 +130,6 @@ class StreetData(object):
         points = doc.createElement("points")
         
         for point in self.points:
-            print point
             p = doc.createElement("point")
             p.setAttribute("x", str(point.getX()))
             p.setAttribute("y", str(point.getY()))

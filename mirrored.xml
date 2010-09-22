@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<xml author="Carsten" mirrored="True" name="Mirrored Road">
+   <points>
+      <point x="0.760135114193" y="1.03139019012"/>
+      <point x="1.40202701092" y="2.91479825974"/>
+      <point x="2.68581080437" y="2.84753370285"/>
+      <point x="2.87162160873" y="-1.09865474701"/>
+   </points>
+</xml>
