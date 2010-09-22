@@ -317,9 +317,11 @@ class Track(object):
                     # if the lines cross / are too near, we have to generate a new map
                     if line1.crossesLine(line2):
                         track_is_ok = False
+                        n += 1
                         break
                         #print i
-                        #n += 1
+                        
+        print n
 
 
         # INTERPOLATION DURCH NURBS
