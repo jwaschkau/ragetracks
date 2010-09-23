@@ -3,8 +3,9 @@
 ## this module contains a class for generating racing tracks
 ##############################################################
 
-#Input is a Tupel with Tupel of (x,y,z)
-#They are the midpoints of the Street
+##          TODO            
+## - Conecting the open part under the Street
+##
 
 from panda3d.core import * 
 from trackgen import Track
@@ -291,6 +292,8 @@ class Track3d(object):
                 self.prim.addVertex(i+j+1)
                 self.prim.addVertex(i+j)
                 self.prim.closePrimitive()
+            else:
+                pass #hier fehlt noch was das die Mesh unten schliest
         #print self.prim
         
 # -------------------------------------------------------------------------------------

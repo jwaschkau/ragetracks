@@ -324,7 +324,7 @@ class Track(object):
                         break
                         #print i
                         
-        print n
+        print "times of street generaton", n
 
 
         # INTERPOLATION DURCH NURBS
