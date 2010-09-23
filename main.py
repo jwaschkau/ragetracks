@@ -11,6 +11,7 @@ import inputdevice
 import player
 import splitscreen
 import trackgen3d
+from playercam import PlayerCam
 
 # -----------------------------------------------------------------
 # -----------------------------------------------------------------
@@ -26,6 +27,7 @@ class Game(ShowBase):
         #PStatClient.connect() #activate to start performance measuring with pstats
         base.setFrameRateMeter(True) #Show the Framerate
         base.camNode.setActive(False) #disable default cam 
+        self.disableMouse() #disable manual camera-control
 
         # load the settings
         self.settings = settings.Settings()
@@ -103,7 +105,7 @@ class Game(ShowBase):
         creates a new player object, initializes it and sorts the cameras on the screen
         '''
         screen = self.splitscreen.addCamera()
-        camera = screen # = PlayerCam(screen)
+        camera = PlayerCam(screen)
         
         #Create a new player object
         self.players.append(player.Player(len(self.players),self.world, self.space, device, camera))
@@ -214,9 +216,9 @@ class Game(ShowBase):
                 
             self.deltaTimeAccumulator -= self.stepSize # Remove a stepSize from the accumulator until the accumulated time is less than the stepsize
             self.world.quickStep(self.stepSize)
-        for player in self.players:                      # set new positions
-            player.getVehicle().getModel().setPosQuat(render, player.getVehicle().getPhysicsModel().getPosition(), Quat(player.getVehicle().getPhysicsModel().getQuaternion()))
-            player.getVehicle().getPhysicsModel().setGravityMode(1) #enable gravity
+            
+        for player in self.players: # set new positions
+            player.updatePlayer()
         self.contactgroup.empty() # Clear the contact joints
         return task.cont
     # -----------------------------------------------------------------

@@ -169,7 +169,11 @@ class Vehicle(object):
         '''
         #refresh variables
         linear_velocity = self.physics_model.getLinearVel()
-        self.direction = self.collision_model.getQuaternion().xform(Vec3(0,1,0)) 
+        direction = self.collision_model.getQuaternion().xform(Vec3(0,1,0)) 
+        
+        #This needs to be done, so we dont create a new object but only change the existing one. else the camera wont update
+        self.direction[0], self.direction[1],self.direction[2] = direction[0],direction[1],direction[2]
+        
         xy_direction = self.collision_model.getQuaternion().xform(Vec3(1,1,0)) 
         self.speed = Vec3(linear_velocity[0]*xy_direction[0],linear_velocity[1]*xy_direction[1],linear_velocity[2]*xy_direction[2]).length()
         
