@@ -324,11 +324,7 @@ class Track(object):
                         break
                         #print i
                         
-<<<<<<< TREE
         print n, "Tracks are ignored"
-=======
-        print "times of street generaton", n
->>>>>>> MERGE-SOURCE
 
 
         # INTERPOLATION DURCH NURBS

@@ -45,14 +45,10 @@ class Game(ShowBase):
         self.splitscreen = splitscreen.SplitScreen(1)
         
         #Create the Track
-<<<<<<< TREE
         self.track = trackgen3d.Track3d(1000, 800, 600, 100)
-=======
-        self.track = trackgen3d.Track3d(1000, 800, 600, 50)
->>>>>>> MERGE-SOURCE
         nodePath = self.render.attachNewNode(self.track.createMesh())
         nodePath.setTwoSided(True)
-        base.toggleWireframe() 
+        #base.toggleWireframe() 
 
         #Initialize Physics (ODE)
         self.world = OdeWorld()
