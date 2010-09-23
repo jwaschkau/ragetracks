@@ -40,7 +40,7 @@ class Game(ShowBase):
         self.TRACK_GRIP = 0.5
         self.LINEAR_FRICTION = 0.9
         self.ANGULAR_FRICTION = 0.9
-        self.splitscreen = splitscreen.SplitScreen(0)
+        self.splitscreen = splitscreen.SplitScreen(1)
         
         #Create the Track
         self.track = trackgen3d.Track3d(1000, 800, 600, 50)
@@ -102,14 +102,12 @@ class Game(ShowBase):
         '''
         creates a new player object, initializes it and sorts the cameras on the screen
         '''
-        screen = self.splitscreen.addScreen()
-        camera = screen
-        #camera = PlayerCam(screen)
+        screen = self.splitscreen.addCamera()
+        camera = screen # = PlayerCam(screen)
+        
         #Create a new player object
         self.players.append(player.Player(len(self.players),self.world, self.space, device, camera))
 
-        #sort the cameras
-        self.splitscreen.refreshScreens(self.players)
 
     # -----------------------------------------------------------------
 
