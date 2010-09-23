@@ -1,10 +1,11 @@
-# _*_ coding: UTF-8 _*_
+# -*- coding: utf-8 -*-
 ##############################################################
 ## this module contains a class for generating racing tracks
 ##############################################################
 
-#Input is a Tupel with Tupel of (x,y,z)
-#They are the midpoints of the Street
+##          TODO            
+## - Conecting the open part under the Street
+##
 
 from panda3d.core import * 
 from trackgen import Track
@@ -44,7 +45,7 @@ class StreetData(object):
         # if the points should be mirrored, we'll do it
         if self.mirrored:
             self.mirrorPoints()
-        
+    
     # -------------------------------------------------------------------------------------
 
     def addPoint(self, x, y):
@@ -109,6 +110,18 @@ class StreetData(object):
     
     # -------------------------------------------------------------------------------------
     
+    def demirrorPoints(self):
+        '''
+        mirrors the point at y axis
+        '''
+        pointlist = []
+        for point in self.points:
+            if point.getX() >= 0:
+                pointlist.append(point)
+        self.points = pointlist
+    
+    # -------------------------------------------------------------------------------------
+    
     def writeFile(self, filename):
         '''
         writes the shape into a file
@@ -129,6 +142,9 @@ class StreetData(object):
         # insert the points
         points = doc.createElement("points")
         
+        if self.mirrored:
+            self.demirrorPoints()
+        
         for point in self.points:
             p = doc.createElement("point")
             p.setAttribute("x", str(point.getX()))
@@ -141,6 +157,9 @@ class StreetData(object):
         f = file(filename, "w")
         doc.writexml(f, addindent="   ", newl="\n")
         f.close()
+        
+        if self.mirrored:
+            self.mirrorPoints()
     
         
     # -------------------------------------------------------------------------------------
@@ -201,18 +220,21 @@ class Track3d(object):
         
         m = Track(x, y, z)
         m.generateTrack()
+        m.genStart(5)
         track_points = m.getInterpolatedPoints(res)
-        #track_points = ((1.0,1.0,1.0),(2.0,5.0,1.0),(3.0,10.0,1.0)) #,(1.0,10.0,0.0)
+        #track_points = (Vec3(-5, 0, 0), Vec3(-5, 10, 0), Vec3(-5, 20, 0), Vec3(-5, 30, 0), Vec3(-5, 40, 0), Vec3(-5, 43, 0), Vec3(-5, 53, 0), Vec3(-5, 63, 0))
         #print "Imput Centers:", track_points
         self.varthickness = []  #Generate the Vector for thickness of the road
         
         for i in range(len(track_points)-1):
             if i == 0:
-                self.varthickness.append(self.calcTheVector(track_points[len(track_points)-1],track_points[i],track_points[i+1]))
+##                self.varthickness.append(self.calcTheVector(track_points[len(track_points)-1],track_points[i],track_points[i+1])) #Wieder benutzen wenn wir einen geschlossenen Kreis haben
+                self.varthickness.append(self.calcTheVector(track_points[i],track_points[i],track_points[i+1]))
                 continue
             self.varthickness.append(self.calcTheVector(track_points[i-1],track_points[i],track_points[i+1]))
-        self.varthickness.append(self.calcTheVector(track_points[len(track_points)-2],track_points[len(track_points)-1],track_points[0]))
-        
+##        self.varthickness.append(self.calcTheVector(track_points[len(track_points)-2],track_points[len(track_points)-1],track_points[0])) #Wieder benutzen wenn wir einen geschlossenen Kreis haben
+        self.varthickness.append(self.calcTheVector(track_points[len(track_points)-2],track_points[len(track_points)-1],track_points[len(track_points)-1]))  
+      
         #Normalizing the Vector
         for i in self.varthickness:
             i.normalize()
@@ -246,7 +268,7 @@ class Track3d(object):
         street_data_length = len(street_data)
         for i in range (len(track_points)):
             
-            for j in range (street_data_length): ###WARUM war hier -2!!!!!!!!!!!!!!
+            for j in range (street_data_length): ###WARUM war hier -2!!!!!!!!!!!!!! wenn man den end und start punkt nicht hat ;)
                     self.vertex.addData3f((track_points[i][0] + (self.varthickness[i][0]*street_data[j][0]), track_points[i][1] + (self.varthickness[i][1]*street_data[j][0]), track_points[i][2] + (self.varthickness[i][2]+street_data[j][1])))
                     self.normal.addData3f(0, 0, 1)
                     self.color.addData4f(i, j, 1, 1)
@@ -270,6 +292,8 @@ class Track3d(object):
                 self.prim.addVertex(i+j+1)
                 self.prim.addVertex(i+j)
                 self.prim.closePrimitive()
+            else:
+                pass #hier fehlt noch was das die Mesh unten schliest
         #print self.prim
         
 # -------------------------------------------------------------------------------------

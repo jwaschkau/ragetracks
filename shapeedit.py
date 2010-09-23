@@ -1,9 +1,10 @@
-# _*_ coding: UTF-8 _*_
+# -*- coding: utf-8 -*-
 
 import trackgen3d
 from direct.showbase.ShowBase import ShowBase
 from pandac.PandaModules import * #Load all PandaModules
 import wx
+import wx.lib.agw.floatspin as FS
 
 ID_PREVIEW = wx.NewId()
 ID_SAVE = wx.NewId()
@@ -31,7 +32,7 @@ class Editor(wx.Frame):
         
         self.mirrored = wx.CheckBox(self.panel, -1, " mirrored", wx.Point(15, 130))
         
-        wx.Button(self.panel, ID_PREVIEW, "Preview", wx.Point(20,180), wx.Size(150,23))
+        ##wx.Button(self.panel, ID_PREVIEW, "Preview", wx.Point(20,180), wx.Size(150,23))
         
         wx.Button(self.panel, ID_NEW, "New", wx.Point(20,230), wx.Size(150,23))
         wx.Button(self.panel, ID_OPEN, "Open", wx.Point(20,260), wx.Size(150,23))
@@ -40,7 +41,21 @@ class Editor(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.onNew, id=ID_NEW)
         self.Bind(wx.EVT_BUTTON, self.onOpen, id=ID_OPEN)
         self.Bind(wx.EVT_BUTTON, self.onSave, id=ID_SAVE)
+        self.Bind(wx.EVT_CHECKBOX, self.onCheck)
         
+    # -----------------------------------------------------------------    
+    
+    def onCheck(self, evt):
+        '''
+        '''
+        if self.mirrored.GetValue():
+            self.canvas.shape.mirrored = True
+            self.canvas.shape.mirrorPoints()
+        else:
+            self.canvas.shape.mirrored = False
+            self.canvas.shape.demirrorPoints()
+        self.canvas.Refresh()
+    
     # -----------------------------------------------------------------    
     
     def onNew(self, evt):
@@ -79,8 +94,8 @@ class Editor(wx.Frame):
                 msg = wx.MessageDialog(self, "There was an error while reading file", "Open File", style = wx.OK | wx.ICON_ERROR)
                 self.onNew(None)
             
-            msg.ShowModal()
-            msg.Destroy()
+                msg.ShowModal()
+                msg.Destroy()
         dlg.Destroy()
         
     # -----------------------------------------------------------------    
@@ -129,10 +144,15 @@ class Canvas(wx.Window):
         self.SetBackgroundColour(wx.Colour(255,255,255))
         
         self.Bind(wx.EVT_PAINT, self.onPaint)
-        self.Bind(wx.EVT_LEFT_DOWN, self.onLeftDown)
+        self.Bind(wx.EVT_LEFT_DOWN, self.onLeftDown)        
+        self.Bind(wx.EVT_LEFT_UP, self.onLeftUp)
+        self.Bind(wx.EVT_LEFT_DCLICK, self.onDoubleClick)
         self.Bind(wx.EVT_RIGHT_UP, self.onAddPoint)
         self.Bind(wx.EVT_MOUSEWHEEL, self.onZoom)
         self.Bind(wx.EVT_SIZE, self.onSize)
+        self.Bind(wx.EVT_MOTION, self.onMotion)
+        
+        self.active_point = None
         
         self.max_value= 5
     
@@ -246,34 +266,106 @@ class Canvas(wx.Window):
 
         self.shape.addPoint(x,y)
         self.Refresh()
+        evt.Skip()
         
+    # -----------------------------------------------------------------
+
+    def hitPoint(self, x,y):
+        '''
+        '''
+        w,h = self.GetClientSizeTuple()
+        
+        for point in self.shape:
+            px, py = self.getRasterPosition(point.getX(), point.getY(), w,h)
+            rect = wx.Rect(px-4,py-4,8,8)
+            if rect.Contains(wx.Point(x,y)):
+                return point
+        
+        return None
+    
     # -----------------------------------------------------------------
 
     def onLeftDown(self, evt):
         '''
         '''
         # check if there is a poit under the click
-        w,h = self.GetClientSizeTuple()
-        x,y = evt.GetPositionTuple()
-        x,y = self.getLogicalPosition(x,y,w,h)
-        
-        x = float("%.1f"%(x))
-        y = float("%.1f"%(y))
-
-        hit_a_point = False
-        
-        for point in self.shape:
-            px = float("%.1f"%(point.getX()))
-            py = float("%.1f"%(point.getY()))
-            if px == x and py == y:
-                hit_a_point = True
-                break
+        x,y = evt.GetPositionTuple() 
+        self.active_point = self.hitPoint(x,y)
             
-        if hit_a_point:
-            print "hit a point"
+        evt.Skip()
     
     # -----------------------------------------------------------------
 
+    def onLeftUp(self, evt):
+        '''
+        '''
+        self.active_point = None
+            
+        evt.Skip()
+    
+    # -----------------------------------------------------------------
+
+    def onMotion(self, evt):
+        '''
+        '''
+        if self.active_point:
+            w,h = self.GetClientSizeTuple()
+            x,y = evt.GetPositionTuple()
+            x,y = self.getLogicalPosition(x,y,w,h)
+
+            self.active_point.setX(x)
+            self.active_point.setY(y)
+            self.Refresh()
+            
+        evt.Skip()
+    
+    # -----------------------------------------------------------------
+
+    def onDoubleClick(self, evt):
+        '''
+        '''
+        # check if there is a poit under the click
+        x,y = evt.GetPositionTuple() 
+        point = self.hitPoint(x,y)
+        if point:
+            dlg = PointDialog(self,point.getX(), point.getY())
+            if dlg.ShowModal() == wx.ID_OK:
+                data = dlg.getValue()
+                point[0] = data[0]
+                point[1] = data[1]
+                self.Refresh()
+            dlg.Destroy()
+        evt.Skip()
+    
+    # -----------------------------------------------------------------
+
+# -----------------------------------------------------------------
+# -----------------------------------------------------------------
+# -----------------------------------------------------------------
+
+class PointDialog(wx.Dialog):
+    '''
+    '''
+    def __init__(self, parent, x, y):
+        '''
+        '''
+        wx.Dialog.__init__(self, parent, size=wx.Size(140,120))
+        
+        wx.StaticText(self, -1, "x", wx.Point(10,10))
+        wx.StaticText(self, -1, "y", wx.Point(10,35))
+        self.x = FS.FloatSpin(self, -1, pos= wx.Point(25,10), min_val=-100, max_val=100, increment=0.01, value=x, agwStyle=FS.FS_LEFT)
+        self.y = FS.FloatSpin(self, -1, pos= wx.Point(25,35), min_val=-100, max_val=100, increment=0.01, value=y, agwStyle=FS.FS_LEFT)
+        wx.Button(self, wx.ID_OK, "Ok", wx.Point(10,60), wx.Size(110,23))
+    
+    # -----------------------------------------------------------------
+        
+    def getValue(self):
+        '''
+        '''
+        return self.x.GetValue(), self.y.GetValue()
+        
+    # -----------------------------------------------------------------
+    
 # -----------------------------------------------------------------
 # -----------------------------------------------------------------
 # -----------------------------------------------------------------

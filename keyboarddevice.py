@@ -1,4 +1,4 @@
-# _*_ coding: UTF-8 _*_
+# -*- coding: utf-8 -*-
 ##############################################################
 ## this module wraps around the panda keybpard event handling
 ## and holds the information about all (un-) pressed keys

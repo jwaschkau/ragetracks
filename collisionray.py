@@ -1,4 +1,4 @@
-# _*_ coding: UTF-8 _*_
+# -*- coding: utf-8 -*-
 ###################################################################
 ## this module represents a collision ray
 ###################################################################
@@ -9,7 +9,7 @@ from wiregeom import WireGeom
 class CollisionRay(object):
     '''
     '''
-    def __init__(self, position, direction, ode_space, length = 1.0, parent = None ,debug = False, collide_bits = 2, category_bits = 0 ):
+    def __init__(self, position, direction, ode_space, length = 1.0, parent = None ,debug = True, collide_bits = 2, category_bits = 0 ):
         '''
         '''
         self.ode_space = ode_space
@@ -46,7 +46,7 @@ class CollisionRay(object):
 
         if self.debug:
             self.drawray.setPos (self.parent.getPosition() + relative_pos)
-            self.drawray.setHpr(Quat(0.0,relative_vec[0]/2,relative_vec[1]/2,relative_vec[2]/2).getHpr())
+            self.drawray.setHpr(Quat(1.0,relative_vec[0],relative_vec[1],relative_vec[2]).getHpr())
 ##            self.drawray.setHpr(Quat(Vec4(0,0,relative_vec[2],relative_vec[1])).getHpr())
 
         

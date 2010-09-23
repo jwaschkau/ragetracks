@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from direct.showbase.ShowBase import ShowBase
 
 class MyApp(ShowBase):

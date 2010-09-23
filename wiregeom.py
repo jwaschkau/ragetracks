@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 
 
 from pandac.PandaModules import Point3, Vec3

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #Author: Kwasi Mensah (kmensah@andrew.cmu.edu)
 #Date: 7/25/2005
 

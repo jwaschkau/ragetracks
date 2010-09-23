@@ -1,7 +1,10 @@
-# _*_ coding: UTF-8 _*_
+# -*- coding: utf-8 -*-
 ##############################################################
 ## this module contains a class for generating racing tracks
 ##############################################################
+
+##          TODO                
+## - The Curve must pass thrue the Points from genStart
 
 import random
 import math
@@ -321,7 +324,11 @@ class Track(object):
                         break
                         #print i
                         
+<<<<<<< TREE
         print n, "Tracks are ignored"
+=======
+        print "times of street generaton", n
+>>>>>>> MERGE-SOURCE
 
 
         # INTERPOLATION DURCH NURBS
@@ -334,8 +341,17 @@ class Track(object):
         self.curve.adjustPoint(0, self.points[-1][0], self.points[-1][1], self.points[-1][2])
         self.curve.adjustPt(self.curve.getMaxT(), self.points[-1][0], self.points[-1][1], self.points[-1][2], tangent[0], tangent[1], tangent[2])
         self.curve.recompute()
-        
-
+    
+    def genStart(self, player):
+        print player
+        startPos = []
+        for i in range(player):
+            startPos.append(Vec3(0,(10*i),0))
+        startPos.append(Vec3(0,3+(10*(player-1)),0))
+        for i in self.points:
+            startPos.append(i)
+        print startPos
+        self.points = startPos
 
 ##        # ================= TEST ================
 ##        # === Strecke in Bitmap visualisieren ===

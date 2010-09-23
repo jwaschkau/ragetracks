@@ -1,4 +1,4 @@
-# _*_ coding: UTF-8 _*_
+# -*- coding: utf-8 -*-
 ###################################################################
 ## this module is the main one, which contains the game class
 ###################################################################
@@ -9,8 +9,9 @@ import menu3D
 import settings
 import inputdevice
 import player
-import splitScreen
+import splitscreen
 import trackgen3d
+from playercam import PlayerCam
 
 # -----------------------------------------------------------------
 # -----------------------------------------------------------------
@@ -26,6 +27,7 @@ class Game(ShowBase):
         #PStatClient.connect() #activate to start performance measuring with pstats
         base.setFrameRateMeter(True) #Show the Framerate
         base.camNode.setActive(False) #disable default cam 
+        self.disableMouse() #disable manual camera-control
 
         # load the settings
         self.settings = settings.Settings()
@@ -40,10 +42,14 @@ class Game(ShowBase):
         self.TRACK_GRIP = 0.5
         self.LINEAR_FRICTION = 0.9
         self.ANGULAR_FRICTION = 0.9
-        #self.splitScreen = splitScreen.SplitScreen(0)
+        self.splitscreen = splitscreen.SplitScreen(1)
         
         #Create the Track
+<<<<<<< TREE
         self.track = trackgen3d.Track3d(1000, 800, 600, 100)
+=======
+        self.track = trackgen3d.Track3d(1000, 800, 600, 50)
+>>>>>>> MERGE-SOURCE
         nodePath = self.render.attachNewNode(self.track.createMesh())
         nodePath.setTwoSided(True)
         base.toggleWireframe() 
@@ -102,11 +108,12 @@ class Game(ShowBase):
         '''
         creates a new player object, initializes it and sorts the cameras on the screen
         '''
+        screen = self.splitscreen.addCamera()
+        camera = PlayerCam(screen)
+        
         #Create a new player object
-        self.players.append(player.Player(len(self.players),self.world, self.space, device, base.makeCamera(base.win,1)))
+        self.players.append(player.Player(len(self.players),self.world, self.space, device, camera))
 
-        #sort the cameras
-        #self.splitScreen.reRegion(self.players)
 
     # -----------------------------------------------------------------
 
@@ -174,13 +181,7 @@ class Game(ShowBase):
                     force_pos = ray.getPosition()
                     contact = entry.getContactPoint(0)
                     force_dir = force_pos - contact
-                    acceleration = (ray.getLength()/2-force_dir.length())#*self.TRACK_GRIP
-                    ##acceleration = (acceleration/abs(acceleration))*(acceleration**2) #logarithmic force
-##                    if acceleration < -0.2 and acceleration > 0.2:
-##                        acceleration = 0
-##                    else:
-##                        acceleration = (acceleration/abs(acceleration))*(acceleration**2) #logarithmic force
-                    #print acceleration
+                    acceleration = (ray.getLength()/2-force_dir.length())#calculate the direction
                     if force_dir.length() < (ray.getLength() / 2):
                         force_dir.normalize()
                         force_dir = Vec3(force_dir[0]*acceleration,force_dir[1]*acceleration,force_dir[2]*acceleration)
@@ -219,9 +220,9 @@ class Game(ShowBase):
                 
             self.deltaTimeAccumulator -= self.stepSize # Remove a stepSize from the accumulator until the accumulated time is less than the stepsize
             self.world.quickStep(self.stepSize)
-        for player in self.players:                      # set new positions
-            player.getVehicle().getModel().setPosQuat(render, player.getVehicle().getPhysicsModel().getPosition(), Quat(player.getVehicle().getPhysicsModel().getQuaternion()))
-            player.getVehicle().getPhysicsModel().setGravityMode(1) #enable gravity
+            
+        for player in self.players: # set new positions
+            player.updatePlayer()
         self.contactgroup.empty() # Clear the contact joints
         return task.cont
     # -----------------------------------------------------------------
