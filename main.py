@@ -174,13 +174,7 @@ class Game(ShowBase):
                     force_pos = ray.getPosition()
                     contact = entry.getContactPoint(0)
                     force_dir = force_pos - contact
-                    acceleration = (ray.getLength()/2-force_dir.length())#*self.TRACK_GRIP
-                    ##acceleration = (acceleration/abs(acceleration))*(acceleration**2) #logarithmic force
-##                    if acceleration < -0.2 and acceleration > 0.2:
-##                        acceleration = 0
-##                    else:
-##                        acceleration = (acceleration/abs(acceleration))*(acceleration**2) #logarithmic force
-                    #print acceleration
+                    acceleration = (ray.getLength()/2-force_dir.length())#calculate the direction
                     if force_dir.length() < (ray.getLength() / 2):
                         force_dir.normalize()
                         force_dir = Vec3(force_dir[0]*acceleration,force_dir[1]*acceleration,force_dir[2]*acceleration)
