@@ -9,7 +9,7 @@ import menu3D
 import settings
 import inputdevice
 import player
-import splitScreen
+import splitscreen
 import trackgen3d
 
 # -----------------------------------------------------------------
@@ -40,10 +40,10 @@ class Game(ShowBase):
         self.TRACK_GRIP = 0.5
         self.LINEAR_FRICTION = 0.9
         self.ANGULAR_FRICTION = 0.9
-        #self.splitScreen = splitScreen.SplitScreen(0)
+        self.splitscreen = splitscreen.SplitScreen(1)
         
         #Create the Track
-        self.track = trackgen3d.Track3d(10, 800, 600, 50)
+        self.track = trackgen3d.Track3d(1000, 800, 600, 50)
         nodePath = self.render.attachNewNode(self.track.createMesh())
         nodePath.setTwoSided(True)
         #base.toggleWireframe() 
@@ -102,11 +102,12 @@ class Game(ShowBase):
         '''
         creates a new player object, initializes it and sorts the cameras on the screen
         '''
+        screen = self.splitscreen.addCamera()
+        camera = screen # = PlayerCam(screen)
+        
         #Create a new player object
-        self.players.append(player.Player(len(self.players),self.world, self.space, device, base.makeCamera(base.win,1)))
+        self.players.append(player.Player(len(self.players),self.world, self.space, device, camera))
 
-        #sort the cameras
-        #self.splitScreen.reRegion(self.players)
 
     # -----------------------------------------------------------------
 
