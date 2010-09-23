@@ -11,12 +11,12 @@
 # -------------------------------------------------------------
 # Importe
 # -------------------------------------------------------------
-import os.path      # Für Dateioperationen
+import os.path      # Fï¿½r Dateioperationen
 
 # -------------------------------------------------------------
 # Funktionen
 # -------------------------------------------------------------
-# Diese Funktionen gehören nicht unmittelbar zur Bitmapklasse und sind daher
+# Diese Funktionen gehï¿½ren nicht unmittelbar zur Bitmapklasse und sind daher
 # nicht als Methoden implementiert
 
 def streamToInt(value):
@@ -24,7 +24,7 @@ def streamToInt(value):
     streamToInt rechnet einen Stream aus Bytes in eine Integerzahl um
     @param value: (string) Bytes, deren Wertigkeit konvertiert werden soll
     '''
-    # Typüberprüfung
+    # Typï¿½berprï¿½fung
     if type(value) != str:
         raise ValueError("Value has to be a string")
 
@@ -39,9 +39,9 @@ def intToStream(value, length):
     '''
     intToStream rechnet eine Integerzahl in einen Stream aus Bytes um
     @param value: (int)
-    @param length: (int) länge desgewünschten streams
+    @param length: (int) lï¿½nge desgewï¿½nschten streams
     '''
-    # Typüberprüfung
+    # Typï¿½berprï¿½fung
     if type(value) != int:
         raise ValueError("Value has to be an integer")
     if type(length) != int:
@@ -68,9 +68,9 @@ def intToStream(value, length):
 
 def negativeStream(value):
     '''
-    Rechnet einen Wert, größer als 2,2 Mrd. in die entsprechende negative 32 Bit Integerzahl um.
+    Rechnet einen Wert, grï¿½ï¿½er als 2,2 Mrd. in die entsprechende negative 32 Bit Integerzahl um.
     @param value: (int) Die Zahl, die umgerechnet werden soll
-          (Integerobjekte in Python haben mehr als 32 Bit, daher ist dieser Typ hier möglich)
+          (Integerobjekte in Python haben mehr als 32 Bit, daher ist dieser Typ hier mï¿½glich)
     '''
     return value-4294967296
 
@@ -83,7 +83,7 @@ def negativeStream(value):
 
 class Bitmap24(object):
     '''
-    Diese Klasse stellt eine 24-Bit Bitmap dar. Zur Instanziierung wird der Dateiname übergeben.
+    Diese Klasse stellt eine 24-Bit Bitmap dar. Zur Instanziierung wird der Dateiname ï¿½bergeben.
     '''
 
     __digits = [["0110", "1011", "1011", "1101", "1101", "0110"], # 0
@@ -100,13 +100,13 @@ class Bitmap24(object):
 
     def __init__(self, filename="", width=0, height=0):
         '''
-        Der Konstruktor legt die Attribute an und lädt das Bild.
+        Der Konstruktor legt die Attribute an und lï¿½dt das Bild.
         @param filename: (string) Dateiname des Bildes, inklusive absolutem oder relativem Pfad
         '''
         # -- Attribute anlegen
         self.__filename = ""        # Dateiname
         self.__width = 0            # Bildbreite
-        self.__height = 0           # Bildhöhe
+        self.__height = 0           # Bildhï¿½he
 
         self.__file_header = ""     # Dateiheader
         self.__bitmap_header = ""   # Bitmapheader
@@ -116,7 +116,7 @@ class Bitmap24(object):
                                     # ob das Bild von oben nach unten aufgebaut ist oder nicht
 
         if filename != "":
-            self.setFile(filename)      # Datei öffnen und Daten einlesen
+            self.setFile(filename)      # Datei ï¿½ffnen und Daten einlesen
         else:
             self.__createBitmap(width, height)
 
@@ -127,7 +127,7 @@ class Bitmap24(object):
 
     def __str__(self):
         '''
-        __str__ repräsentiert das Objekt als String
+        __str__ reprï¿½sentiert das Objekt als String
         '''
         return "Bitmap - 24Bit ["+self.__filename+"], "+str(self.__width)+"x"+str(self.__height)
 
@@ -140,15 +140,15 @@ class Bitmap24(object):
         '''
         initialisiert ein eigenes Bild
         @param width: Breite des Bildes > 0
-        @param: height: Höhe des Bildes > 0
+        @param: height: Hï¿½he des Bildes > 0
         '''
         if width <= 0 or height <= 0:
-            raise ValueError("width und height müssen größer als 0 sein")
+            raise ValueError("width und height mï¿½ssen grï¿½ï¿½er als 0 sein")
 
         self.__width = width
         self.__height = height
 
-        # Anzahl der Bytes, die für die Bilddaten gebraucht werden
+        # Anzahl der Bytes, die fï¿½r die Bilddaten gebraucht werden
         w = width*3
         while w % 4 != 0:   # auf ein vielfaches von 4 Bytes bringen
             w += 1
@@ -157,22 +157,22 @@ class Bitmap24(object):
         # Daten schreiben
 
         self.__file_header = "BM"                # Dateiheader anlegen
-        self.__file_header += intToStream(count+54, 4)  # 4 Byte => Größe der Datei            2
+        self.__file_header += intToStream(count+54, 4)  # 4 Byte => Grï¿½ï¿½e der Datei            2
         self.__file_header += intToStream(0, 4)  # 4 Byte => 0                                 6
         self.__file_header += intToStream(54, 4) # 4 Byte => Offset der Bilddaten             10
                                                  #     in Byte vom Beginn der Datei an
 
         self.__bitmap_header = ""
-        self.__bitmap_header += intToStream(40, 4)     # 4Byte => 40 BITMAP-HEADER-LÄNGE      14
+        self.__bitmap_header += intToStream(40, 4)     # 4Byte => 40 BITMAP-HEADER-Lï¿½NGE      14
         self.__bitmap_header += intToStream(width, 4)  # 4Byte => BREITE in px                18
-        self.__bitmap_header += intToStream(height, 4) # 4Byte => höhe in px (positiv)        22
+        self.__bitmap_header += intToStream(height, 4) # 4Byte => hï¿½he in px (positiv)        22
         self.__bitmap_header += intToStream(1, 2)      # 2Byte => 1 Farbebenen                26
         self.__bitmap_header += intToStream(24, 2)     # 2Byte => 24 Bittiefe                 28
         self.__bitmap_header += intToStream(0, 4)      # 4Byte => 0  Komprimierung            30
-        self.__bitmap_header += intToStream(count, 4)  # 4Byte => Größe der Bilddaten in Byte 34
-        self.__bitmap_header += intToStream(0, 4)      # 4Byte => 0 hor. Auflösung            38
-        self.__bitmap_header += intToStream(0, 4)      # 4Byte => 0 vert. Auflösung           42
-        self.__bitmap_header += intToStream(0, 4)      # 4Byte => 0 Größe der Farbtabelle     46
+        self.__bitmap_header += intToStream(count, 4)  # 4Byte => Grï¿½ï¿½e der Bilddaten in Byte 34
+        self.__bitmap_header += intToStream(0, 4)      # 4Byte => 0 hor. Auflï¿½sung            38
+        self.__bitmap_header += intToStream(0, 4)      # 4Byte => 0 vert. Auflï¿½sung           42
+        self.__bitmap_header += intToStream(0, 4)      # 4Byte => 0 Grï¿½ï¿½e der Farbtabelle     46
         self.__bitmap_header += intToStream(0, 4)      # 4Byte => 0 Anzahl der Farben         50
 
         bild = []
@@ -208,7 +208,7 @@ class Bitmap24(object):
 
     def drawDigit(self, digit, x, y, color = (0,0,0)):
         '''
-        drawDigit malt eine Zahl der Größe 4*6 auf das Bild
+        drawDigit malt eine Zahl der Grï¿½ï¿½e 4*6 auf das Bild
         @param digit: Zahl zwischen 0 und 9
         @param x: Horizontale Position
         @param y: Vertikale Position
@@ -228,8 +228,8 @@ class Bitmap24(object):
                 if ix != "0":
                     pos = self.convertCoords(tx,ty)
 
-                    # hier könnte es einen Indexfehler geben
-                    # wenn die Position außerhalb des Bildes liegt
+                    # hier kï¿½nnte es einen Indexfehler geben
+                    # wenn die Position auï¿½erhalb des Bildes liegt
                     # es wird im Fehlerfall einfach ignoriert
                     try:
                         self.__image_data[pos] = chr(color[0])
@@ -275,17 +275,17 @@ class Bitmap24(object):
         x = int(x)
         y = int(y)
         if x >= self.__width or y >= self.__height:
-            return #raise ValueError("die Angegebene Position ist außerhalb des Bildes")
+            return #raise ValueError("die Angegebene Position ist auï¿½erhalb des Bildes")
         pos = self.convertCoords(x,y)
 
-        # hier könnte es einen Indexfehler geben
-        # wenn die Position außerhalb des Bildes liegt
+        # hier kï¿½nnte es einen Indexfehler geben
+        # wenn die Position auï¿½erhalb des Bildes liegt
         try:
             self.__image_data[pos] = chr(color[0])
             self.__image_data[pos-1] = chr(color[1])
             self.__image_data[pos-2] = chr(color[2])
         except:
-            pass #raise ValueError("die Angegebene Position ist außerhalb des Bildes")
+            pass #raise ValueError("die Angegebene Position ist auï¿½erhalb des Bildes")
 
     ###########################################################
     ###########################################################
@@ -318,14 +318,14 @@ class Bitmap24(object):
 
     def setFile(self, filename):
         '''
-        setFile lädt das Bild.
+        setFile lï¿½dt das Bild.
         @param filename: (string) Dateiname des Bildes, inklusive absolutem oder relativem Pfad
         '''
-        # ---- Parameterprüfung ----
+        # ---- Parameterprï¿½fung ----
         if type(filename) != str:
             raise ValueError("filename muss ein String sein!")
 
-        # ist die Datei überhaupt vorhanden?
+        # ist die Datei ï¿½berhaupt vorhanden?
         if not os.path.isfile(filename):
             raise IOError("Die Datei \""+filename+"\" wurde nicht gefunden!")
 
@@ -333,13 +333,13 @@ class Bitmap24(object):
         try:
             ref = file(filename, "rb")
         except:
-            raise IOError("Die Datei \""+filename+"\" konnte nicht geöffnet werden")
+            raise IOError("Die Datei \""+filename+"\" konnte nicht geï¿½ffnet werden")
 
 
         # Bei Erfolg neuen Dateinamen setzten
         self.__filename = filename
 
-        # die Referenz auf die Datei den Methoden übergeben, die den Header und die Bilddaten auslesen
+        # die Referenz auf die Datei den Methoden ï¿½bergeben, die den Header und die Bilddaten auslesen
         self.__readHeader(ref)
         self.__readImageData(ref)
 
@@ -352,48 +352,48 @@ class Bitmap24(object):
     def __readHeader(self, ref):
         '''
         __readHeader liest den Header aus.
-        @param ref: (file) Referenz auf eine Datei (über file("bild.bmp", "rb") geöffnet)
+        @param ref: (file) Referenz auf eine Datei (ï¿½ber file("bild.bmp", "rb") geï¿½ffnet)
         '''
         # == Fileheader ===========================
         # =========================================
 
-        # Dateityp prüfen
+        # Dateityp prï¿½fen
         filetype = ref.read(2)
         if filetype != "BM":        # in den ersten zwei Bytes der Datei muss BM stehen, sonst
             ref.close()             # handelt es sich nicht um eine Bitmap
-            raise TypeError("Die Datei \""+self.__filename+"\" ist keine gültige Bitmap-Datei!")
+            raise TypeError("Die Datei \""+self.__filename+"\" ist keine gï¿½ltige Bitmap-Datei!")
 
-        # die nächsten 12 Bytes sind nicht für unsere Zwecke relevant, sie werden nur gelesen,
+        # die nï¿½chsten 12 Bytes sind nicht fï¿½r unsere Zwecke relevant, sie werden nur gelesen,
         # nicht verarbeitet, sie werden dennoch im Attribut file_header gespeichert,
-        # um sie beim Speichern einer Datei wieder schreiben zu können
+        # um sie beim Speichern einer Datei wieder schreiben zu kï¿½nnen
         self.__file_header = filetype + ref.read(12)
 
 
         # == Bitmap-Header ========================
         # =========================================
 
-        tmp = ref.read(4)           # Die Länge des Bitmap-Headers auslesen
+        tmp = ref.read(4)           # Die Lï¿½nge des Bitmap-Headers auslesen
         hlen = streamToInt(tmp)     # und aus 4 Bytes eine Zahl machen
 
-        self.__bitmap_header = tmp  # die gelesenen Bytes an das Attribut bitmap_header anhängen
+        self.__bitmap_header = tmp  # die gelesenen Bytes an das Attribut bitmap_header anhï¿½ngen
         self.__bitmap_header += ref.read(hlen-4) # die restlichen Headerbytes im Attribut speichern
 
         # Abmessungen speichern
         self.__width = streamToInt(self.__bitmap_header[4:8])     # die Bildbreite in Pixeln wird ausgelesen
-        self.__height = streamToInt(self.__bitmap_header[8:12])   # die Höhe ebenfalls
+        self.__height = streamToInt(self.__bitmap_header[8:12])   # die Hï¿½he ebenfalls
 
-        # wenn die Höhe negativ im 2er Komplement angegeben wurde,
+        # wenn die Hï¿½he negativ im 2er Komplement angegeben wurde,
         # wird das Bild von oben nach unten aufgebaut (Top-Down-Bitmap)
         if self.__height > 2147483647:
             self.__top_down = True
             self.__height = negativeStream(self.__height)
 
-        # Farbtiefe prüfen
+        # Farbtiefe prï¿½fen
         depth = ord(self.__bitmap_header[14])
-        # Es können nur Bitmap-Dateien mit 24 Bit Farbtiefe, also 3 Bytes pro Pixel gelesen werden
+        # Es kï¿½nnen nur Bitmap-Dateien mit 24 Bit Farbtiefe, also 3 Bytes pro Pixel gelesen werden
         if depth != 24:
             ref.close()
-            raise TypeError("Die Datei \""+self.__filename+"\" ist keine gültige 24-Bit Bitmap!")
+            raise TypeError("Die Datei \""+self.__filename+"\" ist keine gï¿½ltige 24-Bit Bitmap!")
 
 
     ###########################################################
@@ -402,7 +402,7 @@ class Bitmap24(object):
     def __readImageData(self, ref):
         '''
         __readImageData liest das eigentliche Bild aus.
-        @param ref: (file) Referenz auf eine Datei (über file("bild.bmp", "rb") geöffnet)
+        @param ref: (file) Referenz auf eine Datei (ï¿½ber file("bild.bmp", "rb") geï¿½ffnet)
         '''
         # == Bilddaten ==============================
         bild = []
@@ -411,7 +411,7 @@ class Bitmap24(object):
 
         # solange Zeichen vorhanden sind
         while daten:
-            # Zeichen wird angehängt
+            # Zeichen wird angehï¿½ngt
             bild.append(daten)
             daten = ref.read(1) # ein Zeichen lesen
 
@@ -429,14 +429,14 @@ class Bitmap24(object):
         writeBitmap speichert die Bilddaten in einer Bitmap-Datei.
         @param filename: (string) Dateiname der neuen Bilddatei, inklusive absolutem oder relativem Pfad
         '''
-        # Parameterüberprüfung
+        # Parameterï¿½berprï¿½fung
         if type(filename) != str:
             raise ValueError("filename muss ein String sein!")
 
         # Daten zusammensuchen
-        output = self.__file_header     # Dateiheader enthält Informationen zur Datei
-        output += self.__bitmap_header  # Bitmapheader enthält Bildinformationen
-                                        # (Breite Höhe, Farbtiefe, Kompression, ect...)
+        output = self.__file_header     # Dateiheader enthï¿½lt Informationen zur Datei
+        output += self.__bitmap_header  # Bitmapheader enthï¿½lt Bildinformationen
+                                        # (Breite Hï¿½he, Farbtiefe, Kompression, ect...)
 
         for i in self.__image_data:     # Die Bilddaten werden wieder zusammengesetzt
             output += i
@@ -448,14 +448,14 @@ class Bitmap24(object):
         except:
             raise IOError("In die Datei \""+self.__filename+"\" konnte nicht geschrieben werden!")
 
-        ref.close() #Datei schließen
+        ref.close() #Datei schlieï¿½en
 
     ###########################################################
     ###########################################################
 
     def getWidth(self):
         '''
-        getWidth gibt die Breite des Bildes in Pixeln zurück.
+        getWidth gibt die Breite des Bildes in Pixeln zurï¿½ck.
         '''
         return self.__width
 
@@ -464,7 +464,7 @@ class Bitmap24(object):
 
     def getHeight(self):
         '''
-        getHeight gibt die Höhe des Bildes in Pixeln zurück.
+        getHeight gibt die Hï¿½he des Bildes in Pixeln zurï¿½ck.
         '''
         return self.__height
 
@@ -473,7 +473,7 @@ class Bitmap24(object):
 
     def getSize(self):
         '''
-        getSize gibt die Größe des Bildes in Pixeln zurück.
+        getSize gibt die Grï¿½ï¿½e des Bildes in Pixeln zurï¿½ck.
         '''
         return self.__width, self.__height
 
@@ -482,7 +482,7 @@ class Bitmap24(object):
 
     def getFileName(self):
         '''
-        getFileName gibt den Originaldateinamen des Bildes zurück.
+        getFileName gibt den Originaldateinamen des Bildes zurï¿½ck.
         '''
         return self.__filename
 
@@ -524,7 +524,7 @@ class Bitmap24(object):
 
     def getImageData(self):
         '''
-        getImageData gibt die Bilddaten zurück.
+        getImageData gibt die Bilddaten zurï¿½ck.
         '''
         data = ""
 
@@ -542,7 +542,7 @@ class Bitmap24(object):
     def setImageData(self, data):
         '''
         setImageData setzt die Bilddaten
-        @param data: (string) Die Länge der Daten muss der Höhe*Breite*3 entsprechen
+        @param data: (string) Die Lï¿½nge der Daten muss der Hï¿½he*Breite*3 entsprechen
         '''
         if len(data) != self.__width*self.__height*3:
             raise ValueError("Die angegebenen Bilddaten passen nicht in das Bild!")
@@ -610,26 +610,26 @@ def saveSpielbrett(filename, name, autor, feld_weiss, feld_schwarz, stein_weiss,
             raise TypeError("Der Parameter 'background' muss ein Bitmap24-Objekt oder dreielementiges Farbtupel sein!")
 
     if len(name) > 255 or len(autor) > 255:
-        raise ValueError("'name' und 'autor' dürfen nicht länger als 255 Zeichen sein!")
+        raise ValueError("'name' und 'autor' dï¿½rfen nicht lï¿½nger als 255 Zeichen sein!")
 
     if feld_weiss.getSize() != (70,70) or feld_schwarz.getSize() != (70,70):
-        raise ValueError("Die Spielfelder müssen 70x70 Pixel groß sein!")
+        raise ValueError("Die Spielfelder mï¿½ssen 70x70 Pixel groï¿½ sein!")
 
     if stein_weiss.getSize() != (44,44) or stein_schwarz.getSize() != (44,44) or dame_weiss.getSize() != (44,44) or dame_schwarz.getSize() != (44,44):
-        raise ValueError("Alle Sielsteine müssen 44x44 Pixel groß sein!")
+        raise ValueError("Alle Sielsteine mï¿½ssen 44x44 Pixel groï¿½ sein!")
 
     stream = ""
 
     stream += chr(0)+"dame"+chr(0)      # x0damex0 als Dateitypsignatur
-    stream += chr(len(name))            # länge des Spielbrett
+    stream += chr(len(name))            # lï¿½nge des Spielbrett
     stream += name                      # Spielbrettname
-    stream += chr(len(autor))           # Länge des Namens des Autors
+    stream += chr(len(autor))           # Lï¿½nge des Namens des Autors
     stream += autor                     # Name des Autors
 
     stream += feld_weiss.getImageData()         # Bilddaten der einzelen
     stream += feld_schwarz.getImageData()       # Steine / Felder haben eine
-    stream += stein_weiss.getImageData()        # feste Länge und werden daher
-    stream += stein_schwarz.getImageData()      # einfach in den Stream eingefügt
+    stream += stein_weiss.getImageData()        # feste Lï¿½nge und werden daher
+    stream += stein_schwarz.getImageData()      # einfach in den Stream eingefï¿½gt
     stream += dame_weiss.getImageData()
     stream += dame_schwarz.getImageData()
 
@@ -638,7 +638,7 @@ def saveSpielbrett(filename, name, autor, feld_weiss, feld_schwarz, stein_weiss,
     if type(background) == Bitmap24:
         stream += chr(255)
 
-        w,h = background.getSize()  # Höhe und Breite des Hintergrundbildes ermitteln
+        w,h = background.getSize()  # Hï¿½he und Breite des Hintergrundbildes ermitteln
         stream += intToStream(w,4)  # in dem Stream speichern
         stream += intToStream(h,4)
         stream += background.getImageData()
@@ -709,7 +709,7 @@ def openSpielbrett(filename):
 # ------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------
 
-# ein kleiner Testrahmen, der nur ausgeführt wird, wenn die Datei direkt ausgeführt wird
+# ein kleiner Testrahmen, der nur ausgefï¿½hrt wird, wenn die Datei direkt ausgefï¿½hrt wird
 if __name__ == "__main__":
 
     feld_weiss = Bitmap24("feld_weiss.bmp")

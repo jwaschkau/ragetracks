@@ -1,4 +1,4 @@
-# _*_ coding: UTF-8 _*_
+# -*- coding: utf-8 -*-
 
 from direct.showbase.ShowBase import ShowBase
 from panda3d.core import *

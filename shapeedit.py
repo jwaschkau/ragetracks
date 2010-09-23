@@ -1,4 +1,4 @@
-# _*_ coding: UTF-8 _*_
+# -*- coding: utf-8 -*-
 
 import trackgen3d
 from direct.showbase.ShowBase import ShowBase

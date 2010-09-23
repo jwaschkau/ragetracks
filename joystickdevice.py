@@ -1,4 +1,4 @@
-# _*_ coding: UTF-8 _*_
+# -*- coding: utf-8 -*-
 ##############################################################
 ## this module wraps around the pygame joystick event handling
 ## and holds the information about all connected joystick and
