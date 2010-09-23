@@ -3,10 +3,12 @@ from math import sqrt, ceil
 class SplitScreen(object):
     '''
     '''    
-    def __init__(self, playerCount = 1):
-        self.playerCount = playerCount
-        print "Players:", self.playerCount
-##      Add all SplitScreen parts for the count of players
+    def __init__(self, player_count = 1):
+        '''
+        '''
+        self.player_count = player_count
+##        print "Players:", self.player_count
+        # Add all SplitScreen parts for the count of players
 ##        self.cameras = self.createNCamera(self.createNCameras(self.playerCount))
         
     def todel(self):
@@ -28,7 +30,7 @@ class SplitScreen(object):
                 del self.players[i]
         reRegion()
 
-    def reRegion(players):
+    def refreshScreens(players):
         displayRegions = createNCameras(len(players))
         for i in range(0 , len(players), 1):
             players[i].getCamera().node().getDisplayRegion.setDimensions(displayRegions[i])
