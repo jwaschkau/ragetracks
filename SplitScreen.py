@@ -1,4 +1,9 @@
 from math import sqrt, ceil
+
+# -----------------------------------------------------------------
+# -----------------------------------------------------------------
+# -----------------------------------------------------------------
+
  
 class SplitScreen(object):
     '''
@@ -7,9 +12,19 @@ class SplitScreen(object):
         '''
         '''
         self.player_count = player_count
-##        print "Players:", self.player_count
+
         # Add all SplitScreen parts for the count of players
+        print self.getRegions(player_count)
 ##        self.cameras = self.createNCamera(self.createNCameras(self.playerCount))
+
+    # -----------------------------------------------------------------
+    
+    def addScreen(self):
+        '''
+        '''
+        return self.createCamera((0,1,1,0))
+    
+    # -----------------------------------------------------------------
         
     def todel(self):
         #Change the Size of a Display Region
@@ -18,10 +33,14 @@ class SplitScreen(object):
         #Del one Camera 
         #self.cameras[0].removeNode()
         pass
+    
+    # -----------------------------------------------------------------
         
     def oneMorePlayer(player):
         players.append(player) #Every Player must have a Camera created with CreateOneCamera
         reRegion()
+    
+    # -----------------------------------------------------------------
        
     def oneLessPlayer(player):
         for i in range(0 , len(self.players), 1):
@@ -30,69 +49,71 @@ class SplitScreen(object):
                 del self.players[i]
         reRegion()
 
-    def refreshScreens(players):
-        displayRegions = createNCameras(len(players))
-        for i in range(0 , len(players), 1):
-            players[i].getCamera().node().getDisplayRegion.setDimensions(displayRegions[i])
-            #JEDEM PLAYER EIENE neue REGION zuweise
-        
-    def Test(players):
-        #TEST
-        self.displayRegions = self.createNCameras(2)
-        self.cameras.append(self.createOneCamera((0,0,0,0)))
-        #for i in range(2):
-        self.cameras[0].node().getDisplayRegion(0).setDimensions(self.displayRegions[0][0], self.displayRegions[0][1], self.displayRegions[0][2], self.displayRegions[0][3])
-        self.cameras[1].node().getDisplayRegion(0).setDimensions(self.displayRegions[1][0], self.displayRegions[1][1], self.displayRegions[1][2], self.displayRegions[1][3])
-            
-    
-    def _createNCamera(self,dispRegion):
-        '''
-        Create n Cameras use only CreateOneCamera n times
-        '''
-        cameras = []
-        for i in dispRegion:
-            cameras.append(self.createOneCamera(i))
-        return cameras
-    
+    # -----------------------------------------------------------------
 
-    def _createOneCamera(self,dispRegion):
+    def refreshScreens(self, players):
+        regions = self.getRegions(len(players))
+        for i in range(0 , len(players), 1):
+            players[i].getCamera().node().getDisplayRegion().setDimensions(displayRegions[i])
+            #JEDEM PLAYER EIENE neue REGION zuweise
+            
+    # -----------------------------------------------------------------
+
+    def createCamera(self,region):
         '''
         Create one Camera for a new Player
         '''
-        camera=base.makeCamera(base.win,displayRegion=dispRegion)
+        camera=base.makeCamera(base.win,displayRegion=region)
         camera.node().getLens().setAspectRatio(3.0/4.0)
         camera.node().getLens().setFov(45) #optional.
         camera.setPos(0,-8,3) #set its position.
         return camera
 
+    # -----------------------------------------------------------------
+    
+    def createCameras(self, count):
+        '''
+        Generates a count of cameras and deletes all old ones before generating new ones
+        '''
+        # delete the old cameras
+        del self.cameras
+        self.cameras = []
+        
+        # calculate, which regions are nessecary
+        regions = self.getRegions(count)
+        # add the cameras
+        for region in regions:
+            self.cameras.append(self.createCamera(region))
+    
+    # -----------------------------------------------------------------
 
-    def _createNCameras(self,camCount):
+    def getRegions(self, count):
         '''
-        Generates the Windows size andposition for a cont of N players
+        Calculates the window size and position for a count of n screens
         '''
-##        if camCount <= 0:
-##            pass
-        list = []
-        times = ceil(sqrt(camCount))
-        if ((times* times) - times >= camCount):
-            #print times, times-1 #Debug
-            for y in range(int(times-1), 0, -1):
-                for x in range(1,int(times+1) ,1):
-                    #print x, y, times #Debug
-                    #print ((x-1)/times, x/times, (y-1)/(times-1), y/(times-1) ) #Debug
-                    list.append(((x-1)/times, x/times, (y-1)/(times-1), y/(times-1) ))
+        regions = [] #this list stores the display regions for the several screens
+        
+        separations = ceil(sqrt(count)) # how often has the screen to be separated?
+        
+        # this is executed if a squarical order isn't senseful
+        if ((separations**2) - separations >= count):
+            for y in range(int(separations-1), 0, -1):
+                for x in range(1,int(separations+1) ,1):
+                    regions.append(((x-1)/separations, x/separations, (y-1)/(separations-1), y/(separations-1) ))
                    
+        # this is executed if the player count is near a square number e.g. 9 or 16
         else:
-            #print times, times #Debug
-            for y in range(int(times), 0, -1):
-                for x in range(1, int(times+1) ,1):
-                    #print x, y, times #Debug
-                    #print ((x-1)/times, x/times, (y-1)/times, y/times ) #Debug
-                    list.append(((x-1)/times, x/times, (y-1)/times, y/times ))
-        print "SplitScreenView:",len(list)
-        return list   
+            for y in range(int(separations), 0, -1):
+                for x in range(1, int(separations+1) ,1):
+                    regions.append(((x-1)/separations, x/separations, (y-1)/separations, y/separations ))
+        
+        return regions  
+
+# -----------------------------------------------------------------
+# -----------------------------------------------------------------
+# -----------------------------------------------------------------
+# -----------------------------------------------------------------
        
 if __name__ == "__main__":
 #Only for Test 
-    app = SplitScreen(8)
-    app.run()
+    splitter = SplitScreen(2)
