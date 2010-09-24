@@ -234,7 +234,8 @@ class Track3d(object):
             self.varthickness.append(self.calcTheVector(track_points[i-1],track_points[i],track_points[i+1]))
 ##        self.varthickness.append(self.calcTheVector(track_points[len(track_points)-2],track_points[len(track_points)-1],track_points[0])) #Wieder benutzen wenn wir einen geschlossenen Kreis haben
         self.varthickness.append(self.calcTheVector(track_points[len(track_points)-2],track_points[len(track_points)-1],track_points[len(track_points)-1]))  
-      
+        
+        
         #Normalizing the Vector
         for i in self.varthickness:
             i.normalize()
@@ -269,15 +270,14 @@ class Track3d(object):
         texcoordinates =[]
         street_data_length = len(street_data)
         for i in range(street_data_length):
-            texcoordinates.append((i+1)/street_data_length)
+            texcoordinates.append((i+1.0)/street_data_length)
         print "Streetparts", street_data_length
         for i in range (len(track_points)):
             for j in range (street_data_length): ###WARUM war hier -2!!!!!!!!!!!!!! wenn man den end und start punkt nicht hat ;)
                     self.vertex.addData3f((track_points[i][0] + (self.varthickness[i][0]*street_data[j][0]), track_points[i][1] + (self.varthickness[i][1]*street_data[j][0]), track_points[i][2] + (self.varthickness[i][2]+street_data[j][1])))
                     self.normal.addData3f(0, 0, 1) #KA how to calc
-                    self.color.addData4f(colors[j])
-                    print colors[j]
-                    self.texcoord.addData2f(texcoordinates[j])
+                    #self.color.addData4f(colors[j])
+                    self.texcoord.addData2f(texcoordinates[j], (i%2)) #
 ##                track_points[i][0] + (self.varthickness[i][0]*street_data[j][0])   #x
 ##                track_points[i][1] + (self.varthickness[i][1]*street_data[j][0])   #y
 ##                track_points[i][2] + (self.varthickness[i][2]+street_data[j][1])   #z
