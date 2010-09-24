@@ -13,7 +13,7 @@ import copy
 from panda3d.core import *
 
 
-MIN_DIST = 30
+MIN_DIST = 20
 
 # ---------------------------------------------------------
 # ---------------------------------------------------------
@@ -320,11 +320,11 @@ class Track(object):
                     # if the lines cross / are too near, we have to generate a new map
                     if line1.crossesLine(line2):
                         track_is_ok = False
-                        n += 1
+                        n += 1 #Counter
                         break
                         #print i
                         
-        print "times of street generaton", n
+        print n, "Tracks are ignored"
 
 
         # INTERPOLATION DURCH NURBS
