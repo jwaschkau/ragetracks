@@ -48,7 +48,7 @@ class Game(ShowBase):
         self.track = trackgen3d.Track3d(1000, 800, 600, 100)
         nodePath = self.render.attachNewNode(self.track.createMesh())
         nodePath.setTwoSided(True)
-        #base.toggleWireframe() 
+        #base.toggleWireframe()
 
         #Initialize Physics (ODE)
         self.world = OdeWorld()
