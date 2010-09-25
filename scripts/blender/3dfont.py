@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 ###################################################################
-## this creates 3dmodels out of the ascii-characters
+## this creates 3dmodels out of printable characters
 ###################################################################
 import Blender
 import string
@@ -12,5 +12,5 @@ for character in string.printable:
     txt.setText(character)
     txt.setName(character)
     txt.setExtrudeDepth(0.2)
-    ob = scene.objects.new(txt)   # create an object from the obdata in the current scene
-    ob.makeDisplayList()        # rebuild the display list for this object
+    ob = scene.objects.new(txt) 
+    ob.makeDisplayList()        
