@@ -14,24 +14,26 @@ class Text3D(object):
         self.string = string
         self.position = pos
         self.hpr = hpr
-        self.letters = loader.loadModel("data/models/text3d/letters")
+        self.letters = loader.loadModel("data/models/3dfont/letters")
         self.node = render.attachNewNode("3DText")
         self.node.reparentTo(render)
         #self.node.setColor("red")
         self.node.hide()
-        
+
+        #self.letters.ls()
         for letter in self.string:
-            letter3d = self.letters.find(letter)
-            self.letter3d.reparentTo(self.node)
+            letter3d = self.letters.find("a")
+            print letter3d
+            #letter3d.reparentTo(self.node)
         
         
         
     # -----------------------------------------------------------------
- 
-    def setText(self, string): 
+    def setText(self, string):
         self.string = string
-
-    string = property(fset = setText)
+    
+    ##funktioniert aus irgendeinem grund noch nicht
+    #string = property(fset = setText)
     
     # ----------------------------------------------------------------- 
     
