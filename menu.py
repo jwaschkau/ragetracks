@@ -6,7 +6,7 @@ import gettext
 
 #trans = gettext.translation('ragetracks', './data/language/', ['de']) 
 #trans.install()
-gettext.install('ragetracks', '/data/language/', ['de'])
+gettext.install('ragetracks', '/data/language/po', ['de'])
  
 
 print _("Please enter a value: ")
