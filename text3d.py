@@ -8,23 +8,26 @@ class Text3D(object):
     '''
     Creates a 3D-Object out of a string
     '''
-    def __init__(self, string, pos = Vec3(0,0,0), hpr = Vec3(0,0,0)):
+    def __init__(self, string, pos = Vec3(0,0,0), hpr = Vec3(0,90,0), color = Vec4(255,255,255,255), spacing = 1):
         '''
         '''
         self.string = string
         self.position = pos
         self.hpr = hpr
-        self.letters = loader.loadModel("data/models/3dfont/letters")
+        self.spacing = spacing
+        self.spacing_count = 0
+        self.font = loader.loadModel("data/models/3dfont/letters")
         self.node = render.attachNewNode("3DText")
+        self.node.setTwoSided(True)
         self.node.reparentTo(render)
-        #self.node.setColor("red")
+        self.node.setColor(color)
+        self.node.setHpr(self.hpr)
         self.node.hide()
 
-        #self.letters.ls()
         for letter in self.string:
-            letter3d = self.letters.find("a")
-            print letter3d
-            #letter3d.reparentTo(self.node)
+            letter3d = self.font.find("*/%s"%(letter))
+            letter3d.instanceTo(self.node).setPos(self.spacing_count,0,0)
+            self.spacing_count += self.spacing
         
         
         
@@ -32,8 +35,7 @@ class Text3D(object):
     def setText(self, string):
         self.string = string
     
-    ##funktioniert aus irgendeinem grund noch nicht
-    #string = property(fset = setText)
+    text = property(fset = setText)
     
     # ----------------------------------------------------------------- 
     
