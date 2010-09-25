@@ -14,10 +14,35 @@ class Text3D(object):
         self.string = string
         self.position = pos
         self.hpr = hpr
+        self.letters = loader.loadModel("data/models/text3d/letters")
+        self.node = render.attachNewNode("3DText")
+        self.node.reparentTo(render)
+        #self.node.setColor("red")
+        self.node.hide()
+        
+        for letter in self.string:
+            letter3d = self.letters.find(letter)
+            self.letter3d.reparentTo(self.node)
         
         
         
     # -----------------------------------------------------------------
+ 
+    def setText(self, string): 
+        self.string = string
+
+    string = property(fset = setText)
+    
+    # ----------------------------------------------------------------- 
+    
+    def showText(self):
+        self.node.show()
+    
+    # -----------------------------------------------------------------    
+    def hideText(self):
+        self.node.hide()
+    
+    # -----------------------------------------------------------------   
     
 if __name__ == "__main__":
     import main

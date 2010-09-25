@@ -12,6 +12,7 @@ import player
 import splitscreen
 import trackgen3d
 from playercam import PlayerCam
+from text3d import Text3D
 
 # -----------------------------------------------------------------
 # -----------------------------------------------------------------
@@ -51,6 +52,10 @@ class Game(ShowBase):
         nodePath.setTexture(tex)
         nodePath.setTwoSided(True)
         #base.toggleWireframe()
+        
+        #Test for 3D-Text
+        text = Text3D("HalloWelt")
+        text.showText()
 
         #Initialize Physics (ODE)
         self.world = OdeWorld()
