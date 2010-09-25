@@ -12,46 +12,47 @@ class Text3D(object):
         '''
         '''
         self._string = string
-        self.position = pos
-        self.hpr = hpr
-        self.spacing = spacing
-        self.spacing_count = 0
-        self.font = loader.loadModel("data/models/3dfont/letters")
-        self.node = render.attachNewNode("3DText")
-        self.node.setTwoSided(True)
-        self.node.reparentTo(render)
-        self.node.setColor(color)
-        self.node.setHpr(self.hpr)
-        self.node.hide()
+        self._position = pos
+        self._hpr = hpr
+        self._color = color
+        self._spacing = spacing
+        self._spacing_count = 0
+        self._font = loader.loadModel("data/models/3dfont/letters")
+        self._node = render.attachNewNode("3DText")
+        self._node.setTwoSided(True)
+        self._node.reparentTo(render)
+        self._node.setColor(self._color)
+        self._node.setHpr(self._hpr)
+        self._node.hide()
 
         for letter in self._string:
-            letter3d = self.font.find("*/%s"%(letter))
-            placeholder = self.node.attachNewNode("letter")
-            placeholder.setPos(self.spacing_count,0,0)
+            letter3d = self._font.find("*/%s"%(letter))
+            placeholder = self._node.attachNewNode("letter")
+            placeholder.setPos(self._spacing_count,0,0)
             letter3d.instanceTo(placeholder)
-            self.spacing_count += self.spacing
+            self._spacing_count += self._spacing
         
         
         
     # -----------------------------------------------------------------
     def setString(self, string):
-        self.node.stash()
-        self.spacing_count = 0
+        self._node.stash()
+        self._spacing_count = 0
         self._string = string
         
-        self.node = render.attachNewNode("3DText")
-        self.node.setTwoSided(True)
-        self.node.reparentTo(render)
-        self.node.setColor(color)
-        self.node.setHpr(self.hpr)
-        self.node.hide()
+        self._node = render.attachNewNode("3DText")
+        self._node.setTwoSided(True)
+        self._node.reparentTo(render)
+        self._node.setColor(self._color)
+        self._node.setHpr(self._hpr)
+        self._node.hide()
 
         for letter in self._string:
             letter3d = self.font.find("*/%s"%(letter))
-            placeholder = self.node.attachNewNode("letter")
-            placeholder.setPos(self.spacing_count,0,0)
+            placeholder = self._node.attachNewNode("letter")
+            placeholder.setPos(self._spacing_count,0,0)
             letter3d.instanceTo(placeholder)
-            self.spacing_count += self.spacing
+            self._spacing_count += self._spacing
         
     def getString(self):
         return self._string
@@ -61,15 +62,15 @@ class Text3D(object):
     # ----------------------------------------------------------------- 
     
     def showText(self):
-        self.node.show()
+        self._node.show()
     
     # -----------------------------------------------------------------    
     def hideText(self):
-        self.node.hide()
+        self._node.hide()
     
     # ----------------------------------------------------------------- 
     def __del__(self):
-        self.node.stash()
+        self._node.stash()
     
 if __name__ == "__main__":
     import main
