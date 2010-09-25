@@ -5,7 +5,6 @@
 
 from direct.showbase.ShowBase import ShowBase
 from pandac.PandaModules import * #Load all PandaModules
-import menu3D
 import settings
 import inputdevice
 import player
