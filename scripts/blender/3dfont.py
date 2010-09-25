@@ -7,7 +7,7 @@ import string
 from Blender import Curve, Object, Scene, Text3d
 
 scene = Scene.GetCurrent()
-for character in string.letters:
+for character in string.printable:
     txt = Text3d.New(character) 
     txt.setText(character)
     txt.setName(character)
