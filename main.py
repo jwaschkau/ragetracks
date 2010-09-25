@@ -53,8 +53,7 @@ class Game(ShowBase):
         #base.toggleWireframe()
         
         #Test for 3D-Text
-        text = Text3D("WHalloWelttt")
-        text.showText()
+        self.text = Text3D("WHalloWelttt")
 
         #Initialize Physics (ODE)
         self.world = OdeWorld()
