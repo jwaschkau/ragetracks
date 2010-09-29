@@ -54,6 +54,15 @@ class Game(ShowBase):
         
         #Test for 3D-Text
         self.text = Text3D("WHalloWelttt")
+##        self.text2 = TextNode("TestText")
+##        #self.text2.setFont(DynamicTextFont(dir-freetype))
+##        self.text2.getFont().setRenderMode(TextFont.RMSolid)
+##        self.text2.setText("HalloWelt")
+##        node = self.text2.generate()
+##        render.attachNewNode(node)   	
+##        path = NodePath( render,node)
+##        path.setTwoSided(True)
+##        path.setColor(Vec4(100,100,0,0))	
 
         #Initialize Physics (ODE)
         self.world = OdeWorld()
