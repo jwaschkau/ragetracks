@@ -12,6 +12,8 @@ import splitscreen
 import trackgen3d
 from playercam import PlayerCam
 from text3d import Text3D
+import gettext
+from menu import Menu
 
 # -----------------------------------------------------------------
 # -----------------------------------------------------------------
@@ -32,6 +34,9 @@ class Game(ShowBase):
         # load the settings
         self.settings = settings.Settings()
         self.settings.loadSettings("user/config.ini")
+        gettext.install("ragetrack", "data/language")#, unicode=True) #installs the system language
+        #trans = gettext.translation("ragetrack", "data/language", ["de"]) #installs choosen language
+        #trans.install() #usage: print _("Hallo Welt") 
 
         # initialize the input devices
         self.devices = inputdevice.InputDevices(self.settings.getInputSettings())
@@ -53,7 +58,7 @@ class Game(ShowBase):
         #base.toggleWireframe()
         
         #Test for 3D-Text
-        self.text = Text3D("WHalloWelttt")
+        #self.text = Text3D("WHalloWelttt")
 ##        self.text2 = TextNode("TestText")
 ##        #self.text2.setFont(DynamicTextFont(dir-freetype))
 ##        self.text2.getFont().setRenderMode(TextFont.RMSolid)
@@ -110,7 +115,8 @@ class Game(ShowBase):
         #m.addOption("AddPlayer", self.addPlayer)
 
         #Start the Game for testing purpose
-        self.newGame()
+        self.menu = Menu(self.newGame, self.players[0].getDevice())
+        
 
     # -----------------------------------------------------------------
 

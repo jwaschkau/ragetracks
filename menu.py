@@ -1,13 +1,25 @@
-import gettext
+from text3d import Text3D
 
-#gettext.bindtextdomain('ragetracks', '/data/language/')
-#gettext.textdomain('ragetracks')
-#_ = gettext.gettext
+#TODO   exampleTask umbenennen
+#       in dem Task die Tasten abfangen
+#       Immer den aktuellen Eintrag hervorheben
 
-#trans = gettext.translation('ragetracks', './data/language/', ['de']) 
-#trans.install()
-gettext.install('ragetracks', '/data/language/po', ['de'])
- 
+class Menu(object):
 
-print _("Please enter a value: ")
-print _("The random choice is: %s") % "hallo"
+    def __init__(self, newgame, device):
+        #Test for 3D-Text
+        self.text = Text3D(_("NewGame"))
+        #newgame()
+        print "Direc", device.directions
+        taskMgr.add(self.exampleTask, 'MyTaskName')
+        
+    # This task runs for two seconds, then prints done
+    def exampleTask(self, task):
+        if task.time < 2.0:
+            return task.cont
+        print 'Done'
+        return task.done
+
+
+if __name__ == "__main__":
+    import main
