@@ -1,7 +1,8 @@
 import gettext
 
-#trans = gettext.translation("ragetrack", "data/language", ["de"]) 
 gettext.install("ragetrack", "data/language", unicode=True)
+trans = gettext.translation("ragetrack", "data/language", ["de"]) 
+trans.install()
 
 
 print _("Please enter a value: ")
