@@ -201,11 +201,14 @@ class Game(ShowBase):
                     if force_dir.length() < (ray.getLength() / 2):
                         force_dir.normalize()
                         force_dir = Vec3(force_dir[0]*acceleration,force_dir[1]*acceleration,force_dir[2]*acceleration)
-                        player.getVehicle().getPhysicsModel().addForceAtPos(force_dir, force_pos) 
+                        player.getVehicle().getPhysicsModel().addForceAtPos(force_dir*0.25, force_pos)
+                        
+                        #testcode
+                        player.getVehicle().getPhysicsModel().addForce(-player.getVehicle().getPhysicsModel().getLinearVel()*0.5)
                     else:
                         force_dir.normalize()
                         force_dir = Vec3(force_dir[0]*acceleration,force_dir[1]*acceleration,force_dir[2]*acceleration)
-                        player.getVehicle().getPhysicsModel().addForce(force_dir)
+                        player.getVehicle().getPhysicsModel().addForce(force_dir*2)
    
  # -----------------------------------------------------------------
              
