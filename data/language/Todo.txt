@@ -1,0 +1,3 @@
+Use gettext for translations. The translations themself will be done in Launchpad.
+
+HOWTO: http://openbook.galileocomputing.de/python/python_kapitel_15_003.htm

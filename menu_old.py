@@ -1,4 +1,4 @@
-# _*_ coding: UTF-8 _*_
+# -*- coding: utf-8 -*-
 ###################################################################
 ## this module contains the menu class, which is used for the main-
 ## and sub menus
@@ -16,25 +16,13 @@ class Menu(object):
     def __init__(self):
         '''
         '''
-        self.menuNode = render.attachNewNode("MenuNode")
         self.selection = 0
-        self.options = []     
+        self.options = []
+        self.imagesDB = {#{name:[[unselected, selected],pos,scale]}
+        "NewGame":[["data/sprites/menu/newGame.png","data/sprites/menu/newGameSelected.png"],(0,0,0),(.6, 1, .06)]  
+        }       
         self.selected = 0
-        self.menu = [["newGame", "settings", "cars", "exitGame"],(),(),()]
-        
-        for i in range (len(self.menu[0])):
-            self.entry = loader.loadModel("data/models/menu/" + self.menu[0][i])
-            self.entry.reparentTo(self.menuNode)
-            
-        
-        #print self.menuNode.ls()
-        print "##############################"
-        for child in self.menuNode.getChildren():
-            print child
-        print self.menuNode.find(self.menu[0][0] + "*")
-        print render.ls()
-        base.camera.setPosition(0,0,0)
-        
+
     # -----------------------------------------------------------------
 
     def addOption(self, name, function):
@@ -49,15 +37,8 @@ class Menu(object):
     def hideMenu(self):
         '''
         '''
-        self.menuNode.hide()
-        
-
-    # -----------------------------------------------------------------
-    
-    def showMenu(self):
-        '''
-        '''
-        self.menuNode.show()
+        self.options.destroy()
+        pass
 
     # -----------------------------------------------------------------
 

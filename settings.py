@@ -1,4 +1,4 @@
-# _*_ coding: UTF-8 _*_
+# -*- coding: utf-8 -*-
 ##############################################################
 ## this module contains a class to save and load the
 ## application's settings and configuration

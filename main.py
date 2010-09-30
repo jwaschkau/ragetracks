@@ -1,16 +1,19 @@
-# _*_ coding: UTF-8 _*_
+# -*- coding: utf-8 -*-
 ###################################################################
 ## this module is the main one, which contains the game class
 ###################################################################
 
 from direct.showbase.ShowBase import ShowBase
 from pandac.PandaModules import * #Load all PandaModules
-import menu3D
 import settings
 import inputdevice
 import player
 import splitscreen
 import trackgen3d
+from playercam import PlayerCam
+from text3d import Text3D
+import gettext
+from menu import Menu
 
 # -----------------------------------------------------------------
 # -----------------------------------------------------------------
@@ -26,10 +29,14 @@ class Game(ShowBase):
         #PStatClient.connect() #activate to start performance measuring with pstats
         base.setFrameRateMeter(True) #Show the Framerate
         base.camNode.setActive(False) #disable default cam 
+        self.disableMouse() #disable manual camera-control
 
         # load the settings
         self.settings = settings.Settings()
         self.settings.loadSettings("user/config.ini")
+        gettext.install("ragetrack", "data/language")#, unicode=True) #installs the system language
+        #trans = gettext.translation("ragetrack", "data/language", ["de"]) #installs choosen language
+        #trans.install() #usage: print _("Hallo Welt") 
 
         # initialize the input devices
         self.devices = inputdevice.InputDevices(self.settings.getInputSettings())
@@ -43,10 +50,15 @@ class Game(ShowBase):
         self.splitscreen = splitscreen.SplitScreen(1)
         
         #Create the Track
-        self.track = trackgen3d.Track3d(1000, 800, 600, 50)
+        self.track = trackgen3d.Track3d(1000, 800, 600, 100)
         nodePath = self.render.attachNewNode(self.track.createMesh())
+        tex = loader.loadTexture('data/textures/street.png')
+        nodePath.setTexture(tex)
         nodePath.setTwoSided(True)
-        #base.toggleWireframe() 
+        #base.toggleWireframe()
+        
+        #Test for 3D-Text
+        #self.text = Text3D("WHalloWelttt")
 
         #Initialize Physics (ODE)
         self.world = OdeWorld()
@@ -94,7 +106,8 @@ class Game(ShowBase):
         #m.addOption("AddPlayer", self.addPlayer)
 
         #Start the Game for testing purpose
-        self.newGame()
+        self.menu = Menu(self.newGame, self.players[0].getDevice())
+        
 
     # -----------------------------------------------------------------
 
@@ -103,7 +116,7 @@ class Game(ShowBase):
         creates a new player object, initializes it and sorts the cameras on the screen
         '''
         screen = self.splitscreen.addCamera()
-        camera = screen # = PlayerCam(screen)
+        camera = PlayerCam(screen)
         
         #Create a new player object
         self.players.append(player.Player(len(self.players),self.world, self.space, device, camera))
@@ -175,13 +188,7 @@ class Game(ShowBase):
                     force_pos = ray.getPosition()
                     contact = entry.getContactPoint(0)
                     force_dir = force_pos - contact
-                    acceleration = (ray.getLength()/2-force_dir.length())#*self.TRACK_GRIP
-                    ##acceleration = (acceleration/abs(acceleration))*(acceleration**2) #logarithmic force
-##                    if acceleration < -0.2 and acceleration > 0.2:
-##                        acceleration = 0
-##                    else:
-##                        acceleration = (acceleration/abs(acceleration))*(acceleration**2) #logarithmic force
-                    #print acceleration
+                    acceleration = (ray.getLength()/2-force_dir.length())#calculate the direction
                     if force_dir.length() < (ray.getLength() / 2):
                         force_dir.normalize()
                         force_dir = Vec3(force_dir[0]*acceleration,force_dir[1]*acceleration,force_dir[2]*acceleration)
@@ -220,9 +227,9 @@ class Game(ShowBase):
                 
             self.deltaTimeAccumulator -= self.stepSize # Remove a stepSize from the accumulator until the accumulated time is less than the stepsize
             self.world.quickStep(self.stepSize)
-        for player in self.players:                      # set new positions
-            player.getVehicle().getModel().setPosQuat(render, player.getVehicle().getPhysicsModel().getPosition(), Quat(player.getVehicle().getPhysicsModel().getQuaternion()))
-            player.getVehicle().getPhysicsModel().setGravityMode(1) #enable gravity
+            
+        for player in self.players: # set new positions
+            player.updatePlayer()
         self.contactgroup.empty() # Clear the contact joints
         return task.cont
     # -----------------------------------------------------------------

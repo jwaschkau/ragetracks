@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import direct.directbase.DirectStart
 from pandac.PandaModules import *
 from direct.particles.Particles import Particles

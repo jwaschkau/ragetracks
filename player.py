@@ -1,8 +1,9 @@
-# _*_ coding: UTF-8 _*_
+# -*- coding: utf-8 -*-
 ###################################################################
 ## this module contains the data for one player
 ###################################################################
 import vehicle
+from pandac.PandaModules import Vec3,Quat #Load all PandaModules
 
 class Player(object):
     '''
@@ -17,7 +18,7 @@ class Player(object):
         self.vehicle = vehicle.Vehicle(self.ode_world, self.ode_space) #the properties of the vehicle
         self.device = device #The inputdevice
         
-        #self.camera.reparentTo(self.vehicle.getModel())
+        self.camera.followVehicle(self.vehicle.direction, self.vehicle.getModel())
         #self.camera.setPos(0,-40,5)
         #self.camera.lookAt(self.vehicle.getModel())
         
@@ -97,6 +98,17 @@ class Player(object):
         Needs to get executed every Ode-Step
         '''
         self.vehicle.doStep()
+        
+    
+    # ---------------------------------------------------------
+    
+    def updatePlayer(self):
+        '''
+        Needs to get executed every Ode-Step
+        '''
+        self.vehicle.getModel().setPosQuat(render, self.vehicle.getPhysicsModel().getPosition(), Quat(self.vehicle.getPhysicsModel().getQuaternion())) #set new position
+        self.vehicle.getPhysicsModel().setGravityMode(1) #enable gravity
+        self.camera.updateCam()
         
     
     # ---------------------------------------------------------
