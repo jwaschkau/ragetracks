@@ -59,6 +59,15 @@ class Game(ShowBase):
         
         #Test for 3D-Text
         #self.text = Text3D("WHalloWelttt")
+##        self.text2 = TextNode("TestText")
+##        #self.text2.setFont(DynamicTextFont(dir-freetype))
+##        self.text2.getFont().setRenderMode(TextFont.RMSolid)
+##        self.text2.setText("HalloWelt")
+##        node = self.text2.generate()
+##        render.attachNewNode(node)   	
+##        path = NodePath( render,node)
+##        path.setTwoSided(True)
+##        path.setColor(Vec4(100,100,0,0))	
 
         #Initialize Physics (ODE)
         self.world = OdeWorld()
@@ -192,11 +201,15 @@ class Game(ShowBase):
                     if force_dir.length() < (ray.getLength() / 2):
                         force_dir.normalize()
                         force_dir = Vec3(force_dir[0]*acceleration,force_dir[1]*acceleration,force_dir[2]*acceleration)
-                        player.getVehicle().getPhysicsModel().addForceAtPos(force_dir, force_pos) 
+                        player.getVehicle().getPhysicsModel().addForceAtPos(force_dir*0.25, force_pos)
+                        
+                        #testcode
+                        player.getVehicle().getPhysicsModel().addForce(-player.getVehicle().getPhysicsModel().getLinearVel()*0.5) #need to consider direction!
+                        player.getVehicle().hit_ground = True
                     else:
                         force_dir.normalize()
                         force_dir = Vec3(force_dir[0]*acceleration,force_dir[1]*acceleration,force_dir[2]*acceleration)
-                        player.getVehicle().getPhysicsModel().addForce(force_dir)
+                        player.getVehicle().getPhysicsModel().addForce(force_dir*2)
    
  # -----------------------------------------------------------------
              
@@ -227,6 +240,7 @@ class Game(ShowBase):
                 
             self.deltaTimeAccumulator -= self.stepSize # Remove a stepSize from the accumulator until the accumulated time is less than the stepsize
             self.world.quickStep(self.stepSize)
+            player.getVehicle().hit_ground = False
             
         for player in self.players: # set new positions
             player.updatePlayer()

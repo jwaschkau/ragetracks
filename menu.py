@@ -9,7 +9,7 @@ class Menu(object):
     def __init__(self, newgame, device):
         #Test for 3D-Text
         self.text = Text3D(_("NewGame"))
-        #newgame()
+        newgame()
         print "Direc", device.directions
         taskMgr.add(self.exampleTask, 'MyTaskName')
         
