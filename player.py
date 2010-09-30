@@ -71,7 +71,7 @@ class Player(object):
         
     # ---------------------------------------------------------
     
-    def destroy(self):
+    def __del__(self):
         '''
         destroys all objects of the player-object
         '''

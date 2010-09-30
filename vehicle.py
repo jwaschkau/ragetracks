@@ -41,7 +41,7 @@ class Vehicle(object):
         
         self._model = loader.loadModel("data/models/vehicle01")
         self._model.reparentTo(render)
-        self._model.setPos(0,30,100)
+        self._model.setPos(0,0,10)
         self._model.setHpr(0,0,0)
         
         #Initialize the physics-simulation for the vehicle
@@ -51,7 +51,7 @@ class Vehicle(object):
         
         #Initialize the mass of the vehicle
         physics_mass = OdeMass()
-        physics_mass.setBox(4,1,1,1)
+        physics_mass.setBox(400,1,1,1)
         self._physics_model.setMass(physics_mass)
         
         #Initialize the collision-model of the vehicle
@@ -63,10 +63,10 @@ class Vehicle(object):
         self._collision_model.setCategoryBits(0)
 
         #Add collision-rays for the floating effect
-        self._front_left = CollisionRay(Vec3(-2,4,-1), Vec3(0,0,-1), self._ode_space, parent = self._collision_model, length = 14.0)
-        self._front_right = CollisionRay(Vec3(2,4,-1), Vec3(0,0,-1), self._ode_space, parent = self._collision_model, length = 14.0)
-        self._back_left= CollisionRay(Vec3(-2,-4,-1), Vec3(0,0,-1), self._ode_space, parent = self._collision_model, length = 14.0)
-        self._back_right = CollisionRay(Vec3(2,-4,-1), Vec3(0,0,-1), self._ode_space, parent = self._collision_model, length = 14.0)
+        self._front_left = CollisionRay(Vec3(-2,4,-1), Vec3(0,0,-1), self._ode_space, parent = self._collision_model, length = 5.0)
+        self._front_right = CollisionRay(Vec3(2,4,-1), Vec3(0,0,-1), self._ode_space, parent = self._collision_model, length = 5.0)
+        self._back_left= CollisionRay(Vec3(-2,-4,-1), Vec3(0,0,-1), self._ode_space, parent = self._collision_model, length = 5.0)
+        self._back_right = CollisionRay(Vec3(2,-4,-1), Vec3(0,0,-1), self._ode_space, parent = self._collision_model, length = 5.0)
            
     # ---------------------------------------------------------
     
@@ -198,6 +198,9 @@ class Vehicle(object):
     hit_ground= property(fget = getHitGround, fset = setHitGround)
     
     # ----------------------------------------------------------------- 
+    
+    def __del__(self):
+        pass
     
 if __name__ == "__main__":
     import main

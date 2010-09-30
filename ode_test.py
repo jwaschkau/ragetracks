@@ -17,7 +17,7 @@ class RageTracks(ShowBase):
         
         #Initialise the Ode world
         self.world = OdeWorld()
-        self.world.setGravity(0, 0, -0.5)
+        self.world.setGravity(0, 0, -9.81)
         
         #load the models
         

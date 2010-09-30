@@ -54,7 +54,7 @@ class Game(ShowBase):
         nodePath = self.render.attachNewNode(self.track.createMesh())
         tex = loader.loadTexture('data/textures/street.png')
         nodePath.setTexture(tex)
-        nodePath.setTwoSided(True)
+        #nodePath.setTwoSided(True)
         #base.toggleWireframe()
         
         #Test for 3D-Text
@@ -71,9 +71,8 @@ class Game(ShowBase):
 
         #Initialize Physics (ODE)
         self.world = OdeWorld()
-        self.world.setGravity(0, 0, -9.81)
         self.deltaTimeAccumulator = 0.0 #this variable is necessary to track the time for the physics
-        self.stepSize = 1.0 / 90.0 # This stepSize makes the simulation run at 60 frames per second
+        self.stepSize = 1.0 / 900.0 # This stepSize makes the simulation run at 60 frames per second
 
         #Initialize Collisions (ODE)
         self.space = OdeSimpleSpace()
@@ -174,6 +173,7 @@ class Game(ShowBase):
 
         #start the gametask
         taskMgr.add(self.gameTask, "gameTask")
+        self.world.setGravity(0, 0, -1.81)
 
 
 
@@ -197,20 +197,22 @@ class Game(ShowBase):
                     force_pos = ray.getPosition()
                     contact = entry.getContactPoint(0)
                     force_dir = force_pos - contact
-                    acceleration = (ray.getLength()/2-force_dir.length())#calculate the direction
-                    if force_dir.length() < (ray.getLength() / 2):
+                    acceleration = (ray.getLength()/2-force_dir.length())*50#calculate the direction
+                    if acceleration > 0:
                         force_dir.normalize()
                         force_dir = Vec3(force_dir[0]*acceleration,force_dir[1]*acceleration,force_dir[2]*acceleration)
-                        player.vehicle.physics_model.addForceAtPos(force_dir*0.25, force_pos)
-                        
+                        player.vehicle.physics_model.addForceAtPos(force_dir, force_pos)
+                        print "up:", acceleration
                         #testcode
-                        player.vehicle.physics_model.addForce(-player.vehicle.physics_model.getLinearVel()*0.25) #need to consider direction!
+                        dir = player.vehicle.collision_model.getQuaternion().xform(Vec3(-1,0,0))
+                        #player.vehicle.physics_model.addForce(force_dir[0]*dir[0]*0.25,force_dir[1]*dir[1]*0.25,force_dir[2]*dir[2]*0.25)#-player.vehicle.physics_model.getLinearVel()*0.25) #need to consider direction!
                         player.vehicle.hit_ground = True
                     else:
                         force_dir.normalize()
                         force_dir = Vec3(force_dir[0]*acceleration,force_dir[1]*acceleration,force_dir[2]*acceleration)
-                        player.vehicle.physics_model.addForce(force_dir*2)
-   
+                        player.vehicle.physics_model.addForce(force_dir)
+                    #player.vehicle.physics_model.setTorque(player.vehicle.physics_model.getAngularVel()*0.01) 
+                    #player.vehicle.physics_model.addTorque(player.vehicle.physics_model.getAngularVel()*-1)
  # -----------------------------------------------------------------
              
     def gameTask(self, task):
@@ -218,7 +220,7 @@ class Game(ShowBase):
         this task runs once per second if the game is running
         '''
         #calculate the physics
-        self.space.autoCollide() # Setup the contact joints
+        #self.space.autoCollide() # Setup the contact joints
 
         self.deltaTimeAccumulator += globalClock.getDt()  
         while self.deltaTimeAccumulator > self.stepSize: # Step the simulation
@@ -238,9 +240,11 @@ class Game(ShowBase):
                 player.vehicle.physics_model.addForce(linear_velocity*-self.LINEAR_FRICTION)  
                 player.vehicle.physics_model.addTorque(angular_velocity*-self.ANGULAR_FRICTION)    
                 
+                
             self.deltaTimeAccumulator -= self.stepSize # Remove a stepSize from the accumulator until the accumulated time is less than the stepsize
+            self.space.autoCollide() # Setup the contact joints            
             self.world.quickStep(self.stepSize)
-            player.vehicle.hit_ground = False
+            #player.vehicle.hit_ground = False
             
         for player in self.players: # set new positions
             player.updatePlayer()
