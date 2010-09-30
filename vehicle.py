@@ -25,6 +25,7 @@ class Vehicle(object):
         self.boost_strength = 0.0 #the boost propertys of the vehicle
         self.control_strength = 0.0 #impact on the steering behaviour
         self.grip_strength = 0.0 #impact on the steering behaviour
+        self._hit_ground = False
         
         self.setVehicle(name) #set the initial vehicle
         
@@ -150,8 +151,9 @@ class Vehicle(object):
         '''
         Boosts the vehicle by indicated strength
         '''
-        direction = self.collision_model.getQuaternion().xform(Vec3(0,1,0))
-        self.physics_model.addForce(direction*self.boost_strength)
+        if self._hit_ground:
+            direction = self.collision_model.getQuaternion().xform(Vec3(0,1,0))
+            self.physics_model.addForce(direction*self.boost_strength)
         
     def setDirection(self, dir):
         '''
@@ -192,7 +194,21 @@ class Vehicle(object):
     
     # ---------------------------------------------------------
     def getCollisionRays(self):
-        return self.front_left.getRay(), self.front_right.getRay(), self.back_left.getRay() ,self.back_right.getRay()
+        return self.front_left.getRay(), self.front_right.getRay(), self.back_left.getRay() ,self.back_right.getRay()#
+    
+    # ----------------------------------------------------------------- 
+        
+    def getHitGround(self):
+        return self._hit_ground
+        
+    def setHitGround(self, value):
+        if type(value) != bool:
+            raise TypeError("Type should be %s not %s"% (bool,type(value)))
+        self._hit_ground = value
+    
+    hit_ground= property(fget = getHitGround, fset = setHitGround)
+    
+    # ----------------------------------------------------------------- 
     
 if __name__ == "__main__":
     import main
