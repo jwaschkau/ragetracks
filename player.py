@@ -11,76 +11,63 @@ class Player(object):
     def __init__(self, number, ode_world, ode_space, device = None, camera = None):
         '''
         '''
-        self.ode_world = ode_world
-        self.ode_space = ode_space
-        self.number = number
-        self.camera = camera
-        self.vehicle = vehicle.Vehicle(self.ode_world, self.ode_space) #the properties of the vehicle
-        self.device = device #The inputdevice
+        self._ode_world = ode_world
+        self._ode_space = ode_space
+        self._number = number
+        self._camera = camera
+        self._vehicle = vehicle.Vehicle(self._ode_world, self._ode_space) #the properties of the vehicle
+        self._device = device #The inputdevice
         
-        self.camera.followVehicle(self.vehicle.direction, self.vehicle.getModel())
-        #self.camera.setPos(0,-40,5)
-        #self.camera.lookAt(self.vehicle.getModel())
+        self._camera.followVehicle(self._vehicle.direction, self._vehicle.model)
+        #self._camera.setPos(0,-40,5)
+        #self._camera.lookAt(self._vehicle.getModel())
         
         #Initialize the camera
-        #self.camera.reparentTo(self.vehicle.getModel())
-        #self.camera.setPos(0,-30,10)
-        #self.camera.lookAt(self.vehicle.getModel()) 
+        #self._camera.reparentTo(self._vehicle.getModel())
+        #self._camera.setPos(0,-30,10)
+        #self._camera.lookAt(self._vehicle.getModel()) 
     
-    # ---------------------------------------------------------
-    
+    # ---------------------------------------------------------        
+        
     def setCamera(self, camera):
         '''
         '''
-        self.camera = camera
-        
-    # ---------------------------------------------------------
+        self._camera = camera
         
     def getCamera(self):
         '''
         '''
-        return self.camera
+        return self._camera
+        
+    camera = property(fget = getCamera, fset = setCamera)
         
     # ---------------------------------------------------------
-    
-    def setNumber(self):
+            
+    def setVehicle(self, vehicle):
         '''
         '''
-        self.number = number
-    
-    # ---------------------------------------------------------
+        self._vehicle = vehicle
         
-    def getNumber(self):
-        '''
-        '''
-        return self.number
-        
-    # ---------------------------------------------------------
-    
-    def setVehicle(self):
-        '''
-        '''
-        self.vehicle = vehicle
-        
-    # ---------------------------------------------------------
-    
     def getVehicle(self):
         '''
         '''
-        return self.vehicle
+        return self._vehicle
         
-    # ---------------------------------------------------------
-    def setDevice(self):
-        '''
-        '''
-        self.device = device
+    vehicle = property(fget = getVehicle, fset = setVehicle)
         
     # ---------------------------------------------------------
     
+    def setDevice(self, device):
+        '''
+        '''
+        self._device = device
+        
     def getDevice(self):
         '''
         '''
-        return self.device
+        return self._device
+        
+    device = property(fget = getDevice, fset = setDevice)
         
     # ---------------------------------------------------------
     
@@ -89,7 +76,7 @@ class Player(object):
         destroys all objects of the player-object
         '''
         #Del one Camera 
-        self.camera.node().removeNode()
+        self._camera.node().removeNode()
         
     # ---------------------------------------------------------
     
@@ -97,7 +84,7 @@ class Player(object):
         '''
         Needs to get executed every Ode-Step
         '''
-        self.vehicle.doStep()
+        self._vehicle.doStep()
         
     
     # ---------------------------------------------------------
@@ -106,9 +93,9 @@ class Player(object):
         '''
         Needs to get executed every Ode-Step
         '''
-        self.vehicle.getModel().setPosQuat(render, self.vehicle.getPhysicsModel().getPosition(), Quat(self.vehicle.getPhysicsModel().getQuaternion())) #set new position
-        self.vehicle.getPhysicsModel().setGravityMode(1) #enable gravity
-        self.camera.updateCam()
+        self._vehicle.model.setPosQuat(render, self._vehicle.physics_model.getPosition(), Quat(self._vehicle.physics_model.getQuaternion())) #set new position
+        self._vehicle.physics_model.setGravityMode(1) #enable gravity
+        self._camera.updateCam()
         
     
     # ---------------------------------------------------------

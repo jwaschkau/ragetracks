@@ -191,9 +191,9 @@ class Game(ShowBase):
         
         #Handles the collision-rays from the players
         for player in self.players:
-            for ray in player.getVehicle().getCollisionRays():
+            for ray in player.vehicle.collision_rays:
                 if geom1 == ray or geom2 == ray:
-                    player.getVehicle().getPhysicsModel().setGravityMode(0) #disable gravity if on the track
+                    player.vehicle.physics_model.setGravityMode(0) #disable gravity if on the track
                     force_pos = ray.getPosition()
                     contact = entry.getContactPoint(0)
                     force_dir = force_pos - contact
@@ -201,15 +201,15 @@ class Game(ShowBase):
                     if force_dir.length() < (ray.getLength() / 2):
                         force_dir.normalize()
                         force_dir = Vec3(force_dir[0]*acceleration,force_dir[1]*acceleration,force_dir[2]*acceleration)
-                        player.getVehicle().getPhysicsModel().addForceAtPos(force_dir*0.25, force_pos)
+                        player.vehicle.physics_model.addForceAtPos(force_dir*0.25, force_pos)
                         
                         #testcode
-                        player.getVehicle().getPhysicsModel().addForce(-player.getVehicle().getPhysicsModel().getLinearVel()*0.5) #need to consider direction!
-                        player.getVehicle().hit_ground = True
+                        player.vehicle.physics_model.addForce(-player.vehicle.physics_model.getLinearVel()*0.25) #need to consider direction!
+                        player.vehicle.hit_ground = True
                     else:
                         force_dir.normalize()
                         force_dir = Vec3(force_dir[0]*acceleration,force_dir[1]*acceleration,force_dir[2]*acceleration)
-                        player.getVehicle().getPhysicsModel().addForce(force_dir*2)
+                        player.vehicle.physics_model.addForce(force_dir*2)
    
  # -----------------------------------------------------------------
              
@@ -226,21 +226,21 @@ class Game(ShowBase):
                 player.doStep() #refresh player specific things (rays) 
                 
                 #get the player input and set the forces
-                if player.getDevice().boost:
-                    player.getVehicle().setBoost()
-                if player.getDevice().directions[0] != 0 or player.getDevice().directions[1] != 0:
-                    player.getVehicle().setDirection(player.getDevice().directions)
+                if player.device.boost:
+                    player.vehicle.setBoost()
+                if player.device.directions[0] != 0 or player.device.directions[1] != 0:
+                    player.vehicle.direction = player.device.directions
                 
-                linear_velocity = player.getVehicle().getPhysicsModel().getLinearVel()
-                angular_velocity = player.getVehicle().getPhysicsModel().getAngularVel()               
+                linear_velocity = player.vehicle.physics_model.getLinearVel()
+                angular_velocity = player.vehicle.physics_model.getAngularVel()               
                 
                 #calculate airresistance to get energy out of the ode-system
-                player.getVehicle().getPhysicsModel().addForce(linear_velocity*-self.LINEAR_FRICTION)  
-                player.getVehicle().getPhysicsModel().addTorque(angular_velocity*-self.ANGULAR_FRICTION)    
+                player.vehicle.physics_model.addForce(linear_velocity*-self.LINEAR_FRICTION)  
+                player.vehicle.physics_model.addTorque(angular_velocity*-self.ANGULAR_FRICTION)    
                 
             self.deltaTimeAccumulator -= self.stepSize # Remove a stepSize from the accumulator until the accumulated time is less than the stepsize
             self.world.quickStep(self.stepSize)
-            player.getVehicle().hit_ground = False
+            player.vehicle.hit_ground = False
             
         for player in self.players: # set new positions
             player.updatePlayer()
