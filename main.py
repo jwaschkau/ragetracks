@@ -50,7 +50,7 @@ class Game(ShowBase):
         self.splitscreen = splitscreen.SplitScreen(1)
         
         #Create the Track
-        self.track = trackgen3d.Track3d(1000, 800, 600, 100)
+        self.track = trackgen3d.Track3d(1000, 800, 600, 200)
         nodePath = self.render.attachNewNode(self.track.createMesh())
         tex = loader.loadTexture('data/textures/street.png')
         nodePath.setTexture(tex)
