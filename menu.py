@@ -62,7 +62,6 @@ class Menu(object):
         '''
         '''
         self.options.append((name, function))
-        print (len(self.optionsModells))*5
         self.optionsModells.append(Text3D(_(name), Vec3(0, 0, (len(self.optionsModells))*(-1.5))))
         self.optionsModells[len(self.optionsModells)-1].reparentTo(self.menuNode)
         
@@ -122,7 +121,6 @@ class Menu(object):
         '''
         '''
         # call the function behind the selected option
-        print self.selected
         self.options[self.selected][1]()
         self.hideMenu()
 
