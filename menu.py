@@ -22,7 +22,7 @@ class Menu(object):
         self.addOption("NewGame", newGame)
         self.addOption("Options", newGame)
         self.addOption("Credits", newGame)
-        self.addOption("Hall of fame", newGame)
+        self.addOption("HallOfFame", newGame)
         self.addOption("Exit", newGame)
         #self.text = Text3D(_("NewGame"))
         
