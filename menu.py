@@ -20,10 +20,10 @@ class Menu(object):
 
         #Fill the options List
         self.addOption("NewGame", newGame)
-        self.addOption("OptionII", newGame)
-        self.addOption("OptionIII", newGame)
-        self.addOption("OptionIIII", newGame)
-        self.addOption("OptionIIIII", newGame)
+        self.addOption("Options", newGame)
+        self.addOption("Credits", newGame)
+        self.addOption("Hall of fame", newGame)
+        self.addOption("Exit", newGame)
         #self.text = Text3D(_("NewGame"))
         
         self.showMenu()
