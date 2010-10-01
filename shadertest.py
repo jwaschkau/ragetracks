@@ -55,16 +55,16 @@ class GlowDemo(DirectObject):
         #self.tron.loadAnims({"running":"models/tron_anim"})
         self.tron.reparentTo(render)
 
-        #put some lighting on the tron model
-        dlight = DirectionalLight('dlight')
-        alight = AmbientLight('alight')
-        dlnp = render.attachNewNode(dlight)
-        alnp = render.attachNewNode(alight)
-        dlight.setColor(Vec4(1.0, 0.7, 0.2, 1))
-        alight.setColor(Vec4(0.2, 0.2, 0.2, 1))
-        dlnp.setHpr(0, -60, 0)
-        render.setLight(dlnp)
-        render.setLight(alnp)
+##        #put some lighting on the tron model
+##        dlight = DirectionalLight('dlight')
+##        alight = AmbientLight('alight')
+##        dlnp = render.attachNewNode(dlight)
+##        alnp = render.attachNewNode(alight)
+##        dlight.setColor(Vec4(1.0, 1.0, 1.0, 1))
+##        alight.setColor(Vec4(0.2, 0.2, 0.2, 1))
+##        dlnp.setHpr(0, -60, 0)
+##        render.setLight(dlnp)
+##        render.setLight(alnp)
 
         # create the glow buffer. This buffer renders like a normal scene,
         # except that only the glowing materials should show up nonblack.
