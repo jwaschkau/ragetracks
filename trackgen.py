@@ -250,47 +250,56 @@ class Track(object):
         this method generates some random points and stores them in a member variable
         -> sets the attribute self.points
         '''
-        self.points = []
-        # we have make four parts out of our coordinate system, so that every Part has got a piece of road
-        q1 = []
-        q2 = []
-        q3 = []
-        q4 = []
+        player_count = 2
+        vehicle_dist = 20
+        minimum_angle = 40
+        points = []
 
-        # size of the parts
-        q1_size = ((0, 0),(self.size[0]/2, self.size[1]/2))
-        q2_size = ((self.size[0]/2, 0),(self.size[0], self.size[1]/2))
-        q3_size = ((self.size[0]/2, self.size[1]/2),(self.size[0], self.size[1]))
-        q4_size = ((0, self.size[1]/2),(self.size[0]/2, self.size[1]))
+        # calculate the size of the four quadrants and shuffle them
+        size = []
+        size.append(((0, 0),(self.size[0]/2, self.size[1]/2)))
+        size.append((((self.size[0]/2, 0),(self.size[0], self.size[1]/2))))
+        size.append(((self.size[0]/2, self.size[1]/2),(self.size[0], self.size[1])))
+        size.append(((0, self.size[1]/2),(self.size[0]/2, self.size[1])))
+        random.shuffle(size)
 
+        points.append(Vec3(0,(((player_count-1)/4)+2)*-vehicle_dist,0))
+        points.append(Vec3(0,0,0))
 
         # fill the parts with random points
-        for i in range(4):
-            q1.append(Vec3(random.randint(q1_size[0][0], q1_size[1][0]), random.randint(q1_size[0][1], q1_size[1][1]), random.randint(0, self.size[2])))
+        for q in size:
+            for i in xrange(4):
+                x = random.randint(q[0][0], q[1][0])
+                y = random.randint(q[0][1], q[1][1])
+                z = random.randint(0, self.size[2])
+                point = Vec3(x,y,z)
+                
+##                vec1 = points[-1]-points[-2]
+##                vec2 = point-points[-1]
+##                vec1.normalize()
+##                vec2.normalize()
+##                
+##                while vec1.angleDeg(vec2) < minimum_angle:
+##                    x = random.randint(q[0][0], q[1][0])
+##                    y = random.randint(q[0][1], q[1][1])
+##                    z = random.randint(0, self.size[2])
+##                    point = Vec3(x,y,z)
+##                
+##                    vec1 = points[-1]-points[-2]
+##                    vec2 = point-points[-1]
+##                    vec1.normalize()
+##                    vec2.normalize()
+                
+                points.append(point)
+                    
+                    
+        print points
 
-        for i in range(4):
-            q2.append(Vec3(random.randint(q2_size[0][0], q2_size[1][0]), random.randint(q2_size[0][1], q2_size[1][1]), random.randint(0, self.size[2])))
-
-        for i in range(4):
-            q3.append(Vec3(random.randint(q3_size[0][0], q3_size[1][0]), random.randint(q3_size[0][1], q3_size[1][1]), random.randint(0, self.size[2])))
-
-        for i in range(4):
-            q4.append(Vec3(random.randint(q4_size[0][0], q4_size[1][0]), random.randint(q4_size[0][1], q4_size[1][1]), random.randint(0, self.size[2])))
-
-
-        # the parts are randomly patched together
-        points=[q1,q2,q3,q4]
-        random.shuffle(points)
-
-        # and stored in a member variable
-        self.points.extend(points[0])
-        self.points.extend(points[1])
-        self.points.extend(points[2])
-        self.points.extend(points[3])
+        self.points = points
         
-        dir = self.points[1] - self.points[0]
-        dir = dir.normalize()
-        self.points.append(self.points[0]+(dir*(-200)))
+        #dir = self.points[1] - self.points[0]
+        #dir = dir.normalize()
+        #self.points.append(self.points[0]+(dir*(-200)))
         self.points.append(Vec3(self.points[0]))
 
     # -------------------------------------------------------------------------------------

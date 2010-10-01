@@ -202,7 +202,7 @@ class Track3d(object):
     '''
     Generate the 3d Mesh out of the StreetData and the 2dTrack
     '''
-    def __init__(self, res, x, y, z = 50):
+    def __init__(self, res, x, y, z = 200):
         '''
         '''
         #street_data = (Vec2(4.0,4.0), Vec2(10.0,10.0), Vec2(10.0,0.0), Vec2(4.0,0.0), Vec2(0.0,-1.0))
@@ -220,7 +220,8 @@ class Track3d(object):
         
         m = Track(x, y, z)
         m.generateTrack()
-        m.genStart(5)
+        #m.genStart(5)
+        print "generated"
         track_points = m.getInterpolatedPoints(res)
         #track_points = (Vec3(-5, 0, 0), Vec3(-5, 10, 0), Vec3(-5, 20, 0), Vec3(-5, 30, 0), Vec3(-5, 40, 0), Vec3(-5, 43, 0), Vec3(-5, 53, 0), Vec3(-5, 63, 0))
         #print "Imput Centers:", track_points
@@ -319,7 +320,8 @@ class Track3d(object):
 # -------------------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    import main
+    #import main
+    Track3d(200,800,600)
     #Test
 ##    tuple1 = ((1.0,1.0,0.0),(1.0,4.0,0.0),(1.0,10.0,0.0))
 ##    tuple2 = ((-2.0, -3.0, 0.0),(1.0, -5.0, 0.0),(4.0, -4.0, 0.0),(6.0, 0.0, 0.0),(3.0, 4.0, 0.0),(-2.0, 6.0, 0.0),(-7.0, 3.0, 0.0),(-8.0, -2.0, 0.0))

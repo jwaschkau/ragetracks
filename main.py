@@ -50,7 +50,7 @@ class Game(ShowBase):
         self.splitscreen = splitscreen.SplitScreen(0)
         
         #Create the Track
-        self.track = trackgen3d.Track3d(1000, 800, 600, 100)
+        self.track = trackgen3d.Track3d(1000, 800, 600, 200)
         nodePath = self.render.attachNewNode(self.track.createMesh())
         tex = loader.loadTexture('data/textures/street.png')
         nodePath.setTexture(tex)
@@ -204,7 +204,8 @@ class Game(ShowBase):
                         player.getVehicle().getPhysicsModel().addForceAtPos(force_dir*0.25, force_pos)
                         
                         #testcode
-                        player.getVehicle().getPhysicsModel().addForce(-player.getVehicle().getPhysicsModel().getLinearVel()*0.5)
+                        player.getVehicle().getPhysicsModel().addForce(-player.getVehicle().getPhysicsModel().getLinearVel()*0.5) #need to consider direction!
+                        player.getVehicle().hit_ground = True
                     else:
                         force_dir.normalize()
                         force_dir = Vec3(force_dir[0]*acceleration,force_dir[1]*acceleration,force_dir[2]*acceleration)
@@ -239,6 +240,7 @@ class Game(ShowBase):
                 
             self.deltaTimeAccumulator -= self.stepSize # Remove a stepSize from the accumulator until the accumulated time is less than the stepsize
             self.world.quickStep(self.stepSize)
+            player.getVehicle().hit_ground = False
             
         for player in self.players: # set new positions
             player.updatePlayer()
