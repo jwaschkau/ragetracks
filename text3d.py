@@ -31,6 +31,7 @@ class Text3D(object):
         self._node.setTwoSided(True)
         self._node.setColor(self._color)
         self._node.setHpr(self._hpr)
+        self._node.setPos(pos)
 
         for letter in self._string:
             letter3d = self._font.find("*/%s"%(letter))

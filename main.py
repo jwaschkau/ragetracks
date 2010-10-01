@@ -30,24 +30,24 @@ class Game(ShowBase):
         base.setFrameRateMeter(True) #Show the Framerate
         base.camNode.setActive(False) #disable default cam 
         self.disableMouse() #disable manual camera-control
-
+        
         # load the settings
         self.settings = settings.Settings()
         self.settings.loadSettings("user/config.ini")
         gettext.install("ragetrack", "data/language")#, unicode=True) #installs the system language
         #trans = gettext.translation("ragetrack", "data/language", ["de"]) #installs choosen language
         #trans.install() #usage: print _("Hallo Welt") 
-
+        
         # initialize the input devices
         self.devices = inputdevice.InputDevices(self.settings.getInputSettings())
         taskMgr.add(self.devices.fetchEvents, "fetchEvents")
-
+        
         #Initialize needed variables and objects
         self.players = [] #holds the player objects
         self.TRACK_GRIP = 0.5
         self.LINEAR_FRICTION = 0.9
         self.ANGULAR_FRICTION = 0.9
-        self.splitscreen = splitscreen.SplitScreen(1)
+        self.splitscreen = splitscreen.SplitScreen(0)
         
         #Create the Track
         self.track = trackgen3d.Track3d(1000, 800, 600, 100)
@@ -68,13 +68,13 @@ class Game(ShowBase):
 ##        path = NodePath( render,node)
 ##        path.setTwoSided(True)
 ##        path.setColor(Vec4(100,100,0,0))	
-
+        
         #Initialize Physics (ODE)
         self.world = OdeWorld()
         self.world.setGravity(0, 0, -9.81)
         self.deltaTimeAccumulator = 0.0 #this variable is necessary to track the time for the physics
         self.stepSize = 1.0 / 90.0 # This stepSize makes the simulation run at 60 frames per second
-
+        
         #Initialize Collisions (ODE)
         self.space = OdeSimpleSpace()
         #Initialize the surface-table, it defines how objects interact with each other
@@ -87,10 +87,10 @@ class Game(ShowBase):
         #set up the collision event
         self.space.setCollisionEvent("ode-collision")
         base.accept("ode-collision", self.onCollision) 
-
+        
         #Initialize the first player
-        self.addPlayer(self.devices.devices[0]) ##pass the device for the first player (probably the keyboard)
-
+        #self.addPlayer(self.devices.devices[0]) ##pass the device for the first player (probably the keyboard)
+        
         # try to read the ini-file. If it fails the settings class
         # automatically contains default values
         self.settings = settings.Settings()
@@ -98,8 +98,7 @@ class Game(ShowBase):
             self.settings.loadSettings("user/config.ini")
         except:
             pass    # so here is nothing to do
-
-
+        
         # Add the main menu (though this is only temporary:
         # the menu should me a member-variable, not a local one)
         #m = menu3D.Menu()
@@ -110,12 +109,13 @@ class Game(ShowBase):
         plnp = render.attachNewNode(plight)
         plnp.setPos(100, 100, 0)
         render.setLight(plnp)
-
+        
         #m.addOption("NewGame", self.newGame)
         #m.addOption("AddPlayer", self.addPlayer)
-
+        
         #Start the Game for testing purpose
-        self.menu = Menu(self.newGame, self.players[0].getDevice())
+        #self.menu = Menu(self.newGame, self.players[0].getDevice())    #if one player exist
+        self.menu = Menu(self.newGame, self.devices.devices[0])         #if no player exist
         
 
     # -----------------------------------------------------------------
@@ -151,7 +151,7 @@ class Game(ShowBase):
         '''
         starts the game or goes to the next menu
         '''
-
+        self.addPlayer(self.devices.devices[0])
         #Load the Map
         self.map = self.loader.loadModel("data/models/Track01")
         self.map.reparentTo(self.render)
