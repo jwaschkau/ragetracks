@@ -50,7 +50,7 @@ class Game(ShowBase):
         self.splitscreen = splitscreen.SplitScreen(1)
         
         #Create the Track
-        self.track = trackgen3d.Track3d(1000, 800, 600, 100)
+        self.track = trackgen3d.Track3d(1000, 800, 600, 200)
         nodePath = self.render.attachNewNode(self.track.createMesh())
         tex = loader.loadTexture('data/textures/street.png')
         nodePath.setTexture(tex)
@@ -188,11 +188,11 @@ class Game(ShowBase):
         geom2 = entry.getGeom2()
         body1 = entry.getBody1()
         body2 = entry.getBody2()
-        
         #Handles the collision-rays from the players
         for player in self.players:
             for ray in player.vehicle.collision_rays:
                 if geom1 == ray or geom2 == ray:
+                    normal = entry.getContactGeom(0).getNormal()
                     player.vehicle.physics_model.setGravityMode(0) #disable gravity if on the track
                     force_pos = ray.getPosition()
                     contact = entry.getContactPoint(0)
@@ -200,16 +200,17 @@ class Game(ShowBase):
                     acceleration = (ray.getLength()/2-force_dir.length())*50#calculate the direction
                     if acceleration > 0:
                         force_dir.normalize()
-                        force_dir = Vec3(force_dir[0]*acceleration,force_dir[1]*acceleration,force_dir[2]*acceleration)
-                        player.vehicle.physics_model.addForceAtPos(force_dir, force_pos)
-                        print "up:", acceleration
+                        #force_dir = Vec3(force_dir[0]*acceleration,force_dir[1]*acceleration,force_dir[2]*acceleration)
+                        #player.vehicle.physics_model.addForceAtPos(force_dir, force_pos)
+                        #print "up:", acceleration
                         #testcode
+                        print normal
                         dir = player.vehicle.collision_model.getQuaternion().xform(Vec3(-1,0,0))
-                        #player.vehicle.physics_model.addForce(force_dir[0]*dir[0]*0.25,force_dir[1]*dir[1]*0.25,force_dir[2]*dir[2]*0.25)#-player.vehicle.physics_model.getLinearVel()*0.25) #need to consider direction!
+                        force_dir = Vec3(normal[0]*acceleration,normal[1]*acceleration,normal[2]*acceleration)
                         player.vehicle.hit_ground = True
                     else:
                         force_dir.normalize()
-                        force_dir = Vec3(force_dir[0]*acceleration,force_dir[1]*acceleration,force_dir[2]*acceleration)
+                        force_dir = Vec3(normal[0]*acceleration,normal[1]*acceleration,normal[2]*acceleration)
                         player.vehicle.physics_model.addForce(force_dir)
                     #player.vehicle.physics_model.setTorque(player.vehicle.physics_model.getAngularVel()*0.01) 
                     #player.vehicle.physics_model.addTorque(player.vehicle.physics_model.getAngularVel()*-1)
@@ -224,6 +225,7 @@ class Game(ShowBase):
 
         self.deltaTimeAccumulator += globalClock.getDt()  
         while self.deltaTimeAccumulator > self.stepSize: # Step the simulation
+            self.space.autoCollide() # Setup the contact joints  
             for player in self.players:  
                 player.doStep() #refresh player specific things (rays) 
                 
@@ -242,7 +244,7 @@ class Game(ShowBase):
                 
                 
             self.deltaTimeAccumulator -= self.stepSize # Remove a stepSize from the accumulator until the accumulated time is less than the stepsize
-            self.space.autoCollide() # Setup the contact joints            
+            #self.space.autoCollide() # Setup the contact joints            
             self.world.quickStep(self.stepSize)
             #player.vehicle.hit_ground = False
             

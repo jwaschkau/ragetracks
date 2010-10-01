@@ -35,7 +35,7 @@ class Vehicle(object):
         '''
         Choose what vehicle the player has chosen. This method initializes all data of this vehicle
         '''
-        self._boost_strength = 100.0
+        self._boost_strength = 500.0
         self._control_strength = 0.1
         self._grip_strength = 2
         
