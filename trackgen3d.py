@@ -221,7 +221,6 @@ class Track3d(object):
         m = Track(x, y, z)
         m.generateTrack()
         #m.genStart(5)
-        print "generated"
         track_points = m.getInterpolatedPoints(res)
         #track_points = (Vec3(-5, 0, 0), Vec3(-5, 10, 0), Vec3(-5, 20, 0), Vec3(-5, 30, 0), Vec3(-5, 40, 0), Vec3(-5, 43, 0), Vec3(-5, 53, 0), Vec3(-5, 63, 0))
         #print "Imput Centers:", track_points
@@ -272,7 +271,6 @@ class Track3d(object):
         street_data_length = len(street_data)
         for i in range(street_data_length):
             texcoordinates.append((i+1.0)/street_data_length)
-        print "Streetparts", street_data_length
         for i in range (len(track_points)):
             for j in range (street_data_length): ###WARUM war hier -2!!!!!!!!!!!!!! wenn man den end und start punkt nicht hat ;)
                     self.vertex.addData3f((track_points[i][0] + (self.varthickness[i][0]*street_data[j][0]), track_points[i][1] + (self.varthickness[i][1]*street_data[j][0]), track_points[i][2] + (self.varthickness[i][2]+street_data[j][1])))
