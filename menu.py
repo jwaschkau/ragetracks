@@ -154,6 +154,7 @@ class Menu(object):
         # call the function behind the selected option
         self.hideMenu()
         self.options[self.selected][1]()
+        #TODO test
 
 if __name__ == "__main__":
     import main
