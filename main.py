@@ -196,7 +196,7 @@ class Game(ShowBase):
                         player.vehicle.physics_model.addForceAtPos(force_dir, force_pos)
                         #print "up:", acceleration
                         #testcode
-                        print normal
+                        #print normal
                         dir = player.vehicle.collision_model.getQuaternion().xform(Vec3(-1,0,0))
                         force_dir = Vec3(normal[0]*acceleration,normal[1]*acceleration,normal[2]*acceleration)
                         player.vehicle.hit_ground = True
