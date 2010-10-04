@@ -199,11 +199,11 @@ class Game(ShowBase):
                     force_pos = ray.getPosition()
                     contact = entry.getContactPoint(0)
                     force_dir = force_pos - contact
-                    acceleration = (ray.getLength()/2-force_dir.length())*50#calculate the direction
+                    acceleration = (ray.getLength()/2-force_dir.length())#calculate the direction
                     if acceleration > 0:
                         force_dir.normalize()
-                        #force_dir = Vec3(force_dir[0]*acceleration,force_dir[1]*acceleration,force_dir[2]*acceleration)
-                        #player.vehicle.physics_model.addForceAtPos(force_dir, force_pos)
+                        force_dir = Vec3(force_dir[0]*acceleration,force_dir[1]*acceleration,force_dir[2]*acceleration)
+                        player.vehicle.physics_model.addForceAtPos(force_dir, force_pos)
                         #print "up:", acceleration
                         #testcode
                         print normal
@@ -248,11 +248,11 @@ class Game(ShowBase):
             self.deltaTimeAccumulator -= self.stepSize # Remove a stepSize from the accumulator until the accumulated time is less than the stepsize
             #self.space.autoCollide() # Setup the contact joints            
             self.world.quickStep(self.stepSize)
+            self.contactgroup.empty() # Clear the contact joints
             #player.vehicle.hit_ground = False
             
         for player in self.players: # set new positions
             player.updatePlayer()
-        self.contactgroup.empty() # Clear the contact joints
         return task.cont
     # -----------------------------------------------------------------
 
