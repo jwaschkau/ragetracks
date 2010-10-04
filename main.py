@@ -49,26 +49,6 @@ class Game(ShowBase):
         self.ANGULAR_FRICTION = 0.9
         self.splitscreen = splitscreen.SplitScreen(0)
         
-        #Create the Track
-        self.track = trackgen3d.Track3d(1000, 800, 600, 200)
-        nodePath = self.render.attachNewNode(self.track.createMesh())
-        tex = loader.loadTexture('data/textures/street.png')
-        nodePath.setTexture(tex)
-        nodePath.setTwoSided(True)
-        #base.toggleWireframe()
-        
-        #Test for 3D-Text
-        #self.text = Text3D("WHalloWelttt")
-##        self.text2 = TextNode("TestText")
-##        #self.text2.setFont(DynamicTextFont(dir-freetype))
-##        self.text2.getFont().setRenderMode(TextFont.RMSolid)
-##        self.text2.setText("HalloWelt")
-##        node = self.text2.generate()
-##        render.attachNewNode(node)   	
-##        path = NodePath( render,node)
-##        path.setTwoSided(True)
-##        path.setColor(Vec4(100,100,0,0))	
-        
         #Initialize Physics (ODE)
         self.world = OdeWorld()
         self.world.setGravity(0, 0, -9.81)
@@ -116,6 +96,7 @@ class Game(ShowBase):
         #Start the Game for testing purpose
         #self.menu = Menu(self.newGame, self.players[0].getDevice())    #if one player exist
         self.menu = Menu(self.newGame, self.devices.devices[0])         #if no player exist
+        self.menu.menuMain()
         
 
     # -----------------------------------------------------------------
@@ -151,6 +132,15 @@ class Game(ShowBase):
         '''
         starts the game or goes to the next menu
         '''
+        #Create the Track
+        self.track = trackgen3d.Track3d(1000, 800, 600, 200)
+        nodePath = self.render.attachNewNode(self.track.createMesh())
+        tex = loader.loadTexture('data/textures/street.png')
+        nodePath.setTexture(tex)
+        nodePath.setTwoSided(True)
+        #base.toggleWireframe()
+        
+        
         self.addPlayer(self.devices.devices[0])
         #Load the Map
         self.map = self.loader.loadModel("data/models/Track01")

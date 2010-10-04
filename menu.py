@@ -7,6 +7,7 @@ class Menu(object):
 
     def __init__(self, newGame, device):
         self.device = device #The keybord
+        self.newGame = newGame
         
         self.camera = None
         self.selected = 0
@@ -17,16 +18,6 @@ class Menu(object):
 
         self.colorA = Vec4(1,1,0,0)
         self.colorB = Vec4(0,1,1,0)
-
-        #Fill the options List
-        self.addOption("NewGame", newGame)
-        self.addOption("Options", newGame)
-        self.addOption("Credits", newGame)
-        self.addOption("HallOfFame", newGame)
-        self.addOption("Exit", newGame)
-        #self.text = Text3D(_("NewGame"))
-        
-        self.showMenu()
         
         #LICHT
         plight = PointLight('plight')
@@ -36,8 +27,45 @@ class Menu(object):
         self.menuNode.setLight(plnp)
         
         taskMgr.add(self.imput, 'input')
-        
+    
+    # -----------------------------------------------------------------
 
+    def menuMain(self):
+        #Fill the options List
+        self.options = []
+        self.optionsModells = []
+        self.selected = 0
+        self.addOption(_("NewGame"), self.newGame)
+        self.addOption(_("Options"), self.option)
+        self.addOption(_("Credits"), self.newGame)
+        self.addOption(_("HallOfFame"), self.newGame)
+        self.addOption(_("Exit"), self.newGame)
+        #self.text = Text3D(_("NewGame"))
+        self.showMenu()
+    
+    # -----------------------------------------------------------------
+    
+    def menuOption(self):
+        #Fill the options List
+        self.options = []
+        self.optionsModells = []
+        self.selected = 0
+        self.addOption(_("Sceen"), self.newGame)
+        self.addOption(_("FullScreen"), self.newGame)
+        self.addOption(_("Shader"), self.newGame)
+        self.addOption(_("KA"), self.newGame)
+        self.addOption(_("back"), self.newGame)
+        #self.text = Text3D(_("NewGame"))
+        self.showMenu()
+
+    # -----------------------------------------------------------------
+    
+    def option(self):
+        self.menuOption()
+        taskMgr.doMethodLater(0.5, self.imput, 'input')
+
+    # -----------------------------------------------------------------
+    
     def imput(self, task):
         if self.device.directions == [1,0]:
             task.delayTime = 0.2
@@ -58,6 +86,8 @@ class Menu(object):
             return task.done
         return task.cont
 
+    # -----------------------------------------------------------------
+    
     def addOption(self, name, function):
         '''
         '''
@@ -73,20 +103,20 @@ class Menu(object):
         '''
         self.menuNode.hide()
         
-        
         self.camera.node().setActive(False)
-        
 
     # -----------------------------------------------------------------
     
     def showMenu(self):
         '''
         '''
+        if len(self.optionsModells) == 0:
+            return
         self.menuNode.show()
         self.optionsModells[self.selected].color = self.colorB
         
         #Cam
-        if self.camera == None: 
+        if self.camera is None: 
             self.camera = base.makeCamera(base.win)
             self.camera.setPos(5,-15,-3)
         else:
@@ -95,6 +125,7 @@ class Menu(object):
     # -----------------------------------------------------------------
 
     def selectNext(self):
+        print self.selected
         old = self.selected
         self.selected += 1
         if self.selected == len(self.options):
@@ -121,10 +152,8 @@ class Menu(object):
         '''
         '''
         # call the function behind the selected option
-        self.options[self.selected][1]()
         self.hideMenu()
-
-
+        self.options[self.selected][1]()
 
 if __name__ == "__main__":
     import main
