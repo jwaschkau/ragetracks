@@ -40,6 +40,7 @@ class Game(ShowBase):
         
         # initialize the input devices
         self.devices = inputdevice.InputDevices(self.settings.getInputSettings())
+        print self.devices
         taskMgr.add(self.devices.fetchEvents, "fetchEvents")
         
         #Initialize needed variables and objects
@@ -95,7 +96,8 @@ class Game(ShowBase):
         
         #Start the Game for testing purpose
         #self.menu = Menu(self.newGame, self.players[0].getDevice())    #if one player exist
-        self.menu = Menu(self.newGame, self.devices.devices[0])         #if no player exist
+        self.menu = Menu(self.newGame, self.devices.devices[0])         #if no player exist)
+        print self.devices.getCount()
         self.menu.menuMain()
         
 
