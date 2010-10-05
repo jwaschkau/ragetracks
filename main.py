@@ -130,7 +130,15 @@ class Game(ShowBase):
 
     def newGame(self):
         '''
-        starts the game or goes to the next menu
+        the new game menu
+        '''
+        self.startGame()
+
+    # -----------------------------------------------------------------
+
+    def startGame(self):
+        '''
+        Start the game
         '''
         #Create the Track
         self.track = trackgen3d.Track3d(1000, 800, 600, 200)
@@ -165,9 +173,7 @@ class Game(ShowBase):
         #start the gametask
         taskMgr.add(self.gameTask, "gameTask")
         self.world.setGravity(0, 0, -1.81)
-
-
-
+    
     # -----------------------------------------------------------------
     
     def onCollision(self, entry):
