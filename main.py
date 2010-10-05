@@ -28,27 +28,27 @@ class Game(ShowBase):
         ShowBase.__init__(self)
         #PStatClient.connect() #activate to start performance measuring with pstats
         base.setFrameRateMeter(True) #Show the Framerate
-        base.camNode.setActive(False) #disable default cam 
+        base.camNode.setActive(False) #disable default cam
         self.disableMouse() #disable manual camera-control
-        
+
         # load the settings
         self.settings = settings.Settings()
         self.settings.loadSettings("user/config.ini")
         gettext.install("ragetrack", "data/language")#, unicode=True) #installs the system language
         #trans = gettext.translation("ragetrack", "data/language", ["de"]) #installs choosen language
-        #trans.install() #usage: print _("Hallo Welt") 
-        
+        #trans.install() #usage: print _("Hallo Welt")
+
         # initialize the input devices
         self.devices = inputdevice.InputDevices(self.settings.getInputSettings())
         taskMgr.add(self.devices.fetchEvents, "fetchEvents")
-        
+
         #Initialize needed variables and objects
         self.players = [] #holds the player objects
         self.TRACK_GRIP = 0.5
         self.LINEAR_FRICTION = 0.9
         self.ANGULAR_FRICTION = 0.9
         self.splitscreen = splitscreen.SplitScreen(0)
-        
+
         #Initialize Physics (ODE)
         self.world = OdeWorld()
         self.world.setGravity(0, 0, -9.81)
@@ -60,17 +60,17 @@ class Game(ShowBase):
         #Initialize the surface-table, it defines how objects interact with each other
         self.world.initSurfaceTable(1)
         self.world.setSurfaceEntry(0, 0, 150, 0.0, 9.1, 0.9, 0.00001, 0.0, 0.002)
-        self.space.setAutoCollideWorld(self.world) 
+        self.space.setAutoCollideWorld(self.world)
         self.contactgroup = OdeJointGroup()
         self.space.setAutoCollideJointGroup(self.contactgroup)
-        
+
         #set up the collision event
         self.space.setCollisionEvent("ode-collision")
-        base.accept("ode-collision", self.onCollision) 
-        
+        base.accept("ode-collision", self.onCollision)
+
         #Initialize the first player
         #self.addPlayer(self.devices.devices[0]) ##pass the device for the first player (probably the keyboard)
-        
+
         # try to read the ini-file. If it fails the settings class
         # automatically contains default values
         self.settings = settings.Settings()
@@ -78,11 +78,11 @@ class Game(ShowBase):
             self.settings.loadSettings("user/config.ini")
         except:
             pass    # so here is nothing to do
-        
+
         # Add the main menu (though this is only temporary:
         # the menu should me a member-variable, not a local one)
         #m = menu3D.Menu()
-                
+
         #LICHT
         plight = PointLight('plight')
         plight.setColor(VBase4(0.2, 0.2, 0.2, 1))
@@ -92,7 +92,7 @@ class Game(ShowBase):
 
         #Start the Game
         self.showStartScreen()
-        
+
     # -----------------------------------------------------------------
 
     def addPlayer(self, device):
@@ -101,7 +101,7 @@ class Game(ShowBase):
         '''
         screen = self.splitscreen.addCamera()
         camera = PlayerCam(screen)
-        
+
         #Create a new player object
         self.players.append(player.Player(len(self.players),self.world, self.space, device, camera))
 
@@ -151,8 +151,8 @@ class Game(ShowBase):
         nodePath.setTexture(tex)
         nodePath.setTwoSided(True)
         #base.toggleWireframe()
-        
-        
+
+
         self.addPlayer(self.devices.devices[0])
         #Load the Map
         self.map = self.loader.loadModel("data/models/Track01")
@@ -177,9 +177,9 @@ class Game(ShowBase):
         #start the gametask
         taskMgr.add(self.gameTask, "gameTask")
         self.world.setGravity(0, 0, -1.81)
-    
+
     # -----------------------------------------------------------------
-    
+
     def onCollision(self, entry):
         '''
         Handles Collision-Events
@@ -189,7 +189,7 @@ class Game(ShowBase):
         geom2 = entry.getGeom2()
         body1 = entry.getBody1()
         body2 = entry.getBody2()
-        
+
         #Handles the collision-rays from the players
         for player in self.players:
             for ray in player.vehicle.collision_rays:
@@ -214,10 +214,10 @@ class Game(ShowBase):
                         force_dir.normalize()
                         force_dir = Vec3(normal[0]*acceleration,normal[1]*acceleration,normal[2]*acceleration)
                         player.vehicle.physics_model.addForce(force_dir)
-                    #player.vehicle.physics_model.setTorque(player.vehicle.physics_model.getAngularVel()*0.01) 
+                    #player.vehicle.physics_model.setTorque(player.vehicle.physics_model.getAngularVel()*0.01)
                     #player.vehicle.physics_model.addTorque(player.vehicle.physics_model.getAngularVel()*-1)
  # -----------------------------------------------------------------
-             
+
     def gameTask(self, task):
         '''
         this task runs once per second if the game is running
@@ -225,32 +225,32 @@ class Game(ShowBase):
         #calculate the physics
         #self.space.autoCollide() # Setup the contact joints
 
-        self.deltaTimeAccumulator += globalClock.getDt()  
+        self.deltaTimeAccumulator += globalClock.getDt()
         while self.deltaTimeAccumulator > self.stepSize: # Step the simulation
-            self.space.autoCollide() # Setup the contact joints  
-            for player in self.players:  
-                player.doStep() #refresh player specific things (rays) 
-                
+            self.space.autoCollide() # Setup the contact joints
+            for player in self.players:
+                player.doStep() #refresh player specific things (rays)
+
                 #get the player input and set the forces
                 if player.device.boost:
                     player.vehicle.setBoost()
                 if player.device.directions[0] != 0 or player.device.directions[1] != 0:
                     player.vehicle.direction = player.device.directions
-                
+
                 linear_velocity = player.vehicle.physics_model.getLinearVel()
-                angular_velocity = player.vehicle.physics_model.getAngularVel()               
-                
+                angular_velocity = player.vehicle.physics_model.getAngularVel()
+
                 #calculate airresistance to get energy out of the ode-system
-                player.vehicle.physics_model.addForce(linear_velocity*-self.LINEAR_FRICTION)  
-                player.vehicle.physics_model.addTorque(angular_velocity*-self.ANGULAR_FRICTION)    
-                
-                
+                player.vehicle.physics_model.addForce(linear_velocity*-self.LINEAR_FRICTION)
+                player.vehicle.physics_model.addTorque(angular_velocity*-self.ANGULAR_FRICTION)
+
+
             self.deltaTimeAccumulator -= self.stepSize # Remove a stepSize from the accumulator until the accumulated time is less than the stepsize
-            #self.space.autoCollide() # Setup the contact joints            
+            #self.space.autoCollide() # Setup the contact joints
             self.world.quickStep(self.stepSize)
             self.contactgroup.empty() # Clear the contact joints
             #player.vehicle.hit_ground = False
-            
+
         for player in self.players: # set new positions
             player.updatePlayer()
         return task.cont
