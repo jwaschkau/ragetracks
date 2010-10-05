@@ -89,16 +89,10 @@ class Game(ShowBase):
         plnp = render.attachNewNode(plight)
         plnp.setPos(100, 100, 0)
         render.setLight(plnp)
-        
-        #m.addOption("NewGame", self.newGame)
-        #m.addOption("AddPlayer", self.addPlayer)
-        
-        #Start the Game for testing purpose
-        #self.menu = Menu(self.newGame, self.players[0].getDevice())    #if one player exist
-        self.menu = Menu(self.newGame, self.devices.devices[0])         #if no player exist
-        self.menu.menuMain()
-        
 
+        #Start the Game
+        self.showStartScreen()
+        
     # -----------------------------------------------------------------
 
     def addPlayer(self, device):
@@ -125,6 +119,16 @@ class Game(ShowBase):
                 self.players.remove(player) ##all objects must be deleted!
 
         #sort the cameras
+    # -----------------------------------------------------------------
+
+    def showStartScreen(self):
+        '''
+        the new game menu
+        '''
+        #Start the Game for testing purpose
+        #self.menu = Menu(self.newGame, self.players[0].getDevice())    #if one player exist
+        self.menu = Menu(self.newGame, self.devices.devices[0])         #if no player exist
+        self.menu.menuMain()
 
     # -----------------------------------------------------------------
 
