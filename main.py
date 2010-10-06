@@ -128,7 +128,6 @@ class Game(ShowBase):
         taskMgr.add(self.fetchAnyKey, "fetchAnyKey")
 
         print self.devices.getCount()
-        print self.devices.getCount()
         print self.settings.getInputSettings()
         #Start the Game for testing purpose
         #self.menu = Menu(self.newGame, self.players[0].getDevice())    #if one player exist
@@ -140,8 +139,10 @@ class Game(ShowBase):
     
     def fetchAnyKey(self, task):
         '''
+        Return the first device with the first key stroke
         '''
         print self.devices.devices[0].boost
+        print len(self.devices.devices) 
 
         return task.cont
     
