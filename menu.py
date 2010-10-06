@@ -10,8 +10,8 @@ class Menu(object):
     def __init__(self, newGame, device):
         self.device = device #The keybord
         
-        time.sleep(1)               #Bad Hack to make sure that the Key isn't pressed. 
-        self.device.boost = False   #Bad Hack to make sure that the Key isn't pressed. 
+        time.sleep(1)               #Bad Hack to make sure that the Key isn't pressed.
+        self.device.boost = False   #Bad Hack to make sure that the Key isn't pressed.
         
         self.newGame = newGame
         

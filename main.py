@@ -166,7 +166,7 @@ class Game(ShowBase):
                 #Kill Cam
                 self.camera.node().setActive(False)
                 #Kill Node
-                self.startNode.hide() #Maybe there is a function to delete the Node from memory
+                self.startNode.hide()       #Maybe there is a function to delete the Node from memory
                 
                 #Start the Game for testing purpose
                 #self.menu = Menu(self.newGame, self.players[0].getDevice())    #if one player exist
@@ -183,8 +183,27 @@ class Game(ShowBase):
         '''
         the new game menu
         '''
-        self.startGame()
+        taskMgr.add(self.collectPlayer, "collectPlayer")
+        #self.startGame()
 
+    # -----------------------------------------------------------------
+    
+    def collectPlayer(self, task):
+        '''
+        Wait until all players are ready
+        '''    
+        if len(self.players) > 0:
+            if self.players[0].device.boost == True:
+                self.startGame()
+                return task.done
+            
+        for i in xrange(len(self.devices.devices)):             ##There must be an funktion only let every one can join only one time
+            if self.devices.devices[i].boost == True:
+                self.addPlayer(self.devices.devices[i])
+        print len(self.players)        
+
+        return task.cont
+    
     # -----------------------------------------------------------------
 
     def startGame(self):
@@ -200,7 +219,8 @@ class Game(ShowBase):
         #base.toggleWireframe()
 
 
-        self.addPlayer(self.devices.devices[0])
+        #self.addPlayer(self.devices.devices[0])
+        
         #Load the Map
         self.map = self.loader.loadModel("data/models/Track01")
         self.map.reparentTo(self.render)
