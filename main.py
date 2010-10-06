@@ -38,11 +38,6 @@ class Game(ShowBase):
         #trans = gettext.translation("ragetrack", "data/language", ["de"]) #installs choosen language
         #trans.install() #usage: print _("Hallo Welt")
 
-        # initialize the input devices
-        self.devices = inputdevice.InputDevices(self.settings.getInputSettings())
-        print self.devices
-        taskMgr.add(self.devices.fetchEvents, "fetchEvents")
-
         #Initialize needed variables and objects
         self.players = [] #holds the player objects
         self.TRACK_GRIP = 0.5
@@ -90,7 +85,6 @@ class Game(ShowBase):
         plnp = render.attachNewNode(plight)
         plnp.setPos(100, 100, 0)
         render.setLight(plnp)
-        print self.devices.getCount()
 
         #Start the Game
         self.showStartScreen()
@@ -125,14 +119,33 @@ class Game(ShowBase):
 
     def showStartScreen(self):
         '''
-        the new game menu
+        the first screen with "press any Key"
+        the device with the first key press will be the first player
         '''
+        # initialize the input devices
+        self.devices = inputdevice.InputDevices("self.settings.getInputSettings()")
+        taskMgr.add(self.devices.fetchEvents, "fetchEvents")
+        taskMgr.add(self.fetchAnyKey, "fetchAnyKey")
+
+        print self.devices.getCount()
+        print self.devices.getCount()
+        print self.settings.getInputSettings()
         #Start the Game for testing purpose
         #self.menu = Menu(self.newGame, self.players[0].getDevice())    #if one player exist
-        self.menu = Menu(self.newGame, self.devices.devices[0])         #if no player exist
-        self.menu.menuMain()
+        #self.menu = Menu(self.newGame, self.devices.devices[0])         #if no player exist
+        #self.menu.menuMain()
+        
 
     # -----------------------------------------------------------------
+    
+    def fetchAnyKey(self, task):
+        '''
+        '''
+        print self.devices.devices[0].boost
+
+        return task.cont
+    
+        # -----------------------------------------------------------------
 
     def newGame(self):
         '''
