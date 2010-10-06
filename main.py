@@ -14,6 +14,7 @@ from playercam import PlayerCam
 from text3d import Text3D
 import gettext
 from menu import Menu
+import time
 
 # -----------------------------------------------------------------
 # -----------------------------------------------------------------
@@ -123,16 +124,35 @@ class Game(ShowBase):
         the device with the first key press will be the first player
         '''
         # initialize the input devices
-        self.devices = inputdevice.InputDevices("self.settings.getInputSettings()")
+        self.devices = inputdevice.InputDevices(self.settings.getInputSettings())
         taskMgr.add(self.devices.fetchEvents, "fetchEvents")
         taskMgr.add(self.fetchAnyKey, "fetchAnyKey")
 
+        #StartScreen Node
+        self.startNode = NodePath("StartNode")
+        self.startNode.reparentTo(render)
+        
+        self.headline = Text3D("RageTracks")
+        self.headline.reparentTo(self.startNode)
+        self.presskey = Text3D(_("PressAnyKey"), Vec3(0,10,-9.5))
+        self.presskey.reparentTo(self.startNode)
+        
+        self.startNode.show()
+        
+        #LICHT
+        plight = PointLight('plight')
+        plight.setColor(VBase4(0.3, 0.3, 0.3, 1))
+        plnp = self.startNode.attachNewNode(plight)
+        plnp.setPos(0, -10, 0)
+        self.startNode.setLight(plnp)
+        
+        #Cam
+        self.camera = base.makeCamera(base.win)
+        self.camera.setPos(5,-15,-3)
+        
         print self.devices.getCount()
         print self.settings.getInputSettings()
-        #Start the Game for testing purpose
-        #self.menu = Menu(self.newGame, self.players[0].getDevice())    #if one player exist
-        #self.menu = Menu(self.newGame, self.devices.devices[0])         #if no player exist
-        #self.menu.menuMain()
+
         
 
     # -----------------------------------------------------------------
@@ -141,10 +161,21 @@ class Game(ShowBase):
         '''
         Return the first device with the first key stroke
         '''
-        print self.devices.devices[0].boost
-        print len(self.devices.devices) 
-
+        for i in xrange(len(self.devices.devices)):
+            if self.devices.devices[i].boost == True:
+                #Kill Cam
+                self.camera.node().setActive(False)
+                #Kill Node
+                self.startNode.hide() #Maybe there is a function to delete the Node from memory
+                
+                #Start the Game for testing purpose
+                #self.menu = Menu(self.newGame, self.players[0].getDevice())    #if one player exist
+                self.menu = Menu(self.newGame, self.devices.devices[i])         #if no player exist
+                self.menu.menuMain()
+                return task.done
         return task.cont
+    
+    
     
         # -----------------------------------------------------------------
 

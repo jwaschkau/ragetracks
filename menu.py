@@ -2,11 +2,17 @@ from text3d import Text3D
 from panda3d.core import NodePath
 #from pandac.PandaModules import Vec3, Vec4, PointLight #Temp for Testing need VBase4
 from pandac.PandaModules import *
+import time
+import sys
 
 class Menu(object):
 
     def __init__(self, newGame, device):
         self.device = device #The keybord
+        
+        time.sleep(1)               #Bad Hack to make sure that the Key isn't pressed. 
+        self.device.boost = False   #Bad Hack to make sure that the Key isn't pressed. 
+        
         self.newGame = newGame
         
         self.camera = None
@@ -39,7 +45,7 @@ class Menu(object):
         self.addOption(_("Options"), self.option)
         self.addOption(_("Credits"), self.newGame)
         self.addOption(_("HallOfFame"), self.newGame)
-        self.addOption(_("Exit"), self.newGame)
+        self.addOption(_("Exit"), sys.exit)
         #self.text = Text3D(_("NewGame"))
         self.showMenu()
     
@@ -54,7 +60,7 @@ class Menu(object):
         self.addOption(_("FullScreen"), self.newGame)
         self.addOption(_("Shader"), self.newGame)
         self.addOption(_("KA"), self.newGame)
-        self.addOption(_("back"), self.newGame)
+        self.addOption(_("back"), self.backToMain)
         #self.text = Text3D(_("NewGame"))
         self.showMenu()
 
@@ -63,10 +69,17 @@ class Menu(object):
     def option(self):
         self.menuOption()
         taskMgr.doMethodLater(0.5, self.imput, 'input')
+        
+    # -----------------------------------------------------------------
+    
+    def backToMain(self):
+        self.menuMain()
+        taskMgr.doMethodLater(0.5, self.imput, 'input')
 
     # -----------------------------------------------------------------
     
     def imput(self, task):
+        print self.device.directions
         if self.device.directions == [1,0]:
             task.delayTime = 0.2
             return task.again
@@ -92,7 +105,7 @@ class Menu(object):
         '''
         '''
         self.options.append((name, function))
-        self.optionsModells.append(Text3D(_(name), Vec3(0, 0, (len(self.optionsModells))*(-1.5))))
+        self.optionsModells.append(Text3D(_(name), Vec3(0, 0, (len(self.optionsModells))*(-1.5)))) #Think will working too without _ after Text3D
         self.optionsModells[len(self.optionsModells)-1].reparentTo(self.menuNode)
         
 
@@ -118,14 +131,13 @@ class Menu(object):
         #Cam
         if self.camera is None: 
             self.camera = base.makeCamera(base.win)
-            self.camera.setPos(5,-15,-3)
+            #self.camera.setPos(5,-15,-3)
         else:
             self.camera.node().setActive(True)
 
     # -----------------------------------------------------------------
 
     def selectNext(self):
-        print self.selected
         old = self.selected
         self.selected += 1
         if self.selected == len(self.options):

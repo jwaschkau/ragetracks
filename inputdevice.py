@@ -195,7 +195,6 @@ class InputDevices(object):
 
         for device in self.devices:
             device.noticeAction()
-
         return task.cont
 
     # ---------------------------------------------------------
