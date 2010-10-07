@@ -198,12 +198,6 @@ class Game(ShowBase):
                 self.startGame()
                 return task.done
 
-        for i in xrange(len(self.devices.devices)):             ##There must be an funktion only let every one can join only one time
-            if self.devices.devices[i].boost == True:
-                self.addPlayer(self.devices.devices[i])
-        print len(self.players)
-
-
         for device in self.unusedDevices:             ##There must be an funktion only let every one can join only one time
             if device.boost == True:
                 self.addPlayer(device)
