@@ -254,7 +254,7 @@ class Game(ShowBase):
 
         #start the gametask
         taskMgr.add(self.gameTask, "gameTask")
-        self.world.setGravity(0, 0, -1.81)
+        #self.world.setGravity(0, 0, -1.81)
 
     # -----------------------------------------------------------------
 
@@ -323,7 +323,6 @@ class Game(ShowBase):
 
             self.space.autoCollide() # Setup the contact joints
             self.deltaTimeAccumulator -= self.stepSize # Remove a stepSize from the accumulator until the accumulated time is less than the stepsize
-            #self.space.autoCollide() # Setup the contact joints
             self.world.quickStep(self.stepSize)
             self.contactgroup.empty() # Clear the contact joints
             #player.vehicle.hit_ground = False

@@ -25,7 +25,7 @@ class Vehicle(object):
         self._boost_strength = 0.0 #the boost propertys of the vehicle
         self._control_strength = 0.0 #impact on the steering behaviour
         self._grip_strength = 0.0 #impact on the steering behaviour
-        self._hit_ground = False
+        self._hit_ground = True
         
         self.setVehicle(name) #set the initial vehicle
         
@@ -35,7 +35,7 @@ class Vehicle(object):
         '''
         Choose what vehicle the player has chosen. This method initializes all data of this vehicle
         '''
-        self._boost_strength = 500.0
+        self._boost_strength = 5000.0
         self._control_strength = 50
         self._grip_strength = 2
         
