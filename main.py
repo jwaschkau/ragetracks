@@ -5,6 +5,7 @@
 
 from direct.showbase.ShowBase import ShowBase
 from pandac.PandaModules import * #Load all PandaModules
+from panda3d.core import loadPrcFileData
 import settings
 import inputdevice
 import player
@@ -26,8 +27,14 @@ class Game(ShowBase):
     def __init__(self):
         '''
         '''
+        #loadPrcFileData("", "pstats-host 192.168.220.121")
+        
+        loadPrcFileData("", "want-pstats 1\n pstats-host 134.102.133.140\n pstats-tasks 1\n task-timer-verbose 1")
+        #loadPrcFileData("", "pstatshost 192.168.220.121")
         ShowBase.__init__(self)
-        PStatClient.connect() #activate to start performance measuring with pstats
+
+        
+        #PStatClient.connect() #activate to start performance measuring with pstats
         base.setFrameRateMeter(True) #Show the Framerate
         base.camNode.setActive(False) #disable default cam
         self.disableMouse() #disable manual camera-control
@@ -131,6 +138,7 @@ class Game(ShowBase):
         #StartScreen Node
         self.startNode = NodePath("StartNode")
         self.startNode.reparentTo(render)
+        self.startNode.setPos(-5,15,3)
         
         self.headline = Text3D("RageTracks")
         self.headline.reparentTo(self.startNode)
@@ -148,7 +156,6 @@ class Game(ShowBase):
         
         #Cam
         self.camera = base.makeCamera(base.win)
-        self.camera.setPos(5,-15,-3)
         
         print self.devices.getCount()
         print self.settings.getInputSettings()
