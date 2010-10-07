@@ -156,7 +156,6 @@ class Game(ShowBase):
 
         #Cam
         self.camera = base.makeCamera(base.win)
-        self.camera.setPos(5,-15,-3)
 
         print self.devices.getCount()
         print self.settings.getInputSettings()
