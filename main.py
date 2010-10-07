@@ -27,7 +27,7 @@ class Game(ShowBase):
         '''
         '''
         ShowBase.__init__(self)
-        #PStatClient.connect() #activate to start performance measuring with pstats
+        PStatClient.connect() #activate to start performance measuring with pstats
         base.setFrameRateMeter(True) #Show the Framerate
         base.camNode.setActive(False) #disable default cam
         self.disableMouse() #disable manual camera-control
@@ -50,7 +50,7 @@ class Game(ShowBase):
         self.world = OdeWorld()
         self.world.setGravity(0, 0, -9.81)
         self.deltaTimeAccumulator = 0.0 #this variable is necessary to track the time for the physics
-        self.stepSize = 1.0 / 900.0 # This stepSize makes the simulation run at 60 frames per second
+        self.stepSize = 1.0 / 90.0 # This stepSize makes the simulation run at 60 frames per second
 
         #Initialize Collisions (ODE)
         self.space = OdeSimpleSpace()
@@ -131,32 +131,32 @@ class Game(ShowBase):
         #StartScreen Node
         self.startNode = NodePath("StartNode")
         self.startNode.reparentTo(render)
-        
+
         self.headline = Text3D("RageTracks")
         self.headline.reparentTo(self.startNode)
         self.presskey = Text3D(_("PressAnyKey"), Vec3(0,10,-9.5))
         self.presskey.reparentTo(self.startNode)
-        
+
         self.startNode.show()
-        
+
         #LICHT
         plight = PointLight('plight')
         plight.setColor(VBase4(0.3, 0.3, 0.3, 1))
         plnp = self.startNode.attachNewNode(plight)
         plnp.setPos(0, -10, 0)
         self.startNode.setLight(plnp)
-        
+
         #Cam
         self.camera = base.makeCamera(base.win)
         self.camera.setPos(5,-15,-3)
-        
+
         print self.devices.getCount()
         print self.settings.getInputSettings()
 
-        
+
 
     # -----------------------------------------------------------------
-    
+
     def fetchAnyKey(self, task):
         '''
         Return the first device with the first key stroke
@@ -167,16 +167,16 @@ class Game(ShowBase):
                 self.camera.node().setActive(False)
                 #Kill Node
                 self.startNode.hide()       #Maybe there is a function to delete the Node from memory
-                
+
                 #Start the Game for testing purpose
                 #self.menu = Menu(self.newGame, self.players[0].getDevice())    #if one player exist
                 self.menu = Menu(self.newGame, self.devices.devices[i])         #if no player exist
                 self.menu.menuMain()
                 return task.done
         return task.cont
-    
-    
-    
+
+
+
         # -----------------------------------------------------------------
 
     def newGame(self):
@@ -187,23 +187,23 @@ class Game(ShowBase):
         #self.startGame()
 
     # -----------------------------------------------------------------
-    
+
     def collectPlayer(self, task):
         '''
         Wait until all players are ready
-        '''    
+        '''
         if len(self.players) > 0:
             if self.players[0].device.boost == True:
                 self.startGame()
                 return task.done
-            
+
         for i in xrange(len(self.devices.devices)):             ##There must be an funktion only let every one can join only one time
             if self.devices.devices[i].boost == True:
                 self.addPlayer(self.devices.devices[i])
-        print len(self.players)        
+        print len(self.players)
 
         return task.cont
-    
+
     # -----------------------------------------------------------------
 
     def startGame(self):
@@ -220,7 +220,7 @@ class Game(ShowBase):
 
 
         #self.addPlayer(self.devices.devices[0])
-        
+
         #Load the Map
         self.map = self.loader.loadModel("data/models/Track01")
         self.map.reparentTo(self.render)
