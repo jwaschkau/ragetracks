@@ -14,6 +14,7 @@ from playercam import PlayerCam
 from text3d import Text3D
 import gettext
 from menu import Menu
+import time
 
 # -----------------------------------------------------------------
 # -----------------------------------------------------------------
@@ -37,11 +38,6 @@ class Game(ShowBase):
         gettext.install("ragetrack", "data/language")#, unicode=True) #installs the system language
         #trans = gettext.translation("ragetrack", "data/language", ["de"]) #installs choosen language
         #trans.install() #usage: print _("Hallo Welt")
-
-        # initialize the input devices
-        self.devices = inputdevice.InputDevices(self.settings.getInputSettings())
-        print self.devices
-        taskMgr.add(self.devices.fetchEvents, "fetchEvents")
 
         #Initialize needed variables and objects
         self.players = [] #holds the player objects
@@ -90,7 +86,6 @@ class Game(ShowBase):
         plnp = render.attachNewNode(plight)
         plnp.setPos(100, 100, 0)
         render.setLight(plnp)
-        print self.devices.getCount()
 
         #Start the Game
         self.showStartScreen()
@@ -125,21 +120,90 @@ class Game(ShowBase):
 
     def showStartScreen(self):
         '''
-        the new game menu
+        the first screen with "press any Key"
+        the device with the first key press will be the first player
         '''
-        #Start the Game for testing purpose
-        #self.menu = Menu(self.newGame, self.players[0].getDevice())    #if one player exist
-        self.menu = Menu(self.newGame, self.devices.devices[0])         #if no player exist
-        self.menu.menuMain()
+        # initialize the input devices
+        self.devices = inputdevice.InputDevices(self.settings.getInputSettings())
+        taskMgr.add(self.devices.fetchEvents, "fetchEvents")
+        taskMgr.add(self.fetchAnyKey, "fetchAnyKey")
+
+        #StartScreen Node
+        self.startNode = NodePath("StartNode")
+        self.startNode.reparentTo(render)
+        
+        self.headline = Text3D("RageTracks")
+        self.headline.reparentTo(self.startNode)
+        self.presskey = Text3D(_("PressAnyKey"), Vec3(0,10,-9.5))
+        self.presskey.reparentTo(self.startNode)
+        
+        self.startNode.show()
+        
+        #LICHT
+        plight = PointLight('plight')
+        plight.setColor(VBase4(0.3, 0.3, 0.3, 1))
+        plnp = self.startNode.attachNewNode(plight)
+        plnp.setPos(0, -10, 0)
+        self.startNode.setLight(plnp)
+        
+        #Cam
+        self.camera = base.makeCamera(base.win)
+        self.camera.setPos(5,-15,-3)
+        
+        print self.devices.getCount()
+        print self.settings.getInputSettings()
+
+        
 
     # -----------------------------------------------------------------
+    
+    def fetchAnyKey(self, task):
+        '''
+        Return the first device with the first key stroke
+        '''
+        for i in xrange(len(self.devices.devices)):
+            if self.devices.devices[i].boost == True:
+                #Kill Cam
+                self.camera.node().setActive(False)
+                #Kill Node
+                self.startNode.hide()       #Maybe there is a function to delete the Node from memory
+                
+                #Start the Game for testing purpose
+                #self.menu = Menu(self.newGame, self.players[0].getDevice())    #if one player exist
+                self.menu = Menu(self.newGame, self.devices.devices[i])         #if no player exist
+                self.menu.menuMain()
+                return task.done
+        return task.cont
+    
+    
+    
+        # -----------------------------------------------------------------
 
     def newGame(self):
         '''
         the new game menu
         '''
-        self.startGame()
+        taskMgr.add(self.collectPlayer, "collectPlayer")
+        #self.startGame()
 
+    # -----------------------------------------------------------------
+    
+    def collectPlayer(self, task):
+        '''
+        Wait until all players are ready
+        '''    
+        if len(self.players) > 0:
+            if self.players[0].device.boost == True:
+                self.startGame()
+                return task.done
+            
+        for i in xrange(len(self.devices.devices)):             ##There must be an funktion only let every one can join only one time
+            if self.devices.devices[i].boost == True:
+                self.addPlayer(self.devices.devices[i])
+        print len(self.players)        
+
+        return task.cont
+    
     # -----------------------------------------------------------------
 
     def startGame(self):
@@ -155,7 +219,8 @@ class Game(ShowBase):
         #base.toggleWireframe()
 
 
-        self.addPlayer(self.devices.devices[0])
+        #self.addPlayer(self.devices.devices[0])
+        
         #Load the Map
         self.map = self.loader.loadModel("data/models/Track01")
         self.map.reparentTo(self.render)
