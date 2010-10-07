@@ -314,8 +314,8 @@ class Game(ShowBase):
                 if player.device.directions[0] != 0 or player.device.directions[1] != 0:
                     player.vehicle.direction = player.device.directions
 
-                linear_velocity = player.vehicle.physics_model.getLinearVel()
-                angular_velocity = player.vehicle.physics_model.getAngularVel()
+                linear_velocity = player.vehicle.physics_model.getLinearVel() *200
+                angular_velocity = player.vehicle.physics_model.getAngularVel() *200
 
                 #calculate airresistance to get energy out of the ode-system
                 player.vehicle.physics_model.addForce(linear_velocity*-self.LINEAR_FRICTION)
