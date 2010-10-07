@@ -27,7 +27,7 @@ class Game(ShowBase):
         '''
         '''
         ShowBase.__init__(self)
-        #PStatClient.connect() #activate to start performance measuring with pstats
+        PStatClient.connect() #activate to start performance measuring with pstats
         base.setFrameRateMeter(True) #Show the Framerate
         base.camNode.setActive(False) #disable default cam
         self.disableMouse() #disable manual camera-control
@@ -50,7 +50,7 @@ class Game(ShowBase):
         self.world = OdeWorld()
         self.world.setGravity(0, 0, -9.81)
         self.deltaTimeAccumulator = 0.0 #this variable is necessary to track the time for the physics
-        self.stepSize = 1.0 / 900.0 # This stepSize makes the simulation run at 60 frames per second
+        self.stepSize = 1.0 / 90.0 # This stepSize makes the simulation run at 60 frames per second
 
         #Initialize Collisions (ODE)
         self.space = OdeSimpleSpace()
@@ -184,6 +184,7 @@ class Game(ShowBase):
         the new game menu
         '''
         taskMgr.add(self.collectPlayer, "collectPlayer")
+        self.unusedDevices = self.devices.devices[:]
         #self.startGame()
 
     # -----------------------------------------------------------------
@@ -191,17 +192,20 @@ class Game(ShowBase):
     def collectPlayer(self, task):
         '''
         Wait until all players are ready
-        '''    
+        '''
         if len(self.players) > 0:
-            if self.players[0].device.boost == True:
+            if self.players[0].device.boost:
                 self.startGame()
                 return task.done
             
-        for i in xrange(len(self.devices.devices)):             ##There must be an funktion only let every one can join only one time
-            if self.devices.devices[i].boost == True:
-                self.addPlayer(self.devices.devices[i])
-        print len(self.players)        
-
+        for device in self.unusedDevices:             ##There must be an funktion only let every one can join only one time
+            if device.boost == True:
+                self.addPlayer(device)
+                
+                self.unusedDevices.remove(device)
+                task.delayTime = 0.2
+                return task.again
+            
         return task.cont
     
     # -----------------------------------------------------------------
