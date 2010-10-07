@@ -184,6 +184,7 @@ class Game(ShowBase):
         the new game menu
         '''
         taskMgr.add(self.collectPlayer, "collectPlayer")
+        self.unusedDevices = self.devices.devices[:]
         #self.startGame()
 
     # -----------------------------------------------------------------
@@ -193,7 +194,7 @@ class Game(ShowBase):
         Wait until all players are ready
         '''
         if len(self.players) > 0:
-            if self.players[0].device.boost == True:
+            if self.players[0].device.boost:
                 self.startGame()
                 return task.done
 
@@ -201,6 +202,15 @@ class Game(ShowBase):
             if self.devices.devices[i].boost == True:
                 self.addPlayer(self.devices.devices[i])
         print len(self.players)
+
+
+        for device in self.unusedDevices:             ##There must be an funktion only let every one can join only one time
+            if device.boost == True:
+                self.addPlayer(device)
+
+                self.unusedDevices.remove(device)
+                task.delayTime = 0.2
+                return task.again
 
         return task.cont
 
