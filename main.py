@@ -229,7 +229,6 @@ class Game(ShowBase):
 
         self.deltaTimeAccumulator += globalClock.getDt()
         while self.deltaTimeAccumulator > self.stepSize: # Step the simulation
-            self.space.autoCollide() # Setup the contact joints
             for player in self.players:
                 player.doStep() #refresh player specific things (rays)
 
@@ -246,7 +245,7 @@ class Game(ShowBase):
                 player.vehicle.physics_model.addForce(linear_velocity*-self.LINEAR_FRICTION)
                 player.vehicle.physics_model.addTorque(angular_velocity*-self.ANGULAR_FRICTION)
 
-
+            self.space.autoCollide() # Setup the contact joints
             self.deltaTimeAccumulator -= self.stepSize # Remove a stepSize from the accumulator until the accumulated time is less than the stepsize
             #self.space.autoCollide() # Setup the contact joints
             self.world.quickStep(self.stepSize)
