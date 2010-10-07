@@ -21,6 +21,7 @@ class Menu(object):
         self.optionsModells = []
         self.menuNode = NodePath("menuNode")
         self.menuNode.reparentTo(render)
+        self.menuNode.setPos(-5,15,3)
 
         self.colorA = Vec4(1,1,0,0)
         self.colorB = Vec4(0,1,1,0)
