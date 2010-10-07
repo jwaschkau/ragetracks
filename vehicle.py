@@ -35,9 +35,9 @@ class Vehicle(object):
         '''
         Choose what vehicle the player has chosen. This method initializes all data of this vehicle
         '''
-        self._boost_strength = 5000.0
-        self._control_strength = 50
-        self._grip_strength = 2
+        self._boost_strength = 10000.0
+        self._control_strength = 100
+        self._grip_strength = 200
         
         self._model = loader.loadModel("data/models/vehicle01")
         self._model.reparentTo(render)
@@ -168,8 +168,8 @@ class Vehicle(object):
         #calculate delayed velocity changes
         linear_velocity.normalize()
         self._direction.normalize()
-        #self._physics_model.addForce(self._direction*(self._speed*self._grip_strength))#+linear_velocity)
-        #self._physics_model.addForce(-linear_velocity*(self._speed*self._grip_strength))#+linear_velocity)
+        self._physics_model.addForce(self._direction*(self._speed*self._grip_strength))#+linear_velocity)
+        self._physics_model.addForce(-linear_velocity*(self._speed*self._grip_strength))#+linear_velocity)
         
         #refresh the positions of the collisionrays
         self._front_left.doStep()
