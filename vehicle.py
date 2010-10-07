@@ -140,7 +140,7 @@ class Vehicle(object):
         '''
         Boosts the vehicle by indicated strength
         '''
-        rel_direction = self._collision_model.getQuaternion().xform(Vec3(0,0,dir[0]))
+        rel_direction = self._collision_model.getQuaternion().xform(Vec3(dir[1],0,dir[0]))
         rel_position = self._collision_model.getQuaternion().xform(Vec3(5,0,0))
         #force = Vec3(rel_direction[0]*self.direction[0]*self._control_strength*self.speed,rel_direction[1]*self.direction[1]*self._control_strength*self.speed,rel_direction[2]*self.direction[2]*self._control_strength*self.speed)
         self._physics_model.addTorque(-rel_direction*self._control_strength)
