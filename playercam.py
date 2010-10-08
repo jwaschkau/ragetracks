@@ -31,9 +31,9 @@ class PlayerCam(object):
         '''
         if self.nodepath != None:
             x,y,z = self.nodepath.getX(),self.nodepath.getY(),self.nodepath.getZ()
+            self.camera.setPos(x-self.vehicle_direction[0],y-self.vehicle_direction[1],z-self.vehicle_direction[2])
             self.camera.lookAt(x,y,z)
-            self.camera.setPos(x - (self.vehicle_direction[0]*self.delay), y - (self.vehicle_direction[1]*self.delay),z - (self.vehicle_direction[2]*self.delay))
-            self.camera.setHpr(self.nodepath.getHpr())
+            #self.camera.setHpr(self.nodepath.getHpr())
             
         else:
             pass
