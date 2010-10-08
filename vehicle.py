@@ -37,7 +37,7 @@ class Vehicle(object):
         Choose what vehicle the player has chosen. This method initializes all data of this vehicle
         '''
         self._boost_strength = 10.0
-        self._control_strength = 2
+        self._control_strength = 1.5
         self._grip_strength = 0.5
         
         self._model = loader.loadModel("data/models/vehicle01")
