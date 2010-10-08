@@ -245,12 +245,11 @@ class Track(object):
 
     # -------------------------------------------------------------------------------------
 
-    def generatePoints(self):
+    def generatePoints(self, player_count=1):
         '''
         this method generates some random points and stores them in a member variable
         -> sets the attribute self.points
         '''
-        player_count = 2
         vehicle_dist = 20
         minimum_angle = 40
         points = []
@@ -304,7 +303,7 @@ class Track(object):
 
     # -------------------------------------------------------------------------------------
 
-    def generateTrack(self):
+    def generateTrack(self, player_count = 1):
         '''
         generates a curve out of the points
         -> sets the attribute self.curve
@@ -315,7 +314,7 @@ class Track(object):
 
         # generate new tracks until a track seems to be allright
         while not track_is_ok:
-            self.generatePoints()
+            self.generatePoints(player_count)
             max_index = len(self.points)-1
             track_is_ok = True
 
@@ -347,75 +346,77 @@ class Track(object):
         self.curve.adjustPt(self.curve.getMaxT(), self.points[-1][0], self.points[-1][1], self.points[-1][2], tangent[0], tangent[1], tangent[2])
         self.curve.recompute()
     
-    def genStart(self, player):
-        print player
-        startPos = []
-        for i in range(player):
-            startPos.append(Vec3(0,(10*i),0))
-        startPos.append(Vec3(0,3+(10*(player-1)),0))
-        for i in self.points:
-            startPos.append(i)
-        print startPos
-        self.points = startPos
+##    def genStart(self, player):
+##        print player
+##        startPos = []
+##        for i in range(player):
+##            startPos.append(Vec3(0,(10*i),0))
+##        startPos.append(Vec3(0,3+(10*(player-1)),0))
+##        for i in self.points:
+##            startPos.append(i)
+##        print startPos
+##        self.points = startPos
 
-##        # ================= TEST ================
-##        # === Strecke in Bitmap visualisieren ===
-##        # =======================================
-##        bmp = bitmap24.Bitmap24("", self.size[0]+1, self.size[1]+1)
-##
-##        last = None
-##        for i in(self.points):
-##
-##            if last == None:
-##                last = i
-##                continue
-##
-##            if i[2] != 0:
-##                rgb = int((float(i[2])/self.size[2])*200)
-##
-##            bmp.drawLine(last[0], last[1], i[0], i[1], (rgb,rgb,rgb) )
-##
-##            last = i
-##
-##        #bmp.drawLine(self.points[0][0], self.points[0][1], self.points[-1][0], self.points[-1][1])
-##        bmp.drawDigit(0, self.points[0][0], self.points[0][1], (255,0,0))
-##        bmp.drawPixel(self.points[-2][0], self.points[-2][1], (0,255,0))
-##        bmp.writeBitmap("test1.bmp")
-##        # =======================================
-##
-##
-##        # ================= TEST ================
-##        # === Strecke in Bitmap visualisieren ===
-##        # =======================================
-##        bmp = bitmap24.Bitmap24("", self.size[0]+1, self.size[1]+1)
-##
-##        last = None
-##
-##        resolution = 100
-##        
-##        point = Vec3(0,0,0)
-##        length = self.curve.getMaxT()
-##        print length
-##
-##        for i in xrange(0,resolution):
-##            self.curve.getPoint(i*(length/resolution), point)
-##
-##            if last == None:
-##                last = copy.deepcopy(point)
-##                continue
-##
-##            if point.getZ() != 0:
-##                rgb = int((float(point.getZ())/self.size[2])*200)
-##
-##            bmp.drawLine(last.getX(), last.getY(), point.getX(), point.getY(), (rgb,rgb,rgb) )
-##            #bmp.writeBitmap("test/"+str(i)+".bmp")
-##
-##            last = copy.deepcopy(point)
-##
-##        bmp.drawDigit(0, self.points[0][0], self.points[0][1], (255,0,0))
-##        bmp.drawPixel(self.points[-2][0], self.points[-2][1], (0,255,0))
-##
-##        bmp.writeBitmap("test2.bmp")
+        if __name__ == "__main__":
+
+            # ================= TEST ================
+            # === Strecke in Bitmap visualisieren ===
+            # =======================================
+            bmp = bitmap24.Bitmap24("", self.size[0]+1, self.size[1]+1)
+
+            last = None
+            for i in(self.points):
+                rgb =(0,0,0)
+                if last == None:
+                    last = i
+                    continue
+
+                if i[2] != 0:
+                    rgb = int((float(i[2])/self.size[2])*200)
+
+                bmp.drawLine(last[0], last[1], i[0], i[1], (rgb,rgb,rgb) )
+
+                last = i
+
+            #bmp.drawLine(self.points[0][0], self.points[0][1], self.points[-1][0], self.points[-1][1])
+            bmp.drawDigit(0, self.points[0][0], self.points[0][1], (255,0,0))
+            bmp.drawPixel(self.points[-2][0], self.points[-2][1], (0,255,0))
+            bmp.writeBitmap("test1.bmp")
+            # =======================================
+
+
+            # ================= TEST ================
+            # === Strecke in Bitmap visualisieren ===
+            # =======================================
+            bmp = bitmap24.Bitmap24("", self.size[0]+1, self.size[1]+1)
+
+            last = None
+
+            resolution = 100
+            
+            point = Vec3(0,0,0)
+            length = self.curve.getMaxT()
+            print length
+
+            for i in xrange(0,resolution):
+                self.curve.getPoint(i*(length/resolution), point)
+
+                if last == None:
+                    last = copy.deepcopy(point)
+                    continue
+
+                if point.getZ() != 0:
+                    rgb = int((float(point.getZ())/self.size[2])*200)
+
+                bmp.drawLine(last.getX(), last.getY(), point.getX(), point.getY(), (rgb,rgb,rgb) )
+                #bmp.writeBitmap("test/"+str(i)+".bmp")
+
+                last = copy.deepcopy(point)
+
+            bmp.drawDigit(0, self.points[0][0], self.points[0][1], (255,0,0))
+            bmp.drawPixel(self.points[-2][0], self.points[-2][1], (0,255,0))
+
+            bmp.writeBitmap("test2.bmp")
         
     # -------------------------------------------------------------------------------------
 
@@ -449,7 +450,7 @@ if __name__ == "__main__":
 #
 #    print getAngle(a,b)
     m = Track(800,600)
-    m.generateTrack()
+    m.generateTrack(9)
     a = m.getInterpolatedPoints(200)
     #print a
     #print len(a)
