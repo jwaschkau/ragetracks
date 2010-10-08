@@ -339,21 +339,50 @@ class Track(object):
 
 
         # INTERPOLATION DURCH NURBS
-        self.curve = NurbsCurve()
+        self.curve = HermiteCurve()
+        
+        
+        
+##        // Hermite curve continuity types.
+##        #define HC_CUT         1
+##        // The curve is disconnected at this point.  All points between
+##        // this and the following CV are not part of the curve.
+##
+##        #define HC_FREE        2
+##        // Tangents are unconstrained.  The curve is continuous, but its first
+##        // derivative is not.  This is G0 geometric continuity.
+##
+##        #define HC_G1          3
+##        // Tangents are constrained to be collinear.  The curve's derivative
+##        // is not continuous in parametric space, but its geometric slope is.
+##        // The distinction is mainly relevant in the context of animation
+##        // along the curve--when crossing the join point, direction of motion
+##        // will change continuously, but the speed of motion may change
+##        // suddenly.  This is G1 geometric continuity.
+##
+##        #define HC_SMOOTH     4
+##        // Tangents are constrained to be identical.  The curve and its first
+##        // derivative are continuous in parametric space.  When animating
+##        // motion across the join point, speed and direction of motion will
+##        // change continuously.  This is C1 parametric continuity.
+
+
         for point in self.points:
-            self.curve.appendCv(point[0],point[1],point[2])
-        self.curve.recompute()
+            self.curve.appendCv(4, point[0],point[1],point[2])
+        #self.curve.setCvWeight(0, 100000.0)
+        #self.curve.setCvWeight(len(self.points)-1, 100000.0)
+        #self.curve.recompute()
         #tangent = Vec3(0,0,0)
         #self.curve.getTangent(0, tangent)
         
         ##self.curve.adjustPoint(0, self.points[0][0], self.points[0][1], self.points[0][2])
         ##self.curve.adjustPoint(self.curve.getMaxT(), self.points[-1][0], self.points[-1][1], self.points[-1][2])
-        length = self.curve.getMaxT()
-        print "max_t: ", length, len(self.points)
-        self.curve.adjustPoint(0, 0, self.points[0][1], 0)
-        self.curve.adjustPoint(self.curve.getMaxT(), 0, self.points[-1][1], 0)
-        self.curve.recompute()
-        print "max_t: ", length, len(self.points)
+        ##length = self.curve.getNumKnots()
+        ##print "max_t: ", self.curve.getNumKnots(), self.curve.getNumCvs(), self.curve.getMaxT(), len(self.points)
+        #self.curve.adjustPoint(0, 0, self.points[0][1], 0)
+        #self.curve.adjustPoint(self.curve.getMaxT(), 0, self.points[-1][1], 0)
+        #self.curve.recompute()
+        #print "max_t: ", length, len(self.points)
     
 ##    def genStart(self, player):
 ##        print player
@@ -405,7 +434,7 @@ class Track(object):
             
             point = Vec3(0,0,0)
             length = self.curve.getMaxT()
-            print "max_t: ", length
+            #print "max_t: ", length
 
             for i in xrange(0,resolution):
                 self.curve.getPoint(i*(length/resolution), point)
@@ -458,10 +487,10 @@ if __name__ == "__main__":
 #    b = p3-p2
 #
 #    print getAngle(a,b)
-##    m = Track(800,600)
-##    m.generateTrack(9)
-##    a = m.getInterpolatedPoints(200)
-    import main
+    m = Track(800,600)
+    m.generateTrack(9)
+    a = m.getInterpolatedPoints(200)
+##    import main
     #print a
     #print len(a)
 
