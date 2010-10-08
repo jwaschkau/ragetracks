@@ -202,7 +202,7 @@ class Track3d(object):
     '''
     Generate the 3d Mesh out of the StreetData and the 2dTrack
     '''
-    def __init__(self, res, x, y, z = 200):
+    def __init__(self, res, x, y, z = 200, player_count=1):
         '''
         '''
         #street_data = (Vec2(4.0,4.0), Vec2(10.0,10.0), Vec2(10.0,0.0), Vec2(4.0,0.0), Vec2(0.0,-1.0))
@@ -219,7 +219,7 @@ class Track3d(object):
         
         
         m = Track(x, y, z)
-        m.generateTrack()
+        m.generateTrack(player_count)
         #m.genStart(5)
         track_points = m.getInterpolatedPoints(res)
         #track_points = (Vec3(-5, 0, 0), Vec3(-5, 10, 0), Vec3(-5, 20, 0), Vec3(-5, 30, 0), Vec3(-5, 40, 0), Vec3(-5, 43, 0), Vec3(-5, 53, 0), Vec3(-5, 63, 0))

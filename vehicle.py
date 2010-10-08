@@ -36,14 +36,14 @@ class Vehicle(object):
         '''
         Choose what vehicle the player has chosen. This method initializes all data of this vehicle
         '''
-        self._boost_strength = 10000.0
-        self._control_strength = 100
+        self._boost_strength = 10.0
+        self._control_strength = 2
         self._grip_strength = 0.5
         
         self._model = loader.loadModel("data/models/vehicle01")
         self._model.reparentTo(render)
         self._model.setPos(0,0,10)
-        self._model.setHpr(0,0,30)
+        self._model.setHpr(0,0,0)
         
         #Initialize the physics-simulation for the vehicle
         self._physics_model = OdeBody(self._ode_world)
@@ -133,7 +133,7 @@ class Vehicle(object):
         '''
         if self._hit_ground:
             direction = self._collision_model.getQuaternion().xform(Vec3(0,1,0))
-            self._physics_model.addForce(direction*self._boost_strength)
+            self._physics_model.addForce(direction*self._boost_strength*self.physics_model.getMass().getMagnitude())
     
     # ---------------------------------------------------------
         
@@ -142,9 +142,9 @@ class Vehicle(object):
         Boosts the vehicle by indicated strength
         '''
         rel_direction = self._collision_model.getQuaternion().xform(Vec3(dir[1],0,dir[0]))
-        rel_position = self._collision_model.getQuaternion().xform(Vec3(5,0,0))
+        #rel_position = self._collision_model.getQuaternion().xform(Vec3(5,0,0))
         #force = Vec3(rel_direction[0]*self.direction[0]*self._control_strength*self.speed,rel_direction[1]*self.direction[1]*self._control_strength*self.speed,rel_direction[2]*self.direction[2]*self._control_strength*self.speed)
-        self._physics_model.addTorque(-rel_direction*self._control_strength)
+        self._physics_model.addTorque(-rel_direction*self._control_strength*self.physics_model.getMass().getMagnitude())
     
     def getDirection(self):
         return self._direction
