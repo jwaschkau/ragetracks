@@ -27,9 +27,9 @@ class Game(ShowBase):
     def __init__(self):
         '''
         '''
-        #loadPrcFileData("", "pstats-host 192.168.220.128")
+        #loadPrcFileData("", "pstats-host 127.0.0.1")
         
-        #loadPrcFileData("", "want-pstats 1\n pstats-host 134.102.133.140\n pstats-tasks 1\n task-timer-verbose 1")
+        #loadPrcFileData("", "want-pstats 1\n pstats-host 127.0.0.1\n pstats-tasks 1\n task-timer-verbose 1")
         #loadPrcFileData("", "pstatshost 192.168.220.121")
         ShowBase.__init__(self)
 
