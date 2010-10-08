@@ -18,7 +18,7 @@ class Player(object):
         self._vehicle = vehicle.Vehicle(self._ode_world, self._ode_space) #the properties of the vehicle
         self._device = device #The inputdevice
         
-        self._camera.followVehicle(self._vehicle.direction, self._vehicle.model)
+        self._camera.followVehicle(self._vehicle.boost_direction, self._vehicle.model)
         #self._camera.setPos(0,-40,5)
         #self._camera.lookAt(self._vehicle.getModel())
         

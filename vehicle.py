@@ -22,6 +22,7 @@ class Vehicle(object):
         self._collision_model = None
         self._speed = 0.0 #the actual speed of the vehicle (forward direction)
         self._direction = Vec3(0,0,0) #the direction the car is heading
+        self._boost_direction = Vec3(0,0,0)
         self._boost_strength = 0.0 #the boost propertys of the vehicle
         self._control_strength = 0.0 #impact on the steering behaviour
         self._grip_strength = 0.0 #impact on the steering behaviour
@@ -37,12 +38,12 @@ class Vehicle(object):
         '''
         self._boost_strength = 10000.0
         self._control_strength = 100
-        self._grip_strength = 200
+        self._grip_strength = 0.5
         
         self._model = loader.loadModel("data/models/vehicle01")
         self._model.reparentTo(render)
         self._model.setPos(0,0,10)
-        self._model.setHpr(0,0,0)
+        self._model.setHpr(0,0,30)
         
         #Initialize the physics-simulation for the vehicle
         self._physics_model = OdeBody(self._ode_world)
@@ -151,13 +152,22 @@ class Vehicle(object):
     direction = property(fget = getDirection, fset = setDirection)        
         
     # ---------------------------------------------------------
+    
+    def getBoostDirection(self):
+        return self._boost_direction
+        
+    boost_direction = property(fget = getBoostDirection)        
+        
+    # ---------------------------------------------------------
+    
     def doStep(self):
         '''
         Needs to get executed every Ode-Step
         '''
         #refresh variables
         linear_velocity = self._physics_model.getLinearVel()
-        direction = self._collision_model.getQuaternion().xform(Vec3(0,1,0)) 
+        direction = self._collision_model.getQuaternion().xform(Vec3(0,1,0))
+        self._boost_direction[0],self._boost_direction[1],self._boost_direction[2] = self.physics_model.getLinearVel()[0],self.physics_model.getLinearVel()[1],self.physics_model.getLinearVel()[2]
         
         #This needs to be done, so we dont create a new object but only change the existing one. else the camera wont update
         self.direction[0], self.direction[1],self.direction[2] = direction[0],direction[1],direction[2]
@@ -168,8 +178,8 @@ class Vehicle(object):
         #calculate delayed velocity changes
         linear_velocity.normalize()
         self._direction.normalize()
-        self._physics_model.addForce(self._direction*(self._speed*self._grip_strength))#+linear_velocity)
-        self._physics_model.addForce(-linear_velocity*(self._speed*self._grip_strength))#+linear_velocity)
+        self._physics_model.addForce(self._direction*(self._speed*self._grip_strength*self.physics_model.getMass().getMagnitude()))#+linear_velocity)
+        self._physics_model.addForce(-linear_velocity*(self._speed*self._grip_strength*self.physics_model.getMass().getMagnitude()))#+linear_velocity)
         
         #refresh the positions of the collisionrays
         self._front_left.doStep()

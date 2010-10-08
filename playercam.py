@@ -2,7 +2,7 @@
 ###################################################################
 ## this module contains the camera of one player
 ###################################################################
-from pandac.PandaModules import Vec3 #Load all PandaModules
+from pandac.PandaModules import Vec3, NodePath #Load all PandaModules
 
 class PlayerCam(object):
     '''
@@ -14,7 +14,8 @@ class PlayerCam(object):
         self.camera = camera
         self.vehicle_direction = Vec3(0,0,0) #the direction the object is moving
         self.nodepath = None
-        self.delay = 20
+        self.distance = 0.7
+        self.cam_node = NodePath()
     
     # ---------------------------------------------------------
     def followVehicle(self, direction, nodepath = None):
@@ -31,9 +32,9 @@ class PlayerCam(object):
         '''
         if self.nodepath != None:
             x,y,z = self.nodepath.getX(),self.nodepath.getY(),self.nodepath.getZ()
+            self.camera.setPos((self.nodepath.getQuat().xform(Vec3(0,-10,4))+self.nodepath.getPos()-self.vehicle_direction))
             self.camera.lookAt(x,y,z)
-            self.camera.setPos(x - (self.vehicle_direction[0]*self.delay), y - (self.vehicle_direction[1]*self.delay),z - (self.vehicle_direction[2]*self.delay))
-            self.camera.setHpr(self.nodepath.getHpr())
+            #self.camera.setHpr(self.nodepath.getHpr())
             
         else:
             pass
