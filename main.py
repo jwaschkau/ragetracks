@@ -37,7 +37,8 @@ class Game(ShowBase):
         #PStatClient.connect() #activate to start performance measuring with pstats
         base.setFrameRateMeter(True) #Show the Framerate
         base.camNode.setActive(False) #disable default cam
-        self.disableMouse() #disable manual camera-control
+        #self.disableMouse() #disable manual camera-control
+        base.toggleWireframe()
 
         # load the settings
         self.settings = settings.Settings()
@@ -222,14 +223,22 @@ class Game(ShowBase):
         Start the game
         '''
         #Create the Track
-        self.track = trackgen3d.Track3d(1000, 800, 600, 200)
+        
+        self.track = trackgen3d.Track3d(1000, 800, 600, 200, len(self.players))
         nodePath = self.render.attachNewNode(self.track.createMesh())
         tex = loader.loadTexture('data/textures/street.png')
         nodePath.setTexture(tex)
         nodePath.setTwoSided(True)
-        #base.toggleWireframe()
+        
 
-
+        self.arrows = loader.loadModel("data/models/arrows.egg")
+        self.arrows.reparentTo(render)
+        self.arrows.setPos(0,0,0)
+        
+        self.arrows2 = loader.loadModel("data/models/arrows.egg")
+        self.arrows2.reparentTo(render)
+        self.arrows2.setPos(0,60,0)
+        
         #self.addPlayer(self.devices.devices[0])
 
         #Load the Map
