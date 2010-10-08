@@ -27,7 +27,11 @@ class Game(ShowBase):
     def __init__(self):
         '''
         '''
+<<<<<<< TREE
         loadPrcFileData("", "fullscreen 1\n win-size 1920 1200")
+=======
+        #loadPrcFileData("", "pstats-host 192.168.220.128")
+>>>>>>> MERGE-SOURCE
         
         #loadPrcFileData("", "want-pstats 1\n pstats-host 134.102.133.140\n pstats-tasks 1\n task-timer-verbose 1")
         #loadPrcFileData("", "pstatshost 192.168.220.121")
@@ -254,7 +258,7 @@ class Game(ShowBase):
 
         #start the gametask
         taskMgr.add(self.gameTask, "gameTask")
-        #self.world.setGravity(0, 0, -1.81)
+        self.world.setGravity(0, 0, -9.81)
 
     # -----------------------------------------------------------------
 
@@ -269,29 +273,28 @@ class Game(ShowBase):
         body2 = entry.getBody2()
 
         #Handles the collision-rays from the players
-##        for player in self.players:
-##            for ray in player.vehicle.collision_rays:
-##                if geom1 == ray or geom2 == ray:
-##                    normal = entry.getContactGeom(0).getNormal()
-##                    player.vehicle.physics_model.setGravityMode(0) #disable gravity if on the track
-##                    force_pos = ray.getPosition()
-##                    contact = entry.getContactPoint(0)
-##                    force_dir = force_pos - contact
-##                    acceleration = (ray.getLength()/2-force_dir.length())#calculate the direction
-##                    if acceleration > 0:
-##                        force_dir.normalize()
-##                        force_dir = Vec3(force_dir[0]*acceleration,force_dir[1]*acceleration,force_dir[2]*acceleration)
-##                        player.vehicle.physics_model.addForceAtPos(force_dir, force_pos)
-##                        #print "up:", acceleration
-##                        #testcode
-##                        #print normal
-##                        dir = player.vehicle.collision_model.getQuaternion().xform(Vec3(-1,0,0))
-##                        force_dir = Vec3(normal[0]*acceleration,normal[1]*acceleration,normal[2]*acceleration)
-##                        player.vehicle.hit_ground = True
-##                    else:
-##                        force_dir.normalize()
-##                        force_dir = Vec3(normal[0]*acceleration,normal[1]*acceleration,normal[2]*acceleration)
-##                        player.vehicle.physics_model.addForce(force_dir)
+        for player in self.players:
+            for ray in player.vehicle.collision_rays:
+                if geom1 == ray or geom2 == ray:
+                    normal = entry.getContactGeom(0).getNormal()
+                    player.vehicle.physics_model.setGravityMode(0) #disable gravity if on the track
+                    force_pos = ray.getPosition()
+                    contact = entry.getContactPoint(0)
+                    force_dir = force_pos - contact
+                    acceleration = (ray.getLength()/2-force_dir.length())#calculate the direction
+                    mass = player.vehicle.physics_model.getMass().getMagnitude()
+                    
+                    if acceleration > 0:
+                        force_dir.normalize()
+                        force_dir = Vec3(force_dir[0]*acceleration,force_dir[1]*acceleration,force_dir[2]*acceleration)
+                        player.vehicle.physics_model.addForceAtPos(force_dir*mass, force_pos)
+                        dir = player.vehicle.collision_model.getQuaternion().xform(Vec3(-1,0,0))
+                        #force_dir = Vec3(normal[0]*acceleration,normal[1]*acceleration,normal[2]*acceleration)
+                        player.vehicle.hit_ground = True
+                    else:
+                        force_dir.normalize()
+                        force_dir = Vec3(normal[0]*acceleration,normal[1]*acceleration,normal[2]*acceleration)
+                        player.vehicle.physics_model.addForce(force_dir*mass)
                     #player.vehicle.physics_model.setTorque(player.vehicle.physics_model.getAngularVel()*0.01)
                     #player.vehicle.physics_model.addTorque(player.vehicle.physics_model.getAngularVel()*-1)
  # -----------------------------------------------------------------
@@ -314,12 +317,13 @@ class Game(ShowBase):
                 if player.device.directions[0] != 0 or player.device.directions[1] != 0:
                     player.vehicle.direction = player.device.directions
 
-                linear_velocity = player.vehicle.physics_model.getLinearVel() *200
-                angular_velocity = player.vehicle.physics_model.getAngularVel() *200
+                linear_velocity = player.vehicle.physics_model.getLinearVel()
+                angular_velocity = player.vehicle.physics_model.getAngularVel()
+                mass = player.vehicle.physics_model.getMass().getMagnitude()
 
                 #calculate airresistance to get energy out of the ode-system
-                player.vehicle.physics_model.addForce(linear_velocity*-self.LINEAR_FRICTION)
-                player.vehicle.physics_model.addTorque(angular_velocity*-self.ANGULAR_FRICTION)
+                player.vehicle.physics_model.addForce(linear_velocity*-self.LINEAR_FRICTION*mass)
+                player.vehicle.physics_model.addTorque(angular_velocity*-self.ANGULAR_FRICTION*mass)
 
             self.space.autoCollide() # Setup the contact joints
             self.deltaTimeAccumulator -= self.stepSize # Remove a stepSize from the accumulator until the accumulated time is less than the stepsize
