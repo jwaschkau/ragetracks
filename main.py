@@ -12,7 +12,6 @@ import player
 import splitscreen
 import trackgen3d
 from playercam import PlayerCam
-from text3d import Text3D
 import gettext
 from menu import Menu
 import time
@@ -27,7 +26,7 @@ class Game(ShowBase):
     def __init__(self):
         '''
         '''
-        loadPrcFileData("", "fullscreen 1\n win-size 1920 1080")
+        #loadPrcFileData("", "fullscreen 1\n win-size 1920 1080")
         
         #loadPrcFileData("", "want-pstats 1\n pstats-host 127.0.0.1\n pstats-tasks 1\n task-timer-verbose 1")
         #loadPrcFileData("", "pstatshost 192.168.220.121")
@@ -37,7 +36,11 @@ class Game(ShowBase):
         #PStatClient.connect() #activate to start performance measuring with pstats
         base.setFrameRateMeter(True) #Show the Framerate
         base.camNode.setActive(False) #disable default cam
-        self.disableMouse() #disable manual camera-control
+        #self.disableMouse() #disable manual camera-control
+
+        #Font
+        self.font = DynamicTextFont('font.ttf')
+        self.font.setRenderMode(TextFont.RMSolid)
 
         # load the settings
         self.settings = settings.Settings()
@@ -140,10 +143,24 @@ class Game(ShowBase):
         self.startNode.reparentTo(render)
         self.startNode.setPos(-5,15,3)
 
-        self.headline = Text3D("RageTracks")
-        self.headline.reparentTo(self.startNode)
-        self.presskey = Text3D(_("PressAnyKey"), Vec3(0,10,-9.5))
-        self.presskey.reparentTo(self.startNode)
+        headline = TextNode("RageTracks")
+        headline.setFont(self.font)
+        headline.setText("RageTracks")
+        NodePath("test").attachNewNode(headline)
+        self.startNode.attachNewNode(headline)
+
+        presskey = TextNode("PressAnyKey")
+        presskey.setFont(self.font)
+        presskey.setText(_("Press any key!!"))
+        textNodePath = NodePath("PressAnyNode")
+        textNodePath.attachNewNode(presskey)
+        textNodePath.setPos(0,10,-9.5)
+        textNodePath.reparentTo(self.startNode)
+
+        #self.headline = Text3D("RageTracks")
+        #self.headline.reparentTo(self.startNode)
+        #self.presskey = Text3D(_("PressAnyKey"), Vec3(0,10,-9.5))
+        #self.presskey.reparentTo(self.startNode)
 
         self.startNode.show()
 
