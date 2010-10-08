@@ -368,7 +368,7 @@ class Track(object):
 
 
         for point in self.points:
-            self.curve.appendCv(4, point[0],point[1],point[2])
+            self.curve.appendCv(0, point[0],point[1],point[2])
         #self.curve.setCvWeight(0, 100000.0)
         #self.curve.setCvWeight(len(self.points)-1, 100000.0)
         

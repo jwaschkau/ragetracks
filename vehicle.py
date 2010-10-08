@@ -43,7 +43,7 @@ class Vehicle(object):
         self._model = loader.loadModel("data/models/vehicle01")
         self._model.reparentTo(render)
         self._model.setPos(0,0,10)
-        self._model.setHpr(0,0,30)
+        self._model.setHpr(0,0,0)
         
         #Initialize the physics-simulation for the vehicle
         self._physics_model = OdeBody(self._ode_world)
