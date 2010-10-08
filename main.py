@@ -12,7 +12,6 @@ import player
 import splitscreen
 import trackgen3d
 from playercam import PlayerCam
-from text3d import Text3D
 import gettext
 from menu import Menu
 import time
@@ -27,13 +26,10 @@ class Game(ShowBase):
     def __init__(self):
         '''
         '''
-<<<<<<< TREE
         loadPrcFileData("", "fullscreen 1\n win-size 1920 1200")
-=======
         #loadPrcFileData("", "pstats-host 192.168.220.128")
->>>>>>> MERGE-SOURCE
         
-        #loadPrcFileData("", "want-pstats 1\n pstats-host 134.102.133.140\n pstats-tasks 1\n task-timer-verbose 1")
+        #loadPrcFileData("", "want-pstats 1\n pstats-host 127.0.0.1\n pstats-tasks 1\n task-timer-verbose 1")
         #loadPrcFileData("", "pstatshost 192.168.220.121")
         ShowBase.__init__(self)
 
@@ -41,7 +37,12 @@ class Game(ShowBase):
         #PStatClient.connect() #activate to start performance measuring with pstats
         base.setFrameRateMeter(True) #Show the Framerate
         base.camNode.setActive(False) #disable default cam
-        self.disableMouse() #disable manual camera-control
+        #self.disableMouse() #disable manual camera-control
+
+        #Font
+        self.font = DynamicTextFont('font.ttf')
+        self.font.setRenderMode(TextFont.RMSolid)
+        base.toggleWireframe()
 
         # load the settings
         self.settings = settings.Settings()
@@ -144,10 +145,24 @@ class Game(ShowBase):
         self.startNode.reparentTo(render)
         self.startNode.setPos(-5,15,3)
 
-        self.headline = Text3D("RageTracks")
-        self.headline.reparentTo(self.startNode)
-        self.presskey = Text3D(_("PressAnyKey"), Vec3(0,10,-9.5))
-        self.presskey.reparentTo(self.startNode)
+        headline = TextNode("RageTracks")
+        headline.setFont(self.font)
+        headline.setText("RageTracks")
+        NodePath("test").attachNewNode(headline)
+        self.startNode.attachNewNode(headline)
+
+        presskey = TextNode("PressAnyKey")
+        presskey.setFont(self.font)
+        presskey.setText(_("Press any key!!"))
+        textNodePath = NodePath("PressAnyNode")
+        textNodePath.attachNewNode(presskey)
+        textNodePath.setPos(0,10,-9.5)
+        textNodePath.reparentTo(self.startNode)
+
+        #self.headline = Text3D("RageTracks")
+        #self.headline.reparentTo(self.startNode)
+        #self.presskey = Text3D(_("PressAnyKey"), Vec3(0,10,-9.5))
+        #self.presskey.reparentTo(self.startNode)
 
         self.startNode.show()
 
@@ -226,14 +241,22 @@ class Game(ShowBase):
         Start the game
         '''
         #Create the Track
-        self.track = trackgen3d.Track3d(1000, 800, 600, 200)
+        
+        self.track = trackgen3d.Track3d(1000, 800, 600, 200, len(self.players))
         nodePath = self.render.attachNewNode(self.track.createMesh())
         tex = loader.loadTexture('data/textures/street.png')
         nodePath.setTexture(tex)
         nodePath.setTwoSided(True)
-        #base.toggleWireframe()
+        
 
-
+        self.arrows = loader.loadModel("data/models/arrows.egg")
+        self.arrows.reparentTo(render)
+        self.arrows.setPos(0,0,0)
+        
+        self.arrows2 = loader.loadModel("data/models/arrows.egg")
+        self.arrows2.reparentTo(render)
+        self.arrows2.setPos(0,60,0)
+        
         #self.addPlayer(self.devices.devices[0])
 
         #Load the Map
@@ -243,8 +266,7 @@ class Game(ShowBase):
         self.map.setPos(0, 10, -7)
 
         #add collision with the map
-        #OdeTriMeshGeom(self.space, OdeTriMeshData(self.map, True))
-        groundGeom = OdePlaneGeom(self.space, Vec4(0, 0, 1, -7))
+        groundGeom = OdeTriMeshGeom(self.space, OdeTriMeshData(nodePath, True))
         groundGeom.setCollideBits(0)
         groundGeom.setCategoryBits(3)
 
@@ -288,7 +310,7 @@ class Game(ShowBase):
                         force_dir.normalize()
                         force_dir = Vec3(force_dir[0]*acceleration,force_dir[1]*acceleration,force_dir[2]*acceleration)
                         player.vehicle.physics_model.addForceAtPos(force_dir*mass, force_pos)
-                        dir = player.vehicle.collision_model.getQuaternion().xform(Vec3(-1,0,0))
+                        #dir = player.vehicle.collision_model.getQuaternion().xform(Vec3(-1,0,0))
                         #force_dir = Vec3(normal[0]*acceleration,normal[1]*acceleration,normal[2]*acceleration)
                         player.vehicle.hit_ground = True
                     else:
