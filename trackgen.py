@@ -371,7 +371,15 @@ class Track(object):
             self.curve.appendCv(4, point[0],point[1],point[2])
         #self.curve.setCvWeight(0, 100000.0)
         #self.curve.setCvWeight(len(self.points)-1, 100000.0)
-        #self.curve.recompute()
+        
+        self.curve.recompute()
+        
+        vec = Vec3(0,0,0)
+        for i in xrange(len(self.points)):
+            self.curve.getCvIn(i, vec)
+            self.curve.setCvOut(i, vec)
+        
+        self.curve.recompute()
         #tangent = Vec3(0,0,0)
         #self.curve.getTangent(0, tangent)
         
