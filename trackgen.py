@@ -262,7 +262,7 @@ class Track(object):
         size.append(((0, self.size[1]/2),(self.size[0]/2, self.size[1])))
         random.shuffle(size)
 
-        points.append(Vec3(0,(((player_count-1)/4)+2)*-vehicle_dist,0))
+        
         points.append(Vec3(0,0,0))
 
         # fill the parts with random points
@@ -272,6 +272,8 @@ class Track(object):
                 y = random.randint(q[0][1], q[1][1])
                 z = random.randint(0, self.size[2])
                 point = Vec3(x,y,z)
+                
+                points.append(point)
                 
 ##                vec1 = points[-1]-points[-2]
 ##                vec2 = point-points[-1]
@@ -288,11 +290,12 @@ class Track(object):
 ##                    vec2 = point-points[-1]
 ##                    vec1.normalize()
 ##                    vec2.normalize()
+
+        points.append(Vec3(0,(((player_count-1)/4)+2)*-vehicle_dist,0))
                 
-                points.append(point)
                     
                     
-        print points
+        #print points
 
         self.points = points
         
@@ -340,11 +343,17 @@ class Track(object):
         for point in self.points:
             self.curve.appendCv(point[0],point[1],point[2])
         self.curve.recompute()
-        tangent = Vec3(0,0,0)
-        self.curve.getTangent(0, tangent)
-        self.curve.adjustPoint(0, self.points[-1][0], self.points[-1][1], self.points[-1][2])
-        self.curve.adjustPt(self.curve.getMaxT(), self.points[-1][0], self.points[-1][1], self.points[-1][2], tangent[0], tangent[1], tangent[2])
+        #tangent = Vec3(0,0,0)
+        #self.curve.getTangent(0, tangent)
+        
+        ##self.curve.adjustPoint(0, self.points[0][0], self.points[0][1], self.points[0][2])
+        ##self.curve.adjustPoint(self.curve.getMaxT(), self.points[-1][0], self.points[-1][1], self.points[-1][2])
+        length = self.curve.getMaxT()
+        print "max_t: ", length, len(self.points)
+        self.curve.adjustPoint(0, 0, self.points[0][1], 0)
+        self.curve.adjustPoint(self.curve.getMaxT(), 0, self.points[-1][1], 0)
         self.curve.recompute()
+        print "max_t: ", length, len(self.points)
     
 ##    def genStart(self, player):
 ##        print player
@@ -396,7 +405,7 @@ class Track(object):
             
             point = Vec3(0,0,0)
             length = self.curve.getMaxT()
-            print length
+            print "max_t: ", length
 
             for i in xrange(0,resolution):
                 self.curve.getPoint(i*(length/resolution), point)
@@ -449,9 +458,10 @@ if __name__ == "__main__":
 #    b = p3-p2
 #
 #    print getAngle(a,b)
-    m = Track(800,600)
-    m.generateTrack(9)
-    a = m.getInterpolatedPoints(200)
+##    m = Track(800,600)
+##    m.generateTrack(9)
+##    a = m.getInterpolatedPoints(200)
+    import main
     #print a
     #print len(a)
 
