@@ -248,8 +248,7 @@ class Game(ShowBase):
         self.map.setPos(0, 10, -7)
 
         #add collision with the map
-        #OdeTriMeshGeom(self.space, OdeTriMeshData(self.map, True))
-        groundGeom = OdePlaneGeom(self.space, Vec4(0, 0, 1, -7))
+        groundGeom = OdeTriMeshGeom(self.space, OdeTriMeshData(nodePath, True))
         groundGeom.setCollideBits(0)
         groundGeom.setCategoryBits(3)
 
