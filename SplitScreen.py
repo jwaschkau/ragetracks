@@ -19,11 +19,15 @@ class SplitScreen(object):
         
         if cam_count > 0:
             self.addCameras(cam_count)
-        
+            
+        #for i in range(1,10):    
+        #    print i, self.calculateRegions(i)
+        print cam_count
         
     # -----------------------------------------------------------------
     
     def addCamera(self):
+        print "addCamera", len(self.regions), self.regions, len(self.cameras), self.cameras
         '''
         adds a camera for a new player (or an additional view)
         @return: returns the added camera object
@@ -55,6 +59,7 @@ class SplitScreen(object):
     # -----------------------------------------------------------------
     
     def addCameras(self, cam_count):
+        print "addCameras"
         '''
         adds multiple cameras
         @return: (list) returns all recently added cameras
@@ -147,6 +152,7 @@ class SplitScreen(object):
     # -----------------------------------------------------------------
 
     def calculateRegions(self, count):
+        print "calculateRegions", count
         '''
         Calculates the window size and position for a count of n screens
         @return: (tuple) the display region in panda format (x1,x2,y1,y2) x is left-right, y is bottom-up
@@ -174,7 +180,7 @@ class SplitScreen(object):
 # -----------------------------------------------------------------
 # -----------------------------------------------------------------
 # -----------------------------------------------------------------
-       
+      
 if __name__ == "__main__":
-    #import main
-    print type(base.makeCamera())
+    import main
+    #split = SplitScreen()

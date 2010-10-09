@@ -26,7 +26,7 @@ class Game(ShowBase):
     def __init__(self):
         '''
         '''
-        loadPrcFileData("", "fullscreen 1\n win-size 1920 1200")
+        #loadPrcFileData("", "fullscreen 1\n win-size 1920 1200")
         #loadPrcFileData("", "pstats-host 192.168.220.128")
         
         #loadPrcFileData("", "want-pstats 1\n pstats-host 127.0.0.1\n pstats-tasks 1\n task-timer-verbose 1")
@@ -224,11 +224,11 @@ class Game(ShowBase):
                 self.startGame()
                 return task.done
 
-        for device in self.unusedDevices:             ##There must be an funktion only let every one can join only one time
+        for device in self.unusedDevices:
             if device.boost == True:
                 self.addPlayer(device)
 
-                self.unusedDevices.remove(device)
+                #self.unusedDevices.remove(device)
                 task.delayTime = 0.2
                 return task.again
 
