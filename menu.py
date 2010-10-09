@@ -47,7 +47,7 @@ class Menu(object):
         #self.options = []
         #self.optionsModells = []
         #self.selected = 0
-        self.addOption(_("NewGame"), self.newGame)
+        self.addOption(_("New Game"), self.newGame)
         self.addOption(_("Options"), self.option)
         self.addOption(_("Hall Of Fame"), self.newGame)
         self.addOption(_("Credits"), self.newGame)
@@ -63,11 +63,10 @@ class Menu(object):
         #self.options = []
         #self.optionsModells = []
         #self.selected = 0
-        self.addOption(_("Sceen"), self.newGame)
-        self.addOption(_("FullScreen"), self.newGame)
+        self.addOption(_("Resolution"), self.newGame)
+        self.addOption(_("Full Screen"), self.newGame)
         self.addOption(_("Shader"), self.newGame)
-        self.addOption(_("KA"), self.newGame)
-        self.addOption(_("back"), self.backToMain)
+        self.addOption(_("Back"), self.backToMain)
         #self.text = Text3D(_("NewGame"))
         self.showMenu()
 
