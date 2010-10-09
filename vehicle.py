@@ -42,8 +42,10 @@ class Vehicle(object):
         
         self._model = loader.loadModel("data/models/vehicle01")
         self._model.reparentTo(render)
-        self._model.setPos(0,0,10)
+        self._model.setPos(0,0,20)
         self._model.setHpr(0,0,0)
+        #self._model.setScale(1, 1, 1)
+        
         
         #Initialize the physics-simulation for the vehicle
         self._physics_model = OdeBody(self._ode_world)
@@ -52,7 +54,7 @@ class Vehicle(object):
         
         #Initialize the mass of the vehicle
         physics_mass = OdeMass()
-        physics_mass.setBox(400,1,1,1)
+        physics_mass.setBox(1000,1,1,1)
         self._physics_model.setMass(physics_mass)
         
         #Initialize the collision-model of the vehicle
