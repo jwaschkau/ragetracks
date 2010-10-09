@@ -26,7 +26,8 @@ class Game(ShowBase):
     def __init__(self):
         '''
         '''
-        #loadPrcFileData("", "fullscreen 1\n win-size 1920 1080")
+        loadPrcFileData("", "fullscreen 1\n win-size 1920 1200")
+        #loadPrcFileData("", "pstats-host 192.168.220.128")
         
         #loadPrcFileData("", "want-pstats 1\n pstats-host 127.0.0.1\n pstats-tasks 1\n task-timer-verbose 1")
         #loadPrcFileData("", "pstatshost 192.168.220.121")
@@ -36,12 +37,12 @@ class Game(ShowBase):
         #PStatClient.connect() #activate to start performance measuring with pstats
         base.setFrameRateMeter(True) #Show the Framerate
         base.camNode.setActive(False) #disable default cam
-        #self.disableMouse() #disable manual camera-control
+        self.disableMouse() #disable manual camera-control
+        #base.toggleWireframe()
 
         #Font
         self.font = DynamicTextFont('font.ttf')
         self.font.setRenderMode(TextFont.RMSolid)
-        base.toggleWireframe()
 
         # load the settings
         self.settings = settings.Settings()
@@ -53,7 +54,7 @@ class Game(ShowBase):
         #Initialize needed variables and objects
         self.players = [] #holds the player objects
         self.TRACK_GRIP = 0.5
-        self.LINEAR_FRICTION = 0.9
+        self.LINEAR_FRICTION = 0.1
         self.ANGULAR_FRICTION = 0.9
         self.splitscreen = splitscreen.SplitScreen(0)
 
@@ -304,14 +305,13 @@ class Game(ShowBase):
                     force_dir = force_pos - contact
                     acceleration = (ray.getLength()/2-force_dir.length())#calculate the direction
                     mass = player.vehicle.physics_model.getMass().getMagnitude()
-                    
+                    player.vehicle.hit_ground = True
                     if acceleration > 0:
                         force_dir.normalize()
                         force_dir = Vec3(force_dir[0]*acceleration,force_dir[1]*acceleration,force_dir[2]*acceleration)
                         player.vehicle.physics_model.addForceAtPos(force_dir*mass, force_pos)
                         #dir = player.vehicle.collision_model.getQuaternion().xform(Vec3(-1,0,0))
                         #force_dir = Vec3(normal[0]*acceleration,normal[1]*acceleration,normal[2]*acceleration)
-                        player.vehicle.hit_ground = True
                     else:
                         force_dir.normalize()
                         force_dir = Vec3(normal[0]*acceleration,normal[1]*acceleration,normal[2]*acceleration)
@@ -350,7 +350,7 @@ class Game(ShowBase):
             self.deltaTimeAccumulator -= self.stepSize # Remove a stepSize from the accumulator until the accumulated time is less than the stepsize
             self.world.quickStep(self.stepSize)
             self.contactgroup.empty() # Clear the contact joints
-            #player.vehicle.hit_ground = False
+            player.vehicle.hit_ground = False
 
         for player in self.players: # set new positions
             player.updatePlayer()

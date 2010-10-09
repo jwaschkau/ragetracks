@@ -250,7 +250,7 @@ class Track(object):
         this method generates some random points and stores them in a member variable
         -> sets the attribute self.points
         '''
-        vehicle_dist = 20
+        vehicle_dist = 60
         minimum_angle = 40
         points = []
 
@@ -264,6 +264,7 @@ class Track(object):
 
         
         points.append(Vec3(0,0,0))
+        points.append(Vec3(0,vehicle_dist,0))
 
         # fill the parts with random points
         for q in size:
@@ -292,6 +293,7 @@ class Track(object):
 ##                    vec2.normalize()
 
         points.append(Vec3(0,(((player_count-1)/4)+2)*-vehicle_dist,0))
+        points.append(Vec3(0,-vehicle_dist,0))
                 
                     
                     
@@ -368,22 +370,18 @@ class Track(object):
 
 
         for point in self.points:
-            self.curve.appendCv(4, point[0],point[1],point[2])
-        #self.curve.setCvWeight(0, 100000.0)
-        #self.curve.setCvWeight(len(self.points)-1, 100000.0)
-        #self.curve.recompute()
-        #tangent = Vec3(0,0,0)
-        #self.curve.getTangent(0, tangent)
-        
-        ##self.curve.adjustPoint(0, self.points[0][0], self.points[0][1], self.points[0][2])
-        ##self.curve.adjustPoint(self.curve.getMaxT(), self.points[-1][0], self.points[-1][1], self.points[-1][2])
-        ##length = self.curve.getNumKnots()
-        ##print "max_t: ", self.curve.getNumKnots(), self.curve.getNumCvs(), self.curve.getMaxT(), len(self.points)
-        #self.curve.adjustPoint(0, 0, self.points[0][1], 0)
-        #self.curve.adjustPoint(self.curve.getMaxT(), 0, self.points[-1][1], 0)
-        #self.curve.recompute()
-        #print "max_t: ", length, len(self.points)
+            self.curve.appendCv(HCG1, point[0],point[1],point[2])
+            
+        for i in xrange(len(self.points)-1):
+            self.curve.setCvIn(i, self.points[i+1]-self.points[i-1])
+            self.curve.setCvOut(i, self.points[i+1]-self.points[i-1])
     
+        last = len(self.points)-1
+        self.curve.setCvIn(last, self.points[0]-self.points[-2])
+        self.curve.setCvOut(last, self.points[0]-self.points[-2])
+            
+   
+   
 ##    def genStart(self, player):
 ##        print player
 ##        startPos = []
