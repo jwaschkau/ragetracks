@@ -27,7 +27,6 @@ class SplitScreen(object):
     # -----------------------------------------------------------------
     
     def addCamera(self):
-        print "addCamera", len(self.regions), self.regions, len(self.cameras), self.cameras
         '''
         adds a camera for a new player (or an additional view)
         @return: returns the added camera object
@@ -41,7 +40,10 @@ class SplitScreen(object):
             self.regions = self.calculateRegions(len(self.regions)+1)
             self.cameras.append(self.createCamera(self.regions[unused]))
             self.refreshCameras()
-            
+        
+        # if there are empty slots, they're filled with None
+            for i in xrange(len(self.regions)-len(self.cameras)):
+                self.cameras.append(None)
         
         # if there was an unused slot, the camera is now at this place
         # if not, unused is -1 which points to the last element of the list (the newest cam)
@@ -59,7 +61,6 @@ class SplitScreen(object):
     # -----------------------------------------------------------------
     
     def addCameras(self, cam_count):
-        print "addCameras"
         '''
         adds multiple cameras
         @return: (list) returns all recently added cameras
@@ -152,7 +153,6 @@ class SplitScreen(object):
     # -----------------------------------------------------------------
 
     def calculateRegions(self, count):
-        print "calculateRegions", count
         '''
         Calculates the window size and position for a count of n screens
         @return: (tuple) the display region in panda format (x1,x2,y1,y2) x is left-right, y is bottom-up
@@ -183,4 +183,12 @@ class SplitScreen(object):
       
 if __name__ == "__main__":
     import main
-    #split = SplitScreen()
+##    app = ShowBase()
+##    
+##    split = SplitScreen(1)
+##    print "initialisation done"
+##    split.addCamera()
+##    split.addCamera()
+##    split.addCamera()
+##    
+##    app.run()
