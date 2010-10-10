@@ -1,4 +1,3 @@
-from text3d import Text3D
 from panda3d.core import NodePath
 #from pandac.PandaModules import Vec3, Vec4, PointLight #Temp for Testing need VBase4
 from pandac.PandaModules import *
@@ -15,6 +14,15 @@ class Menu(object):
         
         self.newGame = newGame
         
+        #Font
+        self.font = DynamicTextFont('data/fonts/bunny_game.ttf')
+        self.font.setRenderMode(TextFont.RMSolid)
+        
+        taskMgr.add(self.imput, 'input')
+    
+    # -----------------------------------------------------------------
+
+    def initNode(self):
         self.camera = None
         self.selected = 0
         self.options = []
@@ -22,7 +30,7 @@ class Menu(object):
         self.menuNode = NodePath("menuNode")
         self.menuNode.reparentTo(render)
         self.menuNode.setPos(-5,15,3)
-
+        
         self.colorA = Vec4(1,1,0,0)
         self.colorB = Vec4(0,1,1,0)
         
@@ -32,20 +40,17 @@ class Menu(object):
         plnp = self.menuNode.attachNewNode(plight)
         plnp.setPos(0, -10, 0)
         self.menuNode.setLight(plnp)
-        
-        taskMgr.add(self.imput, 'input')
-    
-    # -----------------------------------------------------------------
 
     def menuMain(self):
+        self.initNode()
         #Fill the options List
-        self.options = []
-        self.optionsModells = []
-        self.selected = 0
+        #self.options = []
+        #self.optionsModells = []
+        #self.selected = 0
         self.addOption(_("NewGame"), self.newGame)
         self.addOption(_("Options"), self.option)
+        self.addOption(_("Hall Of Fame"), self.newGame)
         self.addOption(_("Credits"), self.newGame)
-        self.addOption(_("HallOfFame"), self.newGame)
         self.addOption(_("Exit"), sys.exit)
         #self.text = Text3D(_("NewGame"))
         self.showMenu()
@@ -53,10 +58,11 @@ class Menu(object):
     # -----------------------------------------------------------------
     
     def menuOption(self):
+        self.initNode()
         #Fill the options List
-        self.options = []
-        self.optionsModells = []
-        self.selected = 0
+        #self.options = []
+        #self.optionsModells = []
+        #self.selected = 0
         self.addOption(_("Sceen"), self.newGame)
         self.addOption(_("FullScreen"), self.newGame)
         self.addOption(_("Shader"), self.newGame)
@@ -68,6 +74,7 @@ class Menu(object):
     # -----------------------------------------------------------------
     
     def option(self):
+        
         self.menuOption()
         taskMgr.doMethodLater(0.5, self.imput, 'input')
         
@@ -80,7 +87,7 @@ class Menu(object):
     # -----------------------------------------------------------------
     
     def imput(self, task):
-        print self.device.directions
+        #print self.device.directions
         if self.device.directions == [1,0]:
             task.delayTime = 0.2
             return task.again
@@ -105,9 +112,21 @@ class Menu(object):
     def addOption(self, name, function):
         '''
         '''
+        text = TextNode(name)
+        text.setFont(self.font)
+        text.setText(name)
         self.options.append((name, function))
-        self.optionsModells.append(Text3D(_(name), Vec3(0, 0, (len(self.optionsModells))*(-1.5)))) #Think will working too without _ after Text3D
-        self.optionsModells[len(self.optionsModells)-1].reparentTo(self.menuNode)
+        self.optionsModells.append(NodePath("test").attachNewNode(text)) #setPos fehlt
+        self.optionsModells[-1].setColor(self.colorA)
+        self.optionsModells[-1].setPos(0, 0, -len(self.optionsModells))
+        self.menuNode.attachNewNode(text)
+        
+        
+        #text.setTextColor(0.3, 0.6, 0.1, 1.0)
+        #text.setText("Every day in every way I'm getting better and better.")
+        #textNodePath = NodePath("test")
+        #textNodePath.attachNewNode(text)
+        #textNodePath.reparentTo(self.menuNode)
         
 
     # -----------------------------------------------------------------
@@ -115,7 +134,7 @@ class Menu(object):
     def hideMenu(self):
         '''
         '''
-        self.menuNode.hide()
+        self.menuNode.removeNode()
         
         self.camera.node().setActive(False)
 
@@ -126,8 +145,8 @@ class Menu(object):
         '''
         if len(self.optionsModells) == 0:
             return
-        self.menuNode.show()
-        self.optionsModells[self.selected].color = self.colorB
+        #self.menuNode.show()
+        self.optionsModells[self.selected].setColor(self.colorB)
         
         #Cam
         if self.camera is None: 
@@ -144,8 +163,8 @@ class Menu(object):
         if self.selected == len(self.options):
             self.selected = 0
         
-        self.optionsModells[old].color = self.colorA
-        self.optionsModells[self.selected].color = self.colorB
+        self.optionsModells[old].setColor(self.colorA)
+        self.optionsModells[self.selected].setColor(self.colorB)
         
 
     # -----------------------------------------------------------------
@@ -156,8 +175,8 @@ class Menu(object):
         if self.selected == -1:
             self.selected = len(self.options)-1
         
-        self.optionsModells[old].color = self.colorA
-        self.optionsModells[self.selected].color = self.colorB
+        self.optionsModells[old].setColor(self.colorA)
+        self.optionsModells[self.selected].setColor(self.colorB)
 
     # -----------------------------------------------------------------
 
