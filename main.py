@@ -37,7 +37,7 @@ class Game(ShowBase):
         #PStatClient.connect() #activate to start performance measuring with pstats
         base.setFrameRateMeter(True) #Show the Framerate
         base.camNode.setActive(False) #disable default cam
-        self.disableMouse() #disable manual camera-control
+        #self.disableMouse() #disable manual camera-control
         #base.toggleWireframe()
 
         #Font
@@ -48,7 +48,7 @@ class Game(ShowBase):
         self.settings = settings.Settings()
         self.settings.loadSettings("user/config.ini")
         gettext.install("ragetrack", "data/language")#, unicode=True) #installs the system language
-        #trans = gettext.translation("ragetrack", "data/language", ["de"]) #installs choosen language
+        trans = gettext.translation("ragetrack", "data/language", ["de"]) #installs choosen language
         #trans.install() #usage: print _("Hallo Welt")
 
         #Initialize needed variables and objects
@@ -113,6 +113,7 @@ class Game(ShowBase):
 
         #Create a new player object
         self.players.append(player.Player(len(self.players),self.world, self.space, device, camera))
+        print "player"
 
 
     # -----------------------------------------------------------------
