@@ -7,52 +7,52 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-10-09 19:17+0000\n"
-"PO-Revision-Date: 2010-09-30 12:36+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"PO-Revision-Date: 2010-10-10 16:09+0000\n"
+"Last-Translator: simone.sandri <Unknown>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2010-10-10 05:09+0000\n"
+"X-Launchpad-Export-Date: 2010-10-11 04:59+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 "Generated-By: pygettext.py 1.5\n"
 
 #: main.py:155
 msgid "Press any key!!"
-msgstr ""
+msgstr "Schiacia un tasto qualunque!!!"
 
 #: menu.py:50
 msgid "New Game"
-msgstr ""
+msgstr "Nuovo gioco"
 
 #: menu.py:51
 msgid "Options"
-msgstr ""
+msgstr "Opzioni"
 
 #: menu.py:52
 msgid "Hall Of Fame"
-msgstr ""
+msgstr "Galleria dei campioni"
 
 #: menu.py:53
 msgid "Credits"
-msgstr ""
+msgstr "Riconoscimenti"
 
 #: menu.py:54
 msgid "Exit"
-msgstr ""
+msgstr "Esci"
 
 #: menu.py:66
 msgid "Resolution"
-msgstr ""
+msgstr "Risoluzione"
 
 #: menu.py:67
 msgid "Full Screen"
-msgstr ""
+msgstr "Schermo intero"
 
 #: menu.py:68
 msgid "Shader"
-msgstr ""
+msgstr "ombreggiatura"
 
 #: menu.py:69
 msgid "Back"
-msgstr ""
+msgstr "Indietro"

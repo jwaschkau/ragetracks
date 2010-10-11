@@ -1,21 +1,21 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR ORGANIZATION
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Turkish translation for ragetracks
+# Copyright (c) 2010 Rosetta Contributors and Canonical Ltd 2010
+# This file is distributed under the same license as the ragetracks package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
+"Project-Id-Version: ragetracks\n"
+"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2010-10-09 19:17+0000\n"
-"PO-Revision-Date: 2010-10-05 07:22+0000\n"
-"Last-Translator: Carsten Pfeffer <Unknown>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"PO-Revision-Date: 2010-10-10 17:59+0000\n"
+"Last-Translator: zeugma <Unknown>\n"
+"Language-Team: Turkish <tr@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2010-10-11 04:59+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
-"Generated-By: pygettext.py 1.5\n"
 
 #: main.py:155
 msgid "Press any key!!"
@@ -23,11 +23,11 @@ msgstr ""
 
 #: menu.py:50
 msgid "New Game"
-msgstr ""
+msgstr "Yeni Oyun"
 
 #: menu.py:51
 msgid "Options"
-msgstr ""
+msgstr "Seçenekler"
 
 #: menu.py:52
 msgid "Hall Of Fame"
@@ -35,19 +35,19 @@ msgstr ""
 
 #: menu.py:53
 msgid "Credits"
-msgstr ""
+msgstr "Hazırlayanlar"
 
 #: menu.py:54
 msgid "Exit"
-msgstr ""
+msgstr "Çıkış"
 
 #: menu.py:66
 msgid "Resolution"
-msgstr ""
+msgstr "Çözünürlük"
 
 #: menu.py:67
 msgid "Full Screen"
-msgstr ""
+msgstr "Tam Ekran"
 
 #: menu.py:68
 msgid "Shader"
@@ -55,10 +55,4 @@ msgstr ""
 
 #: menu.py:69
 msgid "Back"
-msgstr ""
-
-#~ msgid "Please enter a value: "
-#~ msgstr "Por favor, introduzca un valor: "
-
-#~ msgid "The random choice is: %s"
-#~ msgstr "La elección aleatoria es: %s"
+msgstr "Geri"
