@@ -262,6 +262,10 @@ class Game(ShowBase):
         nodePath.setTexture(tex)
         #nodePath.setTwoSided(True)
         
+        #Create the Plane that you get hi by if you fall down
+        self.plane = OdePlaneGeom(self.space,0,0,1,-50)
+        self.plane.setCollideBits(0)
+        self.plane.setCategoryBits(1)
 
         self.arrows = loader.loadModel("data/models/arrows.egg")
         self.arrows.reparentTo(render)
@@ -311,6 +315,8 @@ class Game(ShowBase):
         #Handles the collision-rays from the players
         for player in self.players:
             for ray in player.vehicle.collision_rays:
+                #print geom1.compareTo(ray)
+                #print geom2.compareTo(ray)
                 if geom1 == ray or geom2 == ray:
                     normal = entry.getContactGeom(0).getNormal()
                     player.vehicle.physics_model.setGravityMode(0) #disable gravity if on the track
@@ -332,6 +338,19 @@ class Game(ShowBase):
                         player.vehicle.physics_model.addForce(force_dir*mass)
                     #player.vehicle.physics_model.setTorque(player.vehicle.physics_model.getAngularVel()*0.01)
                     #player.vehicle.physics_model.addTorque(player.vehicle.physics_model.getAngularVel()*-1)
+                    return
+
+        #workaround until panda 1.7.1
+        #if the player collides with the ground plane he will get reset to the starting position        
+        for player in self.players:
+            if geom1.compareTo(self.plane) == 0 and player.vehicle.physics_model.compareTo(body2) == 0:
+                player.vehicle.physics_model.setPosition(0,0,20)
+                return
+            if geom2.compareTo(self.plane) == 0 and player.vehicle.physics_model.compareTo(body1) == 0:
+                player.vehicle.physics_model.setPosition(0,0,20)
+                #body1.setPosition(0,0,20)
+                return
+
  # -----------------------------------------------------------------
 
     def gameTask(self, task):
