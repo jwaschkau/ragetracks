@@ -26,6 +26,7 @@ class Vehicle(object):
         self._boost_strength = 0.0 #the boost propertys of the vehicle
         self._control_strength = 0.0 #impact on the steering behaviour
         self._grip_strength = 0.0 #impact on the steering behaviour
+        self._track_grip = 0.8 #impact on the steering behaviour
         self._hit_ground = True
         
         self.setVehicle(name) #set the initial vehicle
@@ -136,7 +137,9 @@ class Vehicle(object):
         if self._hit_ground:
             direction = self._collision_model.getQuaternion().xform(Vec3(0,1,0))
             self._physics_model.addForce(direction*self._boost_strength*self.physics_model.getMass().getMagnitude())
-    
+        else:
+            direction = self._collision_model.getQuaternion().xform(Vec3(0,1,0))
+            self._physics_model.addForce(direction*self._boost_strength*0.2*self.physics_model.getMass().getMagnitude())
     # ---------------------------------------------------------
         
     def setDirection(self, dir):
@@ -182,6 +185,9 @@ class Vehicle(object):
         self._direction.normalize()
         self._physics_model.addForce(self._direction*(self._speed*self._grip_strength*self.physics_model.getMass().getMagnitude()))#+linear_velocity)
         self._physics_model.addForce(-linear_velocity*(self._speed*self._grip_strength*self.physics_model.getMass().getMagnitude()))#+linear_velocity)
+        
+        #calculate the grip
+        self._physics_model.addTorque(self._physics_model.getAngularVel()*-self._track_grip*self.physics_model.getMass().getMagnitude())
         
         #refresh the positions of the collisionrays
         self._front_left.doStep()

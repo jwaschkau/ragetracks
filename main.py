@@ -54,8 +54,8 @@ class Game(ShowBase):
         #Initialize needed variables and objects
         self.players = [] #holds the player objects
         self.TRACK_GRIP = 0.5
-        self.LINEAR_FRICTION = 0.1
-        self.ANGULAR_FRICTION = 0.9
+        self.LINEAR_FRICTION = 0.02
+        self.ANGULAR_FRICTION = 0.02
         self.splitscreen = splitscreen.SplitScreen(0)
 
         #Initialize Physics (ODE)
