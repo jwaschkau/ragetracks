@@ -41,14 +41,14 @@ class Game(ShowBase):
         #base.toggleWireframe()
 
         #Font
-        self.font = DynamicTextFont('data/fonts/bunny_game.ttf')
+        self.font = DynamicTextFont('data/fonts/font.ttf')
         self.font.setRenderMode(TextFont.RMSolid)
 
         # load the settings
         self.settings = settings.Settings()
         self.settings.loadSettings("user/config.ini")
         gettext.install("ragetrack", "data/language")#, unicode=True) #installs the system language
-        trans = gettext.translation("ragetrack", "data/language", ["de"]) #installs choosen language
+        #trans = gettext.translation("ragetrack", "data/language", ["de"]) #installs choosen language
         #trans.install() #usage: print _("Hallo Welt")
 
         #Initialize needed variables and objects
