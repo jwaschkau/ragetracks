@@ -37,7 +37,7 @@ class Game(ShowBase):
         #PStatClient.connect() #activate to start performance measuring with pstats
         base.setFrameRateMeter(True) #Show the Framerate
         base.camNode.setActive(False) #disable default cam
-        #self.disableMouse() #disable manual camera-control
+        self.disableMouse() #disable manual camera-control
         #base.toggleWireframe()
 
         #Font
@@ -109,7 +109,6 @@ class Game(ShowBase):
         creates a new player object, initializes it and sorts the cameras on the screen
         '''
         screen = self.splitscreen.addCamera()
-        print screen
         camera = PlayerCam(screen)
         
         #Create a new player object
@@ -211,10 +210,23 @@ class Game(ShowBase):
         '''
         the new game menu
         '''
-        taskMgr.add(self.collectPlayer, "collectPlayer")
         self.unusedDevices = self.devices.devices[:]
+        taskMgr.add(self.collectPlayer, "collectPlayer")
+        
+        self.screens = []
+        taskMgr.add(self.selectVehicle, "selectVehicle")
         #self.startGame()
 
+    # -----------------------------------------------------------------
+
+    def selectVehicle(self, task):
+        if len(self.screens) < len(self.players):
+            self.screens.append(self.players[len(self.screens)].camera)
+            return  task.cont
+        for i in self.players:
+            i.camera
+            #i.get
+    
     # -----------------------------------------------------------------
 
     def collectPlayer(self, task):
@@ -248,7 +260,7 @@ class Game(ShowBase):
         nodePath = self.render.attachNewNode(self.track.createMesh())
         tex = loader.loadTexture('data/textures/street.png')
         nodePath.setTexture(tex)
-        nodePath.setTwoSided(True)
+        #nodePath.setTwoSided(True)
         
 
         self.arrows = loader.loadModel("data/models/arrows.egg")
