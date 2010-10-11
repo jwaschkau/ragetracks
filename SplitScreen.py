@@ -44,6 +44,8 @@ class SplitScreen(object):
         # if there are empty slots, they're filled with None
             for i in xrange(len(self.regions)-len(self.cameras)):
                 self.cameras.append(None)
+                unused-=1
+                
         
         # if there was an unused slot, the camera is now at this place
         # if not, unused is -1 which points to the last element of the list (the newest cam)

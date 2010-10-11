@@ -109,8 +109,9 @@ class Game(ShowBase):
         creates a new player object, initializes it and sorts the cameras on the screen
         '''
         screen = self.splitscreen.addCamera()
+        print screen
         camera = PlayerCam(screen)
-
+        
         #Create a new player object
         self.players.append(player.Player(len(self.players),self.world, self.space, device, camera))
         print "player"
