@@ -24,7 +24,7 @@ class Game(ShowBase):
         
         #PStatClient.connect() #activate to start performance measuring with pstats
         base.setFrameRateMeter(True) #Show the Framerate
-        #base.toggleWireframe()
+        base.toggleWireframe()
         
         self.startGame()
         # -----------------------------------------------------------------
