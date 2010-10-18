@@ -3,10 +3,13 @@ from panda3d.core import NodePath
 from pandac.PandaModules import *
 import time
 import sys
+from direct.directnotify.DirectNotify import DirectNotify
 
 class Menu(object):
 
     def __init__(self, newGame, device):
+        self._notify = DirectNotify().newCategory("Menu")
+        self._notify.info("New Menu-Object created: %s" %(self))
         self.device = device #The keybord
         
         time.sleep(1)               #Bad Hack to make sure that the Key isn't pressed.

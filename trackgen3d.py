@@ -12,6 +12,7 @@ from trackgen import Track
 from pandac.PandaModules import GeomVertexFormat, Geom, GeomVertexWriter, GeomTristrips, GeomNode
 import xml.dom.minidom as dom
 from xml.dom.minidom import Document
+from direct.directnotify.DirectNotify import DirectNotify
 
 # -------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------
@@ -45,7 +46,8 @@ class StreetData(object):
         # if the points should be mirrored, we'll do it
         if self.mirrored:
             self.mirrorPoints()
-    
+        self._notify = DirectNotify().newCategory("TrackGen3D")
+        self._notify.info("New StreetData-Object created: %s" %(self))
     # -------------------------------------------------------------------------------------
 
     def addPoint(self, x, y):
@@ -205,6 +207,8 @@ class Track3d(object):
     def __init__(self, res, x, y, z = 200, player_count=1):
         '''
         '''
+        self._notify = DirectNotify().newCategory("TrackGen3D")
+        self._notify.info("New Track3D-Object created: %s" %(self))
         #street_data = (Vec2(4.0,4.0), Vec2(10.0,10.0), Vec2(10.0,0.0), Vec2(4.0,0.0), Vec2(0.0,-1.0))
         #street_data = StreetData(Vec2(15.0,1.0), Vec2(15.0,-5.0), Vec2(0.0,-5.0), mirrored=True) #, Vec2(15.0,0.0)
         street_data = StreetData()
