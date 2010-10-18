@@ -25,7 +25,7 @@ class PlayerCam(object):
         self.menuNode = NodePath("MenuNode")
         
         #GlobPattern if we need a Panda Class
-        self.vehicle = glob.glob("data/models/*.egg")
+        self.vehicle = glob.glob("data/models/vehicles/*.egg")
     
     # ---------------------------------------------------------
     def followVehicle(self, direction, nodepath = None):
