@@ -206,7 +206,6 @@ class Game(ShowBase):
         #GlobPattern if we need a Panda Class
         self.vehicle_list = glob.glob("data/models/vehicles/*.egg")
         self.platform = loader.loadModel("data/models/platform.egg")
-        print type(self.platform)
         self.unusedDevices = self.devices.devices[:]
         taskMgr.add(self.collectPlayer, "collectPlayer")
         self.player_buttonpressed = []
@@ -219,7 +218,6 @@ class Game(ShowBase):
 
     def selectVehicle(self, task):
         for player in self.players:
-            print task.time
             if self.player_buttonpressed[self.players.index(player)] < task.time:
                 if player.device.directions[0] < -0.8:
                     self.player_buttonpressed[self.players.index(player)] = task.time + self.KEY_DELAY
