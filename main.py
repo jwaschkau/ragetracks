@@ -218,6 +218,9 @@ class Game(ShowBase):
 
     def selectVehicle(self, task):
         for player in self.players:
+            if player.vehicle.model != None:
+                player.vehicle.model.setH(player.vehicle.model.getH()-(30 * globalClock.getDt()) )
+                
             if self.player_buttonpressed[self.players.index(player)] < task.time:
                 if player.device.directions[0] < -0.8:
                     self.player_buttonpressed[self.players.index(player)] = task.time + self.KEY_DELAY
@@ -252,10 +255,14 @@ class Game(ShowBase):
                 self.player_buttonpressed.append(0)
                 #LICHT
                 plight = PointLight('plight')
-                plight.setColor(VBase4(0.3, 0.3, 0.3, 1))
+                plight.setColor(VBase4(10.0, 10.0, 10.0, 1))
                 plnp = vehicleSelectNode.attachNewNode(plight)
-                plnp.setPos(0, -10, 0)
+                plnp.setPos(-10, -10, 5)
                 vehicleSelectNode.setLight(plnp)
+                
+                ambilight = AmbientLight('ambilight')
+                ambilight.setColor(VBase4(0.2, 0.2, 0.2, 1))
+                vehicleSelectNode.setLight(vehicleSelectNode.attachNewNode(ambilight))
                 
                 #Load the platform
                 
@@ -319,6 +326,12 @@ class Game(ShowBase):
         ambilight = AmbientLight('ambilight')
         ambilight.setColor(VBase4(0.2, 0.2, 0.2, 1))
         render.setLight(render.attachNewNode(ambilight))
+        
+        dlight = DirectionalLight('dlight')
+        dlight.setColor(VBase4(10.0, 10.0, 10.0, 1))
+        dlnp = render.attachNewNode(dlight)
+        dlnp.setHpr(0, -60, 0)
+        render.setLight(dlnp)
 
         #start the gametask
         taskMgr.add(self.gameTask, "gameTask")

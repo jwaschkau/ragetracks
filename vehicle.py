@@ -44,10 +44,15 @@ class Vehicle(object):
         self._control_strength = 1.5
         self._grip_strength = 0.5
         
-        if self._model != None: self._model.removeNode()
+        if self._model != None: 
+            heading  = self._model.getH()
+            self._model.removeNode()
+        else:
+            heading = 160
         self._model = model
         self._model.setPos(0,0,2)
-        self._model.setHpr(0,0,0)
+        self._model.setHpr(heading,0,0)
+            
         #self._model.setScale(1, 1, 1)
         
         
