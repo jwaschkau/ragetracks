@@ -29,11 +29,11 @@ class Game(ShowBase):
         '''
         #loadPrcFileData("", "fullscreen 1\n win-size 1920 1200")
         #loadPrcFileData("", "want-pstats 1\n pstats-host 127.0.0.1\n pstats-tasks 1\n task-timer-verbose 1")
-        loadPrcFileData("", "default-directnotify-level info")
+        loadPrcFileData("", "default-directnotify-level error\n notify-level-Game info")
         ShowBase.__init__(self)
 
         self._notify = DirectNotify().newCategory("Game")
-        self._notify.info("New Game-Object created: %s" %(self))
+        self._notify.warning("New Game-Object created: %s" %(self))
         
         #PStatClient.connect() #activate to start performance measuring with pstats
         base.setFrameRateMeter(True) #Show the Framerate

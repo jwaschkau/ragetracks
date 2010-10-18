@@ -5,7 +5,7 @@
 from pandac.PandaModules import * 
 from direct.directnotify.DirectNotify import DirectNotify
 
-loadPrcFileData("", "default-directnotify-level debug")
+loadPrcFileData("", "default-directnotify-level debug\n notify-level-Game info")
 class Logging(object):
     def __init__(self):
         #create a new notify category

@@ -224,7 +224,8 @@ class Track(object):
                         crossings.append( (j, len(points)-1) )
                     
                 points.append(point)
-        print crossings
+                self._notify = DirectNotify().newCategory("SplitScreen")
+        self._notify.debug("Crossings: %s" %(crossings))
 
         points.append(Vec3(0,(((player_count-1)/4)+2)*-VEHICLE_DIST, 0))
         points.append(Vec3(0,-VEHICLE_DIST, 0))
