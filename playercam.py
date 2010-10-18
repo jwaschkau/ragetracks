@@ -4,9 +4,6 @@
 ###################################################################
 from pandac.PandaModules import Vec3, NodePath #Load all PandaModules
 from direct.directnotify.DirectNotify import DirectNotify
-from pandac.PandaModules import * #Load all PandaModules
-import random
-import glob
 
 class PlayerCam(object):
     '''
@@ -16,75 +13,47 @@ class PlayerCam(object):
         '''
         self._notify = DirectNotify().newCategory("PlayerCam")
         self._notify.info("New PlayerCam-Object created: %s" %(self))
-        self.position = Vec3(0,-20,5)
-        self.camera = camera
-        self.vehicle_direction = Vec3(0,0,0) #the direction the object is moving
-        self.nodepath = None
-        self.distance = 0.7
-        self.cam_node = NodePath()
-        self.menuNode = NodePath("MenuNode")
+        self._position = Vec3(0,-20,5)
+        self._camera = camera
+        self._vehicle_direction = Vec3(0,0,0) #the direction the object is moving
+        self._nodepath = None
+        self._distance = 0.7
+        self._cam_node = NodePath()
         
-        #GlobPattern if we need a Panda Class
-        self.vehicle = glob.glob("data/models/vehicles/*.egg")
     
     # ---------------------------------------------------------
     def followVehicle(self, direction, nodepath = None):
         '''
         Let the camera follow the node path.
         '''
-        self.nodepath = nodepath
-        self.vehicle_direction = direction
+        self._nodepath = nodepath
+        self._vehicle_direction = direction
         
     # ---------------------------------------------------------
     def updateCam(self):
         '''
         Needs to get executed every frame that gets displayed on the screen
         '''
-        if self.nodepath != None:
-            x,y,z = self.nodepath.getX(),self.nodepath.getY(),self.nodepath.getZ()
-            self.camera.setPos((self.nodepath.getQuat().xform(Vec3(0,-10,4))+self.nodepath.getPos()-(self.vehicle_direction*0.2)))
-            self.camera.lookAt(x,y,z)
-            self.camera.setR(self.nodepath.getR())
+        if self._nodepath != None:
+            x,y,z = self._nodepath.getX(),self._nodepath.getY(),self._nodepath.getZ()
+            self._camera.setPos((self._nodepath.getQuat().xform(Vec3(0,-10,4))+self._nodepath.getPos()-(self._vehicle_direction*0.2)))
+            self._camera.lookAt(x,y,z)
+            self._camera.setR(self._nodepath.getR())
         else:
             pass
-    
-    # ---------------------------------------------------------
-    def camModeMenu(self):
-        '''
-        Set Cam to menu mode
-        '''
-        self.camera.reparentTo(self.menuNode)
-        
-        ####TEMP
-        #Font
-        self.font = DynamicTextFont('data/fonts/font.ttf')
-        self.font.setRenderMode(TextFont.RMSolid)
-        
-        headline = TextNode("RageTracks")
-        headline.setFont(self.font)
-        headline.setText(str(random.randint(0, 12)))
-        NodePath("test").attachNewNode(headline)
-        self.menuNode.attachNewNode(headline)
-        
-        #LICHT
-        plight = PointLight('plight')
-        plight.setColor(VBase4(0.3, 0.3, 0.3, 1))
-        plnp = self.menuNode.attachNewNode(plight)
-        plnp.setPos(0, -10, 0)
-        self.menuNode.setLight(plnp)
-        
-        #Load the platform
-        m = loader.loadModel("data/models/platform.egg")
-        m.reparentTo(self.menuNode)
-    
-    # ---------------------------------------------------------    
-    def camModeGame(self):
-        '''
-        Set Cam to game mode
-        '''
-        self.camera.reparentTo(render)
         
     # ---------------------------------------------------------
+    
+    def getCamera(self):
+        return self._camera
+
+
+    def setCamera(self, value):
+        self._camera = value
+
+    camera = property(fget = getCamera, fset = setCamera)
+        
+    
     
 if __name__ == "__main__":
     import main

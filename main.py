@@ -16,6 +16,7 @@ from playercam import PlayerCam
 import gettext
 from menu import Menu
 import time
+import glob
 
 # -----------------------------------------------------------------
 # -----------------------------------------------------------------
@@ -29,17 +30,17 @@ class Game(ShowBase):
         '''
         #loadPrcFileData("", "fullscreen 1\n win-size 1920 1200")
         #loadPrcFileData("", "want-pstats 1\n pstats-host 127.0.0.1\n pstats-tasks 1\n task-timer-verbose 1")
-        loadPrcFileData("", "default-directnotify-level error\n notify-level-Game info")
+        loadPrcFileData("", "default-directnotify-level error\n notify-level-Game info \n notify-level-Vehicle debug")
         ShowBase.__init__(self)
 
         self._notify = DirectNotify().newCategory("Game")
-        self._notify.warning("New Game-Object created: %s" %(self))
+        self._notify.info("New Game-Object created: %s" %(self))
         
         #PStatClient.connect() #activate to start performance measuring with pstats
         base.setFrameRateMeter(True) #Show the Framerate
         base.camNode.setActive(False) #disable default cam
         self.disableMouse() #disable manual camera-control
-        base.toggleWireframe()
+        #base.toggleWireframe()
 
         #Font
         self.font = DynamicTextFont('data/fonts/font.ttf')
@@ -105,8 +106,8 @@ class Game(ShowBase):
         
         #Create a new player object
         self.players.append(player.Player(len(self.players),self.world, self.space, device, camera))
+        
         self._notify.info("Player added")
-        self.players[-1].camera.camModeMenu()
 
     # -----------------------------------------------------------------
 
@@ -130,6 +131,8 @@ class Game(ShowBase):
         '''
         self._notify.info("Initializing StartScreen")
 
+        self.KEY_DELAY = 0.15
+        
         #StartScreen Node
         self.startNode = NodePath("StartNode")
         self.startNode.reparentTo(render)
@@ -200,20 +203,33 @@ class Game(ShowBase):
         the new game menu
         '''
         self._notify.info("Initializing new game")
+        #GlobPattern if we need a Panda Class
+        self.vehicle_list = glob.glob("data/models/vehicles/*.egg")
+        self.platform = loader.loadModel("data/models/platform.egg")
+        print type(self.platform)
         self.unusedDevices = self.devices.devices[:]
-        self._notify.info("New game initialized")
         taskMgr.add(self.collectPlayer, "collectPlayer")
-        
+        self.player_buttonpressed = []
         self.screens = []
         taskMgr.add(self.selectVehicle, "selectVehicle")
-        #self.startGame()
+        
+        self._notify.info("New game initialized")
 
     # -----------------------------------------------------------------
 
     def selectVehicle(self, task):
-        for i in self.players:
-            if i.device.directions == [-1,0]:
-                i.vehicle
+        for player in self.players:
+            print task.time
+            if self.player_buttonpressed[self.players.index(player)] < task.time:
+                if player.device.directions[0] < -0.8:
+                    self.player_buttonpressed[self.players.index(player)] = task.time + self.KEY_DELAY
+                    index = self.vehicle_list.index("data/models/vehicles/%s" %(player.vehicle.model.getName()))-1
+                    loader.loadModel(self.vehicle_list[index], callback = player.setVehicle)
+                if player.device.directions[0] > 0.8:
+                    self.player_buttonpressed[self.players.index(player)] = task.time + self.KEY_DELAY
+                    index = self.vehicle_list.index("data/models/vehicles/%s" %(player.vehicle.model.getName()))+1
+                    if index >= len(self.vehicle_list): index = 0
+                    loader.loadModel(self.vehicle_list[index], callback = player.setVehicle)
         return task.cont
     
     # -----------------------------------------------------------------
@@ -224,17 +240,32 @@ class Game(ShowBase):
         '''
         if len(self.players) > 0:
             if self.players[0].device.boost:
-                for i in self.players:
-                    i.camera.camModeGame()
+                taskMgr.remove("selectVehicle")
                 self.startGame()
                 return task.done
 
         for device in self.unusedDevices:
             if device.boost == True:
                 self.addPlayer(device)
+                
+                #Set the PlayerCam to the Vehicle select menu Node        
+                vehicleSelectNode = NodePath("VehicleSelectNode")
+                self.players[-1].camera.camera.reparentTo(vehicleSelectNode)
+                self.player_buttonpressed.append(0)
+                #LICHT
+                plight = PointLight('plight')
+                plight.setColor(VBase4(0.3, 0.3, 0.3, 1))
+                plnp = vehicleSelectNode.attachNewNode(plight)
+                plnp.setPos(0, -10, 0)
+                vehicleSelectNode.setLight(plnp)
+                
+                #Load the platform
+                
+                self.platform.instanceTo(vehicleSelectNode)
 
+                loader.loadModel(self.vehicle_list[0], callback = self.players[-1].setVehicle)
                 #self.unusedDevices.remove(device)
-                task.delayTime = 0.2
+                task.delayTime = self.KEY_DELAY
                 return task.again
 
         return task.cont
@@ -247,6 +278,8 @@ class Game(ShowBase):
         '''
         self._notify = DirectNotify().newCategory("Game")
         self._notify.info("Initializing start game")
+        for player in self.players:
+            player.activateGameCam()
         #Create the Track
         
         self.track = trackgen3d.Track3d(1000, 800, 600, 200, len(self.players))

@@ -21,7 +21,7 @@ class Player(object):
         self._vehicle = vehicle.Vehicle(self._ode_world, self._ode_space) #the properties of the vehicle
         self._device = device #The inputdevice
         
-        self._camera.followVehicle(self._vehicle.boost_direction, self._vehicle.model)
+        #self._camera.followVehicle(self._vehicle.boost_direction, self._vehicle.model)
         #self._camera.setPos(0,-40,5)
         #self._camera.lookAt(self._vehicle.getModel())
         
@@ -30,8 +30,15 @@ class Player(object):
         #self._camera.setPos(0,-30,10)
         #self._camera.lookAt(self._vehicle.getModel()) 
     
-    # ---------------------------------------------------------        
+    # ---------------------------------------------------------
+    
+    def activateGameCam(self):
+        self._camera.followVehicle(self._vehicle.boost_direction, self._vehicle.model)
+        self._camera.camera.reparentTo(render)
+        self._vehicle.model.reparentTo(render)
         
+    # ---------------------------------------------------------
+    
     def setCamera(self, camera):
         '''
         '''
@@ -49,7 +56,9 @@ class Player(object):
     def setVehicle(self, vehicle):
         '''
         '''
-        self._vehicle = vehicle
+        self._vehicle.setVehicle(vehicle)
+        self._vehicle.model.reparentTo(self.camera.camera.getParent())
+        
         
     def getVehicle(self):
         '''

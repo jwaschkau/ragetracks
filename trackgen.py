@@ -11,6 +11,7 @@ import math
 import bitmap24
 import copy
 from panda3d.core import *
+from direct.directnotify.DirectNotify import DirectNotify
 
 MIN_Z_DIST = 100
 MAX_Z_DIST = 500
@@ -151,6 +152,8 @@ class Track(object):
         self.setSize(size_x, size_y, max_height)
         self.points = []
         self.curve = None
+        self._notify = DirectNotify().newCategory("TrackGen")
+        self._notify.info("New Track-Object created: %s" %(self))
 
     # -------------------------------------------------------------------------------------
 

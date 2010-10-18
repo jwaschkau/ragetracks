@@ -31,21 +31,23 @@ class Vehicle(object):
         self._track_grip = 0.8 #impact on the steering behaviour
         self._hit_ground = True
         
-        self.setVehicle(name) #set the initial vehicle
+        #self.setVehicle(name) #set the initial vehicle
         
     # ---------------------------------------------------------
     
-    def setVehicle(self, name):
+    def setVehicle(self, model):
         '''
         Choose what vehicle the player has chosen. This method initializes all data of this vehicle
         '''
+        self._notify.debug("Set new vehicle: %s" %model)
         self._boost_strength = 10.0
         self._control_strength = 1.5
         self._grip_strength = 0.5
         
-        self._model = loader.loadModel("data/models/vehicles/vehicle03")
-        self._model.reparentTo(render)
-        self._model.setPos(0,0,20)
+        
+        if self._model != None: self._model.removeNode()
+        self._model = model
+        self._model.setPos(0,0,2)
         self._model.setHpr(0,0,0)
         #self._model.setScale(1, 1, 1)
         
