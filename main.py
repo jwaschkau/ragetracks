@@ -39,7 +39,7 @@ class Game(ShowBase):
         base.setFrameRateMeter(True) #Show the Framerate
         base.camNode.setActive(False) #disable default cam
         self.disableMouse() #disable manual camera-control
-        base.toggleWireframe()
+        #base.toggleWireframe()
 
         #Font
         self.font = DynamicTextFont('data/fonts/font.ttf')
