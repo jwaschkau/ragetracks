@@ -6,6 +6,7 @@
 from pandac.PandaModules import * #Load all PandaModules
 from wiregeom import WireGeom
 from collisionray import CollisionRay
+from direct.directnotify.DirectNotify import DirectNotify
 
 class Vehicle(object):
     '''
@@ -13,7 +14,8 @@ class Vehicle(object):
     def __init__(self, ode_world, ode_space, name = "standard"):
         '''
         '''
-
+        self._notify = DirectNotify().newCategory("Vehicle")
+        self._notify.info("New Vehicle-Object created: %s" %(self))
         self._ode_world = ode_world
         self._ode_space = ode_space
         self._model = None
@@ -218,7 +220,7 @@ class Vehicle(object):
     # ----------------------------------------------------------------- 
     
     def __del__(self):
-        pass
+        self._notify.info("Vehicle-Object deleted: %s" %(self))
     
 if __name__ == "__main__":
     import main

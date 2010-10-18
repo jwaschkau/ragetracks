@@ -5,6 +5,7 @@
 ##############################################################
 
 from configobj import ConfigObj
+from direct.directnotify.DirectNotify import DirectNotify
 
 # ---------------------------------------------------------
 # ---------------------------------------------------------
@@ -18,7 +19,8 @@ class Settings(object):
         '''
         this class is able to load and save the application's settings
         '''
-
+        self._notify = DirectNotify().newCategory("Settings")
+        self._notify.info("New Settings-Object created: %s" %(self))
         self.width = 800
         self.height = 600
 

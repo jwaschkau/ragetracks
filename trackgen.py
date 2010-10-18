@@ -11,7 +11,7 @@ import math
 import bitmap24
 import copy
 from panda3d.core import *
-
+from direct.directnotify.DirectNotify import DirectNotify
 
 MIN_DIST = 90
 VEHICLE_DIST = 50
@@ -43,6 +43,8 @@ class Line(object):
     def __init__(self, vec1, vec2):
         '''
         '''
+        self._notify = DirectNotify().newCategory("TrackGen")
+        self._notify.debug("New Line-Object created: %s" %(self))
         self._vec1 = vec1
         self._vec2 = vec2
     
@@ -146,6 +148,8 @@ class Track(object):
         @param size_y: (int) maximum y-coordinates
         @param max_height: (int) maximum z-coordinates
         '''
+        self._notify = DirectNotify().newCategory("TrackGen")
+        self._notify.info("New TrackGen-Object created: %s" %(self))
         self.setSize(size_x, size_y, max_height)
         self.points = []
         self.curve = None

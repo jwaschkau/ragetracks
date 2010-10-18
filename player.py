@@ -4,6 +4,7 @@
 ###################################################################
 import vehicle
 from pandac.PandaModules import Vec3,Quat #Load all PandaModules
+from direct.directnotify.DirectNotify import DirectNotify
 
 class Player(object):
     '''
@@ -11,6 +12,8 @@ class Player(object):
     def __init__(self, number, ode_world, ode_space, device = None, camera = None):
         '''
         '''
+        self._notify = DirectNotify().newCategory("Player")
+        self._notify.info("New Player-Object created: %s" %(self))
         self._ode_world = ode_world
         self._ode_space = ode_space
         self._number = number
@@ -76,7 +79,8 @@ class Player(object):
         destroys all objects of the player-object
         '''
         #Del one Camera 
-        self._camera.node().removeNode()
+        self._camera.camera.node().removeNode()
+        self._notify.info("Player-Object deleted: %s" %(self))
         
     # ---------------------------------------------------------
     

@@ -2,6 +2,7 @@
 from direct.showbase.ShowBase import ShowBase
 from pandac.PandaModules import *
 from math import sqrt, ceil
+from direct.directnotify.DirectNotify import DirectNotify
 
 # -----------------------------------------------------------------
 # -----------------------------------------------------------------
@@ -14,6 +15,8 @@ class SplitScreen(object):
     def __init__(self, cam_count=0):
         '''
         '''
+        self._notify = DirectNotify().newCategory("SplitScreen")
+        self._notify.info("New SplitScreen-Object created: %s" %(self))
         self.regions = []   # the regions the screen is separated into
         self.cameras = []   # the cameras (empty ones are None)
         
@@ -31,6 +34,7 @@ class SplitScreen(object):
         adds a camera for a new player (or an additional view)
         @return: returns the added camera object
         '''
+        self._notify.debug("creating new camera")
         unused = self.getUnusedRegion()
         # if there is an unused camera slot, use it
         if unused != -1:
@@ -47,6 +51,7 @@ class SplitScreen(object):
         
         # if there was an unused slot, the camera is now at this place
         # if not, unused is -1 which points to the last element of the list (the newest cam)
+        self._notify.debug("New camera created")
         return self.cameras[unused]
 
     # -----------------------------------------------------------------

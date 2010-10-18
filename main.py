@@ -4,6 +4,7 @@
 ###################################################################
 
 from direct.showbase.ShowBase import ShowBase
+from direct.directnotify.DirectNotify import DirectNotify
 from pandac.PandaModules import * #Load all PandaModules
 from panda3d.core import loadPrcFileData
 import settings
@@ -27,12 +28,12 @@ class Game(ShowBase):
         '''
         '''
         #loadPrcFileData("", "fullscreen 1\n win-size 1920 1200")
-        #loadPrcFileData("", "pstats-host 192.168.220.128")
-        
         #loadPrcFileData("", "want-pstats 1\n pstats-host 127.0.0.1\n pstats-tasks 1\n task-timer-verbose 1")
-        #loadPrcFileData("", "pstatshost 192.168.220.121")
+        loadPrcFileData("", "default-directnotify-level info")
         ShowBase.__init__(self)
 
+        self._notify = DirectNotify().newCategory("Game")
+        self._notify.info("New Game-Object created: %s" %(self))
         
         #PStatClient.connect() #activate to start performance measuring with pstats
         base.setFrameRateMeter(True) #Show the Framerate
@@ -77,28 +78,18 @@ class Game(ShowBase):
         self.space.setCollisionEvent("ode-collision")
         base.accept("ode-collision", self.onCollision)
 
-        #Initialize the first player
-        #self.addPlayer(self.devices.devices[0]) ##pass the device for the first player (probably the keyboard)
-
-        # try to read the ini-file. If it fails the settings class
-        # automatically contains default values
-        self.settings = settings.Settings()
-        try:
-            self.settings.loadSettings("user/config.ini")
-        except:
-            pass    # so here is nothing to do
-
-        # Add the main menu (though this is only temporary:
-        # the menu should me a member-variable, not a local one)
-        #m = menu3D.Menu()
-
         #LICHT
         plight = PointLight('plight')
         plight.setColor(VBase4(0.2, 0.2, 0.2, 1))
         plnp = render.attachNewNode(plight)
         plnp.setPos(100, 100, 0)
         render.setLight(plnp)
-
+        
+        # initialize the input devices
+        self.devices = inputdevice.InputDevices(self.settings.getInputSettings())
+        taskMgr.add(self.devices.fetchEvents, "fetchEvents")
+        taskMgr.add(self.fetchAnyKey, "fetchAnyKey")
+        
         #Start the Game
         self.showStartScreen()
 
@@ -108,13 +99,13 @@ class Game(ShowBase):
         '''
         creates a new player object, initializes it and sorts the cameras on the screen
         '''
+        self._notify.info("Adding Player")
         screen = self.splitscreen.addCamera()
         camera = PlayerCam(screen)
 
         #Create a new player object
         self.players.append(player.Player(len(self.players),self.world, self.space, device, camera))
-        print "player"
-
+        self._notify.info("Player added")
 
     # -----------------------------------------------------------------
 
@@ -122,7 +113,7 @@ class Game(ShowBase):
         '''
         deletes a player object and sorts the cameras on the screem
         '''
-
+        self._notify.info("Player removed")
         #delete the player
         for player in self.players:
             if player.getNumber() == number:
@@ -136,10 +127,7 @@ class Game(ShowBase):
         the first screen with "press any Key"
         the device with the first key press will be the first player
         '''
-        # initialize the input devices
-        self.devices = inputdevice.InputDevices(self.settings.getInputSettings())
-        taskMgr.add(self.devices.fetchEvents, "fetchEvents")
-        taskMgr.add(self.fetchAnyKey, "fetchAnyKey")
+        self._notify.info("Initializing StartScreen")
 
         #StartScreen Node
         self.startNode = NodePath("StartNode")
@@ -177,9 +165,9 @@ class Game(ShowBase):
         #Cam
         self.camera = base.makeCamera(base.win)
 
-        print self.devices.getCount()
-        print self.settings.getInputSettings()
-
+        #print self.devices.getCount()
+        #print self.settings.getInputSettings()
+        self._notify.info("StarScreen initialized")
 
 
     # -----------------------------------------------------------------
@@ -210,8 +198,10 @@ class Game(ShowBase):
         '''
         the new game menu
         '''
+        self._notify.info("Initializing new game")
         taskMgr.add(self.collectPlayer, "collectPlayer")
         self.unusedDevices = self.devices.devices[:]
+        self._notify.info("New game initialized")
         #self.startGame()
 
     # -----------------------------------------------------------------
@@ -241,6 +231,8 @@ class Game(ShowBase):
         '''
         Start the game
         '''
+        self._notify = DirectNotify().newCategory("Game")
+        self._notify.info("Initializing start game")
         #Create the Track
         
         self.track = trackgen3d.Track3d(1000, 800, 600, 200, len(self.players))
@@ -286,6 +278,7 @@ class Game(ShowBase):
         #start the gametask
         taskMgr.add(self.gameTask, "gameTask")
         self.world.setGravity(0, 0, -9.81)
+        self._notify.info("Start game initialized")
 
     # -----------------------------------------------------------------
 

@@ -3,6 +3,7 @@
 ## this module contains the camera of one player
 ###################################################################
 from pandac.PandaModules import Vec3, NodePath #Load all PandaModules
+from direct.directnotify.DirectNotify import DirectNotify
 
 class PlayerCam(object):
     '''
@@ -10,6 +11,8 @@ class PlayerCam(object):
     def __init__(self, camera):
         '''
         '''
+        self._notify = DirectNotify().newCategory("PlayerCam")
+        self._notify.info("New PlayerCam-Object created: %s" %(self))
         self.position = Vec3(0,-20,5)
         self.camera = camera
         self.vehicle_direction = Vec3(0,0,0) #the direction the object is moving
