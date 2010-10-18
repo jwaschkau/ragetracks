@@ -212,8 +212,8 @@ class Game(ShowBase):
 
     def selectVehicle(self, task):
         for i in self.players:
-            pass
-            #i.
+            if i.device.directions == [-1,0]:
+                i.vehicle
         return task.cont
     
     # -----------------------------------------------------------------
