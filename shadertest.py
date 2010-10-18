@@ -51,14 +51,14 @@ class GlowDemo(DirectObject):
 
         # load our model
         self.tron=Actor()
-        self.tron.loadModel("data/models/vehicle01")
+        self.tron.loadModel("data/models/vehicles/vehicle01")
         #self.tron.loadAnims({"running":"models/tron_anim"})
         self.tron.reparentTo(render)
         
         
         # load our model
         self.tron2=Actor()
-        self.tron2.loadModel("data/models/vehicle01")
+        self.tron2.loadModel("data/models/vehicles/vehicle01")
         #self.tron.loadAnims({"running":"models/tron_anim"})
         self.tron2.reparentTo(render)
         self.tron2.setX(5)

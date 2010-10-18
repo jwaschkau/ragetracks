@@ -44,7 +44,7 @@ class Vehicle(object):
         self._control_strength = 1.5
         self._grip_strength = 0.5
         
-        
+        self._model = loader.loadModel("data/models/vehicles/vehicle03")
         if self._model != None: self._model.removeNode()
         self._model = model
         self._model.setPos(0,0,2)

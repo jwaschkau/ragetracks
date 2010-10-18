@@ -361,8 +361,9 @@ class Track(object):
 
 if __name__ == "__main__":
     import sys
-    if sys.argv[1] == "3d":
-        import trackgentest
+    if len(sys.argv) > 1:
+        if sys.argv[1] == "3d":
+            import trackgentest
     else:
         m = Track(800,600)
         m.generateTrack(9)
