@@ -13,7 +13,9 @@ import copy
 from panda3d.core import *
 
 
-MIN_DIST = 20
+MIN_DIST = 90
+VEHICLE_DIST = 50
+MIN_ANGLE = 40
 
 # ---------------------------------------------------------
 # ---------------------------------------------------------
@@ -30,169 +32,108 @@ MIN_DIST = 20
 * Tiles werden entlang der Strecke platziert (Strassenstuecke, Tunnel usw.)
 * Environment (Skybox, fliegende Deko, Wolkenkratzer usw.) wird geladen
 '''
-# -------------------------------------------------------------------------------------
-# -------------------------------------------------------------------------------------
-# -------------------------------------------------------------------------------------
-
-def getAngle(a, b):
-    '''
-    @param a: (Vec3) the first vector
-    @param b: (Vec3) the second vector
-    @return: (float) the angle between the two vectors a and b
-    '''
-    return math.degrees(math.acos(a.dot(b)/(a.length()*b.length())))
 
 # -------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------
 
-class StraightLine(object):
+class Line(object):
     '''
-    This class implements a 3-dimensional straight line (in German: Gerade)
     '''
     def __init__(self, vec1, vec2):
         '''
-        @param vec1: (Vec3) the first vector to define the line (not a directional vector, but a positional one)
-        @param vec2: (Vec3) the second vector to define the line (not a directional vector, but a positional one)
-        the directional vector is computed automatically
         '''
-
-        if type(vec1) == tuple:
-            vec1 = Vec3(vec1[0], vec1[1], vec1[2])
-        if type(vec2) == tuple:
-            vec2 = Vec3(vec2[0], vec2[1], vec2[2])
-
-        if type(vec1) != type(vec2) != Vec3:
-            raise TypeError("vec1 and vec2 have to be of type 'Vec3' or 'tuple'")
-
-        self.posvec = vec1
-        self.posvec2 = vec2
-        self.dirvec = vec2-vec1
-
+        self._vec1 = vec1
+        self._vec2 = vec2
+    
     # -------------------------------------------------------------------------------------
-
-    def getPosVec(self):
+    
+    def getVec1(self):
         '''
-        @return: (Vec3) returns the position vector of the line
         '''
-        return self.posvec
-
+        return self._vec1
+        
     # -------------------------------------------------------------------------------------
-
-    def getPosVec2(self):
+    
+    def setVec1(self, vec1):
         '''
-        @return: (Vec3) returns the second position vector of the line
         '''
-        return self.posvec2
-
+        if type(vec1) != Vec2 and type(vec1) != Vec3:
+            raise TypeError("parameter vec1 has to be of type Vec2 or Vec3")
+        
+        self._vec1 = vec1
+    
     # -------------------------------------------------------------------------------------
-
-    def getDirVec(self):
+    
+    def getVec2(self):
         '''
-        @return: (Vec3) returns the direction vector of the line
         '''
-        return self.dirvec
-
+        return self._vec2
+    
     # -------------------------------------------------------------------------------------
-
-    def get2DLineFunction(self):
+    
+    def setVec2(self, vec2):
         '''
-        @return: (tuple) the mathematical function constants (m, b) [m -> slope, b -> y axis collision]
         '''
-        x1 = self.posvec[0]
-        y1 = self.posvec[1]
-
-        x2 = self.posvec2[0]
-        y2 = self.posvec2[1]
-
-        try:
-            m = (y2-y1)/(x2-x1)
-        except:
-            m = 0
-
-        b = y1-(m*x1)
-
-        return m,b
-
+        if type(vec2) != Vec2 and type(vec2) != Vec3:
+            raise TypeError("parameter vec2 has to be of type Vec2 or Vec3")
+        
+        self._vec2 = vec2
+        
     # -------------------------------------------------------------------------------------
-
-    def getZbyXY(self,x,y):
-        '''
-        @param x: (float) / (int) x-value
-        @param y: (float) / (int) y-value
-        @return: (float) the z-value at the given x and y components
-        '''
-        try:
-            z = self.posvec[2]+(self.dirvec[2]*((float(x)-self.posvec[0])/self.dirvec[0])) # !!! sometimes zero division
-        except:
-            try:
-                z = self.posvec[2]+(self.dirvec[2]*((float(y)-self.posvec[1])/self.dirvec[1])) # !!! sometimes zero division
-            except:
-                raise StandardError("Sorry, but this error will cause the end of the world")
-        return z
-
-    # -------------------------------------------------------------------------------------
-
+    
     def crossesLine(self, other):
         '''
-        @param other: (StaightLine) the other line to check if it crosses this one
-        @return: (bool) returns True if the line self and other have a crossing point in 2d space (x-y) and are very near in 3d space
         '''
-        m1,b1 = self.get2DLineFunction()
-        m2,b2 = other.get2DLineFunction()
-
-        # if this fails, the lines are parallel
-        try:
-            x = (b2-b1)/(m1-m2)
-            y = m1*x+b1
-        except:
-            return False
-
-        a1x = self.posvec[0]
-        a1y = self.posvec[1]
-        a2x = self.posvec2[0]
-        a2y = self.posvec2[1]
-
-        # if the crossing point is on the lines inside the interval of the two given points
-        # it must be also on the other line
-        if ( (a1x < x < a2x) or (a1x > x > a2x) ) and ( (a1y < y < a2y) or (a1y > y > a2y) ):
-
-            # calculate the distance between the lines:
-            try:
-                self_z = self.getZbyXY(x,y)
-                other_z = other.getZbyXY(x,y)
-
-                dist = abs(other_z - self_z)
-            except:
-                return True
-
-            # if the distance is smaller than the minimum distance, we can't use the map
-            if dist < MIN_DIST:
+        x1 = self.vec1.getX()
+        x2 = other.vec2.getX()
+        x3 = self.vec1.getX()
+        x4 = other.vec2.getX()
+        y1 = self.vec1.getX()
+        y2 = other.vec2.getX()
+        y3 = self.vec1.getX()
+        y4 = other.vec2.getX()
+        
+        denominator = ((y4-y3)*(x2-x1))-((x4-x3)*(y2-y1))
+        
+        if denominator == 0:
+            pass #print "StandardError" #raise StandardError()
+        else:
+            u = ((x4-x3)*(y1-y3)-(y4-y3)*(x1-x3))/denominator
+            v = ((x2-x1)*(y1-y3)-(y2-y1)*(x1-x3))/denominator
+            
+            if 0 < u < 1 and 0 < v < 1:
                 return True
             else:
                 return False
-        else:
-            return False
-
-
+        
     # -------------------------------------------------------------------------------------
-
+    
     def getAngle(self, other):
         '''
-        @param other: (StraightLine) the other line to determine the angle to
-        @return: (float) the angle between this line and the other one
         '''
-        a = self.dirvec
-        b = other.getDirVec()
+        a = (other.vec1-self.vec1).length()
+        b = (self.vec2-self.vec1).length()
+        c = (other.vec2-other.vec1).length()
+        
+        value = ((b**2)+(c**2)-(a**2)) / (2*b*c)
+        
+        # because of floating point precision
+        if value > 1:
+            value = 1
+        
+        angle = math.degrees(math.acos( value ))
 
-
-        return getAngle(a, b)
-
-
+        return angle
+        
+    # -------------------------------------------------------------------------------------
+    
+    vec1 = property(getVec1, setVec1)
+    vec2 = property(getVec2, setVec2)
+        
 # -------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------
-
 
 class Track(object):
     '''
@@ -223,7 +164,7 @@ class Track(object):
             raise TypeError("size_x, size_y and max_height have to be of type 'int'")
 
         # set the size
-        self.size = (size_x, size_y, max_height)
+        self.size = Vec3(size_x, size_y, max_height)
 
     # -------------------------------------------------------------------------------------
 
@@ -235,196 +176,112 @@ class Track(object):
         return self.size
 
     # -------------------------------------------------------------------------------------
-
-    def getCurve(self):
+    
+    def generateTrack(self, player_count):
         '''
-        the returned curve is an interpolated one, computed out of the randomly generated Points
-        @return: (NurbsCurve) the interpolated curve [a panda class]
         '''
-        return self.curve
-
-    # -------------------------------------------------------------------------------------
-
-    def generatePoints(self, player_count=1):
-        '''
-        this method generates some random points and stores them in a member variable
-        -> sets the attribute self.points
-        '''
-        vehicle_dist = 60
-        minimum_angle = 40
-        points = []
-
-        # calculate the size of the four quadrants and shuffle them
-        size = []
-        size.append(((0, 0),(self.size[0]/2, self.size[1]/2)))
-        size.append((((self.size[0]/2, 0),(self.size[0], self.size[1]/2))))
-        size.append(((self.size[0]/2, self.size[1]/2),(self.size[0], self.size[1])))
-        size.append(((0, self.size[1]/2),(self.size[0]/2, self.size[1])))
-        random.shuffle(size)
-
+        points = [ Vec3(0,0,0), Vec3(0, VEHICLE_DIST, 0) ]
+        crossings = []
         
-        points.append(Vec3(0,0,0))
-        points.append(Vec3(0,vehicle_dist,0))
+        # we define 4 quadrants to ensure that the track does run through the whole map
+        quadrants = []
+        quadrants.append( (Vec2(0, 0), Vec2(self.size.getX()/2, self.size.getY()/2)) )
+        quadrants.append( (Vec2(self.size.getX()/2, self.size.getY()/2), Vec2(self.size.getX(), self.size.getY())) )
+        quadrants.append( (Vec2(self.size.getX()/2, 0), Vec2(self.size.getX(), self.size.getY()/2)) )
+        quadrants.append( (Vec2(0, self.size.getY()/2), Vec2(self.size.getX()/2, self.size.getY())) )
+        random.shuffle(quadrants) # the order of the quadrants is randomly chosen
 
-        # fill the parts with random points
-        for q in size:
-            for i in xrange(4):
-                x = random.randint(q[0][0], q[1][0])
-                y = random.randint(q[0][1], q[1][1])
-                z = random.randint(0, self.size[2])
-                point = Vec3(x,y,z)
+        # generate points quadrant per quadrant
+        for quadrant in quadrants:
+            # generate 3 points per quadrant
+            for i in xrange(3):
+                point_ok = False
+                points_not_ok = 0
+                
+                # as long as the point isn't ok, look for another one
+                while not point_ok:
+                    # if more than 10 points are thrown away, recalculate the last one                    
+                    if points_not_ok > 10:
+                        del points[-1]
+
+                    # get a point
+                    point = Vec3(random.randint(quadrant[0].getX(), quadrant[1].getX()), random.randint(quadrant[0].getY(), quadrant[1].getY()), 0)
+                    
+                    # define a line for cheching its angle to the last line and for crossing points with other Lines
+                    line = Line(point, points[-1])
+
+                    if line.getAngle(Line(points[-2], points[-1])) > MIN_ANGLE and (point-points[-1]).length() > MIN_DIST: # check for length
+                        point_ok = True
+                    
+                    points_not_ok += 1
+                
+                # check for intersection
+                for j in xrange(len(points)-1):
+                    if line.crossesLine(Line(points[j], points[j+1])): ## seems not to be working, yet
+                        crossings.append( (j, len(points)-1) )
+                    
                 
                 points.append(point)
-                
-##                vec1 = points[-1]-points[-2]
-##                vec2 = point-points[-1]
-##                vec1.normalize()
-##                vec2.normalize()
-##                
-##                while vec1.angleDeg(vec2) < minimum_angle:
-##                    x = random.randint(q[0][0], q[1][0])
-##                    y = random.randint(q[0][1], q[1][1])
-##                    z = random.randint(0, self.size[2])
-##                    point = Vec3(x,y,z)
-##                
-##                    vec1 = points[-1]-points[-2]
-##                    vec2 = point-points[-1]
-##                    vec1.normalize()
-##                    vec2.normalize()
+        print crossings
 
-        points.append(Vec3(0,(((player_count-1)/4)+2)*-vehicle_dist,0))
-        points.append(Vec3(0,-vehicle_dist,0))
-                
-                    
-                    
-        #print points
-
-        self.points = points
+        points.append(Vec3(0,(((player_count-1)/4)+2)*-VEHICLE_DIST, 0))
+        points.append(Vec3(0,-VEHICLE_DIST, 0))
         
-        #dir = self.points[1] - self.points[0]
-        #dir = dir.normalize()
-        #self.points.append(self.points[0]+(dir*(-200)))
-        self.points.append(Vec3(self.points[0]))
-
-    # -------------------------------------------------------------------------------------
-
-    def generateTrack(self, player_count = 1):
-        '''
-        generates a curve out of the points
-        -> sets the attribute self.curve
-        '''
-        track_is_ok = False
-
-        n = 0
-
-        # generate new tracks until a track seems to be allright
-        while not track_is_ok:
-            self.generatePoints(player_count)
-            max_index = len(self.points)-1
-            track_is_ok = True
-
-            # check each line (between two points) for collisions
-            for i in xrange(max_index):
-                if not track_is_ok:
-                    break
-                for j in xrange(i+1, max_index-2):
-                    line1 = StraightLine(self.points[i], self.points[j])
-                    line2 = StraightLine(self.points[j+1], self.points[j+2])
-                    # if the lines cross / are too near, we have to generate a new map
-                    if line1.crossesLine(line2):
-                        track_is_ok = False
-                        n += 1 #Counter
-                        break
-                        #print i
-                        
-        print n, "Tracks are ignored"
-
-
-        # INTERPOLATION DURCH NURBS
+        self.points = points
         self.curve = HermiteCurve()
         
-        
-        
-##        // Hermite curve continuity types.
-##        #define HC_CUT         1
-##        // The curve is disconnected at this point.  All points between
-##        // this and the following CV are not part of the curve.
-##
-##        #define HC_FREE        2
-##        // Tangents are unconstrained.  The curve is continuous, but its first
-##        // derivative is not.  This is G0 geometric continuity.
-##
-##        #define HC_G1          3
-##        // Tangents are constrained to be collinear.  The curve's derivative
-##        // is not continuous in parametric space, but its geometric slope is.
-##        // The distinction is mainly relevant in the context of animation
-##        // along the curve--when crossing the join point, direction of motion
-##        // will change continuously, but the speed of motion may change
-##        // suddenly.  This is G1 geometric continuity.
-##
-##        #define HC_SMOOTH     4
-##        // Tangents are constrained to be identical.  The curve and its first
-##        // derivative are continuous in parametric space.  When animating
-##        // motion across the join point, speed and direction of motion will
-##        // change continuously.  This is C1 parametric continuity.
-
-
         for point in self.points:
-            self.curve.appendCv(HCG1, point[0],point[1],point[2])
+            self.curve.appendCv(HCSMOOTH, point[0],point[1], 0)
             
         for i in xrange(len(self.points)-1):
-            self.curve.setCvIn(i, self.points[i+1]-self.points[i-1])
-            self.curve.setCvOut(i, self.points[i+1]-self.points[i-1])
+            self.curve.setCvIn(i, Vec3(self.points[i+1]-self.points[i-1]))
+            self.curve.setCvOut(i, Vec3(self.points[i+1]-self.points[i-1]))
     
         last = len(self.points)-1
-        self.curve.setCvIn(last, self.points[0]-self.points[-2])
-        self.curve.setCvOut(last, self.points[0]-self.points[-2])
-            
-   
-   
-##    def genStart(self, player):
-##        print player
-##        startPos = []
-##        for i in range(player):
-##            startPos.append(Vec3(0,(10*i),0))
-##        startPos.append(Vec3(0,3+(10*(player-1)),0))
-##        for i in self.points:
-##            startPos.append(i)
-##        print startPos
-##        self.points = startPos
-
+        self.curve.setCvIn(last, Vec3(self.points[0]-self.points[-2]))
+        self.curve.setCvOut(last, Vec3(self.points[0]-self.points[-2]))
+        
+        
+        
         if __name__ == "__main__":
-
             # ================= TEST ================
             # === Strecke in Bitmap visualisieren ===
             # =======================================
-            bmp = bitmap24.Bitmap24("", self.size[0]+1, self.size[1]+1)
+            bmp = bitmap24.Bitmap24("", int(self.size[0]+1), int(self.size[1]+1))
 
             last = None
             for i in(self.points):
-                rgb =(0,0,0)
                 if last == None:
                     last = i
                     continue
 
-                if i[2] != 0:
-                    rgb = int((float(i[2])/self.size[2])*200)
+                #if i[2] != 0:
+                #    rgb = int((float(i[2])/self.size[2])*200)
 
-                bmp.drawLine(last[0], last[1], i[0], i[1], (rgb,rgb,rgb) )
+                bmp.drawLine(last[0], last[1], i[0], i[1], (0,0,0) )
 
                 last = i
+            
+            count = 0
+            for i in(self.points):
+                if count < 10:
+                    bmp.drawDigit(count, i[0],i[1],(0,0,255))
+                bmp.drawPixel(i[0], i[1], (255,0,0) )
+                count += 1
 
             #bmp.drawLine(self.points[0][0], self.points[0][1], self.points[-1][0], self.points[-1][1])
             bmp.drawDigit(0, self.points[0][0], self.points[0][1], (255,0,0))
             bmp.drawPixel(self.points[-2][0], self.points[-2][1], (0,255,0))
             bmp.writeBitmap("test1.bmp")
             # =======================================
-
-
+            
+            
+            
+            
             # ================= TEST ================
             # === Strecke in Bitmap visualisieren ===
             # =======================================
-            bmp = bitmap24.Bitmap24("", self.size[0]+1, self.size[1]+1)
+            bmp = bitmap24.Bitmap24("", int(self.size[0]+1), int(self.size[1]+1))
 
             last = None
 
@@ -432,7 +289,6 @@ class Track(object):
             
             point = Vec3(0,0,0)
             length = self.curve.getMaxT()
-            #print "max_t: ", length
 
             for i in xrange(0,resolution):
                 self.curve.getPoint(i*(length/resolution), point)
@@ -441,10 +297,7 @@ class Track(object):
                     last = copy.deepcopy(point)
                     continue
 
-                if point.getZ() != 0:
-                    rgb = int((float(point.getZ())/self.size[2])*200)
-
-                bmp.drawLine(last.getX(), last.getY(), point.getX(), point.getY(), (rgb,rgb,rgb) )
+                bmp.drawLine(last.getX(), last.getY(), point.getX(), point.getY(), (0,0,0) )
                 #bmp.writeBitmap("test/"+str(i)+".bmp")
 
                 last = copy.deepcopy(point)
@@ -453,7 +306,7 @@ class Track(object):
             bmp.drawPixel(self.points[-2][0], self.points[-2][1], (0,255,0))
 
             bmp.writeBitmap("test2.bmp")
-        
+    
     # -------------------------------------------------------------------------------------
 
     def getInterpolatedPoints(self, resolution):
@@ -472,29 +325,19 @@ class Track(object):
             
         return pointlist
 
+    # -------------------------------------------------------------------------------------
+
 # -------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------
 
 if __name__ == "__main__":
-#    p1 = Vec3(1,2,3)
-#    p2 = Vec3(2,3,4)
-#    p3 = Vec3(5,4,1)
-#
-#    a = p2-p1
-#    b = p3-p2
-#
-#    print getAngle(a,b)
     m = Track(800,600)
     m.generateTrack(9)
-    a = m.getInterpolatedPoints(200)
+    #a = m.getInterpolatedPoints(200)
+    
 ##    import main
-    #print a
-    #print len(a)
 
-    #l1 = StraightLine(Vec3(1,1,200), Vec3(3,20,200))
-    #l2 = StraightLine(Vec3(1,1,300), Vec3(3,3,300))
-    #print l1.getAngle(l2)
 
 
 
