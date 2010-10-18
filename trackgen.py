@@ -247,12 +247,19 @@ class Track(object):
         self.points = points
         self.curve = HermiteCurve()
         
+        #HCCUT
+        #HCFREE 
+        #HCG1
+        #HCSMOOTH
+        
         for point in self.points:
-            self.curve.appendCv(HCG1, point[0],point[1], 0)
+            self.curve.appendCv(HCFREE, point[0],point[1], 0)
             
         for i in xrange(len(self.points)-1):
-            self.curve.setCvIn(i, Vec3(self.points[i+1]-self.points[i-1]))
-            self.curve.setCvOut(i, Vec3(self.points[i+1]-self.points[i-1]))
+##            self.curve.setCvIn(i, Vec3(self.points[i+1]-self.points[i-1]))
+##            self.curve.setCvOut(i, Vec3(self.points[i+1]-self.points[i-1]))
+            self.curve.setCvIn(i, Vec3(self.points[i+1]-self.points[i-1])*.5)
+            self.curve.setCvOut(i, Vec3(self.points[i+1]-self.points[i-1])*.5)
     
         last = len(self.points)-1
         self.curve.setCvIn(last, Vec3(self.points[0]-self.points[-2]))
@@ -349,9 +356,13 @@ class Track(object):
 # -------------------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    m = Track(800,600)
-    m.generateTrack(9)
-    #a = m.getInterpolatedPoints(200)
+    import sys
+    if sys.argv[1] == "3d":
+        import trackgentest
+    else:
+        m = Track(800,600)
+        m.generateTrack(9)
+        #a = m.getInterpolatedPoints(200)
     
 ##    import main
 
