@@ -11,8 +11,9 @@ import math
 import bitmap24
 import copy
 from panda3d.core import *
-from direct.directnotify.DirectNotify import DirectNotify
 
+MIN_Z_DIST = 100
+MAX_Z_DIST = 500
 MIN_DIST = 90
 VEHICLE_DIST = 50
 MIN_ANGLE = 40
@@ -43,8 +44,6 @@ class Line(object):
     def __init__(self, vec1, vec2):
         '''
         '''
-        self._notify = DirectNotify().newCategory("TrackGen")
-        self._notify.debug("New Line-Object created: %s" %(self))
         self._vec1 = vec1
         self._vec2 = vec2
     
@@ -88,18 +87,19 @@ class Line(object):
         '''
         '''
         x1 = self.vec1.getX()
-        x2 = other.vec2.getX()
-        x3 = self.vec1.getX()
+        x2 = self.vec2.getX()
+        x3 = other.vec1.getX()
         x4 = other.vec2.getX()
-        y1 = self.vec1.getX()
-        y2 = other.vec2.getX()
-        y3 = self.vec1.getX()
-        y4 = other.vec2.getX()
+        
+        y1 = self.vec1.getY()
+        y2 = self.vec2.getY()
+        y3 = other.vec1.getY()
+        y4 = other.vec2.getY()
         
         denominator = ((y4-y3)*(x2-x1))-((x4-x3)*(y2-y1))
         
         if denominator == 0:
-            pass #print "StandardError" #raise StandardError()
+            print "StandardError" #raise StandardError()
         else:
             u = ((x4-x3)*(y1-y3)-(y4-y3)*(x1-x3))/denominator
             v = ((x2-x1)*(y1-y3)-(y2-y1)*(x1-x3))/denominator
@@ -148,8 +148,6 @@ class Track(object):
         @param size_y: (int) maximum y-coordinates
         @param max_height: (int) maximum z-coordinates
         '''
-        self._notify = DirectNotify().newCategory("TrackGen")
-        self._notify.info("New TrackGen-Object created: %s" %(self))
         self.setSize(size_x, size_y, max_height)
         self.points = []
         self.curve = None
@@ -219,27 +217,49 @@ class Track(object):
                     
                     points_not_ok += 1
                 
-                # check for intersection
+                # check for intersection 
+                ## this seems to work, but not for the last points, which are added after this loop
                 for j in xrange(len(points)-1):
-                    if line.crossesLine(Line(points[j], points[j+1])): ## seems not to be working, yet
+                    if line.crossesLine(Line(points[j], points[j+1])):
                         crossings.append( (j, len(points)-1) )
                     
-                
                 points.append(point)
         print crossings
 
         points.append(Vec3(0,(((player_count-1)/4)+2)*-VEHICLE_DIST, 0))
         points.append(Vec3(0,-VEHICLE_DIST, 0))
         
+        
+        # add some height
+        for i in xrange(2,len(points)-2):
+            points[i][2] = random.randint(points[i-1][2]-MAX_Z_DIST, points[i-1][2]+MAX_Z_DIST)
+            
+        # adjust the height
+        for cross in crossings:
+            absdist = abs(points[cross[1]][2] - points[cross[0]][2])
+            dist = points[cross[1]][2] - points[cross[0]][2]
+            sign = absdist / dist
+            if absdist < MIN_Z_DIST:
+                points[cross[1]][2] += (MIN_Z_DIST-absdist)*sign
+                points[cross[1]+1][2] += (MIN_Z_DIST-absdist)*sign
+            
+        
         self.points = points
         self.curve = HermiteCurve()
         
+        #HCCUT
+        #HCFREE 
+        #HCG1
+        #HCSMOOTH
+        
         for point in self.points:
-            self.curve.appendCv(HCSMOOTH, point[0],point[1], 0)
+            self.curve.appendCv(HCFREE, point[0],point[1], 0)
             
         for i in xrange(len(self.points)-1):
-            self.curve.setCvIn(i, Vec3(self.points[i+1]-self.points[i-1]))
-            self.curve.setCvOut(i, Vec3(self.points[i+1]-self.points[i-1]))
+##            self.curve.setCvIn(i, Vec3(self.points[i+1]-self.points[i-1]))
+##            self.curve.setCvOut(i, Vec3(self.points[i+1]-self.points[i-1]))
+            self.curve.setCvIn(i, Vec3(self.points[i+1]-self.points[i-1])*.5)
+            self.curve.setCvOut(i, Vec3(self.points[i+1]-self.points[i-1])*.5)
     
         last = len(self.points)-1
         self.curve.setCvIn(last, Vec3(self.points[0]-self.points[-2]))
@@ -336,9 +356,13 @@ class Track(object):
 # -------------------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    m = Track(800,600)
-    m.generateTrack(9)
-    #a = m.getInterpolatedPoints(200)
+    import sys
+    if sys.argv[1] == "3d":
+        import trackgentest
+    else:
+        m = Track(800,600)
+        m.generateTrack(9)
+        #a = m.getInterpolatedPoints(200)
     
 ##    import main
 

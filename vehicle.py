@@ -43,7 +43,7 @@ class Vehicle(object):
         self._control_strength = 1.5
         self._grip_strength = 0.5
         
-        self._model = loader.loadModel("data/models/vehicle01")
+        self._model = loader.loadModel("data/models/vehicle03")
         self._model.reparentTo(render)
         self._model.setPos(0,0,20)
         self._model.setHpr(0,0,0)
