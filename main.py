@@ -221,9 +221,9 @@ class Game(ShowBase):
     # -----------------------------------------------------------------
 
     def selectVehicle(self, task):
-        if len(self.screens) < len(self.players):
-            self.screens.append(self.players[len(self.screens)].camera)
-            return  task.cont
+        for i in self.players:
+            pass
+            #i.
         return task.cont
     
     # -----------------------------------------------------------------

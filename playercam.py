@@ -5,6 +5,7 @@
 from pandac.PandaModules import Vec3, NodePath #Load all PandaModules
 from pandac.PandaModules import * #Load all PandaModules
 import random
+import glob
 
 class PlayerCam(object):
     '''
@@ -65,6 +66,12 @@ class PlayerCam(object):
         plnp = self.menuNode.attachNewNode(plight)
         plnp.setPos(0, -10, 0)
         self.menuNode.setLight(plnp)
+        
+        #GlobPattern if we need a Panda Class
+        print glob.glob("data/models/*.egg")
+        
+        m = loader.loadModel("data/models/platform.egg")
+        m.reparentTo(self.menuNode)
     
     # ---------------------------------------------------------    
     def camModeGame(self):
