@@ -23,6 +23,9 @@ class PlayerCam(object):
         self.distance = 0.7
         self.cam_node = NodePath()
         self.menuNode = NodePath("MenuNode")
+        
+        #GlobPattern if we need a Panda Class
+        self.vehicle = glob.glob("data/models/*.egg")
     
     # ---------------------------------------------------------
     def followVehicle(self, direction, nodepath = None):
@@ -70,9 +73,7 @@ class PlayerCam(object):
         plnp.setPos(0, -10, 0)
         self.menuNode.setLight(plnp)
         
-        #GlobPattern if we need a Panda Class
-        print glob.glob("data/models/*.egg")
-        
+        #Load the platform
         m = loader.loadModel("data/models/platform.egg")
         m.reparentTo(self.menuNode)
     
