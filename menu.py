@@ -15,7 +15,7 @@ class Menu(object):
         self.newGame = newGame
         
         #Font
-        self.font = DynamicTextFont('data/fonts/bunny_game.ttf')
+        self.font = DynamicTextFont('data/fonts/font.ttf')
         self.font.setRenderMode(TextFont.RMSolid)
         
         taskMgr.add(self.imput, 'input')

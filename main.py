@@ -41,7 +41,7 @@ class Game(ShowBase):
         #base.toggleWireframe()
 
         #Font
-        self.font = DynamicTextFont('data/fonts/bunny_game.ttf')
+        self.font = DynamicTextFont('data/fonts/font.ttf')
         self.font.setRenderMode(TextFont.RMSolid)
 
         # load the settings
