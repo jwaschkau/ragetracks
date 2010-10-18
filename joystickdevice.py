@@ -6,6 +6,7 @@
 ##############################################################
 
 import pygame
+from direct.directnotify.DirectNotify import DirectNotify
 
 # ---------------------------------------------------------
 # ---------------------------------------------------------
@@ -19,6 +20,8 @@ class JoystickDevice(object):
         '''
         @param joystick: the pygame joystick object
         '''
+        self._notify = DirectNotify().newCategory("Input")
+        self._notify.info("New Joystick-Object created: %s" %(self))
         # the pygame joysick object
         self.joystick = joystick
         self.joystick.init()
