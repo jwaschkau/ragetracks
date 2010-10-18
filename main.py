@@ -315,7 +315,7 @@ class Game(ShowBase):
                     player.vehicle.hit_ground = True
                     if acceleration > 0:
                         force_dir.normalize()
-                        force_dir = Vec3(force_dir[0]*acceleration,force_dir[1]*acceleration,force_dir[2]*acceleration)
+                        force_dir = Vec3(normal[0]*acceleration,normal[1]*acceleration,normal[2]*acceleration)
                         player.vehicle.physics_model.addForceAtPos(force_dir*mass, force_pos)
                         #dir = player.vehicle.collision_model.getQuaternion().xform(Vec3(-1,0,0))
                         #force_dir = Vec3(normal[0]*acceleration,normal[1]*acceleration,normal[2]*acceleration)
