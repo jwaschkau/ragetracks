@@ -38,8 +38,8 @@ class Game(ShowBase):
         #PStatClient.connect() #activate to start performance measuring with pstats
         base.setFrameRateMeter(True) #Show the Framerate
         base.camNode.setActive(False) #disable default cam
-        #self.disableMouse() #disable manual camera-control
-        #base.toggleWireframe()
+        self.disableMouse() #disable manual camera-control
+        base.toggleWireframe()
 
         #Font
         self.font = DynamicTextFont('data/fonts/font.ttf')
@@ -49,7 +49,7 @@ class Game(ShowBase):
         self.settings = settings.Settings()
         self.settings.loadSettings("user/config.ini")
         gettext.install("ragetrack", "data/language")#, unicode=True) #installs the system language
-        trans = gettext.translation("ragetrack", "data/language", ["de"]) #installs choosen language
+        #trans = gettext.translation("ragetrack", "data/language", ["de"]) #installs choosen language
         #trans.install() #usage: print _("Hallo Welt")
 
         #Initialize needed variables and objects
@@ -102,10 +102,11 @@ class Game(ShowBase):
         self._notify.info("Adding Player")
         screen = self.splitscreen.addCamera()
         camera = PlayerCam(screen)
-
+        
         #Create a new player object
         self.players.append(player.Player(len(self.players),self.world, self.space, device, camera))
         self._notify.info("Player added")
+        self.players[-1].camera.camModeMenu()
 
     # -----------------------------------------------------------------
 
@@ -199,11 +200,22 @@ class Game(ShowBase):
         the new game menu
         '''
         self._notify.info("Initializing new game")
-        taskMgr.add(self.collectPlayer, "collectPlayer")
         self.unusedDevices = self.devices.devices[:]
         self._notify.info("New game initialized")
+        taskMgr.add(self.collectPlayer, "collectPlayer")
+        
+        self.screens = []
+        taskMgr.add(self.selectVehicle, "selectVehicle")
         #self.startGame()
 
+    # -----------------------------------------------------------------
+
+    def selectVehicle(self, task):
+        if len(self.screens) < len(self.players):
+            self.screens.append(self.players[len(self.screens)].camera)
+            return  task.cont
+        return task.cont
+    
     # -----------------------------------------------------------------
 
     def collectPlayer(self, task):
@@ -212,6 +224,8 @@ class Game(ShowBase):
         '''
         if len(self.players) > 0:
             if self.players[0].device.boost:
+                for i in self.players:
+                    i.camera.camModeGame()
                 self.startGame()
                 return task.done
 
