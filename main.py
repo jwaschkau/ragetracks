@@ -38,7 +38,7 @@ class Game(ShowBase):
         base.setFrameRateMeter(True) #Show the Framerate
         base.camNode.setActive(False) #disable default cam
         self.disableMouse() #disable manual camera-control
-        #base.toggleWireframe()
+        base.toggleWireframe()
 
         #Font
         self.font = DynamicTextFont('data/fonts/font.ttf')
@@ -113,6 +113,7 @@ class Game(ShowBase):
         
         #Create a new player object
         self.players.append(player.Player(len(self.players),self.world, self.space, device, camera))
+        self.players[-1].camera.camModeMenu()
         print "player"
 
 
@@ -223,9 +224,7 @@ class Game(ShowBase):
         if len(self.screens) < len(self.players):
             self.screens.append(self.players[len(self.screens)].camera)
             return  task.cont
-        for i in self.players:
-            i.camera
-            #i.get
+        return task.cont
     
     # -----------------------------------------------------------------
 
@@ -235,6 +234,8 @@ class Game(ShowBase):
         '''
         if len(self.players) > 0:
             if self.players[0].device.boost:
+                for i in self.players:
+                    i.camera.camModeGame()
                 self.startGame()
                 return task.done
 
@@ -260,7 +261,7 @@ class Game(ShowBase):
         nodePath = self.render.attachNewNode(self.track.createMesh())
         tex = loader.loadTexture('data/textures/street.png')
         nodePath.setTexture(tex)
-        #nodePath.setTwoSided(True)
+        nodePath.setTwoSided(True)
         
         #Create the Plane that you get hi by if you fall down
         self.plane = OdePlaneGeom(self.space,0,0,1,-50)

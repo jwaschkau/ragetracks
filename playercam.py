@@ -3,6 +3,8 @@
 ## this module contains the camera of one player
 ###################################################################
 from pandac.PandaModules import Vec3, NodePath #Load all PandaModules
+from pandac.PandaModules import * #Load all PandaModules
+import random
 
 class PlayerCam(object):
     '''
@@ -16,6 +18,7 @@ class PlayerCam(object):
         self.nodepath = None
         self.distance = 0.7
         self.cam_node = NodePath()
+        self.menuNode = NodePath("MenuNode")
     
     # ---------------------------------------------------------
     def followVehicle(self, direction, nodepath = None):
@@ -38,6 +41,38 @@ class PlayerCam(object):
         else:
             pass
     
+    # ---------------------------------------------------------
+    def camModeMenu(self):
+        '''
+        Set Cam to menu mode
+        '''
+        self.camera.reparentTo(self.menuNode)
+        
+        ####TEMP
+        #Font
+        self.font = DynamicTextFont('data/fonts/font.ttf')
+        self.font.setRenderMode(TextFont.RMSolid)
+        
+        headline = TextNode("RageTracks")
+        headline.setFont(self.font)
+        headline.setText(str(random.randint(0, 12)))
+        NodePath("test").attachNewNode(headline)
+        self.menuNode.attachNewNode(headline)
+        
+        #LICHT
+        plight = PointLight('plight')
+        plight.setColor(VBase4(0.3, 0.3, 0.3, 1))
+        plnp = self.menuNode.attachNewNode(plight)
+        plnp.setPos(0, -10, 0)
+        self.menuNode.setLight(plnp)
+    
+    # ---------------------------------------------------------    
+    def camModeGame(self):
+        '''
+        Set Cam to game mode
+        '''
+        self.camera.reparentTo(render)
+        
     # ---------------------------------------------------------
     
 if __name__ == "__main__":
