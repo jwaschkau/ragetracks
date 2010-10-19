@@ -19,7 +19,7 @@ class MainMenu(object):
         self.newGame = newGame
         
         #Font
-        self.font = DynamicTextFont('data/fonts/font.ttf')
+        self.font = DynamicTextFont('data/fonts/Orbitron/TTF/orbitron-black.ttf')
         self.font.setRenderMode(TextFont.RMSolid)
         
         taskMgr.add(self.input, 'input')
@@ -79,13 +79,13 @@ class MainMenu(object):
     def option(self):
         
         self.menuOption()
-        taskMgr.doMethodLater(0.5, self.imput, 'input')
+        taskMgr.doMethodLater(0.5, self.input, 'input')
         
     # -----------------------------------------------------------------
     
     def backToMain(self):
         self.menuMain()
-        taskMgr.doMethodLater(0.5, self.imput, 'input')
+        taskMgr.doMethodLater(0.5, self.input, 'input')
 
     # -----------------------------------------------------------------
     
@@ -198,7 +198,7 @@ class Menu(object):
         self._notify = DirectNotify().newCategory("Menu")
         self._notify.info("New Menu-Object created: %s" %(self))
         #Font
-        self.font = DynamicTextFont('data/fonts/font.ttf')
+        self.font = DynamicTextFont('data/fonts/Orbitron/TTF/orbitron-black.ttf')
         self.font.setRenderMode(TextFont.RMSolid)
         
         self.KEY_DELAY = 0.15
