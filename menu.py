@@ -202,7 +202,7 @@ class Menu(object):
         self.font.setRenderMode(TextFont.RMSolid)
         
         self.KEY_DELAY = 0.15
-        self.player_buttonpressed = [0]
+        self.player_buttonpressed = []
         
         self._parent = parent
         self._players = parent.players
@@ -292,7 +292,6 @@ class Menu(object):
         self.vehicle_list = glob.glob("data/models/vehicles/*.egg")
         self.platform = loader.loadModel("data/models/platform.egg")
         self.unusedDevices = self._devices.devices[:]
-        self.player_buttonpressed[0] = 0.2
         taskMgr.add(self.collectPlayer, "collectPlayer")
         self.screens = []
         taskMgr.add(self.selectVehicle, "selectVehicle")
@@ -334,12 +333,12 @@ class Menu(object):
 
         for device in self.unusedDevices:
                 if device.boost:
+                    self.player_buttonpressed.append(0)
                     self._parent.addPlayer(device)
                     
                     #Set the PlayerCam to the Vehicle select menu Node        
                     vehicleSelectNode = NodePath("VehicleSelectNode")
                     self._players[-1].camera.camera.reparentTo(vehicleSelectNode)
-                    self.player_buttonpressed.append(0)
                     #LICHT
                     plight = PointLight('plight')
                     plight.setColor(VBase4(10.0, 10.0, 10.0, 1))
@@ -362,7 +361,9 @@ class Menu(object):
         for player in self._players:
             if self.player_buttonpressed[self._players.index(player)] < task.time:
                 if player.device.use_item:
+                    self._notify.debug("Removing player: %s" %(player))
                     self.unusedDevices.append(player.device)
+                    self.player_buttonpressed.pop(self._players.index(player))
                     self._parent.removePlayer(player)
         return task.cont
 
