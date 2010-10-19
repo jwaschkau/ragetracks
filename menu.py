@@ -359,6 +359,7 @@ class Menu(object):
         for player in self._players:
             if self.player_buttonpressed[self._players.index(player)] < task.time:
                 if player.device.use_item:
+                    self.unusedDevices.append(player.device)
                     self._parent.removePlayer(player)
         return task.cont
 
