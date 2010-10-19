@@ -283,8 +283,13 @@ class Game(ShowBase):
         '''
         self._notify = DirectNotify().newCategory("Game")
         self._notify.info("Initializing start game")
+        counter = 0
         for player in self.players:
             player.activateGameCam()
+            self.players[counter].vehicle.physics_model.setPosition(0, -5 * counter, 5)
+            self.players[counter].vehicle.model.setH(0)
+            self.players[counter].vehicle.physics_model.setQuaternion(self.players[counter].vehicle.model.getQuat(render))
+            counter+=1
         #Create the Track
         
         self.track = trackgen3d.Track3d(1000, 800, 600, 200, len(self.players))
