@@ -44,10 +44,15 @@ class Vehicle(object):
         self._control_strength = 1.5
         self._grip_strength = 0.5
         
-        if self._model != None: self._model.removeNode()
+        if self._model != None: 
+            heading  = self._model.getH()
+            self._model.removeNode()
+        else:
+            heading = 160
         self._model = model
         self._model.setPos(0,0,2)
-        self._model.setHpr(0,0,0)
+        self._model.setHpr(heading,0,0)
+            
         #self._model.setScale(1, 1, 1)
         
         
@@ -67,7 +72,7 @@ class Vehicle(object):
         self._collision_model = OdeBoxGeom(self._ode_space, 4,8,4)
         self._collision_model.setBody(self._physics_model)
         self._collision_model.setCollideBits(1)
-        self._collision_model.setCategoryBits(0)
+        self._collision_model.setCategoryBits(1)
 
         #Add collision-rays for the floating effect
         self._front_left = CollisionRay(Vec3(-2,4,-1), Vec3(0,0,-1), self._ode_space, parent = self._collision_model, length = 5.0)

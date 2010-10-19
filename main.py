@@ -216,6 +216,9 @@ class Game(ShowBase):
 
     def selectVehicle(self, task):
         for player in self.players:
+            if player.vehicle.model != None:
+                player.vehicle.model.setH(player.vehicle.model.getH()-(30 * globalClock.getDt()) )
+                
             if self.player_buttonpressed[self.players.index(player)] < task.time:
                 if player.device.directions[0] < -0.8:
                     self.player_buttonpressed[self.players.index(player)] = task.time + self.KEY_DELAY
@@ -250,10 +253,14 @@ class Game(ShowBase):
                 self.player_buttonpressed.append(0)
                 #LICHT
                 plight = PointLight('plight')
-                plight.setColor(VBase4(0.3, 0.3, 0.3, 1))
+                plight.setColor(VBase4(10.0, 10.0, 10.0, 1))
                 plnp = vehicleSelectNode.attachNewNode(plight)
-                plnp.setPos(0, -10, 0)
+                plnp.setPos(-10, -10, 5)
                 vehicleSelectNode.setLight(plnp)
+                
+                ambilight = AmbientLight('ambilight')
+                ambilight.setColor(VBase4(0.2, 0.2, 0.2, 1))
+                vehicleSelectNode.setLight(vehicleSelectNode.attachNewNode(ambilight))
                 
                 #Load the platform
                 
@@ -274,8 +281,13 @@ class Game(ShowBase):
         '''
         self._notify = DirectNotify().newCategory("Game")
         self._notify.info("Initializing start game")
+        counter = 0
         for player in self.players:
             player.activateGameCam()
+            self.players[counter].vehicle.physics_model.setPosition(0, -5 * counter, 5)
+            self.players[counter].vehicle.model.setH(0)
+            self.players[counter].vehicle.physics_model.setQuaternion(self.players[counter].vehicle.model.getQuat(render))
+            counter+=1
         #Create the Track
         
         self.track = trackgen3d.Track3d(1000, 800, 600, 200, len(self.players))
@@ -317,6 +329,12 @@ class Game(ShowBase):
         ambilight = AmbientLight('ambilight')
         ambilight.setColor(VBase4(0.2, 0.2, 0.2, 1))
         render.setLight(render.attachNewNode(ambilight))
+        
+        dlight = DirectionalLight('dlight')
+        dlight.setColor(VBase4(10.0, 10.0, 10.0, 1))
+        dlnp = render.attachNewNode(dlight)
+        dlnp.setHpr(0, -60, 0)
+        render.setLight(dlnp)
 
         #start the gametask
         taskMgr.add(self.gameTask, "gameTask")
