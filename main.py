@@ -28,7 +28,7 @@ class Game(ShowBase):
         '''
         #loadPrcFileData("", "fullscreen 1\n win-size 1920 1200")
         #loadPrcFileData("", "want-pstats 1\n pstats-host 127.0.0.1\n pstats-tasks 1\n task-timer-verbose 1")
-        loadPrcFileData("", "default-directnotify-level error\n notify-level-Game info")
+        loadPrcFileData("", "default-directnotify-level error\n notify-level-Game info\n notify-level-SplitScreen debug")
         ShowBase.__init__(self)
 
         self._notify = DirectNotify().newCategory("Game")
@@ -111,10 +111,12 @@ class Game(ShowBase):
         '''
         deletes a player object and sorts the cameras on the screem
         '''
+        #delete the cam
+        self.splitscreen.removeCamera(player.camera.camera)
         #delete the player
         self.players.remove(player) ##all objects must be deleted!
         #sort the cameras
-        self.splitscreen.refreshCameras()
+        #self.splitscreen.refreshCameras()
         self._notify.info("Player removed")
     # -----------------------------------------------------------------
 

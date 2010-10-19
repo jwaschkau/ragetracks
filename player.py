@@ -108,7 +108,8 @@ class Player(object):
         destroys all objects of the player-object
         '''
         #Del one Camera 
-        self._camera.camera.node().removeNode()
+        #print dir(self._camera.camera.node())
+        self._camera.camera.removeNode()#node()
         self._notify.info("Player-Object deleted: %s" %(self))
         
     # ---------------------------------------------------------

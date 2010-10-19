@@ -34,7 +34,7 @@ class SplitScreen(object):
         adds a camera for a new player (or an additional view)
         @return: returns the added camera object
         '''
-        self._notify.debug("creating new camera")
+        self._notify.debug("Creating new camera")
         unused = self.getUnusedRegion()
         # if there is an unused camera slot, use it
         if unused != -1:
@@ -53,17 +53,26 @@ class SplitScreen(object):
         
         # if there was an unused slot, the camera is now at this place
         # if not, unused is -1 which points to the last element of the list (the newest cam)
+        self._notify.debug("New regions: %s , New cameras: %s" %(self.regions, self.cameras))
         self._notify.debug("New camera created")
         return self.cameras[unused]
 
     # -----------------------------------------------------------------
     
-    def removeCamera(self):
+    def removeCamera(self,camera):
         '''
         removes a camera out of the list
         '''
-##      NOT IMPLEMENTED, YET        
-        pass
+        self._notify.debug("Removing camera: %s" %(camera))
+        self.regions.pop(self.cameras.index(camera))
+        self.cameras.remove(camera)
+        try: 
+            while True:
+                self.cameras.remove(None)
+        except: pass
+        self.regions = self.calculateRegions(len(self.cameras))
+        self.refreshCameras()
+        self._notify.debug("New regions: %s , New cameras: %s" %(self.regions, self.cameras))
 
     # -----------------------------------------------------------------
     
