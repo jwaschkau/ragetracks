@@ -309,10 +309,12 @@ class Menu(object):
             if self.player_buttonpressed[self._players.index(player)] < task.time:
                 if player.device.directions[0] < -0.8:
                     self.player_buttonpressed[self._players.index(player)] = task.time + self.KEY_DELAY
+                    self._notify.debug("Previous vehicle selected: %s" %(player.vehicle.model.getName()))
                     index = self.vehicle_list.index("data/models/vehicles/%s" %(player.vehicle.model.getName()))-1
                     loader.loadModel(self.vehicle_list[index], callback = player.setVehicle)
                 if player.device.directions[0] > 0.8:
                     self.player_buttonpressed[self._players.index(player)] = task.time + self.KEY_DELAY
+                    self._notify.debug("Next vehicle selected: %s" %(Filename.fromOsSpecific(player.vehicle.model.getName())))#getNode(0).getFullpath()))
                     index = self.vehicle_list.index("data/models/vehicles/%s" %(player.vehicle.model.getName()))+1
                     if index >= len(self.vehicle_list): index = 0
                     loader.loadModel(self.vehicle_list[index], callback = player.setVehicle)
@@ -353,6 +355,7 @@ class Menu(object):
                     self.platform.instanceTo(vehicleSelectNode)
     
                     loader.loadModel(self.vehicle_list[0], callback = self._players[-1].setVehicle)
+                    self._notify.debug("Loading initial vehicle: %s" %(self.vehicle_list[0]))
                     self.unusedDevices.remove(device)
                     self.player_buttonpressed[-1] = task.time + self.KEY_DELAY
 
