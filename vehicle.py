@@ -29,6 +29,7 @@ class Vehicle(object):
         self._control_strength = 0.0 #impact on the steering behaviour
         self._grip_strength = 0.0 #impact on the steering behaviour
         self._track_grip = 0.8 #impact on the steering behaviour
+        self._energy = 100
         self._hit_ground = True
         
         #self.setVehicle(name) #set the initial vehicle
@@ -170,6 +171,20 @@ class Vehicle(object):
         return self._boost_direction
         
     boost_direction = property(fget = getBoostDirection)        
+        
+    # ---------------------------------------------------------
+    
+    def setEnergy(self, energy):
+        '''
+        Boosts the vehicle by indicated strength
+        '''
+        self._notify.debug("Energy: %s" %self._energy)
+        self._energy = energy
+    
+    def getEnergy(self):
+        return self._energy
+        
+    energy = property(fget = getEnergy, fset = setEnergy)        
         
     # ---------------------------------------------------------
     

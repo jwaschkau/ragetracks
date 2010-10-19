@@ -163,9 +163,9 @@ class Game(ShowBase):
         self.map.setPos(0, 10, -7)
 
         #add collision with the map
-        groundGeom = OdeTriMeshGeom(self.space, OdeTriMeshData(nodePath, True))
-        groundGeom.setCollideBits(0)
-        groundGeom.setCategoryBits(3)
+        self.groundGeom = OdeTriMeshGeom(self.space, OdeTriMeshData(nodePath, True))
+        self.groundGeom.setCollideBits(0)
+        self.groundGeom.setCategoryBits(3)
 
         #Load the Players
         ##probably unnecessary because the players are already initialized at this point
@@ -225,17 +225,20 @@ class Game(ShowBase):
                     #player.vehicle.physics_model.setTorque(player.vehicle.physics_model.getAngularVel()*0.01)
                     #player.vehicle.physics_model.addTorque(player.vehicle.physics_model.getAngularVel()*-1)
                     return
-
-        #workaround until panda 1.7.1
-        #if the player collides with the ground plane he will get reset to the starting position        
+                     
         for player in self.players:
+            #workaround until panda 1.7.1
+            #if the player collides with the ground plane he will get reset to the starting position   
             if geom1.compareTo(self.plane) == 0 and player.vehicle.physics_model.compareTo(body2) == 0:
                 player.vehicle.physics_model.setPosition(0,0,20)
                 return
-            if geom2.compareTo(self.plane) == 0 and player.vehicle.physics_model.compareTo(body1) == 0:
+            elif geom2.compareTo(self.plane) == 0 and player.vehicle.physics_model.compareTo(body1) == 0:
                 player.vehicle.physics_model.setPosition(0,0,20)
                 #body1.setPosition(0,0,20)
                 return
+            #Decrease energy on collision
+            elif player.vehicle.physics_model.compareTo(body1) == 0 or player.vehicle.physics_model.compareTo(body2) == 0:
+                player.vehicle.energy -= 0.1
 
  # -----------------------------------------------------------------
 
