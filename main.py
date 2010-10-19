@@ -165,7 +165,7 @@ class Game(ShowBase):
         #add collision with the map
         self.groundGeom = OdeTriMeshGeom(self.space, OdeTriMeshData(nodePath, True))
         self.groundGeom.setCollideBits(0)
-        self.groundGeom.setCategoryBits(3)
+        self.groundGeom.setCategoryBits(1)
 
         #Load the Players
         ##probably unnecessary because the players are already initialized at this point
@@ -231,9 +231,11 @@ class Game(ShowBase):
             #if the player collides with the ground plane he will get reset to the starting position   
             if geom1.compareTo(self.plane) == 0 and player.vehicle.physics_model.compareTo(body2) == 0:
                 player.vehicle.physics_model.setPosition(0,0,20)
+                player.vehicle.physics_model.setLinearVel(0,0,0)
                 return
             elif geom2.compareTo(self.plane) == 0 and player.vehicle.physics_model.compareTo(body1) == 0:
                 player.vehicle.physics_model.setPosition(0,0,20)
+                player.vehicle.physics_model.setLinearVel(0,0,0)
                 #body1.setPosition(0,0,20)
                 return
             #Decrease energy on collision
