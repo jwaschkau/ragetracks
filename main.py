@@ -28,7 +28,7 @@ class Game(ShowBase):
         '''
         #loadPrcFileData("", "fullscreen 1\n win-size 1680 1050")
         #loadPrcFileData("", "want-pstats 1\n pstats-host 127.0.0.1\n pstats-tasks 1\n task-timer-verbose 1")
-        loadPrcFileData("", "default-directnotify-level debug\n notify-level-Game info\n notify-level-Menu debug\n notify-level-Vehicle debug")
+        loadPrcFileData("", "default-directnotify-level debug\n notify-level-Game debug\n notify-level-Menu debug\n notify-level-Vehicle debug")
         ShowBase.__init__(self)
 
         self._notify = DirectNotify().newCategory("Game")
@@ -141,7 +141,7 @@ class Game(ShowBase):
         #add collision with the map
         self.groundGeom = OdeTriMeshGeom(self.space, OdeTriMeshData(nodePath, True))
         self.groundGeom.setCollideBits(0)
-        self.groundGeom.setCategoryBits(1)
+        self.groundGeom.setCategoryBits(3)
         
         #Create the Plane that you get hit by if you fall down
         self.plane = OdePlaneGeom(self.space,0,0,1,-50)
