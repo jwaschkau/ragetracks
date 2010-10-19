@@ -4,8 +4,9 @@ from pandac.PandaModules import *
 import time
 import sys
 from direct.directnotify.DirectNotify import DirectNotify
+import glob
 
-class Menu(object):
+class MainMenu(object):
 
     def __init__(self, newGame, device):
         self._notify = DirectNotify().newCategory("Menu")
@@ -188,6 +189,173 @@ class Menu(object):
         '''
         self.hideMenu()
         self.options[self.selected][1]()
+
+class Menu(object):
+    '''
+    '''
+    def __init__(self, parent):
+        
+        self._notify = DirectNotify().newCategory("Menu")
+        self._notify.info("New Menu-Object created: %s" %(self))
+        #Font
+        self.font = DynamicTextFont('data/fonts/font.ttf')
+        self.font.setRenderMode(TextFont.RMSolid)
+        
+        self._parent = parent
+        self._players = parent.players
+        self._devices = parent.devices
+        
+    def showStartScreen(self):
+        '''
+        the first screen with "press any Key"
+        the device with the first key press will be the first player
+        '''
+        self._notify.info("Initializing StartScreen")
+        
+        self.KEY_DELAY = 0.15
+        
+        #StartScreen Node
+        self.startNode = NodePath("StartNode")
+        self.startNode.reparentTo(render)
+        self.startNode.setPos(-5,15,3)
+        
+        headline = TextNode("RageTracks")
+        headline.setFont(self.font)
+        headline.setText("RageTracks")
+        NodePath("test").attachNewNode(headline)
+        self.startNode.attachNewNode(headline)
+        
+        presskey = TextNode("PressAnyKey")
+        presskey.setFont(self.font)
+        presskey.setText(_("Press any key!!"))
+        textNodePath = NodePath("PressAnyNode")
+        textNodePath.attachNewNode(presskey)
+        textNodePath.setPos(0,10,-9.5)
+        textNodePath.reparentTo(self.startNode)
+        
+        #self.headline = Text3D("RageTracks")
+        #self.headline.reparentTo(self.startNode)
+        #self.presskey = Text3D(_("PressAnyKey"), Vec3(0,10,-9.5))
+        #self.presskey.reparentTo(self.startNode)
+        
+        self.startNode.show()
+        
+        #LICHT
+        plight = PointLight('plight')
+        plight.setColor(VBase4(0.3, 0.3, 0.3, 1))
+        plnp = self.startNode.attachNewNode(plight)
+        plnp.setPos(0, -10, 0)
+        self.startNode.setLight(plnp)
+        
+        #Cam
+        self.camera = base.makeCamera(base.win)
+        
+        #print self.devices.getCount()
+        #print self.settings.getInputSettings()
+        self._notify.info("StarScreen initialized")
+        
+    # -----------------------------------------------------------------
+    
+    def fetchAnyKey(self, task):
+        '''
+        Return the first device with the first key stroke
+        '''
+        for i in xrange(len(self._devices.devices)):
+            if self._devices.devices[i].boost == True:
+                #Kill Cam
+                self.camera.node().setActive(False)
+                #Kill Node
+                self.startNode.hide()       #Maybe there is a function to delete the Node from memory
+
+                #Start the Game for testing purpose
+                #self.menu = Menu(self.newGame, self.players[0].getDevice())    #if one player exist
+                self.menu = MainMenu(self.newGame, self._devices.devices[i])         #if no player exist
+                self.menu.menuMain()
+                return task.done
+        return task.cont
+
+
+
+        # -----------------------------------------------------------------
+
+    def newGame(self):
+        '''
+        the new game menu
+        '''
+        self._notify.info("Initializing new game")
+        #GlobPattern if we need a Panda Class
+        self.vehicle_list = glob.glob("data/models/vehicles/*.egg")
+        self.platform = loader.loadModel("data/models/platform.egg")
+        self.unusedDevices = self._devices.devices[:]
+        taskMgr.add(self.collectPlayer, "collectPlayer")
+        self.player_buttonpressed = []
+        self.screens = []
+        taskMgr.add(self.selectVehicle, "selectVehicle")
+        
+        self._notify.info("New game initialized")
+
+    # -----------------------------------------------------------------
+
+    def selectVehicle(self, task):
+        for player in self._players:
+            if player.vehicle.model != None:
+                player.vehicle.model.setH(player.vehicle.model.getH()-(30 * globalClock.getDt()) )
+                
+            if self.player_buttonpressed[self._players.index(player)] < task.time:
+                if player.device.directions[0] < -0.8:
+                    self.player_buttonpressed[self._players.index(player)] = task.time + self.KEY_DELAY
+                    index = self.vehicle_list.index("data/models/vehicles/%s" %(player.vehicle.model.getName()))-1
+                    loader.loadModel(self.vehicle_list[index], callback = player.setVehicle)
+                if player.device.directions[0] > 0.8:
+                    self.player_buttonpressed[self._players.index(player)] = task.time + self.KEY_DELAY
+                    index = self.vehicle_list.index("data/models/vehicles/%s" %(player.vehicle.model.getName()))+1
+                    if index >= len(self.vehicle_list): index = 0
+                    loader.loadModel(self.vehicle_list[index], callback = player.setVehicle)
+        return task.cont
+    
+    # -----------------------------------------------------------------
+
+    def collectPlayer(self, task):
+        '''
+        Wait until all players are ready
+        '''
+        if len(self._players) > 0:
+            if self._players[0].device.boost:
+                taskMgr.remove("selectVehicle")
+                self._parent.startGame()
+                return task.done
+
+        for device in self.unusedDevices:
+            if device.boost == True:
+                self._parent.addPlayer(device)
+                
+                #Set the PlayerCam to the Vehicle select menu Node        
+                vehicleSelectNode = NodePath("VehicleSelectNode")
+                self._players[-1].camera.camera.reparentTo(vehicleSelectNode)
+                self.player_buttonpressed.append(0)
+                #LICHT
+                plight = PointLight('plight')
+                plight.setColor(VBase4(10.0, 10.0, 10.0, 1))
+                plnp = vehicleSelectNode.attachNewNode(plight)
+                plnp.setPos(-10, -10, 5)
+                vehicleSelectNode.setLight(plnp)
+                
+                ambilight = AmbientLight('ambilight')
+                ambilight.setColor(VBase4(0.2, 0.2, 0.2, 1))
+                vehicleSelectNode.setLight(vehicleSelectNode.attachNewNode(ambilight))
+                
+                #Load the platform
+                
+                self.platform.instanceTo(vehicleSelectNode)
+
+                loader.loadModel(self.vehicle_list[0], callback = self._players[-1].setVehicle)
+                #self.unusedDevices.remove(device)
+                task.delayTime = self.KEY_DELAY
+                return task.again
+
+        return task.cont
+
+    # -----------------------------------------------------------------
 
 if __name__ == "__main__":
     import main
