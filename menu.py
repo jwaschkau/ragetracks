@@ -290,6 +290,9 @@ class Menu(object):
         self._notify.info("Initializing new game")
         #GlobPattern if we need a Panda Class
         self.vehicle_list = glob.glob("data/models/vehicles/*.egg")
+        for index in range(len(self.vehicle_list)):
+            self.vehicle_list[index] = Filename.fromOsSpecific(self.vehicle_list[index]).getFullpath()
+        self._notify.debug("Vehicle list: %s" %(self.vehicle_list))
         self.platform = loader.loadModel("data/models/platform.egg")
         self.unusedDevices = self._devices.devices[:]
         taskMgr.add(self.collectPlayer, "collectPlayer")
@@ -308,13 +311,13 @@ class Menu(object):
             if self.player_buttonpressed[self._players.index(player)] < task.time:
                 if player.device.directions[0] < -0.8:
                     self.player_buttonpressed[self._players.index(player)] = task.time + self.KEY_DELAY
-                    self._notify.debug("Previous vehicle selected: %s" %(player.vehicle.model.getName()))
                     index = self.vehicle_list.index("data/models/vehicles/%s" %(player.vehicle.model.getName()))-1
+                    self._notify.debug("Previous vehicle selected: %s" %(index))
                     loader.loadModel(self.vehicle_list[index], callback = player.setVehicle)
                 if player.device.directions[0] > 0.8:
                     self.player_buttonpressed[self._players.index(player)] = task.time + self.KEY_DELAY
-                    self._notify.debug("Next vehicle selected: %s" %(Filename.fromOsSpecific(player.vehicle.model.getName())))#getNode(0).getFullpath()))
                     index = self.vehicle_list.index("data/models/vehicles/%s" %(player.vehicle.model.getName()))+1
+                    self._notify.debug("Next vehicle selected: %s" %(index))
                     if index >= len(self.vehicle_list): index = 0
                     loader.loadModel(self.vehicle_list[index], callback = player.setVehicle)
         return task.cont
