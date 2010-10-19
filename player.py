@@ -83,16 +83,6 @@ class Player(object):
         
     # ---------------------------------------------------------
     
-    def __del__(self):
-        '''
-        destroys all objects of the player-object
-        '''
-        #Del one Camera 
-        self._camera.camera.node().removeNode()
-        self._notify.info("Player-Object deleted: %s" %(self))
-        
-    # ---------------------------------------------------------
-    
     def doStep(self):
         '''
         Needs to get executed every Ode-Step
@@ -111,6 +101,16 @@ class Player(object):
         self._camera.updateCam()
         
     
+    # ---------------------------------------------------------
+        
+    def __del__(self):
+        '''
+        destroys all objects of the player-object
+        '''
+        #Del one Camera 
+        self._camera.camera.node().removeNode()
+        self._notify.info("Player-Object deleted: %s" %(self))
+        
     # ---------------------------------------------------------
     
     if __name__ == "__main__":

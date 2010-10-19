@@ -226,6 +226,15 @@ class Vehicle(object):
     # ----------------------------------------------------------------- 
     
     def __del__(self):
+        '''
+        Destroy unused nodes
+        '''
+        for node in self._model.getChildren():
+            node.removeNode()
+        self._model.removeNode()
+        self._physics_model.destroy()
+        self._collision_model.destroy()
+        self._physics_mass.destroy()
         self._notify.info("Vehicle-Object deleted: %s" %(self))
     
 if __name__ == "__main__":

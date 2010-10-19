@@ -28,7 +28,7 @@ class Game(ShowBase):
         '''
         #loadPrcFileData("", "fullscreen 1\n win-size 1920 1200")
         #loadPrcFileData("", "want-pstats 1\n pstats-host 127.0.0.1\n pstats-tasks 1\n task-timer-verbose 1")
-        loadPrcFileData("", "default-directnotify-level error\n notify-level-Game info \n notify-level-Vehicle debug")
+        loadPrcFileData("", "default-directnotify-level error\n notify-level-Game info")
         ShowBase.__init__(self)
 
         self._notify = DirectNotify().newCategory("Game")
@@ -97,28 +97,26 @@ class Game(ShowBase):
         '''
         creates a new player object, initializes it and sorts the cameras on the screen
         '''
-        self._notify.info("Adding Player")
+        self._notify.info("Adding Player, Device: %s" %(device))
         screen = self.splitscreen.addCamera()
         camera = PlayerCam(screen)
         
         #Create a new player object
         self.players.append(player.Player(len(self.players),self.world, self.space, device, camera))
         
-        self._notify.info("Player added")
+        self._notify.info("Player added: %s" %(self.players[-1]))
 
     # -----------------------------------------------------------------
 
-    def removePlayer(self, number):
+    def removePlayer(self, player):
         '''
         deletes a player object and sorts the cameras on the screem
         '''
-        self._notify.info("Player removed")
         #delete the player
-        for player in self.players:
-            if player.getNumber() == number:
-                self.players.remove(player) ##all objects must be deleted!
-
+        self.players.remove(player) ##all objects must be deleted!
         #sort the cameras
+        self.splitscreen.refreshCameras()
+        self._notify.info("Player removed")
     # -----------------------------------------------------------------
 
 
