@@ -22,7 +22,7 @@ class MainMenu(object):
         self.font = DynamicTextFont('data/fonts/font.ttf')
         self.font.setRenderMode(TextFont.RMSolid)
         
-        taskMgr.add(self.imput, 'input')
+        taskMgr.add(self.input, 'input')
     
     # -----------------------------------------------------------------
 
@@ -89,7 +89,7 @@ class MainMenu(object):
 
     # -----------------------------------------------------------------
     
-    def imput(self, task):
+    def input(self, task):
         #print self.device.directions
         if self.device.directions == [1,0]:
             task.delayTime = 0.2
@@ -201,9 +201,14 @@ class Menu(object):
         self.font = DynamicTextFont('data/fonts/font.ttf')
         self.font.setRenderMode(TextFont.RMSolid)
         
+        self.KEY_DELAY = 0.15
+        self.player_buttonpressed = [0]
+        
         self._parent = parent
         self._players = parent.players
         self._devices = parent.devices
+        
+        taskMgr.add(self.fetchAnyKey, "fetchAnyKey")
         
     def showStartScreen(self):
         '''
@@ -212,7 +217,7 @@ class Menu(object):
         '''
         self._notify.info("Initializing StartScreen")
         
-        self.KEY_DELAY = 0.15
+
         
         #StartScreen Node
         self.startNode = NodePath("StartNode")
@@ -287,8 +292,8 @@ class Menu(object):
         self.vehicle_list = glob.glob("data/models/vehicles/*.egg")
         self.platform = loader.loadModel("data/models/platform.egg")
         self.unusedDevices = self._devices.devices[:]
+        self.player_buttonpressed[0] = 0.2
         taskMgr.add(self.collectPlayer, "collectPlayer")
-        self.player_buttonpressed = []
         self.screens = []
         taskMgr.add(self.selectVehicle, "selectVehicle")
         
@@ -319,40 +324,42 @@ class Menu(object):
         '''
         Wait until all players are ready
         '''
-        if len(self._players) > 0:
+        if len(self._players) > 0 and self.player_buttonpressed[0] < task.time:
             if self._players[0].device.boost:
                 taskMgr.remove("selectVehicle")
                 self._parent.startGame()
                 return task.done
 
         for device in self.unusedDevices:
-            if device.boost == True:
-                self._parent.addPlayer(device)
-                
-                #Set the PlayerCam to the Vehicle select menu Node        
-                vehicleSelectNode = NodePath("VehicleSelectNode")
-                self._players[-1].camera.camera.reparentTo(vehicleSelectNode)
-                self.player_buttonpressed.append(0)
-                #LICHT
-                plight = PointLight('plight')
-                plight.setColor(VBase4(10.0, 10.0, 10.0, 1))
-                plnp = vehicleSelectNode.attachNewNode(plight)
-                plnp.setPos(-10, -10, 5)
-                vehicleSelectNode.setLight(plnp)
-                
-                ambilight = AmbientLight('ambilight')
-                ambilight.setColor(VBase4(0.2, 0.2, 0.2, 1))
-                vehicleSelectNode.setLight(vehicleSelectNode.attachNewNode(ambilight))
-                
-                #Load the platform
-                
-                self.platform.instanceTo(vehicleSelectNode)
+                if device.boost:
+                    self._parent.addPlayer(device)
+                    
+                    #Set the PlayerCam to the Vehicle select menu Node        
+                    vehicleSelectNode = NodePath("VehicleSelectNode")
+                    self._players[-1].camera.camera.reparentTo(vehicleSelectNode)
+                    self.player_buttonpressed.append(0)
+                    #LICHT
+                    plight = PointLight('plight')
+                    plight.setColor(VBase4(10.0, 10.0, 10.0, 1))
+                    plnp = vehicleSelectNode.attachNewNode(plight)
+                    plnp.setPos(-10, -10, 5)
+                    vehicleSelectNode.setLight(plnp)
+                    
+                    ambilight = AmbientLight('ambilight')
+                    ambilight.setColor(VBase4(0.2, 0.2, 0.2, 1))
+                    vehicleSelectNode.setLight(vehicleSelectNode.attachNewNode(ambilight))
+                    
+                    #Load the platform
+                    self.platform.instanceTo(vehicleSelectNode)
+    
+                    loader.loadModel(self.vehicle_list[0], callback = self._players[-1].setVehicle)
+                    self.unusedDevices.remove(device)
+                    self.player_buttonpressed[-1] = task.time + self.KEY_DELAY
 
-                loader.loadModel(self.vehicle_list[0], callback = self._players[-1].setVehicle)
-                #self.unusedDevices.remove(device)
-                task.delayTime = self.KEY_DELAY
-                return task.again
-
+        for player in self._players:
+            if self.player_buttonpressed[self._players.index(player)] < task.time:
+                if player.device.use_item:
+                    self._parent.removePlayer(player)
         return task.cont
 
     # -----------------------------------------------------------------

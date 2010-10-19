@@ -85,7 +85,6 @@ class Game(ShowBase):
         self.devices = inputdevice.InputDevices(self.settings.getInputSettings())
         myMenu = Menu(self)
         taskMgr.add(self.devices.fetchEvents, "fetchEvents")
-        taskMgr.add(myMenu.fetchAnyKey, "fetchAnyKey")
         
         #Start the Game
         
@@ -118,13 +117,6 @@ class Game(ShowBase):
         self.splitscreen.refreshCameras()
         self._notify.info("Player removed")
     # -----------------------------------------------------------------
-
-
-
-
-    # -----------------------------------------------------------------
-
-    
 
     def startGame(self):
         '''
