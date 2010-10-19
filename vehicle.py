@@ -72,8 +72,8 @@ class Vehicle(object):
         ##self.collision_model = OdeTriMeshGeom(self.ode_space, OdeTriMeshData(self.model, True))
         self._collision_model = OdeBoxGeom(self._ode_space, 4,8,4)
         self._collision_model.setBody(self._physics_model)
-        self._collision_model.setCollideBits(3)
-        self._collision_model.setCategoryBits(1)
+        self._collision_model.setCollideBits(1)
+        self._collision_model.setCategoryBits(0)
 
         #Add collision-rays for the floating effect
         self._front_left = CollisionRay(Vec3(-2,4,-1), Vec3(0,0,-1), self._ode_space, parent = self._collision_model, length = 5.0)

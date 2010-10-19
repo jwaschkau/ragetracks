@@ -111,13 +111,10 @@ class Game(ShowBase):
         '''
         deletes a player object and sorts the cameras on the screem
         '''
-        #delete the cam
         self.splitscreen.removeCamera(player.camera.camera)
-        #delete the player
         self.players.remove(player) ##all objects must be deleted!
-        #sort the cameras
-        #self.splitscreen.refreshCameras()
-        self._notify.info("Player removed")
+        self._notify.info("Player removed: %s" %(player))
+        
     # -----------------------------------------------------------------
 
     def startGame(self):
@@ -133,18 +130,23 @@ class Game(ShowBase):
             self.players[counter].vehicle.model.setH(0)
             self.players[counter].vehicle.physics_model.setQuaternion(self.players[counter].vehicle.model.getQuat(render))
             counter+=1
-        #Create the Track
         
+        #Create the Track
         self.track = trackgen3d.Track3d(1000, 800, 600, 200, len(self.players))
         nodePath = self.render.attachNewNode(self.track.createMesh())
         tex = loader.loadTexture('data/textures/street.png')
         nodePath.setTexture(tex)
         nodePath.setTwoSided(True)
         
-        #Create the Plane that you get hi by if you fall down
+        #add collision with the map
+        self.groundGeom = OdeTriMeshGeom(self.space, OdeTriMeshData(nodePath, True))
+        self.groundGeom.setCollideBits(0)
+        self.groundGeom.setCategoryBits(1)
+        
+        #Create the Plane that you get hit by if you fall down
         self.plane = OdePlaneGeom(self.space,0,0,1,-50)
         self.plane.setCollideBits(0)
-        self.plane.setCategoryBits(1)
+        self.plane.setCategoryBits(3)
 
         self.arrows = loader.loadModel("data/models/arrows.egg")
         self.arrows.reparentTo(render)
@@ -153,22 +155,6 @@ class Game(ShowBase):
         self.arrows2 = loader.loadModel("data/models/arrows.egg")
         self.arrows2.reparentTo(render)
         self.arrows2.setPos(0,60,0)
-        
-        #self.addPlayer(self.devices.devices[0])
-
-        #Load the Map
-        self.map = self.loader.loadModel("data/models/Track01")
-        self.map.reparentTo(self.render)
-        self.map.setScale(10, 10, 10)
-        self.map.setPos(0, 10, -7)
-
-        #add collision with the map
-        self.groundGeom = OdeTriMeshGeom(self.space, OdeTriMeshData(nodePath, True))
-        self.groundGeom.setCollideBits(0)
-        self.groundGeom.setCategoryBits(1)
-
-        #Load the Players
-        ##probably unnecessary because the players are already initialized at this point
 
         #Load the Lights
         ambilight = AmbientLight('ambilight')
@@ -182,6 +168,7 @@ class Game(ShowBase):
         render.setLight(dlnp)
 
         #start the gametask
+        self._notify.debug("Starting gameTask")
         taskMgr.add(self.gameTask, "gameTask")
         self.world.setGravity(0, 0, -9.81)
         self._notify.info("Start game initialized")
@@ -204,6 +191,7 @@ class Game(ShowBase):
                 #print geom1.compareTo(ray)
                 #print geom2.compareTo(ray)
                 if geom1 == ray or geom2 == ray:
+                    self._notify.info("Player collided: %s" %(player))
                     normal = entry.getContactGeom(0).getNormal()
                     player.vehicle.physics_model.setGravityMode(0) #disable gravity if on the track
                     force_pos = ray.getPosition()
@@ -279,15 +267,7 @@ class Game(ShowBase):
         for player in self.players: # set new positions
             player.updatePlayer()
         return task.cont
-    # -----------------------------------------------------------------
 
-    def menuTask(self, task):
-        '''
-        this task runs once per second if we are in game menu
-        '''
-        pass
-
-    # -----------------------------------------------------------------
 
 # -----------------------------------------------------------------
 # -----------------------------------------------------------------
