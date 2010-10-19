@@ -178,7 +178,6 @@ class Vehicle(object):
         '''
         Boosts the vehicle by indicated strength
         '''
-        self._notify.debug("Energy: %s" %self._energy)
         self._energy = energy
     
     def getEnergy(self):

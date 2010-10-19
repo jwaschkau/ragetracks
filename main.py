@@ -26,9 +26,9 @@ class Game(ShowBase):
     def __init__(self):
         '''
         '''
-        #loadPrcFileData("", "fullscreen 1\n win-size 1920 1200")
+        #loadPrcFileData("", "fullscreen 1\n win-size 1680 1050")
         #loadPrcFileData("", "want-pstats 1\n pstats-host 127.0.0.1\n pstats-tasks 1\n task-timer-verbose 1")
-        loadPrcFileData("", "default-directnotify-level error\n notify-level-Game info\n notify-level-Menu debug\n notify-level-Vehicle debug")
+        loadPrcFileData("", "default-directnotify-level debug\n notify-level-Game info\n notify-level-Menu debug\n notify-level-Vehicle debug")
         ShowBase.__init__(self)
 
         self._notify = DirectNotify().newCategory("Game")
