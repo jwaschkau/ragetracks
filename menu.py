@@ -5,6 +5,7 @@ import time
 import sys
 from direct.directnotify.DirectNotify import DirectNotify
 import glob
+import settings
 
 FONT = 'data/fonts/font.ttf'
 class MainMenu(object):
@@ -69,7 +70,7 @@ class MainMenu(object):
         #self.optionsModells = []
         #self.selected = 0
         self.addOption(_("Resolution"), self.newGame)
-        self.addOption(_("Full Screen"), self.newGame)
+        self.addOption(_("Full Screen"), self.fullscreen)
         self.addOption(_("Shader"), self.newGame)
         self.addOption(_("Back"), self.backToMain)
         #self.text = Text3D(_("NewGame"))
@@ -86,6 +87,20 @@ class MainMenu(object):
     
     def backToMain(self):
         self.menuMain()
+        taskMgr.doMethodLater(0.5, self.input, 'input')
+
+    # -----------------------------------------------------------------
+    
+    def fullscreen(self):
+        conf = settings.Settings()
+        conf.loadSettings("user/config.ini")
+        conf.fullscreen = not conf.fullscreen
+        wp = base.win.getProperties()
+        #wp.setFullscreen(True) 
+        print type(wp)
+        wp.setSize(1200, 1920)
+        print "TEST2", wp.getYSize()
+        base.win.requestProperties(wp)
         taskMgr.doMethodLater(0.5, self.input, 'input')
 
     # -----------------------------------------------------------------
