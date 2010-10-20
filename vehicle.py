@@ -31,6 +31,7 @@ class Vehicle(object):
         self._track_grip = 0.8 #impact on the steering behaviour
         self._energy = 100
         self._hit_ground = True
+        self._model_loading = False
         
         #self.setVehicle(name) #set the initial vehicle
         
@@ -44,9 +45,12 @@ class Vehicle(object):
         self._boost_strength = 10.0
         self._control_strength = 1.5
         self._grip_strength = 0.5
-        
+        loading = model.getParent().find("LoadingNode")
+        loading.hide()
+        loading.removeNode()
         if self._model != None: 
             heading  = self._model.getH()
+            self._model.hide()
             self._model.removeNode()
         else:
             heading = 160
@@ -81,6 +85,8 @@ class Vehicle(object):
         self._back_left= CollisionRay(Vec3(-2,-4,-1), Vec3(0,0,-1), self._ode_space, parent = self._collision_model, length = 5.0)
         self._back_right = CollisionRay(Vec3(2,-4,-1), Vec3(0,0,-1), self._ode_space, parent = self._collision_model, length = 5.0)
            
+        self._model_loading = False
+        
     # ---------------------------------------------------------
     
     def setPos(self, x, y, z):
@@ -184,6 +190,17 @@ class Vehicle(object):
         return self._energy
         
     energy = property(fget = getEnergy, fset = setEnergy)        
+        
+    # ---------------------------------------------------------
+    def setModelLoading(self, bool):
+        '''
+        '''
+        self._model_loading = bool
+    
+    def getModelLoading(self):
+        return self._model_loading
+        
+    model_loading = property(fget = getModelLoading, fset = setModelLoading)        
         
     # ---------------------------------------------------------
     

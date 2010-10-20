@@ -117,7 +117,7 @@ class Game(ShowBase):
         
     # -----------------------------------------------------------------
 
-    def startGame(self):
+    def startGame(self, track):
         '''
         Start the game
         '''
@@ -132,14 +132,10 @@ class Game(ShowBase):
             counter+=1
         
         #Create the Track
-        self.track = trackgen3d.Track3d(1000, 800, 600, 0, len(self.players))
-        nodePath = self.render.attachNewNode(self.track.createMesh())
-        tex = loader.loadTexture('data/textures/street.png')
-        nodePath.setTexture(tex)
-        nodePath.setTwoSided(True)
+        self.track = track
         
         #add collision with the map
-        self.groundGeom = OdeTriMeshGeom(self.space, OdeTriMeshData(nodePath, True))
+        self.groundGeom = OdeTriMeshGeom(self.space, OdeTriMeshData(self.track, True))
         self.groundGeom.setCollideBits(0)
         self.groundGeom.setCategoryBits(3)
         
@@ -191,7 +187,6 @@ class Game(ShowBase):
                 #print geom1.compareTo(ray)
                 #print geom2.compareTo(ray)
                 if geom1 == ray or geom2 == ray:
-                    self._notify.info("Player collided: %s" %(player))
                     normal = entry.getContactGeom(0).getNormal()
                     player.vehicle.physics_model.setGravityMode(0) #disable gravity if on the track
                     force_pos = ray.getPosition()
