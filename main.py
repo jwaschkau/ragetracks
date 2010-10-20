@@ -26,7 +26,7 @@ class Game(ShowBase):
     def __init__(self):
         '''
         '''
-        #loadPrcFileData("", "fullscreen 1\n win-size 1680 1050")
+        #loadPrcFileData("", "fullscreen 1\n win-size 800 600")
         #loadPrcFileData("", "want-pstats 1\n pstats-host 127.0.0.1\n pstats-tasks 1\n task-timer-verbose 1")
         loadPrcFileData("", "default-directnotify-level debug\n notify-level-Game debug\n notify-level-Menu debug\n notify-level-Vehicle debug")
         ShowBase.__init__(self)
@@ -47,6 +47,14 @@ class Game(ShowBase):
         #trans = gettext.translation("ragetrack", "data/language", ["de"]) #installs choosen language
         #trans.install() #usage: print _("Hallo Welt")
 
+        #Fullscreen
+        if self.settings.fullscreen:
+            wp = WindowProperties()
+            wp.setFullscreen(self.settings.fullscreen)
+            wp.setOrigin(0,0)
+            wp.setSize(int(base.pipe.getDisplayWidth()),int(base.pipe.getDisplayHeight()))
+            base.win.requestProperties(wp)
+        
         #Initialize needed variables and objects
         self.players = [] #holds the player objects
         self.TRACK_GRIP = 0.5

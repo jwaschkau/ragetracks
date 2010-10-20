@@ -6,7 +6,9 @@ import sys
 from direct.directnotify.DirectNotify import DirectNotify
 import trackgen3d
 import glob
+import settings
 
+FONT = 'data/fonts/font.ttf'
 class MainMenu(object):
 
     def __init__(self, newGame, device):
@@ -20,8 +22,12 @@ class MainMenu(object):
         self.newGame = newGame
         
         #Font
-        self.font = DynamicTextFont('data/fonts/Orbitron/TTF/orbitron-black.ttf')
+        self.font = DynamicTextFont(FONT)
         self.font.setRenderMode(TextFont.RMSolid)
+        
+        self.CONF_PATH = "user/config.ini"
+        self._conf = settings.Settings()
+        self._conf.loadSettings(self.CONF_PATH)
         
         taskMgr.add(self.input, 'input')
     
@@ -56,7 +62,7 @@ class MainMenu(object):
         self.addOption(_("Options"), self.option)
         self.addOption(_("Hall Of Fame"), self.newGame)
         self.addOption(_("Credits"), self.newGame)
-        self.addOption(_("Exit"), sys.exit)
+        self.addOption(_("Exit"), self.exit)
         #self.text = Text3D(_("NewGame"))
         self.showMenu()
     
@@ -69,7 +75,7 @@ class MainMenu(object):
         #self.optionsModells = []
         #self.selected = 0
         self.addOption(_("Resolution"), self.newGame)
-        self.addOption(_("Full Screen"), self.newGame)
+        self.addOption(_("Full Screen"), self.fullscreen)
         self.addOption(_("Shader"), self.newGame)
         self.addOption(_("Back"), self.backToMain)
         #self.text = Text3D(_("NewGame"))
@@ -87,6 +93,23 @@ class MainMenu(object):
     def backToMain(self):
         self.menuMain()
         taskMgr.doMethodLater(0.5, self.input, 'input')
+
+    # -----------------------------------------------------------------
+    
+    def exit(self):
+        self._conf.saveSettings(self.CONF_PATH)
+        sys.exit()
+
+    # -----------------------------------------------------------------
+    
+    def fullscreen(self):
+        self._conf.fullscreen = not self._conf.fullscreen
+        wp = WindowProperties()
+        wp.setFullscreen(self._conf.fullscreen)
+        wp.setOrigin(0,0)
+        wp.setSize(int(base.pipe.getDisplayWidth()),int(base.pipe.getDisplayHeight()))
+        base.win.requestProperties(wp)
+        self.option()
 
     # -----------------------------------------------------------------
     
@@ -199,7 +222,7 @@ class Menu(object):
         self._notify = DirectNotify().newCategory("Menu")
         self._notify.info("New Menu-Object created: %s" %(self))
         #Font
-        self.font = DynamicTextFont('data/fonts/Orbitron/TTF/orbitron-black.ttf')
+        self.font = DynamicTextFont(FONT)
         self.font.setRenderMode(TextFont.RMSolid)
         
         self.KEY_DELAY = 0.15
