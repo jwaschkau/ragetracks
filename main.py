@@ -132,7 +132,7 @@ class Game(ShowBase):
             counter+=1
         
         #Create the Track
-        self.track = trackgen3d.Track3d(1000, 800, 600, 200, len(self.players))
+        self.track = trackgen3d.Track3d(1000, 800, 600, 0, len(self.players))
         nodePath = self.render.attachNewNode(self.track.createMesh())
         tex = loader.loadTexture('data/textures/street.png')
         nodePath.setTexture(tex)
