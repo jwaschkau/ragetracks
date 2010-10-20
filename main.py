@@ -47,6 +47,14 @@ class Game(ShowBase):
         #trans = gettext.translation("ragetrack", "data/language", ["de"]) #installs choosen language
         #trans.install() #usage: print _("Hallo Welt")
 
+        #Fullscreen
+        if self.settings.fullscreen:
+            wp = WindowProperties()
+            wp.setFullscreen(self.settings.fullscreen)
+            wp.setOrigin(0,0)
+            wp.setSize(int(base.pipe.getDisplayWidth()),int(base.pipe.getDisplayHeight()))
+            base.win.requestProperties(wp)
+        
         #Initialize needed variables and objects
         self.players = [] #holds the player objects
         self.TRACK_GRIP = 0.5

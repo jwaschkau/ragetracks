@@ -126,7 +126,9 @@ class SplitScreen(object):
             if self.cameras[i] != None:
                 self.cameras[i].node().getDisplayRegion(0).setDimensions(self.regions[i][0], self.regions[i][1], self.regions[i][2], self.regions[i][3])
                 self._notify.debug("Aspect Ratio: %s:%s" %(self.regions[i][1]-self.regions[i][0],self.regions[i][3]-self.regions[i][2]))
-                self.cameras[i].node().getLens().setFov(45*(self.regions[i][1]-self.regions[i][0]/self.regions[i][3]-self.regions[i][2])) 
+                
+                #self.cameras[i].node().getLens().setFov(45*((self.regions[i][1]-self.regions[i][0])/(self.regions[i][3]-self.regions[i][2])))
+                self.cameras[i].node().getLens().setAspectRatio(((self.regions[i][1]-self.regions[i][0])/(self.regions[i][3]-self.regions[i][2])))
     # -----------------------------------------------------------------
     
     def getUnusedRegion(self):

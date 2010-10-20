@@ -25,6 +25,10 @@ class MainMenu(object):
         self.font = DynamicTextFont(FONT)
         self.font.setRenderMode(TextFont.RMSolid)
         
+        self.CONF_PATH = "user/config.ini"
+        self._conf = settings.Settings()
+        self._conf.loadSettings(self.CONF_PATH)
+        
         taskMgr.add(self.input, 'input')
     
     # -----------------------------------------------------------------
@@ -58,7 +62,7 @@ class MainMenu(object):
         self.addOption(_("Options"), self.option)
         self.addOption(_("Hall Of Fame"), self.newGame)
         self.addOption(_("Credits"), self.newGame)
-        self.addOption(_("Exit"), sys.exit)
+        self.addOption(_("Exit"), self.exit)
         #self.text = Text3D(_("NewGame"))
         self.showMenu()
     
@@ -92,17 +96,20 @@ class MainMenu(object):
 
     # -----------------------------------------------------------------
     
+    def exit(self):
+        self._conf.saveSettings(self.CONF_PATH)
+        sys.exit()
+
+    # -----------------------------------------------------------------
+    
     def fullscreen(self):
-        conf = settings.Settings()
-        conf.loadSettings("user/config.ini")
-        conf.fullscreen = not conf.fullscreen
-        wp = base.win.getProperties()
-        #wp.setFullscreen(True) 
-        print type(wp)
-        wp.setSize(1200, 1920)
-        print "TEST2", wp.getYSize()
+        self._conf.fullscreen = not self._conf.fullscreen
+        wp = WindowProperties()
+        wp.setFullscreen(self._conf.fullscreen)
+        wp.setOrigin(0,0)
+        wp.setSize(int(base.pipe.getDisplayWidth()),int(base.pipe.getDisplayHeight()))
         base.win.requestProperties(wp)
-        taskMgr.doMethodLater(0.5, self.input, 'input')
+        self.option()
 
     # -----------------------------------------------------------------
     
