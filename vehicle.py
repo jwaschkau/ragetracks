@@ -45,9 +45,6 @@ class Vehicle(object):
         self._boost_strength = 10.0
         self._control_strength = 1.5
         self._grip_strength = 0.5
-        loading = model.getParent().find("LoadingNode")
-        loading.hide()
-        loading.removeNode()
         if self._model != None: 
             heading  = self._model.getH()
             self._model.hide()
