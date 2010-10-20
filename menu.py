@@ -4,6 +4,7 @@ from pandac.PandaModules import *
 import time
 import sys
 from direct.directnotify.DirectNotify import DirectNotify
+import trackgen3d
 import glob
 
 class MainMenu(object):
@@ -287,6 +288,7 @@ class Menu(object):
         '''
         the new game menu
         '''
+        self.countdown = 5 #the countdown, when its over the game can be started
         self._notify.info("Initializing new game")
         #GlobPattern if we need a Panda Class
         self.vehicle_list = glob.glob("data/models/vehicles/*.egg")
@@ -294,6 +296,25 @@ class Menu(object):
             self.vehicle_list[index] = Filename.fromOsSpecific(self.vehicle_list[index]).getFullpath()
         self._notify.debug("Vehicle list: %s" %(self.vehicle_list))
         self.platform = loader.loadModel("data/models/platform.egg")
+        
+        #Loading-Text that gets displayed when loading a model
+        text = TextNode("Loading")
+        text.setFont(self.font)
+        text.setText(_("Loading..."))
+        text.setAlign(TextProperties.ACenter)
+        self.loading = NodePath("LoadingNode")
+        self.loading.attachNewNode(text)
+        self.loading.setPos(0,0,2)
+        
+        #The countdown, its possible to start the game when its 0
+        text = TextNode("Countdown")
+        text.setFont(self.font)
+        text.setAlign(TextProperties.ACenter)
+        text.setText(_("5"))
+        self.countdown_node = NodePath("Countdown")
+        self.countdown_node.attachNewNode(text)
+        self.countdown_node.setPos(0,-5,3.5)
+        
         self.unusedDevices = self._devices.devices[:]
         taskMgr.add(self.collectPlayer, "collectPlayer")
         self.screens = []
@@ -304,21 +325,36 @@ class Menu(object):
     # -----------------------------------------------------------------
 
     def selectVehicle(self, task):
+        #Set the countdown and hide, if <= 0
+        self.countdown -= globalClock.getDt()
+        if self.countdown <= 0 or self.countdown >=3: self.countdown_node.hide()
+        else: self.countdown_node.show()
+        
+        self.loading.setH(self.loading.getH() -(30 * globalClock.getDt()))
+        self.countdown_node.getChild(0).node().setText(str(int(round((self.countdown+0.5)))))
         for player in self._players:
             if player.vehicle.model != None:
                 player.vehicle.model.setH(player.vehicle.model.getH()-(30 * globalClock.getDt()) )
                 
             if self.player_buttonpressed[self._players.index(player)] < task.time:
                 if player.device.directions[0] < -0.8:
+                    self.countdown = 5
                     self.player_buttonpressed[self._players.index(player)] = task.time + self.KEY_DELAY
                     index = self.vehicle_list.index("data/models/vehicles/%s" %(player.vehicle.model.getName()))-1
                     self._notify.debug("Previous vehicle selected: %s" %(index))
+                    player.vehicle.model_loading = True
+                    player.vehicle.model.hide()
+                    self.loading.instanceTo(player.camera.camera.getParent())
                     loader.loadModel(self.vehicle_list[index], callback = player.setVehicle)
                 if player.device.directions[0] > 0.8:
+                    self.countdown = 5
                     self.player_buttonpressed[self._players.index(player)] = task.time + self.KEY_DELAY
                     index = self.vehicle_list.index("data/models/vehicles/%s" %(player.vehicle.model.getName()))+1
                     self._notify.debug("Next vehicle selected: %s" %(index))
                     if index >= len(self.vehicle_list): index = 0
+                    player.vehicle.model_loading = True
+                    player.vehicle.model.hide()
+                    self.loading.instanceTo(player.camera.camera.getParent())
                     loader.loadModel(self.vehicle_list[index], callback = player.setVehicle)
         return task.cont
     
@@ -329,13 +365,23 @@ class Menu(object):
         Wait until all players are ready
         '''
         if len(self._players) > 0 and self.player_buttonpressed[0] < task.time:
-            if self._players[0].device.boost:
-                taskMgr.remove("selectVehicle")
-                self._parent.startGame()
-                return task.done
+            if self._players[0].device.boost and self.countdown <= 0:
+                loading = False
+                for player in self._players: 
+                    if player.vehicle.model_loading: loading = True
+                self._notify.debug("Loading vehicle: %s" %(loading))
+                if not loading:
+                    taskMgr.remove("selectVehicle")
+                    nodePath = render.attachNewNode(trackgen3d.Track3d(1000, 800, 600, 200, len(self._players)).createMesh())
+                    tex = loader.loadTexture('data/textures/street.png')
+                    nodePath.setTexture(tex)
+                    nodePath.setTwoSided(True)
+                    self._parent.startGame(nodePath)
+                    return task.done
 
         for device in self.unusedDevices:
                 if device.boost:
+                    self.countdown = 5
                     self.player_buttonpressed.append(0)
                     self._parent.addPlayer(device)
                     
@@ -352,10 +398,10 @@ class Menu(object):
                     ambilight = AmbientLight('ambilight')
                     ambilight.setColor(VBase4(0.2, 0.2, 0.2, 1))
                     vehicleSelectNode.setLight(vehicleSelectNode.attachNewNode(ambilight))
-                    
-                    #Load the platform
-                    self.platform.instanceTo(vehicleSelectNode)
-    
+                    self.platform.instanceTo(vehicleSelectNode) #Load the platform
+                    self.countdown_node.instanceTo(vehicleSelectNode) #Load the platform
+                    self.loading.instanceTo(self._players[-1].camera.camera.getParent())
+                    self._players[-1].vehicle.model_loading = True
                     loader.loadModel(self.vehicle_list[0], callback = self._players[-1].setVehicle)
                     self._notify.debug("Loading initial vehicle: %s" %(self.vehicle_list[0]))
                     self.unusedDevices.remove(device)
@@ -369,7 +415,6 @@ class Menu(object):
                     self.player_buttonpressed.pop(self._players.index(player))
                     self._parent.removePlayer(player)
         return task.cont
-
     # -----------------------------------------------------------------
 
 if __name__ == "__main__":

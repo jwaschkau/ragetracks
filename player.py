@@ -56,9 +56,8 @@ class Player(object):
     def setVehicle(self, vehicle):
         '''
         '''
+        vehicle.reparentTo(self.camera.camera.getParent())
         self._vehicle.setVehicle(vehicle)
-        self._vehicle.model.reparentTo(self.camera.camera.getParent())
-        
         
     def getVehicle(self):
         '''
