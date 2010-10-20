@@ -11,6 +11,7 @@ import math
 import bitmap24
 import copy
 from panda3d.core import *
+from pandac.PandaModules import *
 from direct.directnotify.DirectNotify import DirectNotify
 
 MIN_Z_DIST = 100

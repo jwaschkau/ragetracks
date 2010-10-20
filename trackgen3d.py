@@ -241,7 +241,6 @@ class Track3d(object):
 ##        self.varthickness.append(self.calcTheVector(track_points[len(track_points)-2],track_points[len(track_points)-1],track_points[0])) #Wieder benutzen wenn wir einen geschlossenen Kreis haben
         self.varthickness.append(self.calcTheVector(track_points[len(track_points)-2],track_points[len(track_points)-1],track_points[len(track_points)-1]))  
         
-        
         #Normalizing the Vector
         for i in self.varthickness:
             i.normalize()

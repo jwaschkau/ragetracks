@@ -43,7 +43,7 @@ class Settings(object):
         config["application"]["fullscreen"] = str(int(self.fullscreen))
 
         config["joysticks"] = {}
-
+        config["keyboard"] = {}
         config.write()
 
 

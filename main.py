@@ -26,7 +26,7 @@ class Game(ShowBase):
     def __init__(self):
         '''
         '''
-        #loadPrcFileData("", "fullscreen 1\n win-size 1680 1050")
+        #loadPrcFileData("", "fullscreen 1\n win-size 800 600")
         #loadPrcFileData("", "want-pstats 1\n pstats-host 127.0.0.1\n pstats-tasks 1\n task-timer-verbose 1")
         loadPrcFileData("", "sync-video #f")
         loadPrcFileData("", "default-directnotify-level debug\n notify-level-Game debug\n notify-level-Menu debug\n notify-level-Vehicle debug")
@@ -48,6 +48,14 @@ class Game(ShowBase):
         #trans = gettext.translation("ragetrack", "data/language", ["de"]) #installs choosen language
         #trans.install() #usage: print _("Hallo Welt")
 
+        #Fullscreen
+        if self.settings.fullscreen:
+            wp = WindowProperties()
+            wp.setFullscreen(self.settings.fullscreen)
+            wp.setOrigin(0,0)
+            wp.setSize(int(base.pipe.getDisplayWidth()),int(base.pipe.getDisplayHeight()))
+            base.win.requestProperties(wp)
+        
         #Initialize needed variables and objects
         self.players = [] #holds the player objects
         self.TRACK_GRIP = 0.5
@@ -118,7 +126,7 @@ class Game(ShowBase):
         
     # -----------------------------------------------------------------
 
-    def startGame(self):
+    def startGame(self, track):
         '''
         Start the game
         '''
@@ -133,14 +141,10 @@ class Game(ShowBase):
             counter+=1
         
         #Create the Track
-        self.track = trackgen3d.Track3d(1000, 800, 600, 200, len(self.players))
-        nodePath = self.render.attachNewNode(self.track.createMesh())
-        tex = loader.loadTexture('data/textures/street.png')
-        nodePath.setTexture(tex)
-        nodePath.setTwoSided(True)
+        self.track = track
         
         #add collision with the map
-        self.groundGeom = OdeTriMeshGeom(self.space, OdeTriMeshData(nodePath, True))
+        self.groundGeom = OdeTriMeshGeom(self.space, OdeTriMeshData(self.track, True))
         self.groundGeom.setCollideBits(0)
         self.groundGeom.setCategoryBits(3)
         
@@ -192,7 +196,6 @@ class Game(ShowBase):
                 #print geom1.compareTo(ray)
                 #print geom2.compareTo(ray)
                 if geom1 == ray or geom2 == ray:
-                    self._notify.info("Player collided: %s" %(player))
                     normal = entry.getContactGeom(0).getNormal()
                     player.vehicle.physics_model.setGravityMode(0) #disable gravity if on the track
                     force_pos = ray.getPosition()
