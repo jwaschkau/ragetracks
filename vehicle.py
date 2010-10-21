@@ -40,6 +40,16 @@ class Vehicle(object):
         self._hit_ground = True
         self._model_loading = False
         
+        #set up the propertys of the vehicle that schould be loaded
+        self._tags =    [["control_strength",self._control_strength],
+                        ["grip_strength",self._grip_strength],
+                        ["track_grip",self._track_grip],
+                        ["max_energy",self._max_energy],
+                        ["max_armor",self._max_armor],
+                        ["weight",self._weight],
+                        ["description",self._description],
+                        ["name",self._name],
+                        ["brake_strength",self._brake_strength]]
         #self.setVehicle(name) #set the initial vehicle
         
     # ---------------------------------------------------------
@@ -49,12 +59,15 @@ class Vehicle(object):
         Choose what vehicle the player has chosen. This method initializes all data of this vehicle
         '''
         self._notify.debug("Set new vehicle: %s" %model)
-        tag = model.getNetTag("boost_strength")
-        if tag:
-            self._notify.debug("boost_strength: %s" %tag)
-            self._boost_strength = tag
-        self._control_strength = 1.5
-        self._grip_strength = 0.5
+        
+        for tag in self._tags:
+            value = model.getNetTag(tag[0])
+            if value:
+                self._notify.debug("%s: %s" %(tag[0],value))
+                tag[1] = tag[0]
+            else: self._notify.warning("No value defined for tag: %s" %(tag[0]))
+
+
         if self._model != None: 
             heading  = self._model.getH()
             self._model.hide()
