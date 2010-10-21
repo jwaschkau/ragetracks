@@ -8,7 +8,7 @@ import trackgen3d
 import glob
 import settings
 
-FONT = 'data/fonts/font.ttf'
+FONT = 'data/fonts/Orbitron/TTF/orbitron-black.ttf'
 class MainMenu(object):
 
     def __init__(self, newGame, device):
@@ -41,6 +41,7 @@ class MainMenu(object):
         self.menuNode = NodePath("menuNode")
         self.menuNode.reparentTo(render)
         self.menuNode.setPos(-5,15,3)
+        self.menuNode.setTwoSided(True)
         
         self.colorA = Vec4(1,1,0,0)
         self.colorB = Vec4(0,1,1,0)
