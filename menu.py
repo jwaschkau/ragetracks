@@ -340,6 +340,15 @@ class Menu(object):
         self.countdown_node.attachNewNode(text)
         self.countdown_node.setPos(0,-5,3.5)
         
+        #PreLoad the description that gets displayed when loading a model
+        text = TextNode("name")
+        text.setFont(self.font)
+        text.setText(_("Loading..."))
+        text.setAlign(TextProperties.ACenter)
+        self.attributes = NodePath("AttributeNode")
+        self.attributes.attachNewNode(text)
+        self.attributes.setPos(0,10,4)
+        
         self.unusedDevices = self._devices.devices[:]
         taskMgr.add(self.collectPlayer, "collectPlayer")
         self.screens = []
@@ -378,6 +387,7 @@ class Menu(object):
                     self._notify.debug("Previous vehicle selected: %s" %(index))
                     player.vehicle.model_loading = True
                     player.vehicle.model.hide()
+                    player.camera.camera.getParent().find("AttributeNode").hide()#Hide the attributes
                     self.loading.instanceTo(player.camera.camera.getParent())
                     loader.loadModel(self.vehicle_list[index], callback = player.setVehicle)
                 if player.device.directions[0] > 0.8:
@@ -388,6 +398,7 @@ class Menu(object):
                     if index >= len(self.vehicle_list): index = 0
                     player.vehicle.model_loading = True
                     player.vehicle.model.hide()
+                    player.camera.camera.getParent().find("AttributeNode").hide()#Hide the attributes
                     self.loading.instanceTo(player.camera.camera.getParent())
                     loader.loadModel(self.vehicle_list[index], callback = player.setVehicle)
         return task.cont
@@ -433,9 +444,14 @@ class Menu(object):
                     ambilight.setColor(VBase4(0.2, 0.2, 0.2, 1))
                     vehicleSelectNode.setLight(vehicleSelectNode.attachNewNode(ambilight))
                     self.platform.instanceTo(vehicleSelectNode) #Load the platform
+                    
+                    #instance shown text
                     self.countdown_node.instanceTo(vehicleSelectNode) #Instance the Countdown
-                    self.loading.instanceTo(self._players[-1].camera.camera.getParent()) #Show the Loading-Text
+                    self.loading.instanceTo(vehicleSelectNode) #Show the Loading-Text
+                    self.attributes.copyTo(vehicleSelectNode).hide()
                     self._players[-1].vehicle.model_loading = True
+                    
+                    #start loading the model
                     loader.loadModel(self.vehicle_list[0], callback = self._players[-1].setVehicle)
                     self._notify.debug("Loading initial vehicle: %s" %(self.vehicle_list[0]))
                     self.unusedDevices.remove(device)
