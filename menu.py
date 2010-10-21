@@ -378,7 +378,7 @@ class Menu(object):
                     self._notify.debug("Previous vehicle selected: %s" %(index))
                     player.vehicle.model_loading = True
                     player.vehicle.model.hide()
-                    self.loading.instanceTo(self._players[-1].camera.camera.getParent())
+                    self.loading.instanceTo(player.camera.camera.getParent())
                     loader.loadModel(self.vehicle_list[index], callback = player.setVehicle)
                 if player.device.directions[0] > 0.8:
                     self.countdown = 5
@@ -388,7 +388,7 @@ class Menu(object):
                     if index >= len(self.vehicle_list): index = 0
                     player.vehicle.model_loading = True
                     player.vehicle.model.hide()
-                    self.loading.instanceTo(self._players[-1].camera.camera.getParent())
+                    self.loading.instanceTo(player.camera.camera.getParent())
                     loader.loadModel(self.vehicle_list[index], callback = player.setVehicle)
         return task.cont
     
