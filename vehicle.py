@@ -68,7 +68,7 @@ class Vehicle(object):
                 self._notify.debug("%s: %s" %(tag[0],value))
                 #translate the value if its a string
                 if type(value) == str: tag[1] = _(value)
-                else: tag[1] = value
+                else: tag[1] = value ##since obects are immutable the object wont get updated
             else: self._notify.warning("No value defined for tag: %s" %(tag[0]))
 
         if self._model != None: 
@@ -77,7 +77,9 @@ class Vehicle(object):
             #display the attributes
             text = self._model.getParent().find("AttributeNode")
             if text: 
-                text.find("name").node().setText(self._name)
+                node = text.find("name").node()
+                node.setText(self._name)
+                node.update()
                 text.show()
             self._model.removeNode()
         else:
