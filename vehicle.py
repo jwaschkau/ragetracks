@@ -59,18 +59,28 @@ class Vehicle(object):
         Choose what vehicle the player has chosen. This method initializes all data of this vehicle
         '''
         self._notify.debug("Set new vehicle: %s" %model)
+        
+        #Load the attributes of the vehicle
         attributes = model.find("**/Attributes")
         for tag in self._tags:
             value = attributes.getNetTag(tag[0])
             if value:
                 self._notify.debug("%s: %s" %(tag[0],value))
-                tag[1] = value
+                #translate the value if its a string
+                if type(value) == str: tag[1] = _(value)
+                else: tag[1] = value ##since obects are immutable the object wont get updated
             else: self._notify.warning("No value defined for tag: %s" %(tag[0]))
-
 
         if self._model != None: 
             heading  = self._model.getH()
-            self._model.hide()
+            
+            #display the attributes
+            text = self._model.getParent().find("AttributeNode")
+            if text: 
+                node = text.find("name").node()
+                node.setText(self._name)
+                node.update()
+                text.show()
             self._model.removeNode()
         else:
             heading = 160
@@ -88,7 +98,7 @@ class Vehicle(object):
         
         #Initialize the mass of the vehicle
         physics_mass = OdeMass()
-        physics_mass.setBox(1000,1,1,1)
+        physics_mass.setBox(self._weight,1,1,1)
         self._physics_model.setMass(physics_mass)
         
         #Initialize the collision-model of the vehicle
