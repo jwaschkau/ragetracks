@@ -59,12 +59,12 @@ class Vehicle(object):
         Choose what vehicle the player has chosen. This method initializes all data of this vehicle
         '''
         self._notify.debug("Set new vehicle: %s" %model)
-        
+        attributes = model.find("**/Attributes")
         for tag in self._tags:
-            value = model.getNetTag(tag[0])
+            value = attributes.getNetTag(tag[0])
             if value:
                 self._notify.debug("%s: %s" %(tag[0],value))
-                tag[1] = tag[0]
+                tag[1] = value
             else: self._notify.warning("No value defined for tag: %s" %(tag[0]))
 
 
