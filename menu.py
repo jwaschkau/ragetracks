@@ -438,7 +438,7 @@ class Menu(object):
                     self._players[-1].vehicle.model_loading = True
                     loader.loadModel(self.vehicle_list[0], callback = self._players[-1].setVehicle)
                     self._notify.debug("Loading initial vehicle: %s" %(self.vehicle_list[0]))
-                    self.unusedDevices.remove(device)
+                    self.unusedDevices.remove(device) 
                     self.player_buttonpressed[-1] = task.time + self.KEY_DELAY
 
         for player in self._players:
