@@ -6,7 +6,7 @@
   <Tag> brake_strength { 10.0 }
   <Tag> weight { 400.0 }
   <Tag> track_grip { 0.800000011921 }
-  <Tag> name { The flying egg }
+  <Tag> name { Humba Rumba }
   <Tag> description { The best Vehicle ever }
   <Tag> max_armor { 100.0 }
   <Tag> grip_strength { 0.5 }
