@@ -56,8 +56,11 @@ class Player(object):
     def setVehicle(self, vehicle):
         '''
         '''
-        vehicle.reparentTo(self.camera.camera.getParent())
+        loading = self.camera.camera.getParent().find("LoadingNode")
+        loading.detachNode()
+        #loading.removeNode()
         self._vehicle.setVehicle(vehicle)
+        vehicle.reparentTo(self.camera.camera.getParent())
         
     def getVehicle(self):
         '''

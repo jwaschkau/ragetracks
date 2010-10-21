@@ -48,7 +48,7 @@ class MainMenu(object):
         
         #LICHT
         plight = PointLight('plight')
-        plight.setColor(VBase4(0.3, 0.3, 0.3, 1))
+        plight.setColor(VBase4(10, 10, 10, 1))
         plnp = self.menuNode.attachNewNode(plight)
         plnp.setPos(0, -10, 0)
         self.menuNode.setLight(plnp)
@@ -272,7 +272,7 @@ class Menu(object):
         
         #LICHT
         plight = PointLight('plight')
-        plight.setColor(VBase4(0.3, 0.3, 0.3, 1))
+        plight.setColor(VBase4(10, 10, 10, 1))
         plnp = self.startNode.attachNewNode(plight)
         plnp.setPos(0, -10, 0)
         self.startNode.setLight(plnp)
@@ -354,13 +354,14 @@ class Menu(object):
         if self.countdown <= 0 or self.countdown >=3: self.countdown_node.hide()
         else: self.countdown_node.show()
         
-        self.loading.setH(self.loading.getH() -(30 * globalClock.getDt()))
+        heading = self.loading.getH() -(30 * globalClock.getDt())
+        self.loading.setH(heading)
         self.countdown_node.getChild(0).node().setText(str(int(round((self.countdown+0.5)))))
         for player in self._players:
             if player.vehicle.model != None:
-                player.vehicle.model.setH(player.vehicle.model.getH()-(30 * globalClock.getDt()) )
+                player.vehicle.model.setH(heading)
                 
-            if self.player_buttonpressed[self._players.index(player)] < task.time:
+            if self.player_buttonpressed[self._players.index(player)] < task.time and not player.vehicle.model_loading:
                 if player.device.directions[0] < -0.8:
                     self.countdown = 5
                     self.player_buttonpressed[self._players.index(player)] = task.time + self.KEY_DELAY
@@ -368,7 +369,7 @@ class Menu(object):
                     self._notify.debug("Previous vehicle selected: %s" %(index))
                     player.vehicle.model_loading = True
                     player.vehicle.model.hide()
-                    self.loading.instanceTo(player.camera.camera.getParent())
+                    self.loading.instanceTo(self._players[-1].camera.camera.getParent())
                     loader.loadModel(self.vehicle_list[index], callback = player.setVehicle)
                 if player.device.directions[0] > 0.8:
                     self.countdown = 5
@@ -378,7 +379,7 @@ class Menu(object):
                     if index >= len(self.vehicle_list): index = 0
                     player.vehicle.model_loading = True
                     player.vehicle.model.hide()
-                    self.loading.instanceTo(player.camera.camera.getParent())
+                    self.loading.instanceTo(self._players[-1].camera.camera.getParent())
                     loader.loadModel(self.vehicle_list[index], callback = player.setVehicle)
         return task.cont
     
@@ -423,8 +424,8 @@ class Menu(object):
                     ambilight.setColor(VBase4(0.2, 0.2, 0.2, 1))
                     vehicleSelectNode.setLight(vehicleSelectNode.attachNewNode(ambilight))
                     self.platform.instanceTo(vehicleSelectNode) #Load the platform
-                    self.countdown_node.instanceTo(vehicleSelectNode) #Load the platform
-                    self.loading.instanceTo(self._players[-1].camera.camera.getParent())
+                    self.countdown_node.instanceTo(vehicleSelectNode) #Instance the Countdown
+                    self.loading.instanceTo(self._players[-1].camera.camera.getParent()) #Show the Loading-Text
                     self._players[-1].vehicle.model_loading = True
                     loader.loadModel(self.vehicle_list[0], callback = self._players[-1].setVehicle)
                     self._notify.debug("Loading initial vehicle: %s" %(self.vehicle_list[0]))
