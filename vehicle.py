@@ -189,7 +189,7 @@ class Vehicle(object):
             self._physics_model.addForce(direction*self._boost_strength*0.2*self.physics_model.getMass().getMagnitude())
     # ---------------------------------------------------------
         
-    def setDirection(self, diforshesr):
+    def setDirection(self, dir):
         '''
         Boosts the vehicle by indicated strength
         '''
