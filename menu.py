@@ -413,7 +413,9 @@ class Menu(object):
             if self._players[0].device.boost and self.countdown <= 0:
                 loading = False
                 for player in self._players: 
-                    if player.vehicle.model_loading: loading = True
+                    if player.vehicle.model_loading: 
+                        loading = True
+                        break
                 self._notify.debug("Loading vehicle: %s" %(loading))
                 if not loading:
                     taskMgr.remove("selectVehicle")

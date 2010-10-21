@@ -41,17 +41,19 @@ class Vehicle(object):
         self._model_loading = False
         
         #set up the propertys of the vehicle that schould be loaded
-        self._tags =    [["control_strength",self._control_strength],
-                        ["grip_strength",self._grip_strength],
-                        ["track_grip",self._track_grip],
-                        ["max_energy",self._max_energy],
-                        ["max_armor",self._max_armor],
-                        ["weight",self._weight],
-                        ["description",self._description],
-                        ["name",self._name],
-                        ["brake_strength",self._brake_strength]]
-        #self.setVehicle(name) #set the initial vehicle
-        
+        #the methods get called because the data is immutable and 
+        #wouldnt get updated when calling the objects directly
+        #the last entry is the function to convert the string
+        self._tags =    [["name",self.setName,str],
+                        ["description",self.setDescription,str],
+                        ["control_strength",self.setControlStrength,float],
+                        ["grip_strength",self.setGripStrength, float],
+                        ["track_grip",self.setTrackGrip,float],
+                        ["max_energy",self.setMaxEnergy,float],
+                        ["max_armor",self.setMaxArmor,float],
+                        ["weight",self.setWeight,float],
+                        ["brake_strength",self.setBrakeStrength,float]]
+
     # ---------------------------------------------------------
     
     def setVehicle(self, model):
@@ -67,8 +69,8 @@ class Vehicle(object):
             if value:
                 self._notify.debug("%s: %s" %(tag[0],value))
                 #translate the value if its a string
-                if type(value) == str: tag[1] = _(value)
-                else: tag[1] = value ##since obects are immutable the object wont get updated
+                if type(tag[2](value)) == str: tag[1](_(tag[2](value)))
+                else: tag[1](tag[2](value))
             else: self._notify.warning("No value defined for tag: %s" %(tag[0]))
 
         if self._model != None: 
@@ -187,7 +189,7 @@ class Vehicle(object):
             self._physics_model.addForce(direction*self._boost_strength*0.2*self.physics_model.getMass().getMagnitude())
     # ---------------------------------------------------------
         
-    def setDirection(self, dir):
+    def setDirection(self, diforshesr):
         '''
         Boosts the vehicle by indicated strength
         '''
@@ -286,6 +288,96 @@ class Vehicle(object):
     
     # ----------------------------------------------------------------- 
     
+    def getControlStrength(self):
+        return self._control_strength
+        
+    def setControlStrength(self, value):
+        self._control_strength = value
+    
+    control_strength = property(fget = getControlStrength, fset = setControlStrength)
+    
+    # ----------------------------------------------------------------- 
+    
+    def getGripStrength(self):
+        return self._grip_strength
+        
+    def setGripStrength(self, value):
+        self._grip_strength = value
+    
+    grip_strength = property(fget = getGripStrength, fset = setGripStrength)
+    
+    # ----------------------------------------------------------------- 
+    
+    def getTrackGrip(self):
+        return self._track_grip
+        
+    def setTrackGrip(self, value):
+        self._track_grip = value
+    
+    track_grip = property(fget = getTrackGrip, fset = setTrackGrip)
+    
+    # ----------------------------------------------------------------- 
+    
+    def getMaxEnergy(self):
+        return self._max_energy
+        
+    def setMaxEnergy(self, value):
+        self._max_energy = value
+    
+    max_energy = property(fget = getMaxEnergy, fset = setMaxEnergy)
+    
+    # ----------------------------------------------------------------- 
+    
+    def getMaxArmor(self):
+        return self._max_armor
+        
+    def setMaxArmor(self, value):
+        self._max_armor = value
+    
+    max_armor = property(fget = getMaxArmor, fset = setMaxArmor)
+    
+    # ----------------------------------------------------------------- 
+    
+    def getWeight(self):
+        return self._weight
+        
+    def setWeight(self, value):
+        self._weight = value
+    
+    weight = property(fget = getWeight, fset = setWeight)
+    
+    # ----------------------------------------------------------------- 
+    
+    def getDescription(self):
+        return self._description
+        
+    def setDescription(self, value):
+        self._description = value
+    
+    description = property(fget = getDescription, fset = setDescription)
+    
+    # ----------------------------------------------------------------- 
+        
+    def getBrakeStrength(self):
+        return self._brake_strength
+        
+    def setBrakeStrength(self, value):
+        self._brake_strength = value
+    
+    brake_strength = property(fget = getBrakeStrength, fset = setBrakeStrength)
+    
+    # ----------------------------------------------------------------- 
+            
+    def getName(self):
+        return self._name
+        
+    def setName(self, value):
+        self._name = value
+    
+    name = property(fget = getName, fset = setName)
+    
+    # ----------------------------------------------------------------- 
+
     def __del__(self):
         '''
         Destroy unused nodes
