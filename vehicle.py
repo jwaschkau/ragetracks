@@ -25,11 +25,18 @@ class Vehicle(object):
         self._speed = 0.0 #the actual speed of the vehicle (forward direction)
         self._direction = Vec3(0,0,0) #the direction the car is heading
         self._boost_direction = Vec3(0,0,0)
-        self._boost_strength = 0.0 #the boost propertys of the vehicle
-        self._control_strength = 0.0 #impact on the steering behaviour
-        self._grip_strength = 0.0 #impact on the steering behaviour
+        self._boost_strength = 10.0 #the boost propertys of the vehicle
+        self._control_strength = 1.5 #impact on the steering behaviour
+        self._grip_strength = 0.5 #impact on the steering behaviour
         self._track_grip = 0.8 #impact on the steering behaviour
-        self._energy = 100
+        self._energy = 100.0
+        self._armor = 100.0
+        self._max_energy = 100.0
+        self._max_armor = 100.0
+        self._weight = 400.0
+        self._description = "The best vehicle ever"
+        self._name = "The flying egg"
+        self._brake_strength = 10.0
         self._hit_ground = True
         self._model_loading = False
         
@@ -42,7 +49,10 @@ class Vehicle(object):
         Choose what vehicle the player has chosen. This method initializes all data of this vehicle
         '''
         self._notify.debug("Set new vehicle: %s" %model)
-        self._boost_strength = 10.0
+        tag = model.getNetTag("boost_strength")
+        if tag:
+            self._notify.debug("boost_strength: %s" %tag)
+            self._boost_strength = tag
         self._control_strength = 1.5
         self._grip_strength = 0.5
         if self._model != None: 

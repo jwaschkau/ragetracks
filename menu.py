@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from panda3d.core import NodePath
 #from pandac.PandaModules import Vec3, Vec4, PointLight #Temp for Testing need VBase4
 from pandac.PandaModules import *
@@ -17,7 +18,7 @@ class MainMenu(object):
         self.device = device #The keybord
         
         time.sleep(1)               #Bad Hack to make sure that the Key isn't pressed.
-        self.device.boost = False   #Bad Hack to make sure that the Key isn't pressed.
+        self.device.boost = False   #Bad Hack to make sure that the Key isn't ￼.setColor(self.colorA)pressed.
         
         self.newGame = newGame
         
@@ -344,19 +345,27 @@ class Menu(object):
         self.screens = []
         taskMgr.add(self.selectVehicle, "selectVehicle")
         
+        self.color_red = Vec4(1,0,0,0)
+        self.color_green = Vec4(0,1,0,0)
+        
         self._notify.info("New game initialized")
 
     # -----------------------------------------------------------------
 
     def selectVehicle(self, task):
-        #Set the countdown and hide, if <= 0
+        #Set the countdown and hide, if > 3
         self.countdown -= globalClock.getDt()
-        if self.countdown <= 0 or self.countdown >=3: self.countdown_node.hide()
-        else: self.countdown_node.show()
+        if self.countdown <=0:
+            self.countdown_node.getChild(0).node().setText(_("Go"))
+            self.countdown_node.setColor(self.color_green)
+        elif self.countdown <=3: 
+            self.countdown_node.getChild(0).node().setText(str(int(round((self.countdown+0.5)))))
+            self.countdown_node.setColor(self.color_red)           
+            self.countdown_node.show()
+        else: self.countdown_node.hide()
         
         heading = self.loading.getH() -(30 * globalClock.getDt())
         self.loading.setH(heading)
-        self.countdown_node.getChild(0).node().setText(str(int(round((self.countdown+0.5)))))
         for player in self._players:
             if player.vehicle.model != None:
                 player.vehicle.model.setH(heading)
