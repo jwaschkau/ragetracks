@@ -31,7 +31,8 @@ class Game(ShowBase):
         loadPrcFileData("", "sync-video #f")
         loadPrcFileData("", "default-directnotify-level debug\n notify-level-Game debug\n notify-level-Menu debug\n notify-level-Vehicle debug")
         ShowBase.__init__(self)
-
+        base.enableParticles()
+        
         self._notify = DirectNotify().newCategory("Game")
         self._notify.info("New Game-Object created: %s" %(self))
         
@@ -81,13 +82,9 @@ class Game(ShowBase):
         #set up the collision event
         self.space.setCollisionEvent("ode-collision")
         base.accept("ode-collision", self.onCollision)
-
-        #LICHT
-        plight = PointLight('plight')
-        plight.setColor(VBase4(0.2, 0.2, 0.2, 1))
-        plnp = render.attachNewNode(plight)
-        plnp.setPos(100, 100, 0)
-        render.setLight(plnp)
+        
+        
+        
         
         
         # initialize the input devices
