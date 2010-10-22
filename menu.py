@@ -435,12 +435,16 @@ class Menu(object):
                     #Set the PlayerCam to the Vehicle select menu Node        
                     vehicleSelectNode = NodePath("VehicleSelectNode")
                     self._players[-1].camera.camera.reparentTo(vehicleSelectNode)
+                    
                     #LICHT
-                    plight = PointLight('plight')
+                    plight = Spotlight('plight')
                     plight.setColor(VBase4(10.0, 10.0, 10.0, 1))
+                    plight.setShadowCaster(True, 2048, 2048)#enable shadows for this light
                     plnp = vehicleSelectNode.attachNewNode(plight)
-                    plnp.setPos(-10, -10, 5)
+                    plnp.setPos(2, -10, 10)
+                    plnp.lookAt(0,0,0)
                     vehicleSelectNode.setLight(plnp)
+                    vehicleSelectNode.setShaderAuto()#enable autoshader so we can use shadows
                     
                     ambilight = AmbientLight('ambilight')
                     ambilight.setColor(VBase4(0.2, 0.2, 0.2, 1))
@@ -462,6 +466,7 @@ class Menu(object):
         for player in self._players:
             if self.player_buttonpressed[self._players.index(player)] < task.time:
                 if player.device.use_item:
+                    self.countdown = 5
                     self._notify.debug("Removing player: %s" %(player))
                     self.unusedDevices.append(player.device)
                     self.player_buttonpressed.pop(self._players.index(player))

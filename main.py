@@ -41,6 +41,7 @@ class Game(ShowBase):
         base.camNode.setActive(False) #disable default cam
         self.disableMouse() #disable manual camera-control
         #base.toggleWireframe()
+        render.setShaderAuto()
 
         # load the settings
         self.settings = settings.Settings()
@@ -165,6 +166,7 @@ class Game(ShowBase):
         
         dlight = DirectionalLight('dlight')
         dlight.setColor(VBase4(10.0, 10.0, 10.0, 1))
+        dlight.setShadowCaster(True, 2048, 2048) #enable shadows for this light
         dlnp = render.attachNewNode(dlight)
         dlnp.setHpr(0, -60, 0)
         render.setLight(dlnp)
