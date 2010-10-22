@@ -338,7 +338,7 @@ class Menu(object):
         text.setText(_("5"))
         self.countdown_node = NodePath("Countdown")
         self.countdown_node.attachNewNode(text)
-        self.countdown_node.setPos(0,-5,3.5)
+        self.countdown_node.setPos(0,0,4)
         
         #PreLoad the description that gets displayed when loading a model
         text = TextNode("name")
@@ -436,7 +436,7 @@ class Menu(object):
                     vehicleSelectNode = NodePath("VehicleSelectNode")
                     self._players[-1].camera.camera.reparentTo(vehicleSelectNode)
                     
-                    #LICHT
+                    #ligt, that casts shadows
                     plight = Spotlight('plight')
                     plight.setColor(VBase4(10.0, 10.0, 10.0, 1))
                     plight.setShadowCaster(True, 2048, 2048)#enable shadows for this light

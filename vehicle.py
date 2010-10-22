@@ -4,6 +4,7 @@
 ###################################################################
 
 from pandac.PandaModules import * #Load all PandaModules
+from panda3d.core import TexGenAttrib
 from wiregeom import WireGeom
 from collisionray import CollisionRay
 from direct.directnotify.DirectNotify import DirectNotify
@@ -89,10 +90,7 @@ class Vehicle(object):
         self._model = model
         self._model.setPos(0,0,2)
         self._model.setHpr(heading,0,0)
-            
-        #self._model.setScale(1, 1, 1)
-        
-        
+       
         #Initialize the physics-simulation for the vehicle
         self._physics_model = OdeBody(self._ode_world)
         self._physics_model.setPosition(self._model.getPos(render))
