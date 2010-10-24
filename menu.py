@@ -440,6 +440,7 @@ class Menu(object):
                     plight = Spotlight('plight')
                     plight.setColor(VBase4(10.0, 10.0, 10.0, 1))
                     plight.setShadowCaster(True, 2048, 2048)#enable shadows for this light
+                    plight.getLens().setFov(80)
                     plnp = vehicleSelectNode.attachNewNode(plight)
                     plnp.setPos(2, -10, 10)
                     plnp.lookAt(0,0,0)
