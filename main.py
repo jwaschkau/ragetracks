@@ -111,7 +111,9 @@ class Game(ShowBase):
         '''
         deletes a player object and sorts the cameras on the screem
         '''
+        #delete the cam
         self.splitscreen.removeCamera(player.camera.camera)
+        #delete the player
         self.players.remove(player) ##all objects must be deleted!
         self._notify.info("Player removed: %s" %(player))
         
@@ -132,6 +134,7 @@ class Game(ShowBase):
             counter+=1
         
         #Create the Track
+        
         self.track = trackgen3d.Track3d(1000, 800, 600, 200, len(self.players))
         nodePath = self.render.attachNewNode(self.track.createMesh())
         tex = loader.loadTexture('data/textures/street.png')
@@ -267,6 +270,7 @@ class Game(ShowBase):
         for player in self.players: # set new positions
             player.updatePlayer()
         return task.cont
+    # -----------------------------------------------------------------
 
 
 # -----------------------------------------------------------------
