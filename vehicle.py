@@ -103,8 +103,9 @@ class Vehicle(object):
         
         #Initialize the collision-model of the vehicle
         ##for use with blender models
-        ##self.collision_model = OdeTriMeshGeom(self.ode_space, OdeTriMeshData(self.model, True))
-        self._collision_model = OdeBoxGeom(self._ode_space, 4,8,4)
+        self.collision_model = OdeTriMeshGeom(self._ode_space, OdeTriMeshData(self.model, True))
+        ##for fast collisions
+        #self._collision_model = OdeBoxGeom(self._ode_space, 4,8,4)
         self._collision_model.setBody(self._physics_model)
         self._collision_model.setCollideBits(1)
         self._collision_model.setCategoryBits(0)
