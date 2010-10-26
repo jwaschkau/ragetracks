@@ -313,7 +313,7 @@ class Track3d(object):
         
         node = GeomNode('street')
         node.addGeom(geom)
-         
+        
         #nodePath = self.render.attachNewNode(node)
         return node
 

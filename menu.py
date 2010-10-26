@@ -419,11 +419,18 @@ class Menu(object):
                 self._notify.debug("Loading vehicle: %s" %(loading))
                 if not loading:
                     taskMgr.remove("selectVehicle")
-                    nodePath = render.attachNewNode(trackgen3d.Track3d(1000, 800, 600, 200, len(self._players)).createMesh())
-                    tex = loader.loadTexture('data/textures/street.png')
-                    nodePath.setTexture(tex)
-                    nodePath.setTwoSided(True)
-                    self._parent.startGame(nodePath)
+                    #nodePath = render.attachNewNode(trackgen3d.Track3d(1000, 800, 600, 200, len(self._players)).createMesh())
+                    #tex = loader.loadTexture('data/textures/street.png')
+                    #nodePath.setTexture(tex)
+                    #nodePath.setTwoSided(True)
+                    
+                    self.nodePath = loader.loadModel('data/models/Street.egg')
+                    
+                    #tex = loader.loadTexture('data/models/StreetTex.png')
+                    #self.nodePath.setTexture(tex)
+                    #self.nodePath.setTwoSided(True)
+                    self.nodePath.reparentTo(render)
+                    self._parent.startGame(self.nodePath)
                     return task.done
 
         for device in self.unusedDevices:
@@ -439,7 +446,7 @@ class Menu(object):
                     #ligt, that casts shadows
                     plight = Spotlight('plight')
                     plight.setColor(VBase4(10.0, 10.0, 10.0, 1))
-                    plight.setShadowCaster(True, 512, 512)#enable shadows for this light
+                    #plight.setShadowCaster(True, 2048, 2048)#enable shadows for this light
                     plight.getLens().setFov(80)
                     plnp = vehicleSelectNode.attachNewNode(plight)
                     plnp.setPos(2, -10, 10)
