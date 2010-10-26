@@ -338,7 +338,7 @@ class Menu(object):
         text.setText(_("5"))
         self.countdown_node = NodePath("Countdown")
         self.countdown_node.attachNewNode(text)
-        self.countdown_node.setPos(0,-5,3.5)
+        self.countdown_node.setPos(0,0,4)
         
         #PreLoad the description that gets displayed when loading a model
         text = TextNode("name")
@@ -413,7 +413,9 @@ class Menu(object):
             if self._players[0].device.boost and self.countdown <= 0:
                 loading = False
                 for player in self._players: 
-                    if player.vehicle.model_loading: loading = True
+                    if player.vehicle.model_loading: 
+                        loading = True
+                        break
                 self._notify.debug("Loading vehicle: %s" %(loading))
                 if not loading:
                     taskMgr.remove("selectVehicle")
@@ -433,12 +435,17 @@ class Menu(object):
                     #Set the PlayerCam to the Vehicle select menu Node        
                     vehicleSelectNode = NodePath("VehicleSelectNode")
                     self._players[-1].camera.camera.reparentTo(vehicleSelectNode)
-                    #LICHT
-                    plight = PointLight('plight')
+                    
+                    #ligt, that casts shadows
+                    plight = Spotlight('plight')
                     plight.setColor(VBase4(10.0, 10.0, 10.0, 1))
+                    plight.setShadowCaster(True, 2048, 2048)#enable shadows for this light
+                    plight.getLens().setFov(80)
                     plnp = vehicleSelectNode.attachNewNode(plight)
-                    plnp.setPos(-10, -10, 5)
+                    plnp.setPos(2, -10, 10)
+                    plnp.lookAt(0,0,0)
                     vehicleSelectNode.setLight(plnp)
+                    vehicleSelectNode.setShaderAuto()#enable autoshader so we can use shadows
                     
                     ambilight = AmbientLight('ambilight')
                     ambilight.setColor(VBase4(0.2, 0.2, 0.2, 1))
@@ -460,6 +467,7 @@ class Menu(object):
         for player in self._players:
             if self.player_buttonpressed[self._players.index(player)] < task.time:
                 if player.device.use_item:
+                    self.countdown = 5
                     self._notify.debug("Removing player: %s" %(player))
                     self.unusedDevices.append(player.device)
                     self.player_buttonpressed.pop(self._players.index(player))
