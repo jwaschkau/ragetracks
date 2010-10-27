@@ -30,11 +30,18 @@ class GlowDemo(DirectObject):
         
         self.tron=Actor()
         #self.tron.setShaderAuto()
-        self.tron.loadModel("data/models/vehicle01")
+        self.tron.loadModel("data/models/vehicles/vehicle01")
         self.tron.setTexture(ts, "data/textures/vehicle01_body_glow.png")
         #self.tron.
         
         self.tron.reparentTo(render)
+        
+        self.tron2=Actor()
+        #self.tron.setShaderAuto()
+        self.tron2.loadModel("data/models/vehicles/vehicle01")
+        
+        self.tron2.reparentTo(render)
+        self.tron2.setX(5)
 
 
 t=GlowDemo()

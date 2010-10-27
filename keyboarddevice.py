@@ -6,6 +6,7 @@
 
 from panda3d.core import *
 from direct.showbase.ShowBase import ShowBase
+from direct.directnotify.DirectNotify import DirectNotify
 
 # ---------------------------------------------------------
 # ---------------------------------------------------------
@@ -18,7 +19,8 @@ class KeyboardDevice():
     def __init__(self):
         '''
         '''
-
+        self._notify = DirectNotify().newCategory("Input")
+        self._notify.info("New Keyboard-Object created: %s" %(self))
         base.buttonThrowers[0].node().setButtonUpEvent("button-up")
         base.buttonThrowers[0].node().setButtonDownEvent("button")
         base.accept("button-up", self.setKey, [False])

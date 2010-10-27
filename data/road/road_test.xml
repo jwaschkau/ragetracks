@@ -1,0 +1,7 @@
+<?xml version="1.0" ?>
+<xml author="RageTracks Team" mirrored="False" name="roads01">
+   <points>
+      <point x="-20.0" y="0.0"/>
+      <point x="20.0" y="0.0"/>
+   </points>
+</xml>

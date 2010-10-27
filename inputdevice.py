@@ -4,6 +4,7 @@
 ###########################################################
 
 from panda3d.core import *
+from direct.directnotify.DirectNotify import DirectNotify
 import pygame
 import keyboarddevice
 import joystickdevice
@@ -19,6 +20,8 @@ class InputDevice(object):
     def __init__(self, device, settings):
         '''
         '''
+        self._notify = DirectNotify().newCategory("Input")
+        self._notify.info("New Input-Object created: %s" %(self))
         self.device = device
         self.directions = [0,0]  # x and y movement
         self.boost = False       # Button for boosting

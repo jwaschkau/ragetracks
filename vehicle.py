@@ -4,8 +4,10 @@
 ###################################################################
 
 from pandac.PandaModules import * #Load all PandaModules
+from panda3d.core import TexGenAttrib
 from wiregeom import WireGeom
 from collisionray import CollisionRay
+from direct.directnotify.DirectNotify import DirectNotify
 
 class Vehicle(object):
     '''
@@ -13,7 +15,8 @@ class Vehicle(object):
     def __init__(self, ode_world, ode_space, name = "standard"):
         '''
         '''
-
+        self._notify = DirectNotify().newCategory("Vehicle")
+        self._notify.info("New Vehicle-Object created: %s" %(self))
         self._ode_world = ode_world
         self._ode_space = ode_space
         self._model = None
@@ -23,30 +26,71 @@ class Vehicle(object):
         self._speed = 0.0 #the actual speed of the vehicle (forward direction)
         self._direction = Vec3(0,0,0) #the direction the car is heading
         self._boost_direction = Vec3(0,0,0)
-        self._boost_strength = 0.0 #the boost propertys of the vehicle
-        self._control_strength = 0.0 #impact on the steering behaviour
-        self._grip_strength = 0.0 #impact on the steering behaviour
+        self._boost_strength = 10.0 #the boost propertys of the vehicle
+        self._control_strength = 1.5 #impact on the steering behaviour
+        self._grip_strength = 0.5 #impact on the steering behaviour
+        self._track_grip = 0.8 #impact on the steering behaviour
+        self._energy = 100.0
+        self._armor = 100.0
+        self._max_energy = 100.0
+        self._max_armor = 100.0
+        self._weight = 400.0
+        self._description = "The best vehicle ever"
+        self._name = "The flying egg"
+        self._brake_strength = 10.0
         self._hit_ground = True
+        self._model_loading = False
         
-        self.setVehicle(name) #set the initial vehicle
-        
+        #set up the propertys of the vehicle that schould be loaded
+        #the methods get called because the data is immutable and 
+        #wouldnt get updated when calling the objects directly
+        #the last entry is the function to convert the string
+        self._tags =    [["name",self.setName,str],
+                        ["description",self.setDescription,str],
+                        ["control_strength",self.setControlStrength,float],
+                        ["grip_strength",self.setGripStrength, float],
+                        ["track_grip",self.setTrackGrip,float],
+                        ["max_energy",self.setMaxEnergy,float],
+                        ["max_armor",self.setMaxArmor,float],
+                        ["weight",self.setWeight,float],
+                        ["brake_strength",self.setBrakeStrength,float]]
+
     # ---------------------------------------------------------
     
-    def setVehicle(self, name):
+    def setVehicle(self, model):
         '''
         Choose what vehicle the player has chosen. This method initializes all data of this vehicle
         '''
-        self._boost_strength = 10.0
-        self._control_strength = 1.5
-        self._grip_strength = 0.5
+        self._notify.debug("Set new vehicle: %s" %model)
         
-        self._model = loader.loadModel("data/models/vehicle01")
-        self._model.reparentTo(render)
-        self._model.setPos(0,0,20)
-        self._model.setHpr(0,0,0)
-        #self._model.setScale(1, 1, 1)
-        
-        
+        #Load the attributes of the vehicle
+        attributes = model.find("**/Attributes")
+        for tag in self._tags:
+            value = attributes.getNetTag(tag[0])
+            if value:
+                self._notify.debug("%s: %s" %(tag[0],value))
+                #translate the value if its a string
+                if type(tag[2](value)) == str: tag[1](_(tag[2](value)))
+                else: tag[1](tag[2](value))
+            else: self._notify.warning("No value defined for tag: %s" %(tag[0]))
+
+        if self._model != None: 
+            heading  = self._model.getH()
+            
+            #display the attributes
+            text = self._model.getParent().find("AttributeNode")
+            if text: 
+                node = text.find("name").node()
+                node.setText(self._name)
+                node.update()
+                text.show()
+            self._model.removeNode()
+        else:
+            heading = 160
+        self._model = model
+        self._model.setPos(0,0,2)
+        self._model.setHpr(heading,0,0)
+       
         #Initialize the physics-simulation for the vehicle
         self._physics_model = OdeBody(self._ode_world)
         self._physics_model.setPosition(self._model.getPos(render))
@@ -54,7 +98,7 @@ class Vehicle(object):
         
         #Initialize the mass of the vehicle
         physics_mass = OdeMass()
-        physics_mass.setBox(1000,1,1,1)
+        physics_mass.setBox(self._weight,1,1,1)
         self._physics_model.setMass(physics_mass)
         
         #Initialize the collision-model of the vehicle
@@ -71,6 +115,8 @@ class Vehicle(object):
         self._back_left= CollisionRay(Vec3(-2,-4,-1), Vec3(0,0,-1), self._ode_space, parent = self._collision_model, length = 5.0)
         self._back_right = CollisionRay(Vec3(2,-4,-1), Vec3(0,0,-1), self._ode_space, parent = self._collision_model, length = 5.0)
            
+        self._model_loading = False
+        
     # ---------------------------------------------------------
     
     def setPos(self, x, y, z):
@@ -136,7 +182,9 @@ class Vehicle(object):
         if self._hit_ground:
             direction = self._collision_model.getQuaternion().xform(Vec3(0,1,0))
             self._physics_model.addForce(direction*self._boost_strength*self.physics_model.getMass().getMagnitude())
-    
+        else:
+            direction = self._collision_model.getQuaternion().xform(Vec3(0,1,0))
+            self._physics_model.addForce(direction*self._boost_strength*0.2*self.physics_model.getMass().getMagnitude())
     # ---------------------------------------------------------
         
     def setDirection(self, dir):
@@ -162,6 +210,30 @@ class Vehicle(object):
         
     # ---------------------------------------------------------
     
+    def setEnergy(self, energy):
+        '''
+        Boosts the vehicle by indicated strength
+        '''
+        self._energy = energy
+    
+    def getEnergy(self):
+        return self._energy
+        
+    energy = property(fget = getEnergy, fset = setEnergy)        
+        
+    # ---------------------------------------------------------
+    def setModelLoading(self, bool):
+        '''
+        '''
+        self._model_loading = bool
+    
+    def getModelLoading(self):
+        return self._model_loading
+        
+    model_loading = property(fget = getModelLoading, fset = setModelLoading)        
+        
+    # ---------------------------------------------------------
+    
     def doStep(self):
         '''
         Needs to get executed every Ode-Step
@@ -182,6 +254,9 @@ class Vehicle(object):
         self._direction.normalize()
         self._physics_model.addForce(self._direction*(self._speed*self._grip_strength*self.physics_model.getMass().getMagnitude()))#+linear_velocity)
         self._physics_model.addForce(-linear_velocity*(self._speed*self._grip_strength*self.physics_model.getMass().getMagnitude()))#+linear_velocity)
+        
+        #calculate the grip
+        self._physics_model.addTorque(self._physics_model.getAngularVel()*-self._track_grip*self.physics_model.getMass().getMagnitude())
         
         #refresh the positions of the collisionrays
         self._front_left.doStep()
@@ -211,8 +286,106 @@ class Vehicle(object):
     
     # ----------------------------------------------------------------- 
     
+    def getControlStrength(self):
+        return self._control_strength
+        
+    def setControlStrength(self, value):
+        self._control_strength = value
+    
+    control_strength = property(fget = getControlStrength, fset = setControlStrength)
+    
+    # ----------------------------------------------------------------- 
+    
+    def getGripStrength(self):
+        return self._grip_strength
+        
+    def setGripStrength(self, value):
+        self._grip_strength = value
+    
+    grip_strength = property(fget = getGripStrength, fset = setGripStrength)
+    
+    # ----------------------------------------------------------------- 
+    
+    def getTrackGrip(self):
+        return self._track_grip
+        
+    def setTrackGrip(self, value):
+        self._track_grip = value
+    
+    track_grip = property(fget = getTrackGrip, fset = setTrackGrip)
+    
+    # ----------------------------------------------------------------- 
+    
+    def getMaxEnergy(self):
+        return self._max_energy
+        
+    def setMaxEnergy(self, value):
+        self._max_energy = value
+    
+    max_energy = property(fget = getMaxEnergy, fset = setMaxEnergy)
+    
+    # ----------------------------------------------------------------- 
+    
+    def getMaxArmor(self):
+        return self._max_armor
+        
+    def setMaxArmor(self, value):
+        self._max_armor = value
+    
+    max_armor = property(fget = getMaxArmor, fset = setMaxArmor)
+    
+    # ----------------------------------------------------------------- 
+    
+    def getWeight(self):
+        return self._weight
+        
+    def setWeight(self, value):
+        self._weight = value
+    
+    weight = property(fget = getWeight, fset = setWeight)
+    
+    # ----------------------------------------------------------------- 
+    
+    def getDescription(self):
+        return self._description
+        
+    def setDescription(self, value):
+        self._description = value
+    
+    description = property(fget = getDescription, fset = setDescription)
+    
+    # ----------------------------------------------------------------- 
+        
+    def getBrakeStrength(self):
+        return self._brake_strength
+        
+    def setBrakeStrength(self, value):
+        self._brake_strength = value
+    
+    brake_strength = property(fget = getBrakeStrength, fset = setBrakeStrength)
+    
+    # ----------------------------------------------------------------- 
+            
+    def getName(self):
+        return self._name
+        
+    def setName(self, value):
+        self._name = value
+    
+    name = property(fget = getName, fset = setName)
+    
+    # ----------------------------------------------------------------- 
+
     def __del__(self):
-        pass
+        '''
+        Destroy unused nodes
+        '''
+        for node in self._model.getChildren():
+            node.removeNode()
+        self._model.removeNode()
+        self._physics_model.destroy()
+        self._collision_model.destroy()
+        self._notify.info("Vehicle-Object deleted: %s" %(self))
     
 if __name__ == "__main__":
     import main

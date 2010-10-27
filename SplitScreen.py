@@ -2,6 +2,7 @@
 from direct.showbase.ShowBase import ShowBase
 from pandac.PandaModules import *
 from math import sqrt, ceil
+from direct.directnotify.DirectNotify import DirectNotify
 
 # -----------------------------------------------------------------
 # -----------------------------------------------------------------
@@ -14,12 +15,17 @@ class SplitScreen(object):
     def __init__(self, cam_count=0):
         '''
         '''
+        self._notify = DirectNotify().newCategory("SplitScreen")
+        self._notify.info("New SplitScreen-Object created: %s" %(self))
         self.regions = []   # the regions the screen is separated into
         self.cameras = []   # the cameras (empty ones are None)
         
         if cam_count > 0:
             self.addCameras(cam_count)
-        
+            
+        #for i in range(1,10):    
+        #    print i, self.calculateRegions(i)
+        print cam_count
         
     # -----------------------------------------------------------------
     
@@ -28,6 +34,7 @@ class SplitScreen(object):
         adds a camera for a new player (or an additional view)
         @return: returns the added camera object
         '''
+        self._notify.debug("Creating new camera")
         unused = self.getUnusedRegion()
         # if there is an unused camera slot, use it
         if unused != -1:
@@ -37,20 +44,35 @@ class SplitScreen(object):
             self.regions = self.calculateRegions(len(self.regions)+1)
             self.cameras.append(self.createCamera(self.regions[unused]))
             self.refreshCameras()
-            
+        
+        # if there are empty slots, they're filled with None
+            for i in xrange(len(self.regions)-len(self.cameras)):
+                self.cameras.append(None)
+                unused-=1
+                
         
         # if there was an unused slot, the camera is now at this place
         # if not, unused is -1 which points to the last element of the list (the newest cam)
+        self._notify.debug("New regions: %s , New cameras: %s" %(self.regions, self.cameras))
+        self._notify.debug("New camera created")
         return self.cameras[unused]
 
     # -----------------------------------------------------------------
     
-    def removeCamera(self):
+    def removeCamera(self,camera):
         '''
         removes a camera out of the list
         '''
-##      NOT IMPLEMENTED, YET        
-        pass
+        self._notify.debug("Removing camera: %s" %(camera))
+        self.regions.pop(self.cameras.index(camera))
+        self.cameras.remove(camera)
+        try: 
+            while True:
+                self.cameras.remove(None)
+        except: pass
+        self.regions = self.calculateRegions(len(self.cameras))
+        self.refreshCameras()
+        self._notify.debug("New regions: %s , New cameras: %s" %(self.regions, self.cameras))
 
     # -----------------------------------------------------------------
     
@@ -103,7 +125,10 @@ class SplitScreen(object):
         for i in xrange(len(self.cameras)):
             if self.cameras[i] != None:
                 self.cameras[i].node().getDisplayRegion(0).setDimensions(self.regions[i][0], self.regions[i][1], self.regions[i][2], self.regions[i][3])
-            
+                self._notify.debug("Aspect Ratio: %s:%s" %(self.regions[i][1]-self.regions[i][0],self.regions[i][3]-self.regions[i][2]))
+                
+                #self.cameras[i].node().getLens().setFov(45*((self.regions[i][1]-self.regions[i][0])/(self.regions[i][3]-self.regions[i][2])))
+                self.cameras[i].node().getLens().setAspectRatio(((self.regions[i][1]-self.regions[i][0])/(self.regions[i][3]-self.regions[i][2])))
     # -----------------------------------------------------------------
     
     def getUnusedRegion(self):
@@ -174,7 +199,15 @@ class SplitScreen(object):
 # -----------------------------------------------------------------
 # -----------------------------------------------------------------
 # -----------------------------------------------------------------
-       
+      
 if __name__ == "__main__":
-    #import main
-    print type(base.makeCamera())
+    import main
+##    app = ShowBase()
+##    
+##    split = SplitScreen(1)
+##    print "initialisation done"
+##    split.addCamera()
+##    split.addCamera()
+##    split.addCamera()
+##    
+##    app.run()

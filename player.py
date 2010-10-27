@@ -4,6 +4,7 @@
 ###################################################################
 import vehicle
 from pandac.PandaModules import Vec3,Quat #Load all PandaModules
+from direct.directnotify.DirectNotify import DirectNotify
 
 class Player(object):
     '''
@@ -11,6 +12,8 @@ class Player(object):
     def __init__(self, number, ode_world, ode_space, device = None, camera = None):
         '''
         '''
+        self._notify = DirectNotify().newCategory("Player")
+        self._notify.info("New Player-Object created: %s" %(self))
         self._ode_world = ode_world
         self._ode_space = ode_space
         self._number = number
@@ -18,7 +21,7 @@ class Player(object):
         self._vehicle = vehicle.Vehicle(self._ode_world, self._ode_space) #the properties of the vehicle
         self._device = device #The inputdevice
         
-        self._camera.followVehicle(self._vehicle.boost_direction, self._vehicle.model)
+        #self._camera.followVehicle(self._vehicle.boost_direction, self._vehicle.model)
         #self._camera.setPos(0,-40,5)
         #self._camera.lookAt(self._vehicle.getModel())
         
@@ -27,8 +30,15 @@ class Player(object):
         #self._camera.setPos(0,-30,10)
         #self._camera.lookAt(self._vehicle.getModel()) 
     
-    # ---------------------------------------------------------        
+    # ---------------------------------------------------------
+    
+    def activateGameCam(self):
+        self._camera.followVehicle(self._vehicle.boost_direction, self._vehicle.model)
+        self._camera.camera.reparentTo(render)
+        self._vehicle.model.reparentTo(render)
         
+    # ---------------------------------------------------------
+    
     def setCamera(self, camera):
         '''
         '''
@@ -46,7 +56,13 @@ class Player(object):
     def setVehicle(self, vehicle):
         '''
         '''
-        self._vehicle = vehicle
+        loading = self.camera.camera.getParent().find("LoadingNode")
+        #loading.detachNode()
+        if loading: loading.removeNode()
+        else: self._notify.warning("Could not remove the loading node")
+            
+        self._vehicle.setVehicle(vehicle)
+        vehicle.reparentTo(self.camera.camera.getParent())
         
     def getVehicle(self):
         '''
@@ -71,15 +87,6 @@ class Player(object):
         
     # ---------------------------------------------------------
     
-    def __del__(self):
-        '''
-        destroys all objects of the player-object
-        '''
-        #Del one Camera 
-        self._camera.node().removeNode()
-        
-    # ---------------------------------------------------------
-    
     def doStep(self):
         '''
         Needs to get executed every Ode-Step
@@ -98,6 +105,17 @@ class Player(object):
         self._camera.updateCam()
         
     
+    # ---------------------------------------------------------
+        
+    def __del__(self):
+        '''
+        destroys all objects of the player-object
+        '''
+        #Del one Camera 
+        #print dir(self._camera.camera.node())
+        self._camera.camera.removeNode()#node()
+        self._notify.info("Player-Object deleted: %s" %(self))
+        
     # ---------------------------------------------------------
     
     if __name__ == "__main__":
