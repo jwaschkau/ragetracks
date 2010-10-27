@@ -133,8 +133,9 @@ class Game(ShowBase):
         counter = 0
         for player in self.players:
             player.activateGameCam()
-            self.players[counter].vehicle.physics_model.setPosition(0, -5 * counter, 5)
+            self.players[counter].vehicle.physics_model.setPosition(0, -5 * counter, 10)
             self.players[counter].vehicle.model.setH(0)
+            self.players[counter].vehicle.model.setP(10)
             self.players[counter].vehicle.physics_model.setQuaternion(self.players[counter].vehicle.model.getQuat(render))
             counter+=1
         
@@ -196,25 +197,31 @@ class Game(ShowBase):
                 #print geom2.compareTo(ray)
                 if geom1 == ray or geom2 == ray:
                     normal = entry.getContactGeom(0).getNormal()
+                    normal.normalize()
                     player.vehicle.physics_model.setGravityMode(0) #disable gravity if on the track
+                    mass = player.vehicle.physics_model.getMass().getMagnitude()                    
                     force_pos = ray.getPosition()
                     contact = entry.getContactPoint(0)
                     force_dir = force_pos - contact
-                    acceleration = (ray.getLength()/2-force_dir.length())#calculate the direction
-                    mass = player.vehicle.physics_model.getMass().getMagnitude()
+                    acceleration = ((ray.getLength()/2)-force_dir.length())#calculate the direction
                     player.vehicle.hit_ground = True
+                    
+                    #push the vehicle
                     if acceleration > 0:
                         force_dir.normalize()
-                        force_dir = Vec3(normal[0]*acceleration,normal[1]*acceleration,normal[2]*acceleration)
+                        force_dir = Vec3(force_dir[0]*acceleration,force_dir[1]*acceleration,force_dir[2]*acceleration)
                         player.vehicle.physics_model.addForceAtPos(force_dir*mass, force_pos)
                         #dir = player.vehicle.collision_model.getQuaternion().xform(Vec3(-1,0,0))
                         #force_dir = Vec3(normal[0]*acceleration,normal[1]*acceleration,normal[2]*acceleration)
+                    
+                    #pull the vehicle
                     else:
                         force_dir.normalize()
-                        force_dir = Vec3(normal[0]*acceleration,normal[1]*acceleration,normal[2]*acceleration)
-                        player.vehicle.physics_model.addForce(force_dir*mass)
+                        force_dir = Vec3(force_dir[0]*acceleration,force_dir[1]*acceleration,force_dir[2]*acceleration)
+                        player.vehicle.physics_model.addForceAtPos(force_dir*mass, force_pos)
                     #player.vehicle.physics_model.setTorque(player.vehicle.physics_model.getAngularVel()*0.01)
                     #player.vehicle.physics_model.addTorque(player.vehicle.physics_model.getAngularVel()*-1)
+                    player.vehicle.physics_model.addForce(normal[0]*player.vehicle.boost_direction[0]*-0.99*mass, normal[1]*player.vehicle.boost_direction[1]*-0.99*mass, normal[2]*player.vehicle.boost_direction[2]*-0.99*mass)
                     return
                      
         for player in self.players:
