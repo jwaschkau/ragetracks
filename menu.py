@@ -428,7 +428,6 @@ class Menu(object):
                     #tex = loader.loadTexture('data/models/StreetTex.png')
                     #self.nodePath.setTexture(tex)
                     #self.nodePath.setTwoSided(True)
-                    self.nodePath.reparentTo(render)
                     self._parent.startGame(self.nodePath)
                     return task.done
 
