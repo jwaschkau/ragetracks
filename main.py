@@ -69,7 +69,7 @@ class Game(ShowBase):
         self.world = OdeWorld()
 ##        self.world.setGravity(0, 0, -9.81)
         self.deltaTimeAccumulator = 0.0 #this variable is necessary to track the time for the physics
-        self.stepSize = 1.0 / 90.0 # This stepSize makes the simulation run at 60 frames per second
+        self.stepSize = 1.0 / 200.0 # This stepSize makes the simulation run at 60 frames per second
 
         #Initialize Collisions (ODE)
         self.space = OdeSimpleSpace()
@@ -135,22 +135,23 @@ class Game(ShowBase):
             player.activateGameCam()
             self.players[counter].vehicle.physics_model.setPosition(0, -5 * counter, 10)
             self.players[counter].vehicle.model.setH(0)
-            self.players[counter].vehicle.model.setP(10)
+            self.players[counter].vehicle.model.setP(0)
             self.players[counter].vehicle.physics_model.setQuaternion(self.players[counter].vehicle.model.getQuat(render))
             counter+=1
         
         #Create the Track
         self.track = track
+        self.track.reparentTo(render)
         
         #add collision with the map
         self.groundGeom = OdeTriMeshGeom(self.space, OdeTriMeshData(self.track, True))
         self.groundGeom.setCollideBits(0)
-        self.groundGeom.setCategoryBits(3)
+        self.groundGeom.setCategoryBits(1)
         
         #Create the Plane that you get hit by if you fall down
         self.plane = OdePlaneGeom(self.space,0,0,1,-50)
         self.plane.setCollideBits(0)
-        self.plane.setCategoryBits(3)
+        self.plane.setCategoryBits(1)
 
         self.arrows = loader.loadModel("data/models/arrows.egg")
         self.arrows.reparentTo(render)
@@ -203,13 +204,13 @@ class Game(ShowBase):
                     force_pos = ray.getPosition()
                     contact = entry.getContactPoint(0)
                     force_dir = force_pos - contact
-                    acceleration = ((ray.getLength()/2)-force_dir.length())#calculate the direction
+                    acceleration = ((ray.getLength()/2)-force_dir.length())*10#calculate the direction
                     player.vehicle.hit_ground = True
                     
                     #push the vehicle
                     if acceleration > 0:
                         force_dir.normalize()
-                        force_dir = Vec3(force_dir[0]*acceleration,force_dir[1]*acceleration,force_dir[2]*acceleration)
+                        force_dir = Vec3(normal[0]*acceleration,normal[1]*acceleration,normal[2]*acceleration)
                         player.vehicle.physics_model.addForceAtPos(force_dir*mass, force_pos)
                         #dir = player.vehicle.collision_model.getQuaternion().xform(Vec3(-1,0,0))
                         #force_dir = Vec3(normal[0]*acceleration,normal[1]*acceleration,normal[2]*acceleration)
@@ -217,10 +218,8 @@ class Game(ShowBase):
                     #pull the vehicle
                     else:
                         force_dir.normalize()
-                        force_dir = Vec3(force_dir[0]*acceleration,force_dir[1]*acceleration,force_dir[2]*acceleration)
-                        player.vehicle.physics_model.addForceAtPos(force_dir*mass, force_pos)
-                    #player.vehicle.physics_model.setTorque(player.vehicle.physics_model.getAngularVel()*0.01)
-                    #player.vehicle.physics_model.addTorque(player.vehicle.physics_model.getAngularVel()*-1)
+                        force_dir = Vec3(normal[0]*acceleration,normal[1]*acceleration,normal[2]*acceleration)
+                        player.vehicle.physics_model.addForce(force_dir*mass)
                     player.vehicle.physics_model.addForce(normal[0]*player.vehicle.boost_direction[0]*-0.99*mass, normal[1]*player.vehicle.boost_direction[1]*-0.99*mass, normal[2]*player.vehicle.boost_direction[2]*-0.99*mass)
                     return
                      

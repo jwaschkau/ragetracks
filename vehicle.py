@@ -104,7 +104,8 @@ class Vehicle(object):
         #Initialize the collision-model of the vehicle
         ##for use with blender models
         try:
-            col_model = loader.loadModel("data/models/vehicles/%s_collision" %(self._model.getName()))
+            col_model = loader.loadModel("data/models/vehicles/%s_collision" %(self._model.getName().rstrip(".egg")))
+            col_model.convertToBox()
             self.collision_model = OdeTriMeshGeom(self._ode_space, OdeTriMeshData(col_model, True))
         ##for fast collisions
         except:
@@ -115,12 +116,13 @@ class Vehicle(object):
         self._collision_model.setCategoryBits(0)
 
         #Add collision-rays for the floating effect
-        self._front_left = CollisionRay(Vec3(-1.5,1,-1), Vec3(0,0,-1), self._ode_space, parent = self._collision_model, length = 5.0)
-        self._front_right = CollisionRay(Vec3(1.5,1,-1), Vec3(0,0,-1), self._ode_space, parent = self._collision_model, length = 5.0)
-        self._back_left= CollisionRay(Vec3(-1.5,-3,-1), Vec3(0,0,-1), self._ode_space, parent = self._collision_model, length = 5.0)
-        self._back_right = CollisionRay(Vec3(1.5,-3,-1), Vec3(0,0,-1), self._ode_space, parent = self._collision_model, length = 5.0)
+        self._front_left = CollisionRay(Vec3(-0.5,1,0), Vec3(0,0,-1), self._ode_space, parent = self._collision_model, length = 5.0)
+        self._front_right = CollisionRay(Vec3(0.5,1,0), Vec3(0,0,-1), self._ode_space, parent = self._collision_model, length = 5.0)
+        self._back_left= CollisionRay(Vec3(-0.5,-1,0), Vec3(0,0,-1), self._ode_space, parent = self._collision_model, length = 5.0)
+        self._back_right = CollisionRay(Vec3(0.5,-1,0), Vec3(0,0,-1), self._ode_space, parent = self._collision_model, length = 5.0)
 
         ##Overwrite variables for testing purposes
+        self._grip_strength = 0.99
         self._track_grip = 0.99
         
         self._model_loading = False
