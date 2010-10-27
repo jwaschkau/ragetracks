@@ -243,7 +243,6 @@ class Menu(object):
         '''
         self._notify.info("Initializing StartScreen")
         
-
         
         #StartScreen Node
         self.startNode = NodePath("StartNode")
@@ -446,7 +445,7 @@ class Menu(object):
                     #ligt, that casts shadows
                     plight = Spotlight('plight')
                     plight.setColor(VBase4(10.0, 10.0, 10.0, 1))
-                    #plight.setShadowCaster(True, 2048, 2048)#enable shadows for this light
+                    plight.setShadowCaster(True, 2048, 2048)#enable shadows for this light
                     plight.getLens().setFov(80)
                     plnp = vehicleSelectNode.attachNewNode(plight)
                     plnp.setPos(2, -10, 10)
