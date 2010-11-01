@@ -245,7 +245,8 @@ class Track3d(object):
         for i in self.varthickness:
             i.normalize()
         #Creating the Vertex
-        self.creatingVertex(track_points, street_data)
+        ##self.creatingVertex(track_points, street_data)
+        self.createVertices(track_points, street_data)
         #Connect the Vertex
         self.connectVertex(len(street_data))
         #?Show the Mesh
@@ -266,6 +267,64 @@ class Track3d(object):
     def getVarthickness(self):
         return self.varthickness
     
+# -------------------------------------------------------------------------------------
+
+    def createVertices(self, track_points, street_data):
+        '''
+        '''
+        texcoordinates =[]
+        street_data_length = len(street_data)
+        
+        for i in xrange(street_data_length):
+            texcoordinates.append((i+1.0)/street_data_length)
+            
+        for i in xrange(len(track_points)):
+            if i+1 == len(track_points):
+                vec = track_points[i-1]-track_points[0]
+            else:
+                vec = track_points[i-1]-track_points[i+1]
+        
+##            h = Vec3(1,0,0).angleDeg(Vec3(vec[0],0,0))
+##            p = Vec3(0,1,0).angleDeg(Vec3(0,vec[1],0))
+##            r = Vec3(0,0,1).angleDeg(Vec3(0,0,vec[2]))
+            
+            #hpr = heading, pitch, roll
+
+            hvec = Vec3(vec[0],vec[1],0)
+            pvec = Vec3(vec[0],0,vec[2])
+            rvec = Vec3(0,vec[1],vec[2])
+            
+            hvec.normalize()
+            pvec.normalize()
+            rvec.normalize()
+            
+            h = Vec3(1,0,0).angleDeg(hvec)
+            p = Vec3(0,1,0).angleDeg(pvec)
+            r = Vec3(0,0,1).angleDeg(rvec)
+                
+            mat1 = Mat3()
+            mat2 = Mat3()
+            mat3 = Mat3()
+            mat1.setRotateMat(h, Vec3(1,0,0))
+            mat2.setRotateMat(p, Vec3(0,1,0))
+            mat3.setRotateMat(r, Vec3(0,0,1))
+            
+            j = 0    
+            for shapedot in street_data:
+                ##dot = Vec3(shapedot[0], 0, shapedot[1])
+                dot = Vec3(shapedot[0], 0, shapedot[1])
+                dot = mat1.xform(dot)
+                dot = mat2.xform(dot)
+                dot = mat3.xform(dot)
+                
+                point = track_points[i]+dot
+            
+                ##self.vertex.addData3f((track_points[i][0] + (self.varthickness[i][0]*street_data[j][0]), track_points[i][1] + (self.varthickness[i][1]*street_data[j][0]), track_points[i][2] + (self.varthickness[i][2]+street_data[j][1])))
+                self.vertex.addData3f(point[0], point[1], point[2])
+                self.normal.addData3f(0, 0, 1) #KA how to calc
+                self.texcoord.addData2f(texcoordinates[j], (i%2)) #
+                j += 1
+        
 # -------------------------------------------------------------------------------------
 
     def creatingVertex(self, track_points, street_data):
