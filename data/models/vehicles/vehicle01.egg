@@ -86537,3 +86537,16 @@
     <VertexRef> { 94 95 96 97 <Ref> { Mesh } }
   }
 }
+<Group> Attributes {
+  <Tag> brake_strength { 10.0 }
+  <Tag> weight { 400.0 }
+  <Tag> track_grip { 0.800000011921 }
+  <Tag> name { The flying egg }
+  <Tag> description { The best Vehicle ever }
+  <Tag> max_armor { 100.0 }
+  <Tag> grip_strength { 0.5 }
+  <Tag> boost_strength { 10.0 }
+  <Tag> control_strength { 1.5 }
+  <Tag> max_energy { 100.0 }
+  <ObjectType> { model }
+}

@@ -62,6 +62,13 @@ class GlowDemo(DirectObject):
         #self.tron.loadAnims({"running":"models/tron_anim"})
         self.tron2.reparentTo(render)
         self.tron2.setX(5)
+        
+        # load our model
+        self.tron3=Actor()
+        self.tron3.loadModel("data/models/vehicles/vehicle03")
+        #self.tron.loadAnims({"running":"models/tron_anim"})
+        self.tron3.reparentTo(render)
+        self.tron3.setX(10)
 
 ##        #put some lighting on the tron model
 ##        dlight = DirectionalLight('dlight')
