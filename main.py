@@ -14,7 +14,9 @@ import splitscreen
 import trackgen3d
 from playercam import PlayerCam
 import gettext
+import sys
 from menu import Menu
+from menu import MainMenu
 
 # -----------------------------------------------------------------
 # -----------------------------------------------------------------
@@ -23,24 +25,23 @@ from menu import Menu
 class Game(ShowBase):
     '''
     '''
-    def __init__(self):
+    def __init__(self, *args):
         '''
         '''
+        
         #loadPrcFileData("", "fullscreen 1\n win-size 800 600")
         #loadPrcFileData("", "want-pstats 1\n pstats-host 127.0.0.1\n pstats-tasks 1\n task-timer-verbose 1")
         loadPrcFileData("", "sync-video #f")
         loadPrcFileData("", "default-directnotify-level debug\n notify-level-Game debug\n notify-level-Menu debug\n notify-level-Vehicle debug")
         ShowBase.__init__(self)
         #base.enableParticles()
-
+        
         self._notify = DirectNotify().newCategory("Game")
         self._notify.info("New Game-Object created: %s" %(self))
         
-        #PStatClient.connect() #activate to start performance measuring with pstats
         base.setFrameRateMeter(True) #Show the Framerate
         base.camNode.setActive(False) #disable default cam
         self.disableMouse() #disable manual camera-control
-        #base.toggleWireframe()
         render.setShaderAuto()
 
         # load the settings
@@ -79,21 +80,42 @@ class Game(ShowBase):
         self.space.setAutoCollideWorld(self.world)
         self.contactgroup = OdeJointGroup()
         self.space.setAutoCollideJointGroup(self.contactgroup)
-
+        
         #set up the collision event
         self.space.setCollisionEvent("ode-collision")
         base.accept("ode-collision", self.onCollision)
-  
-        
         
         # initialize the input devices
         self.devices = inputdevice.InputDevices(self.settings.getInputSettings())
-        myMenu = Menu(self)
-        taskMgr.add(self.devices.fetchEvents, "fetchEvents")
-        
+
+        startgame = True
         #Start the Game
-        
-        myMenu.showStartScreen()
+        for arg in sys.argv:
+            if  arg == "--ep":
+                startgame = False
+                if sys.argv[sys.argv.index(arg)+1] == "startGame":
+                    for i in xrange(len(self.devices.devices)):
+                        #myMenu = Menu(self)
+                                           
+                        player = self.addPlayer(self.devices.devices[0])
+                        import glob
+                        self.vehicle_list = glob.glob("data/models/vehicles/*.egg")
+                        #start loading the model
+                        self.players[0].setVehicle(loader.loadModel(self.vehicle_list[-1]))
+                       
+                        taskMgr.add(self.devices.fetchEvents, "fetchEvents")
+                        
+                        self.streetPath = loader.loadModel('data/models/Street.egg')    #Test Street
+                        self.startGame(self.streetPath)
+            if  arg == "--PSt":
+                PStatClient.connect() #activate to start performance measuring with pstats
+            if  arg == "--wire":    
+                base.toggleWireframe()
+        if startgame:   
+            myMenu = Menu(self)
+            taskMgr.add(self.devices.fetchEvents, "fetchEvents")
+            myMenu.showStartScreen()
+            
 
     # -----------------------------------------------------------------
 
