@@ -16,6 +16,7 @@ from playercam import PlayerCam
 import gettext
 import sys
 from menu import Menu
+from menu import MainMenu
 
 # -----------------------------------------------------------------
 # -----------------------------------------------------------------
@@ -79,24 +80,42 @@ class Game(ShowBase):
         self.space.setAutoCollideWorld(self.world)
         self.contactgroup = OdeJointGroup()
         self.space.setAutoCollideJointGroup(self.contactgroup)
-
+        
         #set up the collision event
         self.space.setCollisionEvent("ode-collision")
         base.accept("ode-collision", self.onCollision)
         
         # initialize the input devices
         self.devices = inputdevice.InputDevices(self.settings.getInputSettings())
-        myMenu = Menu(self)
-        taskMgr.add(self.devices.fetchEvents, "fetchEvents")
+
         
         #Start the Game
         for arg in sys.argv:
             if  arg == "--ep":
                 #try:
                 if sys.argv[sys.argv.index(arg)+1] == "startGame":
-                    menu = Menu(self)
-                    
-                    taskMgr.add(menu.collectPlayer, "fetchAnyKey")
+                    for i in xrange(len(self.devices.devices)):
+                        myMenu = Menu(self)
+                                           
+                        player = self.addPlayer(self.devices.devices[0])
+                        print "PLAYER" , self.players
+                        ##TEST
+                        #Set the PlayerCam to the Vehicle select menu Node        
+                        vehicleSelectNode = NodePath("VehicleSelectNode")
+                        
+                        import glob
+                        self.vehicle_list = glob.glob("data/models/vehicles/*.egg")
+                        #start loading the model
+                        print "self.vehicle_list[0]", self.vehicle_list[-1]
+                        self.players[0].setVehicle(loader.loadModel(self.vehicle_list[-1]))
+                        self.players[0].vehicle.model_loading = True
+                        ##TEST EnD                    
+                        
+                        newGame = myMenu.newGame()
+                        self.menu = MainMenu(newGame, self.devices.devices[0])         #if no player exist    
+                        
+                        self.streetPath = loader.loadModel('data/models/Street.egg')    #Test Street
+                        self.startGame(self.streetPath)
                     
                 #except:
                 #    print "Missing arg"
@@ -104,8 +123,10 @@ class Game(ShowBase):
                 PStatClient.connect() #activate to start performance measuring with pstats
             if  arg == "--wire":    
                 base.toggleWireframe()
-                
-        myMenu.showStartScreen()
+            if arg == "--start":
+                myMenu = Menu(self)
+                taskMgr.add(self.devices.fetchEvents, "fetchEvents")
+                myMenu.showStartScreen()
 
     # -----------------------------------------------------------------
 
