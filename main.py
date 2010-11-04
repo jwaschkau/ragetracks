@@ -128,7 +128,9 @@ class Game(ShowBase):
         '''
         deletes a player object and sorts the cameras on the screem
         '''
+        #delete the cam
         self.splitscreen.removeCamera(player.camera.camera)
+        #delete the player
         self.players.remove(player) ##all objects must be deleted!
         self._notify.info("Player removed: %s" %(player))
         
@@ -286,6 +288,7 @@ class Game(ShowBase):
         for player in self.players: # set new positions
             player.updatePlayer()
         return task.cont
+    # -----------------------------------------------------------------
 
 
 # -----------------------------------------------------------------
