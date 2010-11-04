@@ -88,45 +88,34 @@ class Game(ShowBase):
         # initialize the input devices
         self.devices = inputdevice.InputDevices(self.settings.getInputSettings())
 
-        
+        startgame = True
         #Start the Game
         for arg in sys.argv:
             if  arg == "--ep":
-                #try:
+                startgame = False
                 if sys.argv[sys.argv.index(arg)+1] == "startGame":
                     for i in xrange(len(self.devices.devices)):
-                        myMenu = Menu(self)
+                        #myMenu = Menu(self)
                                            
                         player = self.addPlayer(self.devices.devices[0])
-                        print "PLAYER" , self.players
-                        ##TEST
-                        #Set the PlayerCam to the Vehicle select menu Node        
-                        vehicleSelectNode = NodePath("VehicleSelectNode")
-                        
                         import glob
                         self.vehicle_list = glob.glob("data/models/vehicles/*.egg")
                         #start loading the model
-                        print "self.vehicle_list[0]", self.vehicle_list[-1]
                         self.players[0].setVehicle(loader.loadModel(self.vehicle_list[-1]))
-                        self.players[0].vehicle.model_loading = True
-                        ##TEST EnD                    
-                        
-                        newGame = myMenu.newGame()
-                        self.menu = MainMenu(newGame, self.devices.devices[0])         #if no player exist    
+                       
+                        taskMgr.add(self.devices.fetchEvents, "fetchEvents")
                         
                         self.streetPath = loader.loadModel('data/models/Street.egg')    #Test Street
                         self.startGame(self.streetPath)
-                    
-                #except:
-                #    print "Missing arg"
             if  arg == "--PSt":
                 PStatClient.connect() #activate to start performance measuring with pstats
             if  arg == "--wire":    
                 base.toggleWireframe()
-            if arg == "--start":
-                myMenu = Menu(self)
-                taskMgr.add(self.devices.fetchEvents, "fetchEvents")
-                myMenu.showStartScreen()
+        if startgame:   
+            myMenu = Menu(self)
+            taskMgr.add(self.devices.fetchEvents, "fetchEvents")
+            myMenu.showStartScreen()
+            
 
     # -----------------------------------------------------------------
 
