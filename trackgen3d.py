@@ -312,7 +312,7 @@ class Track3d(object):
             j = 0    
             for shapedot in street_data:
                 ##dot = Vec3(shapedot[0], 0, shapedot[1])
-                dot = Vec3(shapedot[0], 0, shapedot[1])
+                dot = Vec3(0, shapedot[0], shapedot[1])
                 dot = mat1.xform(dot)
                 dot = mat2.xform(dot)
                 dot = mat3.xform(dot)
