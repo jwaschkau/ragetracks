@@ -479,6 +479,7 @@ class Menu(object):
                     self.player_buttonpressed.pop(self._players.index(player))
                     self._parent.removePlayer(player)
         return task.cont
+
     # -----------------------------------------------------------------
 
 if __name__ == "__main__":
