@@ -110,7 +110,7 @@ class Vehicle(object):
         ##for fast collisions
         except:
             self._notify.warning("Could not load collision-file. Using standard collision-box")
-            self._collision_model = OdeBoxGeom(self._ode_space, 5,5,2)
+            self._collision_model = OdeBoxGeom(self._ode_space, 3,3,2)
         self._collision_model.setBody(self._physics_model)
         self._collision_model.setCollideBits(1)
         self._collision_model.setCategoryBits(0)
