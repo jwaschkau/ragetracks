@@ -116,10 +116,7 @@ class Vehicle(object):
         self._collision_model.setCategoryBits(0)
 
         #Add collision-rays for the floating effect
-        self._front_left = CollisionRay(Vec3(-0.5,1,0), Vec3(0,0,-1), self._ode_space, parent = self._collision_model, length = 5.0)
-        self._front_right = CollisionRay(Vec3(0.5,1,0), Vec3(0,0,-1), self._ode_space, parent = self._collision_model, length = 5.0)
-        self._back_left= CollisionRay(Vec3(-0.5,-1,0), Vec3(0,0,-1), self._ode_space, parent = self._collision_model, length = 5.0)
-        self._back_right = CollisionRay(Vec3(0.5,-1,0), Vec3(0,0,-1), self._ode_space, parent = self._collision_model, length = 5.0)
+        self._ray = CollisionRay(Vec3(0,0,0), Vec3(0,0,-1), self._ode_space, parent = self._collision_model, length = 10.0)
 
         ##Overwrite variables for testing purposes
         self._grip_strength = 0.99
@@ -276,18 +273,15 @@ class Vehicle(object):
         self._physics_model.addTorque(self._physics_model.getAngularVel()*-self._track_grip*self.physics_model.getMass().getMagnitude())
         
         #refresh the positions of the collisionrays
-        self._front_left.doStep()
-        self._front_right.doStep()
-        self._back_left.doStep()
-        self._back_right.doStep()
+        self._ray.doStep()
         
     
     # ---------------------------------------------------------
     
-    def getCollisionRays(self):
-        return (self._front_left.getRay(), self._front_right.getRay(), self._back_left.getRay() ,self._back_right.getRay())#
+    def getRay(self):
+        return self._ray
     
-    collision_rays = property(fget = getCollisionRays)    
+    ray = property(fget = getRay)    
     
     # ----------------------------------------------------------------- 
         
