@@ -14,7 +14,9 @@ import splitscreen
 import trackgen3d
 from playercam import PlayerCam
 import gettext
+import sys
 from menu import Menu
+from menu import MainMenu
 
 # -----------------------------------------------------------------
 # -----------------------------------------------------------------
@@ -23,24 +25,23 @@ from menu import Menu
 class Game(ShowBase):
     '''
     '''
-    def __init__(self):
+    def __init__(self, *args):
         '''
         '''
+        
         #loadPrcFileData("", "fullscreen 1\n win-size 800 600")
         #loadPrcFileData("", "want-pstats 1\n pstats-host 127.0.0.1\n pstats-tasks 1\n task-timer-verbose 1")
         loadPrcFileData("", "sync-video #f")
         loadPrcFileData("", "default-directnotify-level debug\n notify-level-Game debug\n notify-level-Menu debug\n notify-level-Vehicle debug")
         ShowBase.__init__(self)
         #base.enableParticles()
-
+        
         self._notify = DirectNotify().newCategory("Game")
         self._notify.info("New Game-Object created: %s" %(self))
         
-        #PStatClient.connect() #activate to start performance measuring with pstats
         base.setFrameRateMeter(True) #Show the Framerate
         base.camNode.setActive(False) #disable default cam
         self.disableMouse() #disable manual camera-control
-        #base.toggleWireframe()
         render.setShaderAuto()
 
         # load the settings
@@ -69,7 +70,7 @@ class Game(ShowBase):
         self.world = OdeWorld()
 ##        self.world.setGravity(0, 0, -9.81)
         self.deltaTimeAccumulator = 0.0 #this variable is necessary to track the time for the physics
-        self.stepSize = 1.0 / 200.0 # This stepSize makes the simulation run at 60 frames per second
+        self.stepSize = 1.0 / 300.0 # This stepSize makes the simulation run at 60 frames per second
 
         #Initialize Collisions (ODE)
         self.space = OdeSimpleSpace()
@@ -79,21 +80,42 @@ class Game(ShowBase):
         self.space.setAutoCollideWorld(self.world)
         self.contactgroup = OdeJointGroup()
         self.space.setAutoCollideJointGroup(self.contactgroup)
-
+        
         #set up the collision event
         self.space.setCollisionEvent("ode-collision")
         base.accept("ode-collision", self.onCollision)
-  
-        
         
         # initialize the input devices
         self.devices = inputdevice.InputDevices(self.settings.getInputSettings())
-        myMenu = Menu(self)
-        taskMgr.add(self.devices.fetchEvents, "fetchEvents")
-        
+
+        startgame = True
         #Start the Game
-        
-        myMenu.showStartScreen()
+        for arg in sys.argv:
+            if  arg == "--ep":
+                startgame = False
+                if sys.argv[sys.argv.index(arg)+1] == "startGame":
+                    for i in xrange(len(self.devices.devices)):
+                        #myMenu = Menu(self)
+                                           
+                        player = self.addPlayer(self.devices.devices[0])
+                        import glob
+                        self.vehicle_list = glob.glob("data/models/vehicles/*.egg")
+                        #start loading the model
+                        self.players[0].setVehicle(loader.loadModel(self.vehicle_list[-1]))
+                       
+                        taskMgr.add(self.devices.fetchEvents, "fetchEvents")
+                        
+                        self.streetPath = loader.loadModel('data/models/Street.egg')    #Test Street
+                        self.startGame(self.streetPath)
+            if  arg == "--PSt":
+                PStatClient.connect() #activate to start performance measuring with pstats
+            if  arg == "--wire":    
+                base.toggleWireframe()
+        if startgame:   
+            myMenu = Menu(self)
+            taskMgr.add(self.devices.fetchEvents, "fetchEvents")
+            myMenu.showStartScreen()
+            
 
     # -----------------------------------------------------------------
 
@@ -193,35 +215,37 @@ class Game(ShowBase):
 
         #Handles the collision-rays from the players
         for player in self.players:
-            for ray in player.vehicle.collision_rays:
-                #print geom1.compareTo(ray)
-                #print geom2.compareTo(ray)
-                if geom1 == ray or geom2 == ray:
-                    normal = entry.getContactGeom(0).getNormal()
-                    normal.normalize()
-                    player.vehicle.physics_model.setGravityMode(0) #disable gravity if on the track
-                    mass = player.vehicle.physics_model.getMass().getMagnitude()                    
-                    force_pos = ray.getPosition()
-                    contact = entry.getContactPoint(0)
-                    force_dir = force_pos - contact
-                    acceleration = ((ray.getLength()/2)-force_dir.length())*10#calculate the direction
-                    player.vehicle.hit_ground = True
-                    
-                    #push the vehicle
-                    if acceleration > 0:
-                        force_dir.normalize()
-                        force_dir = Vec3(normal[0]*acceleration,normal[1]*acceleration,normal[2]*acceleration)
-                        player.vehicle.physics_model.addForceAtPos(force_dir*mass, force_pos)
-                        #dir = player.vehicle.collision_model.getQuaternion().xform(Vec3(-1,0,0))
-                        #force_dir = Vec3(normal[0]*acceleration,normal[1]*acceleration,normal[2]*acceleration)
-                    
-                    #pull the vehicle
-                    else:
-                        force_dir.normalize()
-                        force_dir = Vec3(normal[0]*acceleration,normal[1]*acceleration,normal[2]*acceleration)
-                        player.vehicle.physics_model.addForce(force_dir*mass)
-                    player.vehicle.physics_model.addForce(normal[0]*player.vehicle.boost_direction[0]*-0.99*mass, normal[1]*player.vehicle.boost_direction[1]*-0.99*mass, normal[2]*player.vehicle.boost_direction[2]*-0.99*mass)
-                    return
+            ray = player.vehicle.ray.getRay()
+            #print geom1.compareTo(ray)
+            #print geom2.compareTo(ray)
+            if geom1 == ray or geom2 == ray:
+                normal = entry.getContactGeom(0).getNormal()
+                normal.normalize()
+                player.vehicle.physics_model.setGravityMode(0) #disable gravity if on the track
+                mass = player.vehicle.physics_model.getMass().getMagnitude()                    
+                force_pos = ray.getPosition()
+                contact = entry.getContactPoint(0)
+                force_dir = force_pos - contact
+                acceleration = ((ray.getLength()/2)-force_dir.length())*20#calculate the direction
+                player.vehicle.hit_ground = True
+                
+                force_dir.normalize()
+                #rigidbody.AddTorque(Vector3.Cross(transform.forward, Vector3.up) - rigidbody.angularVelocity * 0.5f);
+                
+                #Change the angle of the vehicle so it matches the street
+                player.vehicle.physics_model.addTorque(player.vehicle.collision_model.getQuaternion().xform(Vec3(0,0,1)).cross(normal)*mass*20)# - player.vehicle.physics_model.getAngularVel() * 0.5)
+
+                #push the vehicle
+                if acceleration > 0:
+                    force_dir = Vec3(normal[0]*acceleration,normal[1]*acceleration,normal[2]*acceleration)
+                    player.vehicle.physics_model.addForce(force_dir*mass)
+                
+                #pull the vehicle
+                else:
+                    force_dir = Vec3(normal[0]*acceleration,normal[1]*acceleration,normal[2]*acceleration)
+                    player.vehicle.physics_model.addForce(force_dir*mass)
+                player.vehicle.physics_model.addForce(normal[0]*player.vehicle.boost_direction[0]*-0.99*mass, normal[1]*player.vehicle.boost_direction[1]*-0.99*mass, normal[2]*player.vehicle.boost_direction[2]*-0.99*mass)
+                return
                      
         for player in self.players:
             #workaround until panda 1.7.1

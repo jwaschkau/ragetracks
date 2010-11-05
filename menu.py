@@ -243,7 +243,6 @@ class Menu(object):
         '''
         self._notify.info("Initializing StartScreen")
         
-
         
         #StartScreen Node
         self.startNode = NodePath("StartNode")
@@ -297,7 +296,7 @@ class Menu(object):
                 self.camera.node().setActive(False)
                 #Kill Node
                 self.startNode.hide()       #Maybe there is a function to delete the Node from memory
-
+                
                 #Start the Game for testing purpose
                 #self.menu = Menu(self.newGame, self.players[0].getDevice())    #if one player exist
                 self.menu = MainMenu(self.newGame, self._devices.devices[i])         #if no player exist
@@ -360,7 +359,7 @@ class Menu(object):
         self._notify.info("New game initialized")
 
     # -----------------------------------------------------------------
-
+        
     def selectVehicle(self, task):
         #Set the countdown and hide, if > 3
         self.countdown -= globalClock.getDt()
@@ -424,12 +423,12 @@ class Menu(object):
                     #nodePath.setTexture(tex)
                     #nodePath.setTwoSided(True)
                     
-                    self.nodePath = loader.loadModel('data/models/Street.egg')
+                    self.streetPath = loader.loadModel('data/models/Street.egg')
                     
                     #tex = loader.loadTexture('data/models/StreetTex.png')
                     #self.nodePath.setTexture(tex)
                     #self.nodePath.setTwoSided(True)
-                    self._parent.startGame(self.nodePath)
+                    self._parent.startGame(self.streetPath)
                     return task.done
 
         for device in self.unusedDevices:
@@ -445,7 +444,7 @@ class Menu(object):
                     #ligt, that casts shadows
                     plight = Spotlight('plight')
                     plight.setColor(VBase4(10.0, 10.0, 10.0, 1))
-                    #plight.setShadowCaster(True, 2048, 2048)#enable shadows for this light
+                    plight.setShadowCaster(True, 2048, 2048)#enable shadows for this light
                     plight.getLens().setFov(80)
                     plnp = vehicleSelectNode.attachNewNode(plight)
                     plnp.setPos(2, -10, 10)
