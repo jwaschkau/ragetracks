@@ -103,23 +103,21 @@ class Vehicle(object):
         
         #Initialize the collision-model of the vehicle
         ##for use with blender models
-        try:
-            col_model = loader.loadModel("data/models/vehicles/%s_collision" %(self._model.getName().rstrip(".egg")))
-            col_model.convertToBox()
-            self.collision_model = OdeTriMeshGeom(self._ode_space, OdeTriMeshData(col_model, True))
+        #try:
+        #    col_model = loader.loadModel("data/models/vehicles/%s_collision" %(self._model.getName().rstrip(".egg")))
+        #    self.collision_model = OdeTriMeshGeom(self._ode_space, OdeTriMeshData(col_model, True))
+        #    self._notify.info("Loading collision-file: %s" %("data/models/vehicles/%s_collision" %(self._model.getName().rstrip(".egg"))))
         ##for fast collisions
-        except:
-            self._notify.warning("Could not load collision-file. Using standard collision-box")
-            self._collision_model = OdeBoxGeom(self._ode_space, 5,5,2)
+        #except:
+        #    self._notify.warning("Could not load collision-file. Using standard collision-box")
+        self.collision_model = OdeTriMeshGeom(self._ode_space, OdeTriMeshData(model, False))
+            #self._collision_model = OdeBoxGeom(self._ode_space, 3,3,2)
         self._collision_model.setBody(self._physics_model)
-        self._collision_model.setCollideBits(1)
-        self._collision_model.setCategoryBits(0)
+        self._collision_model.setCollideBits(3)
+        self._collision_model.setCategoryBits(2)
 
         #Add collision-rays for the floating effect
-        self._front_left = CollisionRay(Vec3(-0.5,1,0), Vec3(0,0,-1), self._ode_space, parent = self._collision_model, length = 5.0)
-        self._front_right = CollisionRay(Vec3(0.5,1,0), Vec3(0,0,-1), self._ode_space, parent = self._collision_model, length = 5.0)
-        self._back_left= CollisionRay(Vec3(-0.5,-1,0), Vec3(0,0,-1), self._ode_space, parent = self._collision_model, length = 5.0)
-        self._back_right = CollisionRay(Vec3(0.5,-1,0), Vec3(0,0,-1), self._ode_space, parent = self._collision_model, length = 5.0)
+        self._ray = CollisionRay(Vec3(0,0,0), Vec3(0,0,-1), self._ode_space, parent = self._collision_model, length = 10.0)
 
         ##Overwrite variables for testing purposes
         self._grip_strength = 0.99
@@ -276,18 +274,15 @@ class Vehicle(object):
         self._physics_model.addTorque(self._physics_model.getAngularVel()*-self._track_grip*self.physics_model.getMass().getMagnitude())
         
         #refresh the positions of the collisionrays
-        self._front_left.doStep()
-        self._front_right.doStep()
-        self._back_left.doStep()
-        self._back_right.doStep()
+        self._ray.doStep()
         
     
     # ---------------------------------------------------------
     
-    def getCollisionRays(self):
-        return (self._front_left.getRay(), self._front_right.getRay(), self._back_left.getRay() ,self._back_right.getRay())#
+    def getRay(self):
+        return self._ray
     
-    collision_rays = property(fget = getCollisionRays)    
+    ray = property(fget = getRay)    
     
     # ----------------------------------------------------------------- 
         
