@@ -289,35 +289,21 @@ class Track3d(object):
 ##            r = Vec3(0,0,1).angleDeg(Vec3(0,0,vec[2]))
             
             #hpr = heading, pitch, roll
-
-            hvec = Vec3(vec[0],vec[1],0)
-            pvec = Vec3(vec[0],0,vec[2])
-            rvec = Vec3(0,vec[1],vec[2])
-            
-            hvec.normalize()
-            pvec.normalize()
-            rvec.normalize()
-            
-            h = Vec3(1,0,0).angleDeg(hvec)
-            p = Vec3(0,1,0).angleDeg(pvec)
-            r = Vec3(0,0,1).angleDeg(rvec)
                 
-            mat1 = Mat3()
-            mat2 = Mat3()
-            mat3 = Mat3()
-            mat1.setRotateMat(h, Vec3(1,0,0))
-            mat2.setRotateMat(p, Vec3(0,1,0))
-            mat3.setRotateMat(r, Vec3(0,0,1))
+            mat = Mat3()
+            mat.setRotateMat(-90, Vec3(0,0,1))
+            vec = mat.xform(vec)
+            vec.normalize()
             
             j = 0    
             for shapedot in street_data:
-                ##dot = Vec3(shapedot[0], 0, shapedot[1])
-                dot = Vec3(shapedot[0], 0, shapedot[1])
-                dot = mat1.xform(dot)
-                dot = mat2.xform(dot)
-                dot = mat3.xform(dot)
-                
-                point = track_points[i]+dot
+                point = Vec3(shapedot[0], 0, shapedot[1])
+
+                point[0] *= vec[0]
+                point[1] *= vec[1]
+                point[0] += track_points[i][0]
+                point[1] += track_points[i][1]
+                point[2] += track_points[i][2]
             
                 ##self.vertex.addData3f((track_points[i][0] + (self.varthickness[i][0]*street_data[j][0]), track_points[i][1] + (self.varthickness[i][1]*street_data[j][0]), track_points[i][2] + (self.varthickness[i][2]+street_data[j][1])))
                 self.vertex.addData3f(point[0], point[1], point[2])
