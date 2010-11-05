@@ -9,7 +9,7 @@ from wiregeom import WireGeom
 class CollisionRay(object):
     '''
     '''
-    def __init__(self, position, direction, ode_space, length = 1.0, parent = None ,debug = True, collide_bits = 1, category_bits = 0 ):
+    def __init__(self, position, direction, ode_space, length = 1.0, parent = None ,debug = True, collide_bits = 5, category_bits = 0 ):
         '''
         '''
         self.ode_space = ode_space

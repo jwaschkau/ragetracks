@@ -173,7 +173,7 @@ class Game(ShowBase):
         #Create the Plane that you get hit by if you fall down
         self.plane = OdePlaneGeom(self.space,0,0,1,-50)
         self.plane.setCollideBits(0)
-        self.plane.setCategoryBits(1)
+        self.plane.setCategoryBits(3)
 
         self.arrows = loader.loadModel("data/models/arrows.egg")
         self.arrows.reparentTo(render)

@@ -103,17 +103,18 @@ class Vehicle(object):
         
         #Initialize the collision-model of the vehicle
         ##for use with blender models
-        try:
-            col_model = loader.loadModel("data/models/vehicles/%s_collision" %(self._model.getName().rstrip(".egg")))
-            col_model.convertToBox()
-            self.collision_model = OdeTriMeshGeom(self._ode_space, OdeTriMeshData(col_model, True))
+        #try:
+        #    col_model = loader.loadModel("data/models/vehicles/%s_collision" %(self._model.getName().rstrip(".egg")))
+        #    self.collision_model = OdeTriMeshGeom(self._ode_space, OdeTriMeshData(col_model, True))
+        #    self._notify.info("Loading collision-file: %s" %("data/models/vehicles/%s_collision" %(self._model.getName().rstrip(".egg"))))
         ##for fast collisions
-        except:
-            self._notify.warning("Could not load collision-file. Using standard collision-box")
-            self._collision_model = OdeBoxGeom(self._ode_space, 3,3,2)
+        #except:
+        #    self._notify.warning("Could not load collision-file. Using standard collision-box")
+        self.collision_model = OdeTriMeshGeom(self._ode_space, OdeTriMeshData(model, False))
+            #self._collision_model = OdeBoxGeom(self._ode_space, 3,3,2)
         self._collision_model.setBody(self._physics_model)
-        self._collision_model.setCollideBits(1)
-        self._collision_model.setCategoryBits(0)
+        self._collision_model.setCollideBits(3)
+        self._collision_model.setCategoryBits(2)
 
         #Add collision-rays for the floating effect
         self._ray = CollisionRay(Vec3(0,0,0), Vec3(0,0,-1), self._ode_space, parent = self._collision_model, length = 10.0)
