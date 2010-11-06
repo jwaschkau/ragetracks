@@ -423,7 +423,7 @@ class Menu(object):
                     #nodePath.setTexture(tex)
                     #nodePath.setTwoSided(True)
                     
-                    self.streetPath = loader.loadModel('data/models/Street.egg')
+                    self.streetPath = loader.loadModel('data/models/TestStreet2.egg')
                     
                     #tex = loader.loadTexture('data/models/StreetTex.png')
                     #self.nodePath.setTexture(tex)
@@ -441,16 +441,16 @@ class Menu(object):
                     vehicleSelectNode = NodePath("VehicleSelectNode")
                     self._players[-1].camera.camera.reparentTo(vehicleSelectNode)
                     
-                    #ligt, that casts shadows
-                    plight = Spotlight('plight')
-                    plight.setColor(VBase4(10.0, 10.0, 10.0, 1))
-                    plight.setShadowCaster(True, 2048, 2048)#enable shadows for this light
-                    plight.getLens().setFov(80)
-                    plnp = vehicleSelectNode.attachNewNode(plight)
-                    plnp.setPos(2, -10, 10)
-                    plnp.lookAt(0,0,0)
-                    vehicleSelectNode.setLight(plnp)
-                    vehicleSelectNode.setShaderAuto()#enable autoshader so we can use shadows
+#                    #ligt, that casts shadows
+#                    plight = Spotlight('plight')
+#                    plight.setColor(VBase4(10.0, 10.0, 10.0, 1))
+#                    plight.setShadowCaster(True, 2048, 2048)#enable shadows for this light
+#                    plight.getLens().setFov(80)
+#                    plnp = vehicleSelectNode.attachNewNode(plight)
+#                    plnp.setPos(2, -10, 10)
+#                    plnp.lookAt(0,0,0)
+#                    vehicleSelectNode.setLight(plnp)
+#                    vehicleSelectNode.setShaderAuto()#enable autoshader so we can use shadows
                     
                     ambilight = AmbientLight('ambilight')
                     ambilight.setColor(VBase4(0.2, 0.2, 0.2, 1))
