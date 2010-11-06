@@ -244,7 +244,7 @@ class Game(ShowBase):
                 else:
                     force_dir = Vec3(normal[0]*acceleration,normal[1]*acceleration,normal[2]*acceleration)
                     player.vehicle.physics_model.addForce(force_dir*mass)
-                player.vehicle.physics_model.addForce(normal[0]*player.vehicle.boost_direction[0]*-0.99*mass, normal[1]*player.vehicle.boost_direction[1]*-0.99*mass, normal[2]*player.vehicle.boost_direction[2]*-0.99*mass)
+                player.vehicle.physics_model.addForce(normal[0]*player.vehicle.boost_direction[0]*-0.9*mass, normal[1]*player.vehicle.boost_direction[1]*-0.9*mass, normal[2]*player.vehicle.boost_direction[2]*-0.9*mass)
                 return
                      
         for player in self.players:
