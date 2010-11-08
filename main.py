@@ -29,7 +29,7 @@ class Game(ShowBase):
         '''
         '''
         
-        #loadPrcFileData("", "fullscreen 1\n win-size 800 600")
+        #loadPrcFileData("", "fullscreen 1\n win-size 1680 1050")
         #loadPrcFileData("", "want-pstats 1\n pstats-host 127.0.0.1\n pstats-tasks 1\n task-timer-verbose 1")
         loadPrcFileData("", "sync-video #f")
         loadPrcFileData("", "default-directnotify-level debug\n notify-level-Game debug\n notify-level-Menu debug\n notify-level-Vehicle debug")

@@ -103,14 +103,14 @@ class Vehicle(object):
         
         #Initialize the collision-model of the vehicle
         ##for use with blender models
-        #try:
-        #    col_model = loader.loadModel("data/models/vehicles/%s_collision" %(self._model.getName().rstrip(".egg")))
-        #    self.collision_model = OdeTriMeshGeom(self._ode_space, OdeTriMeshData(col_model, True))
-        #    self._notify.info("Loading collision-file: %s" %("data/models/vehicles/%s_collision" %(self._model.getName().rstrip(".egg"))))
+        try:
+            col_model = loader.loadModel("data/models/vehicles/%s.collision" %(self._model.getName()))
+            self.collision_model = OdeTriMeshGeom(self._ode_space, OdeTriMeshData(col_model, True))
+            self._notify.info("Loading collision-file: %s" %("data/models/vehicles/%s.collision" %(self._model.getName())))
         ##for fast collisions
-        #except:
-        #    self._notify.warning("Could not load collision-file. Using standard collision-box")
-        self.collision_model = OdeTriMeshGeom(self._ode_space, OdeTriMeshData(model, False))
+        except:
+            self._notify.warning("Could not load collision-file. Using standard collision-box")
+            self.collision_model = OdeTriMeshGeom(self._ode_space, OdeTriMeshData(model, False))
             #self._collision_model = OdeBoxGeom(self._ode_space, 3,3,2)
         self._collision_model.setBody(self._physics_model)
         self._collision_model.setCollideBits(3)
