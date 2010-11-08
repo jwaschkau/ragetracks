@@ -29,7 +29,7 @@ class Game(ShowBase):
         '''
         '''
         
-        #loadPrcFileData("", "fullscreen 1\n win-size 800 600")
+        #loadPrcFileData("", "fullscreen 1\n win-size 1680 1050")
         #loadPrcFileData("", "want-pstats 1\n pstats-host 127.0.0.1\n pstats-tasks 1\n task-timer-verbose 1")
         loadPrcFileData("", "sync-video #f")
         loadPrcFileData("", "default-directnotify-level debug\n notify-level-Game debug\n notify-level-Menu debug\n notify-level-Vehicle debug")
@@ -244,7 +244,7 @@ class Game(ShowBase):
                 else:
                     force_dir = Vec3(normal[0]*acceleration,normal[1]*acceleration,normal[2]*acceleration)
                     player.vehicle.physics_model.addForce(force_dir*mass)
-                player.vehicle.physics_model.addForce(normal[0]*player.vehicle.boost_direction[0]*-0.99*mass, normal[1]*player.vehicle.boost_direction[1]*-0.99*mass, normal[2]*player.vehicle.boost_direction[2]*-0.99*mass)
+                player.vehicle.physics_model.addForce(normal[0]*player.vehicle.boost_direction[0]*-0.9*mass, normal[1]*player.vehicle.boost_direction[1]*-0.9*mass, normal[2]*player.vehicle.boost_direction[2]*-0.9*mass)
                 return
                      
         for player in self.players:
