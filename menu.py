@@ -243,7 +243,6 @@ class Menu(object):
         '''
         self._notify.info("Initializing StartScreen")
         
-        
         #StartScreen Node
         self.startNode = NodePath("StartNode")
         self.startNode.reparentTo(render)
@@ -280,11 +279,21 @@ class Menu(object):
         #Cam
         self.camera = base.makeCamera(base.win)
         
+        self.count = 0
+        taskMgr.add(self.camScaleTest, "TEST")
+        
         #print self.devices.getCount()
         #print self.settings.getInputSettings()
         self._notify.info("StarScreen initialized")
         
     # -----------------------------------------------------------------
+    
+    def camScaleTest(self, task):
+        self.count += 0.01
+        if self.count > 1: 
+            self.count = 0
+        self.camera.node().getDisplayRegion(0).setDimensions(0, self.count, 0, 1)
+        return task.cont
     
     def fetchAnyKey(self, task):
         '''
@@ -423,7 +432,7 @@ class Menu(object):
                     #nodePath.setTexture(tex)
                     #nodePath.setTwoSided(True)
                     
-                    self.streetPath = loader.loadModel('data/models/TestStreet2.egg')
+                    self.streetPath = loader.loadModel('data/models/Street.egg')
                     
                     #tex = loader.loadTexture('data/models/StreetTex.png')
                     #self.nodePath.setTexture(tex)
