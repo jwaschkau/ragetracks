@@ -279,6 +279,7 @@ class Menu(object):
         #Cam
         self.camera = base.makeCamera(base.win)
         
+        ##TEST
         self.count = 0
         taskMgr.add(self.camScaleTest, "TEST")
         
