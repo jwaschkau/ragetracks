@@ -77,9 +77,12 @@ class Vehicle(object):
             else: self._notify.warning("No value defined for tag: %s" %(tag[0]))
         
         blowout = model.find("**/Blowout")
-        print
-        print blowout.get_children()
-        print
+        for node in blowout.getChildren():
+            particle = ParticleEffect()
+            self._blowout.append(particle)
+            particle.loadConfig('./data/particles/blowout_test.ptf')
+            particle.start(node)
+            particle.softStop()
         
         if self._model != None: 
             heading  = self._model.getH()
@@ -129,15 +132,6 @@ class Vehicle(object):
         ##Overwrite variables for testing purposes
         self._grip_strength = 0.99
         self._track_grip = 0.99
-        self._blowout.append(ParticleEffect())
-        self._blowout.append(ParticleEffect())
-        for particle in self._blowout:
-            particle.loadConfig('./data/particles/blowout_test.ptf')
-            particle.start(self._model)
-            particle.softStop()
-        self._blowout[0].setPos(0.2, -3.000, 0)
-        self._blowout[1].setPos(-0.2, -3.000, 0)
-        
         self._model_loading = False
         
     # ---------------------------------------------------------
