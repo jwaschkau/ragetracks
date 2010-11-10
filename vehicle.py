@@ -9,6 +9,10 @@ from wiregeom import WireGeom
 from collisionray import CollisionRay
 from direct.directnotify.DirectNotify import DirectNotify
 from direct.particles.ParticleEffect import ParticleEffect
+#Glow
+from pandac.PandaModules import *
+from direct.filter.CommonFilters import CommonFilters
+from direct.showbase.DirectObject import DirectObject
 
 class Vehicle(object):
     '''
@@ -108,6 +112,16 @@ class Vehicle(object):
         self._model.setPos(0,0,2)
         self._model.setHpr(heading,0,0)
        
+        #GlowTextur
+        #self.glowSize=0
+        #self.filters = CommonFilters(base.win, base.cam)
+        #self.filters.setBloom(blend=(1,0,0,1),mintrigger=.6, maxtrigger=1, desat=-.5,intensity=3,size=1)
+        #self.filters.setBloom(blend=(0,self.glowSize,0,0) ,desat=-2, intensity=3, size='medium')
+        #tex = loader.loadTexture( 'data/textures/vehicle03_glow_map.jpg' )
+        #ts = TextureStage('ts')
+        #ts.setMode(TextureStage.MGlow)
+        #self._model.setTexture(ts, tex)
+       
         #Initialize the physics-simulation for the vehicle
         self._physics_model = OdeBody(self._ode_world)
         self._physics_model.setPosition(self._model.getPos(render))
@@ -140,6 +154,18 @@ class Vehicle(object):
         self._grip_strength = 0.99
         self._track_grip = 0.99
         self._model_loading = False
+        
+    def toggleGlow(self):
+        self.glowSize += .1
+        print self.glowSize
+        if (self.glowSize == 4): self.glowSize = 0
+        self.filters.setBloom(blend=(0,self.glowSize,0,0) ,desat=-2, intensity=3, size='medium')
+      
+    def boggleGlow(self):
+        self.glowSize -= .1
+        print self.glowSize
+        if (self.glowSize == 4): self.glowSize = 0
+        self.filters.setBloom(blend=(0,self.glowSize,0,0) , desat=-2, intensity=3.0, size='medium')
         
     # ---------------------------------------------------------
     
