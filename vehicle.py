@@ -10,7 +10,6 @@ from collisionray import CollisionRay
 from direct.directnotify.DirectNotify import DirectNotify
 from direct.particles.ParticleEffect import ParticleEffect
 #Glow
-from pandac.PandaModules import *
 from direct.filter.CommonFilters import CommonFilters
 from direct.showbase.DirectObject import DirectObject
 
