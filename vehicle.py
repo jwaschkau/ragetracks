@@ -41,7 +41,7 @@ class Vehicle(object):
         self._brake_strength = 10.0
         self._hit_ground = True
         self._model_loading = False
-        self._blowout = ParticleEffect()
+        self._blowout = []
         
         #set up the propertys of the vehicle that schould be loaded
         #the methods get called because the data is immutable and 
@@ -75,7 +75,12 @@ class Vehicle(object):
                 if type(tag[2](value)) == str: tag[1](_(tag[2](value)))
                 else: tag[1](tag[2](value))
             else: self._notify.warning("No value defined for tag: %s" %(tag[0]))
-
+        
+        blowout = model.find("**/Blowout")
+        print
+        print blowout.get_children()
+        print
+        
         if self._model != None: 
             heading  = self._model.getH()
             
@@ -124,9 +129,15 @@ class Vehicle(object):
         ##Overwrite variables for testing purposes
         self._grip_strength = 0.99
         self._track_grip = 0.99
-        self._blowout.loadConfig('./data/particles/blowout_test.ptf')
-        self._blowout.start(self._model)
-        self._blowout.setPos(0.000, -5.000, 0)
+        self._blowout.append(ParticleEffect())
+        self._blowout.append(ParticleEffect())
+        for particle in self._blowout:
+            particle.loadConfig('./data/particles/blowout_test.ptf')
+            particle.start(self._model)
+            particle.softStop()
+        self._blowout[0].setPos(0.2, -3.000, 0)
+        self._blowout[1].setPos(-0.2, -3.000, 0)
+        
         self._model_loading = False
         
     # ---------------------------------------------------------
@@ -142,6 +153,20 @@ class Vehicle(object):
         return self._model.setPos(x,y,z)
         
     position = property(fget = getPos, fset = setPos)
+        
+    # ---------------------------------------------------------
+    
+    def startBlowout(self):
+        '''
+        '''
+        for particle in self._blowout:
+            particle.softStart()
+        
+    def stopBlowout(self):
+        '''
+        '''
+        for particle in self._blowout:
+            particle.softStop()
         
     # ---------------------------------------------------------
     
@@ -191,6 +216,7 @@ class Vehicle(object):
         '''
         Boosts the vehicle by indicated strength
         '''
+        self.startBlowout()
         if self._hit_ground:
             direction = self._collision_model.getQuaternion().xform(Vec3(0,1,0))
             self._physics_model.addForce(direction*self._boost_strength*self.physics_model.getMass().getMagnitude())

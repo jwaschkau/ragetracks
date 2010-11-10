@@ -280,6 +280,8 @@ class Game(ShowBase):
                 #get the player input and set the forces
                 if player.device.boost:
                     player.vehicle.setBoost()
+                else:
+                    player.vehicle.stopBlowout()
                 if player.device.directions[0] != 0 or player.device.directions[1] != 0:
                     player.vehicle.direction = player.device.directions
 
