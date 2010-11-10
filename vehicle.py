@@ -110,6 +110,12 @@ class Vehicle(object):
         self._model.setPos(0,0,2)
         self._model.setHpr(heading,0,0)
        
+        #GlowTextur
+        tex = loader.loadTexture( 'data/textures/vehicle03_glow_map.jpg' )
+        ts = TextureStage('ts')
+        ts.setMode(TextureStage.MGlow)
+        self._model.setTexture(ts, tex)
+       
         #Initialize the physics-simulation for the vehicle
         self._physics_model = OdeBody(self._ode_world)
         self._physics_model.setPosition(self._model.getPos(render))
