@@ -278,7 +278,6 @@ class Game(ShowBase):
         while self.deltaTimeAccumulator > self.stepSize: # Step the simulation
             for player in self.players:
                 player.doStep() #refresh player specific things (rays)
-
                 #get the player input and set the forces
                 if player.device.boost:
                     player.vehicle.setBoost()
@@ -287,7 +286,6 @@ class Game(ShowBase):
                     
                 if player.device.directions[0] != 0 or player.device.directions[1] != 0:
                     player.vehicle.direction = player.device.directions
-
                 linear_velocity = player.vehicle.physics_model.getLinearVel()
                 angular_velocity = player.vehicle.physics_model.getAngularVel()
                 mass = player.vehicle.physics_model.getMass().getMagnitude()
@@ -295,13 +293,13 @@ class Game(ShowBase):
                 #calculate airresistance to get energy out of the ode-system
                 player.vehicle.physics_model.addForce(linear_velocity*-self.LINEAR_FRICTION*mass)
                 player.vehicle.physics_model.addTorque(angular_velocity*-self.ANGULAR_FRICTION*mass)
-
+            
+            ##This crashes the game when a different vehicle gets selected!
             self.space.autoCollide() # Setup the contact joints
             self.deltaTimeAccumulator -= self.stepSize # Remove a stepSize from the accumulator until the accumulated time is less than the stepsize
             self.world.quickStep(self.stepSize)
             self.contactgroup.empty() # Clear the contact joints
             player.vehicle.hit_ground = False
-
         for player in self.players: # set new positions
             player.updatePlayer()
         return task.cont
