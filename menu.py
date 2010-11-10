@@ -279,22 +279,11 @@ class Menu(object):
         #Cam
         self.camera = base.makeCamera(base.win)
         
-        ##TEST
-        self.count = 0
-        taskMgr.add(self.camScaleTest, "TEST")
-        
         #print self.devices.getCount()
         #print self.settings.getInputSettings()
         self._notify.info("StarScreen initialized")
         
     # -----------------------------------------------------------------
-    
-    def camScaleTest(self, task):
-        self.count += 0.01
-        if self.count > 1: 
-            self.count = 0
-        self.camera.node().getDisplayRegion(0).setDimensions(0, self.count, 0, 1)
-        return task.cont
     
     def fetchAnyKey(self, task):
         '''
@@ -476,7 +465,7 @@ class Menu(object):
                     #start loading the model
                     loader.loadModel(self.vehicle_list[0], callback = self._players[-1].setVehicle)
                     self._notify.debug("Loading initial vehicle: %s" %(self.vehicle_list[0]))
-                    self.unusedDevices.remove(device) 
+                    #self.unusedDevices.remove(device) 
                     self.player_buttonpressed[-1] = task.time + self.KEY_DELAY
 
         for player in self._players:
