@@ -34,7 +34,6 @@ class Game(ShowBase):
         loadPrcFileData("", "sync-video #f")
         loadPrcFileData("", "default-directnotify-level debug\n notify-level-x11display fatal\n notify-level-Game debug\n notify-level-Menu debug\n notify-level-Vehicle debug")
         ShowBase.__init__(self)
-        base.enableParticles()
         
         self._notify = DirectNotify().newCategory("Game")
         self._notify.info("New Game-Object created: %s" %(self))
@@ -43,6 +42,7 @@ class Game(ShowBase):
         base.camNode.setActive(False) #disable default cam
         self.disableMouse() #disable manual camera-control
         render.setShaderAuto()
+        base.enableParticles()
 
         # load the settings
         self.settings = settings.Settings()
@@ -80,10 +80,6 @@ class Game(ShowBase):
         self.space.setAutoCollideWorld(self.world)
         self.contactgroup = OdeJointGroup()
         self.space.setAutoCollideJointGroup(self.contactgroup)
-        
-        #set up the collision event
-        self.space.setCollisionEvent("ode-collision")
-        base.accept("ode-collision", self.onCollision)
         
         # initialize the input devices
         self.devices = inputdevice.InputDevices(self.settings.getInputSettings())
@@ -158,6 +154,7 @@ class Game(ShowBase):
             self.players[counter].vehicle.physics_model.setPosition(0, -5 * counter, 10)
             self.players[counter].vehicle.model.setH(0)
             self.players[counter].vehicle.model.setP(0)
+            self.players[counter].vehicle.model.setR(0)
             self.players[counter].vehicle.physics_model.setQuaternion(self.players[counter].vehicle.model.getQuat(render))
             counter+=1
         
@@ -194,12 +191,17 @@ class Game(ShowBase):
         dlnp = render.attachNewNode(dlight)
         dlnp.setHpr(0, -60, 0)
         render.setLight(dlnp)
+        self.space.setCollisionEvent("ode-collision")
+        base.accept("ode-collision", self.onCollision)
+
 
         #start the gametask
         self._notify.debug("Starting gameTask")
         taskMgr.add(self.gameTask, "gameTask")
         self.world.setGravity(0, 0, -9.81)
         self._notify.info("Start game initialized")
+        #set up the collision event
+
 
     # -----------------------------------------------------------------
 

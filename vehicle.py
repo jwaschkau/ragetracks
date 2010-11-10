@@ -93,7 +93,6 @@ class Vehicle(object):
                 particle.softStop()
         else: self._notify.warning("No Blowout-Node found")
             
-        print self._model
         if self._model != None: 
             heading  = self._model.getH()
             
