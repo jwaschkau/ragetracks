@@ -282,6 +282,7 @@ class Game(ShowBase):
                     player.vehicle.setBoost()
                 else:
                     player.vehicle.stopBlowout()
+                    
                 if player.device.directions[0] != 0 or player.device.directions[1] != 0:
                     player.vehicle.direction = player.device.directions
 

@@ -45,3 +45,6 @@ class CollisionRay(object):
 
     def getRay(self):
         return self.ray
+    
+    def __del__(self):
+        self.ray.destroy()
