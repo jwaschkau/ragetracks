@@ -64,11 +64,7 @@ class Vehicle(object):
         Choose what vehicle the player has chosen. This method initializes all data of this vehicle
         '''
         self.cleanResources()
-        ##Seems not to work
-        #self._notify.debug("Delete unused Nodes")
-        #for node in self._blowout:
-        #    node.removeNode()
-        
+    
         self._notify.debug("Set new vehicle: %s" %model)
         
         #Load the attributes of the vehicle
@@ -166,13 +162,13 @@ class Vehicle(object):
         '''
         for particle in self._blowout:
             particle.softStart()
-        
+
     def stopBlowout(self):
         '''
         '''
         for particle in self._blowout:
             particle.softStop()
-        
+
     # ---------------------------------------------------------
     
     def setModel(self, model):
@@ -429,6 +425,7 @@ class Vehicle(object):
         '''
         for node in self._blowout:
             node.removeNode()
+            self._blowout = []
             
         if self._model != None:
             for node in self._model.getChildren():
