@@ -44,7 +44,7 @@ class Game(ShowBase):
         #Start of the code from steam.ptf
         #self.p.cleanup()
         self.p = ParticleEffect()
-        self.p.loadConfig('./data/particles/blowout.ptf')        
+        self.p.loadConfig('./data/particles/blowout_test.ptf')        
         #Sets particles to birth relative to the teapot, but to render at toplevel
         self.p.start(render)
         self.p.setPos(0.000, 0.000, 0)

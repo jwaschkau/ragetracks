@@ -8,6 +8,7 @@ from panda3d.core import TexGenAttrib
 from wiregeom import WireGeom
 from collisionray import CollisionRay
 from direct.directnotify.DirectNotify import DirectNotify
+from direct.particles.ParticleEffect import ParticleEffect
 
 class Vehicle(object):
     '''
@@ -40,6 +41,7 @@ class Vehicle(object):
         self._brake_strength = 10.0
         self._hit_ground = True
         self._model_loading = False
+        self._blowout = ParticleEffect()
         
         #set up the propertys of the vehicle that schould be loaded
         #the methods get called because the data is immutable and 
@@ -122,7 +124,9 @@ class Vehicle(object):
         ##Overwrite variables for testing purposes
         self._grip_strength = 0.99
         self._track_grip = 0.99
-        
+        self._blowout.loadConfig('./data/particles/blowout_test.ptf')
+        self._blowout.start(self._model)
+        self._blowout.setPos(0.000, -5.000, 0)
         self._model_loading = False
         
     # ---------------------------------------------------------
