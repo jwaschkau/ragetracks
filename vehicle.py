@@ -63,10 +63,16 @@ class Vehicle(object):
         '''
         Choose what vehicle the player has chosen. This method initializes all data of this vehicle
         '''
+        ##Seems not to work
+        self._notify.debug("Delete unused Nodes")
+        for node in self._blowout:
+            node.removeNode()
+        
         self._notify.debug("Set new vehicle: %s" %model)
         
         #Load the attributes of the vehicle
         attributes = model.find("**/Attributes")
+        if attributes.isEmpty(): self._notify.warning("No Attribute-Node found")
         for tag in self._tags:
             value = attributes.getNetTag(tag[0])
             if value:
@@ -77,13 +83,16 @@ class Vehicle(object):
             else: self._notify.warning("No value defined for tag: %s" %(tag[0]))
         
         blowout = model.find("**/Blowout")
-        for node in blowout.getChildren():
-            particle = ParticleEffect()
-            self._blowout.append(particle)
-            particle.loadConfig('./data/particles/blowout_test.ptf')
-            particle.start(node)
-            particle.softStop()
-        
+        if not blowout.isEmpty():
+            self._notify.debug("Loading Blowout-Particles")
+            for node in blowout.getChildren():
+                particle = ParticleEffect()
+                self._blowout.append(particle)
+                particle.loadConfig('./data/particles/blowout_test.ptf')
+                particle.start(node)
+                particle.softStop()
+        else: self._notify.warning("No Blowout-Node found")
+            
         if self._model != None: 
             heading  = self._model.getH()
             
@@ -411,11 +420,13 @@ class Vehicle(object):
     name = property(fget = getName, fset = setName)
     
     # ----------------------------------------------------------------- 
-
+    
     def __del__(self):
         '''
         Destroy unused nodes
         '''
+        for node in self._blowout:
+            node.removeNode()
         for node in self._model.getChildren():
             node.removeNode()
         self._model.removeNode()
