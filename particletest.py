@@ -1,60 +1,58 @@
 # -*- coding: utf-8 -*-
-import direct.directbase.DirectStart
-from pandac.PandaModules import *
-from direct.particles.Particles import Particles
-from direct.particles.ParticleEffect import ParticleEffect
+###################################################################
+## this module is the main one, which contains the game class
+###################################################################
 
+from direct.showbase.ShowBase import ShowBase
+from pandac.PandaModules import * #Load all PandaModules
+from tkpanels.ParticlePanel import ParticlePanel
 
+# -----------------------------------------------------------------
+# -----------------------------------------------------------------
+# -----------------------------------------------------------------
 
-class App(object):
+class Game(ShowBase):
     '''
     '''
     def __init__(self):
         '''
         '''
-        # set 'sky' colour
-        base.setBackgroundColor(0.0,0.0,0.2,0)
+        #loadPrcFileData("", "want-pstats 1\n pstats-host 127.0.0.1\n pstats-tasks 1\n task-timer-verbose 1")
+        #loadPrcFileData("", "pstatshost 192.168.220.121")
+        ShowBase.__init__(self)
 
-        # just an environment model
-        env = loader.loadModel('environment')
-        env.reparentTo(render)
-        env.setScale(0.02)
-        env.setPos(0,18,-3)
-
-
-        # parent node to attach the particle effect to
-        self.parent = render.attachNewNode('parent')
-
-        self.parent.setPos(-24,13,0)
+        
+        #PStatClient.connect() #activate to start performance measuring with pstats
+        base.setFrameRateMeter(True) #Show the Framerate
+        #base.toggleWireframe()
+        
+        self.startGame()
+        # -----------------------------------------------------------------
 
 
-        # enable particles
-        base.enableParticles()
 
-        blowout = ParticleEffect()
-        # set the file to read particle effect settings from
-        blowout.loadConfig(Filename('data/particles/blowout.ptf'))
-        #Sets particles to birth relative to the parent
-        blowout.start(self.parent)
+    # -----------------------------------------------------------------
 
+    def startGame(self):
+        '''
+        Start the game
+        '''
+        panel = ParticlePanel()
+    
+        #Load the Lights
+        ambilight = AmbientLight('ambilight')
+        ambilight.setColor(VBase4(0.2, 0.2, 0.2, 1))
+        render.setLight(render.attachNewNode(ambilight))
 
-        # we will need to change some teexturing settings
-        blowtexture = loader.loadTexture("data/textures/blowout_orange.png")
-        ts = TextureStage("ts")
-        #ts.setMode(TextureStage.MReplace)
-        blowout.setTexture(ts, blowtexture, 1)
+    # -----------------------------------------------------------------
 
-        taskMgr.add(self.moveParent, "moveParent")
+# -----------------------------------------------------------------
+# -----------------------------------------------------------------
+# -----------------------------------------------------------------
 
-
-    def moveParent(self,task):
-            '''
-            '''
-            self.parent.setX(self.parent.getX()+(8*globalClock.getDt()))
-            return task.cont
+game = Game()
+game.run()
 
 
 
 
-App()
-run()
