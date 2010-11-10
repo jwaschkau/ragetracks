@@ -88,7 +88,7 @@ class Vehicle(object):
             for node in blowout.getChildren():
                 particle = ParticleEffect()
                 self._blowout.append(particle)
-                particle.loadConfig('./data/particles/blowout_test.ptf')
+                particle.loadConfig('./data/particles/blowout.ptf')
                 particle.start(node)
                 particle.softStop()
         else: self._notify.warning("No Blowout-Node found")
