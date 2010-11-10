@@ -9,6 +9,10 @@ from wiregeom import WireGeom
 from collisionray import CollisionRay
 from direct.directnotify.DirectNotify import DirectNotify
 from direct.particles.ParticleEffect import ParticleEffect
+#Glow
+from pandac.PandaModules import *
+from direct.filter.CommonFilters import CommonFilters
+from direct.showbase.DirectObject import DirectObject
 
 class Vehicle(object):
     '''
@@ -63,10 +67,11 @@ class Vehicle(object):
         '''
         Choose what vehicle the player has chosen. This method initializes all data of this vehicle
         '''
+        self.cleanResources()
         ##Seems not to work
-        self._notify.debug("Delete unused Nodes")
-        for node in self._blowout:
-            node.removeNode()
+        #self._notify.debug("Delete unused Nodes")
+        #for node in self._blowout:
+        #    node.removeNode()
         
         self._notify.debug("Set new vehicle: %s" %model)
         
@@ -93,6 +98,7 @@ class Vehicle(object):
                 particle.softStop()
         else: self._notify.warning("No Blowout-Node found")
             
+        print self._model
         if self._model != None: 
             heading  = self._model.getH()
             
@@ -111,10 +117,14 @@ class Vehicle(object):
         self._model.setHpr(heading,0,0)
        
         #GlowTextur
-        tex = loader.loadTexture( 'data/textures/vehicle03_glow_map.jpg' )
-        ts = TextureStage('ts')
-        ts.setMode(TextureStage.MGlow)
-        self._model.setTexture(ts, tex)
+        #self.glowSize=0
+        #self.filters = CommonFilters(base.win, base.cam)
+        #self.filters.setBloom(blend=(1,0,0,1),mintrigger=.6, maxtrigger=1, desat=-.5,intensity=3,size=1)
+        #self.filters.setBloom(blend=(0,self.glowSize,0,0) ,desat=-2, intensity=3, size='medium')
+        #tex = loader.loadTexture( 'data/textures/vehicle03_glow_map.jpg' )
+        #ts = TextureStage('ts')
+        #ts.setMode(TextureStage.MGlow)
+        #self._model.setTexture(ts, tex)
        
         #Initialize the physics-simulation for the vehicle
         self._physics_model = OdeBody(self._ode_world)
@@ -148,6 +158,18 @@ class Vehicle(object):
         self._grip_strength = 0.99
         self._track_grip = 0.99
         self._model_loading = False
+        
+    def toggleGlow(self):
+        self.glowSize += .1
+        print self.glowSize
+        if (self.glowSize == 4): self.glowSize = 0
+        self.filters.setBloom(blend=(0,self.glowSize,0,0) ,desat=-2, intensity=3, size='medium')
+      
+    def boggleGlow(self):
+        self.glowSize -= .1
+        print self.glowSize
+        if (self.glowSize == 4): self.glowSize = 0
+        self.filters.setBloom(blend=(0,self.glowSize,0,0) , desat=-2, intensity=3.0, size='medium')
         
     # ---------------------------------------------------------
     
@@ -427,17 +449,38 @@ class Vehicle(object):
     
     # ----------------------------------------------------------------- 
     
+    def cleanResources(self):
+        '''
+        Removes old nodes, gets called when a new vehcile loads
+        '''
+        for node in self._blowout:
+            node.removeNode()
+            
+        if self._model != None:
+            for node in self._model.getChildren():
+                node.removeNode()
+            self._model.removeNode()
+            self._model = None
+            self._physics_model.destroy()
+            self._collision_model.destroy()
+        
+        self._notify.info("Vehicle-Object cleaned: %s" %(self))
+    
     def __del__(self):
         '''
         Destroy unused nodes
         '''
         for node in self._blowout:
             node.removeNode()
-        for node in self._model.getChildren():
-            node.removeNode()
-        self._model.removeNode()
-        self._physics_model.destroy()
-        self._collision_model.destroy()
+            
+        if self._model != None:
+            for node in self._model.getChildren():
+                node.removeNode()
+            self._model.removeNode()
+            self._model = None
+            self._physics_model.destroy()
+            self._collision_model.destroy()
+        
         self._notify.info("Vehicle-Object deleted: %s" %(self))
     
 if __name__ == "__main__":
