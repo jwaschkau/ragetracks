@@ -83,16 +83,16 @@ class Vehicle(object):
                 else: tag[1](tag[2](value))
             else: self._notify.warning("No value defined for tag: %s" %(tag[0]))
         
-##        blowout = model.find("**/Blowout")
-##        if not blowout.isEmpty():
-##            self._notify.debug("Loading Blowout-Particles")
-##            for node in blowout.getChildren():
-##                particle = ParticleEffect()
-##                self._blowout.append(particle)
-##                particle.loadConfig('./data/particles/blowout_test.ptf')
-##                particle.start(node)
-##                particle.softStop()
-##        else: self._notify.warning("No Blowout-Node found")
+        blowout = model.find("**/Blowout")
+        if not blowout.isEmpty():
+            self._notify.debug("Loading Blowout-Particles")
+            for node in blowout.getChildren():
+                particle = ParticleEffect()
+                self._blowout.append(particle)
+                particle.loadConfig('./data/particles/blowout_test.ptf')
+                particle.start(node)
+                particle.softStop()
+        else: self._notify.warning("No Blowout-Node found")
             
         print self._model
         if self._model != None: 
