@@ -356,8 +356,17 @@ class Track3d(object):
                 self.prim.addVertex(i+j+1)
                 self.prim.addVertex(i+j)
                 self.prim.closePrimitive()
-            else:
-                pass #hier fehlt noch was das die Mesh unten schliest
+            else: # close mesh's bottom side
+                print "langweiler", i, j
+                self.prim.addVertex(i+1-j)
+                self.prim.addVertex(i+j+1-j)
+                self.prim.addVertex(i+j-1+1-j)
+                self.prim.closePrimitive()
+                
+                self.prim.addVertex(i+j-1+1-j)
+                self.prim.addVertex(i+j+1-j)
+                self.prim.addVertex(i+(2*j)-1+1-j)
+                self.prim.closePrimitive()
         #print self.prim
         
 # -------------------------------------------------------------------------------------
