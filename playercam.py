@@ -21,8 +21,8 @@ class PlayerCam(object):
         self._distance = 0.7
         self._cam_node = NodePath()
         
-        filters = CommonFilters(base.win, self._camera)
-        filters.setBloom(blend=(0,1,0,0) ,desat=10, intensity=1, size='medium')
+        #filters = CommonFilters(base.win, self._camera)
+        #filters.setBloom(blend=(0,1,0,0) ,desat=10, intensity=1, size='medium')
     
     # ---------------------------------------------------------
     def followVehicle(self, direction, nodepath = None):
