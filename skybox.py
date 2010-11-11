@@ -20,7 +20,7 @@ class Game(ShowBase):
         self.skybox.setDepthWrite(0)
         self.skybox.setDepthTest(0)
         self.skybox.setLightOff()
-        self.skybox.setScale(2000)
+        self.skybox.setScale(10000)
         self.skybox.reparentTo(render)
 
 
