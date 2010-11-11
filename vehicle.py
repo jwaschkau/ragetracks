@@ -45,6 +45,7 @@ class Vehicle(object):
         self._hit_ground = True
         self._model_loading = False
         self._blowout = []
+        self._blowout_on = False
         
         #set up the propertys of the vehicle that schould be loaded
         #the methods get called because the data is immutable and 
@@ -109,16 +110,33 @@ class Vehicle(object):
         self._model = model
         self._model.setPos(0,0,2)
         self._model.setHpr(heading,0,0)
-       
-        #GlowTextur
-        #self.glowSize=0
-        #self.filters = CommonFilters(base.win, base.cam)
-        #self.filters.setBloom(blend=(1,0,0,1),mintrigger=.6, maxtrigger=1, desat=-.5,intensity=3,size=1)
-        #self.filters.setBloom(blend=(0,self.glowSize,0,0) ,desat=-2, intensity=3, size='medium')
-        #tex = loader.loadTexture( 'data/textures/vehicle03_glow_map.jpg' )
-        #ts = TextureStage('ts')
-        #ts.setMode(TextureStage.MGlow)
-        #self._model.setTexture(ts, tex)
+        
+#        #Test
+#        plightCenter = NodePath( 'plightCenter' )
+#        plightCenter.reparentTo( render )
+#        self.interval = plightCenter.hprInterval(12, Vec3(360, 0, 0))
+#        self.interval.loop()
+#
+#        plight = PointLight('plight')
+#        plight.setColor(VBase4(0.8, 0.8, 0.8, 1))
+#        plight.setAttenuation(Vec3(1,0,0))
+#        plnp = plightCenter.attachNewNode(plight)
+#        plnp.setPos(5, 5, 10)
+#        render.setLight(plnp)
+#
+#        alight = AmbientLight('alight')
+#        alight.setColor(VBase4(0,0,0, 1))
+#        alnp = render.attachNewNode(alight)
+#        render.setLight(alnp)
+        
+#        GlowTextur
+#        self.glowSize=10
+#        self.filters = CommonFilters(base.win, self._model)
+#        self.filters.setBloom(blend=(0,self.glowSize,0,0) ,desat=1, intensity=1, size='medium')
+        tex = loader.loadTexture( 'data/textures/glowmap.png' )
+        ts = TextureStage('ts')
+        ts.setMode(TextureStage.MGlow)
+        self._model.setTexture(ts, tex)
        
         #Initialize the physics-simulation for the vehicle
         self._physics_model = OdeBody(self._ode_world)
@@ -184,14 +202,18 @@ class Vehicle(object):
     def startBlowout(self):
         '''
         '''
-        for particle in self._blowout:
-            particle.softStart()
+        if not self._blowout_on:
+            self._blowout_on = True
+            for particle in self._blowout:
+                particle.softStart()
 
     def stopBlowout(self):
         '''
         '''
-        for particle in self._blowout:
-            particle.softStop()
+        if self._blowout_on:
+            self._blowout_on = False
+            for particle in self._blowout:
+                particle.softStop()
 
     # ---------------------------------------------------------
     
