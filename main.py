@@ -168,7 +168,7 @@ class Game(ShowBase):
         self.groundGeom.setCategoryBits(1)
         
         #Create the Plane that you get hit by if you fall down
-        self.plane = OdePlaneGeom(self.space,0,0,1,-50)
+        self.plane = OdePlaneGeom(self.space,0,0,1,-250)
         self.plane.setCollideBits(0)
         self.plane.setCategoryBits(3)
 
