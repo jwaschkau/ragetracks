@@ -157,8 +157,8 @@ class Vehicle(object):
         ##for fast collisions
         except:
             self._notify.warning("Could not load collision-file. Using standard collision-box")
-            self.collision_model = OdeTriMeshGeom(self._ode_space, OdeTriMeshData(model, False))
-            #self._collision_model = OdeBoxGeom(self._ode_space, 3,3,2)
+            #self.collision_model = OdeTriMeshGeom(self._ode_space, OdeTriMeshData(model, False))
+            self._collision_model = OdeBoxGeom(self._ode_space, 3,3,2)
         self._collision_model.setBody(self._physics_model)
         self._collision_model.setCollideBits(7)
         self._collision_model.setCategoryBits(2)
@@ -352,6 +352,8 @@ class Vehicle(object):
         
         #refresh the positions of the collisionrays
         self._ray.doStep()
+        self._physics_model.setGravityMode(1)
+        self._hit_ground = False
         
     
     # ---------------------------------------------------------

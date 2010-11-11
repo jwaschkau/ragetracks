@@ -294,8 +294,6 @@ class Game(ShowBase):
                 #calculate airresistance to get energy out of the ode-system
                 player.vehicle.physics_model.addForce(linear_velocity*-self.LINEAR_FRICTION*mass)
                 player.vehicle.physics_model.addTorque(angular_velocity*-self.ANGULAR_FRICTION*mass)
-            
-            player.vehicle.hit_ground = False
             self.space.autoCollide() # Setup the contact joints
             self.deltaTimeAccumulator -= self.stepSize # Remove a stepSize from the accumulator until the accumulated time is less than the stepsize
             self.world.quickStep(self.stepSize)
