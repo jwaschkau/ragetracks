@@ -45,6 +45,7 @@ class Vehicle(object):
         self._hit_ground = True
         self._model_loading = False
         self._blowout = []
+        self._blowout_on = False
         
         #set up the propertys of the vehicle that schould be loaded
         #the methods get called because the data is immutable and 
@@ -88,7 +89,7 @@ class Vehicle(object):
             for node in blowout.getChildren():
                 particle = ParticleEffect()
                 self._blowout.append(particle)
-                particle.loadConfig('./data/particles/blowout.ptf')
+                particle.loadConfig('./data/particles/blowout_test.ptf')
                 particle.start(node)
                 particle.softStop()
         else: self._notify.warning("No Blowout-Node found")
@@ -201,14 +202,18 @@ class Vehicle(object):
     def startBlowout(self):
         '''
         '''
-        for particle in self._blowout:
-            particle.softStart()
+        if not self._blowout_on:
+            self._blowout_on = True
+            for particle in self._blowout:
+                particle.softStart()
 
     def stopBlowout(self):
         '''
         '''
-        for particle in self._blowout:
-            particle.softStop()
+        if self._blowout_on:
+            self._blowout_on = False
+            for particle in self._blowout:
+                particle.softStop()
 
     # ---------------------------------------------------------
     
