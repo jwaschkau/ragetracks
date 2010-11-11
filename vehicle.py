@@ -8,6 +8,10 @@ from panda3d.core import TexGenAttrib
 from wiregeom import WireGeom
 from collisionray import CollisionRay
 from direct.directnotify.DirectNotify import DirectNotify
+from direct.particles.ParticleEffect import ParticleEffect
+#Glow
+from direct.filter.CommonFilters import CommonFilters
+from direct.showbase.DirectObject import DirectObject
 
 class Vehicle(object):
     '''
@@ -40,6 +44,8 @@ class Vehicle(object):
         self._brake_strength = 10.0
         self._hit_ground = True
         self._model_loading = False
+        self._blowout = []
+        self._blowout_on = False
         
         #set up the propertys of the vehicle that schould be loaded
         #the methods get called because the data is immutable and 
@@ -61,10 +67,13 @@ class Vehicle(object):
         '''
         Choose what vehicle the player has chosen. This method initializes all data of this vehicle
         '''
+        self.cleanResources()
+    
         self._notify.debug("Set new vehicle: %s" %model)
         
         #Load the attributes of the vehicle
         attributes = model.find("**/Attributes")
+        if attributes.isEmpty(): self._notify.warning("No Attribute-Node found")
         for tag in self._tags:
             value = attributes.getNetTag(tag[0])
             if value:
@@ -73,7 +82,18 @@ class Vehicle(object):
                 if type(tag[2](value)) == str: tag[1](_(tag[2](value)))
                 else: tag[1](tag[2](value))
             else: self._notify.warning("No value defined for tag: %s" %(tag[0]))
-
+        
+        blowout = model.find("**/Blowout")
+        if not blowout.isEmpty():
+            self._notify.debug("Loading Blowout-Particles")
+            for node in blowout.getChildren():
+                particle = ParticleEffect()
+                self._blowout.append(particle)
+                particle.loadConfig('./data/particles/blowout_test.ptf')
+                particle.start(node)
+                particle.softStop()
+        else: self._notify.warning("No Blowout-Node found")
+            
         if self._model != None: 
             heading  = self._model.getH()
             
@@ -90,6 +110,33 @@ class Vehicle(object):
         self._model = model
         self._model.setPos(0,0,2)
         self._model.setHpr(heading,0,0)
+        
+#        #Test
+#        plightCenter = NodePath( 'plightCenter' )
+#        plightCenter.reparentTo( render )
+#        self.interval = plightCenter.hprInterval(12, Vec3(360, 0, 0))
+#        self.interval.loop()
+#
+#        plight = PointLight('plight')
+#        plight.setColor(VBase4(0.8, 0.8, 0.8, 1))
+#        plight.setAttenuation(Vec3(1,0,0))
+#        plnp = plightCenter.attachNewNode(plight)
+#        plnp.setPos(5, 5, 10)
+#        render.setLight(plnp)
+#
+#        alight = AmbientLight('alight')
+#        alight.setColor(VBase4(0,0,0, 1))
+#        alnp = render.attachNewNode(alight)
+#        render.setLight(alnp)
+        
+#        GlowTextur
+#        self.glowSize=10
+#        self.filters = CommonFilters(base.win, self._model)
+#        self.filters.setBloom(blend=(0,self.glowSize,0,0) ,desat=1, intensity=1, size='medium')
+        tex = loader.loadTexture( 'data/textures/glowmap.png' )
+        ts = TextureStage('ts')
+        ts.setMode(TextureStage.MGlow)
+        self._model.setTexture(ts, tex)
        
         #Initialize the physics-simulation for the vehicle
         self._physics_model = OdeBody(self._ode_world)
@@ -103,17 +150,17 @@ class Vehicle(object):
         
         #Initialize the collision-model of the vehicle
         ##for use with blender models
-        #try:
-        #    col_model = loader.loadModel("data/models/vehicles/%s_collision" %(self._model.getName().rstrip(".egg")))
-        #    self.collision_model = OdeTriMeshGeom(self._ode_space, OdeTriMeshData(col_model, True))
-        #    self._notify.info("Loading collision-file: %s" %("data/models/vehicles/%s_collision" %(self._model.getName().rstrip(".egg"))))
+        try:
+            col_model = loader.loadModel("data/models/vehicles/%s.collision" %(self._model.getName()))
+            self.collision_model = OdeTriMeshGeom(self._ode_space, OdeTriMeshData(col_model, True))
+            self._notify.info("Loading collision-file: %s" %("data/models/vehicles/%s.collision" %(self._model.getName())))
         ##for fast collisions
-        #except:
-        #    self._notify.warning("Could not load collision-file. Using standard collision-box")
-        self.collision_model = OdeTriMeshGeom(self._ode_space, OdeTriMeshData(model, False))
-            #self._collision_model = OdeBoxGeom(self._ode_space, 3,3,2)
+        except:
+            self._notify.warning("Could not load collision-file. Using standard collision-box")
+            #self.collision_model = OdeTriMeshGeom(self._ode_space, OdeTriMeshData(model, False))
+            self._collision_model = OdeBoxGeom(self._ode_space, 3,3,2)
         self._collision_model.setBody(self._physics_model)
-        self._collision_model.setCollideBits(3)
+        self._collision_model.setCollideBits(7)
         self._collision_model.setCategoryBits(2)
 
         #Add collision-rays for the floating effect
@@ -122,8 +169,19 @@ class Vehicle(object):
         ##Overwrite variables for testing purposes
         self._grip_strength = 0.99
         self._track_grip = 0.99
-        
         self._model_loading = False
+        
+    def toggleGlow(self):
+        self.glowSize += .1
+        print self.glowSize
+        if (self.glowSize == 4): self.glowSize = 0
+        self.filters.setBloom(blend=(0,self.glowSize,0,0) ,desat=-2, intensity=3, size='medium')
+      
+    def boggleGlow(self):
+        self.glowSize -= .1
+        print self.glowSize
+        if (self.glowSize == 4): self.glowSize = 0
+        self.filters.setBloom(blend=(0,self.glowSize,0,0) , desat=-2, intensity=3.0, size='medium')
         
     # ---------------------------------------------------------
     
@@ -139,6 +197,24 @@ class Vehicle(object):
         
     position = property(fget = getPos, fset = setPos)
         
+    # ---------------------------------------------------------
+    
+    def startBlowout(self):
+        '''
+        '''
+        if not self._blowout_on:
+            self._blowout_on = True
+            for particle in self._blowout:
+                particle.softStart()
+
+    def stopBlowout(self):
+        '''
+        '''
+        if self._blowout_on:
+            self._blowout_on = False
+            for particle in self._blowout:
+                particle.softStop()
+
     # ---------------------------------------------------------
     
     def setModel(self, model):
@@ -187,6 +263,7 @@ class Vehicle(object):
         '''
         Boosts the vehicle by indicated strength
         '''
+        self.startBlowout()
         if self._hit_ground:
             direction = self._collision_model.getQuaternion().xform(Vec3(0,1,0))
             self._physics_model.addForce(direction*self._boost_strength*self.physics_model.getMass().getMagnitude())
@@ -275,6 +352,8 @@ class Vehicle(object):
         
         #refresh the positions of the collisionrays
         self._ray.doStep()
+        self._physics_model.setGravityMode(1)
+        self._hit_ground = False
         
     
     # ---------------------------------------------------------
@@ -387,16 +466,44 @@ class Vehicle(object):
     name = property(fget = getName, fset = setName)
     
     # ----------------------------------------------------------------- 
+    
+    def cleanResources(self):
+        '''
+        Removes old nodes, gets called when a new vehcile loads
+        '''
+        for node in self._blowout:
+            node.removeNode()
+            self._blowout = []
+            
+        if self._model != None:
+            for node in self._model.getChildren():
+                node.removeNode()
+            self._model.removeNode()
+            self._model = None
+            self._physics_model.destroy()
+            self._collision_model.destroy()
+            ##temporary fix because destroy() doesnt work
+            self._physics_model.disable()
+            self._collision_model.disable()
 
+        
+        self._notify.info("Vehicle-Object cleaned: %s" %(self))
+    
     def __del__(self):
         '''
         Destroy unused nodes
         '''
-        for node in self._model.getChildren():
+        for node in self._blowout:
             node.removeNode()
-        self._model.removeNode()
-        self._physics_model.destroy()
-        self._collision_model.destroy()
+            
+        if self._model != None:
+            for node in self._model.getChildren():
+                node.removeNode()
+            self._model.removeNode()
+            self._model = None
+            self._physics_model.destroy()
+            self._collision_model.destroy()
+        
         self._notify.info("Vehicle-Object deleted: %s" %(self))
     
 if __name__ == "__main__":

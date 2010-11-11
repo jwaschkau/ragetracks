@@ -1,60 +1,68 @@
 # -*- coding: utf-8 -*-
-import direct.directbase.DirectStart
-from pandac.PandaModules import *
-from direct.particles.Particles import Particles
+###################################################################
+## this module is the main one, which contains the game class
+###################################################################
+
+from direct.showbase.ShowBase import ShowBase
+from pandac.PandaModules import * #Load all PandaModules
 from direct.particles.ParticleEffect import ParticleEffect
 
+# -----------------------------------------------------------------
+# -----------------------------------------------------------------
+# -----------------------------------------------------------------
 
-
-class App(object):
+class Game(ShowBase):
     '''
     '''
     def __init__(self):
         '''
         '''
-        # set 'sky' colour
-        base.setBackgroundColor(0.0,0.0,0.2,0)
-
-        # just an environment model
-        env = loader.loadModel('environment')
-        env.reparentTo(render)
-        env.setScale(0.02)
-        env.setPos(0,18,-3)
-
-
-        # parent node to attach the particle effect to
-        self.parent = render.attachNewNode('parent')
-
-        self.parent.setPos(-24,13,0)
+        #loadPrcFileData("", "want-pstats 1\n pstats-host 127.0.0.1\n pstats-tasks 1\n task-timer-verbose 1")
+        #loadPrcFileData("", "pstatshost 192.168.220.121")
+        ShowBase.__init__(self)
+        loadPrcFileData("", "default-directnotify-level debug\n notify-level-x11display fatal")
+        
+        #PStatClient.connect() #activate to start performance measuring with pstats
+        base.setFrameRateMeter(True) #Show the Framerate
+        #base.toggleWireframe()
+        
+        self.startGame()
+        # -----------------------------------------------------------------
 
 
-        # enable particles
+
+    # -----------------------------------------------------------------
+
+    def startGame(self):
+        '''
+        Start the game
+        '''
+        
         base.enableParticles()
+        #self.p = ParticleEffect()
+        #self.loadParticleConfig('./data.parcticles/blowout_fire.ptf')
+        #Start of the code from steam.ptf
+        #self.p.cleanup()
+        self.p = ParticleEffect()
+        self.p.loadConfig('./data/particles/blowout_test.ptf')        
+        #Sets particles to birth relative to the teapot, but to render at toplevel
+        self.p.start(render)
+        self.p.setPos(0.000, 0.000, 0)
+    
+        #Load the Lights
+        ambilight = AmbientLight('ambilight')
+        ambilight.setColor(VBase4(0.2, 0.2, 0.2, 1))
+        render.setLight(render.attachNewNode(ambilight))
 
-        blowout = ParticleEffect()
-        # set the file to read particle effect settings from
-        blowout.loadConfig(Filename('data/particles/blowout.ptf'))
-        #Sets particles to birth relative to the parent
-        blowout.start(self.parent)
+    # -----------------------------------------------------------------
 
+# -----------------------------------------------------------------
+# -----------------------------------------------------------------
+# -----------------------------------------------------------------
 
-        # we will need to change some teexturing settings
-        blowtexture = loader.loadTexture("data/textures/blowout_orange.png")
-        ts = TextureStage("ts")
-        #ts.setMode(TextureStage.MReplace)
-        blowout.setTexture(ts, blowtexture, 1)
-
-        taskMgr.add(self.moveParent, "moveParent")
-
-
-    def moveParent(self,task):
-            '''
-            '''
-            self.parent.setX(self.parent.getX()+(8*globalClock.getDt()))
-            return task.cont
+game = Game()
+game.run()
 
 
 
 
-App()
-run()

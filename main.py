@@ -29,12 +29,11 @@ class Game(ShowBase):
         '''
         '''
         
-        #loadPrcFileData("", "fullscreen 1\n win-size 800 600")
+        #loadPrcFileData("", "fullscreen 1\n win-size 1680 1050")
         #loadPrcFileData("", "want-pstats 1\n pstats-host 127.0.0.1\n pstats-tasks 1\n task-timer-verbose 1")
         loadPrcFileData("", "sync-video #f")
-        loadPrcFileData("", "default-directnotify-level debug\n notify-level-Game debug\n notify-level-Menu debug\n notify-level-Vehicle debug")
+        loadPrcFileData("", "default-directnotify-level debug\n notify-level-x11display fatal\n notify-level-Game debug\n notify-level-Menu debug\n notify-level-Vehicle debug")
         ShowBase.__init__(self)
-        #base.enableParticles()
         
         self._notify = DirectNotify().newCategory("Game")
         self._notify.info("New Game-Object created: %s" %(self))
@@ -43,6 +42,7 @@ class Game(ShowBase):
         base.camNode.setActive(False) #disable default cam
         self.disableMouse() #disable manual camera-control
         render.setShaderAuto()
+        base.enableParticles()
 
         # load the settings
         self.settings = settings.Settings()
@@ -80,10 +80,6 @@ class Game(ShowBase):
         self.space.setAutoCollideWorld(self.world)
         self.contactgroup = OdeJointGroup()
         self.space.setAutoCollideJointGroup(self.contactgroup)
-        
-        #set up the collision event
-        self.space.setCollisionEvent("ode-collision")
-        base.accept("ode-collision", self.onCollision)
         
         # initialize the input devices
         self.devices = inputdevice.InputDevices(self.settings.getInputSettings())
@@ -158,8 +154,18 @@ class Game(ShowBase):
             self.players[counter].vehicle.physics_model.setPosition(0, -5 * counter, 10)
             self.players[counter].vehicle.model.setH(0)
             self.players[counter].vehicle.model.setP(0)
+            self.players[counter].vehicle.model.setR(0)
             self.players[counter].vehicle.physics_model.setQuaternion(self.players[counter].vehicle.model.getQuat(render))
             counter+=1
+        
+        #Add the Skybox
+        self.skybox = self.loader.loadModel("data/models/skybox.egg")
+        self.skybox.setBin("background", 1)
+        self.skybox.setDepthWrite(0)
+        self.skybox.setDepthTest(0)
+        self.skybox.setLightOff()
+        self.skybox.setScale(10000)
+        self.skybox.reparentTo(render)
         
         #Create the Track
         self.track = track
@@ -171,9 +177,9 @@ class Game(ShowBase):
         self.groundGeom.setCategoryBits(1)
         
         #Create the Plane that you get hit by if you fall down
-        self.plane = OdePlaneGeom(self.space,0,0,1,-50)
+        self.plane = OdePlaneGeom(self.space,0,0,1,-250)
         self.plane.setCollideBits(0)
-        self.plane.setCategoryBits(3)
+        self.plane.setCategoryBits(4)
 
         self.arrows = loader.loadModel("data/models/arrows.egg")
         self.arrows.reparentTo(render)
@@ -190,16 +196,22 @@ class Game(ShowBase):
         
         dlight = DirectionalLight('dlight')
         dlight.setColor(VBase4(10.0, 10.0, 10.0, 1))
-        #dlight.setShadowCaster(True, 2048, 2048) #enable shadows for this light
+        if (base.win.getGsg().getSupportsBasicShaders() != 0):
+            dlight.setShadowCaster(True, 2048, 2048) #enable shadows for this light
         dlnp = render.attachNewNode(dlight)
         dlnp.setHpr(0, -60, 0)
         render.setLight(dlnp)
+        self.space.setCollisionEvent("ode-collision")
+        base.accept("ode-collision", self.onCollision)
+
 
         #start the gametask
         self._notify.debug("Starting gameTask")
         taskMgr.add(self.gameTask, "gameTask")
         self.world.setGravity(0, 0, -9.81)
         self._notify.info("Start game initialized")
+        #set up the collision event
+
 
     # -----------------------------------------------------------------
 
@@ -244,7 +256,7 @@ class Game(ShowBase):
                 else:
                     force_dir = Vec3(normal[0]*acceleration,normal[1]*acceleration,normal[2]*acceleration)
                     player.vehicle.physics_model.addForce(force_dir*mass)
-                player.vehicle.physics_model.addForce(normal[0]*player.vehicle.boost_direction[0]*-0.99*mass, normal[1]*player.vehicle.boost_direction[1]*-0.99*mass, normal[2]*player.vehicle.boost_direction[2]*-0.99*mass)
+                player.vehicle.physics_model.addForce(normal[0]*player.vehicle.boost_direction[0]*-0.9*mass, normal[1]*player.vehicle.boost_direction[1]*-0.9*mass, normal[2]*player.vehicle.boost_direction[2]*-0.9*mass)
                 return
                      
         for player in self.players:
@@ -276,13 +288,14 @@ class Game(ShowBase):
         while self.deltaTimeAccumulator > self.stepSize: # Step the simulation
             for player in self.players:
                 player.doStep() #refresh player specific things (rays)
-
                 #get the player input and set the forces
                 if player.device.boost:
                     player.vehicle.setBoost()
+                else:
+                    player.vehicle.stopBlowout()
+                    
                 if player.device.directions[0] != 0 or player.device.directions[1] != 0:
                     player.vehicle.direction = player.device.directions
-
                 linear_velocity = player.vehicle.physics_model.getLinearVel()
                 angular_velocity = player.vehicle.physics_model.getAngularVel()
                 mass = player.vehicle.physics_model.getMass().getMagnitude()
@@ -290,13 +303,10 @@ class Game(ShowBase):
                 #calculate airresistance to get energy out of the ode-system
                 player.vehicle.physics_model.addForce(linear_velocity*-self.LINEAR_FRICTION*mass)
                 player.vehicle.physics_model.addTorque(angular_velocity*-self.ANGULAR_FRICTION*mass)
-
             self.space.autoCollide() # Setup the contact joints
             self.deltaTimeAccumulator -= self.stepSize # Remove a stepSize from the accumulator until the accumulated time is less than the stepsize
             self.world.quickStep(self.stepSize)
             self.contactgroup.empty() # Clear the contact joints
-            player.vehicle.hit_ground = False
-
         for player in self.players: # set new positions
             player.updatePlayer()
         return task.cont
