@@ -25,11 +25,17 @@ class Game(ShowBase):
         #PStatClient.connect() #activate to start performance measuring with pstats
         base.setFrameRateMeter(True) #Show the Framerate
         #base.toggleWireframe()
-        
+        self.accept("space",self.onSpace)
         self.startGame()
         # -----------------------------------------------------------------
 
-
+    # -----------------------------------------------------------------
+    
+    def onSpace(self, evt=None):
+        '''
+        '''
+        base.toggleWireframe()
+        
 
     # -----------------------------------------------------------------
 

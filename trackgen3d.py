@@ -104,7 +104,7 @@ class StreetData(object):
         '''
         pointlist = []
         for point in self.points:
-            if point.getX() >= 0:
+            if point.getX() <= 0:
                 pointlist.append(point)
                 if point.getX() != 0:
                     pointlist.insert(0,Vec2(point.getX()*-1,point.getY()))
@@ -118,7 +118,7 @@ class StreetData(object):
         '''
         pointlist = []
         for point in self.points:
-            if point.getX() >= 0:
+            if point.getX() <= 0:
                 pointlist.append(point)
         self.points = pointlist
     
@@ -248,7 +248,7 @@ class Track3d(object):
         ##self.creatingVertex(track_points, street_data)
         self.createVertices(track_points, street_data)
         #Connect the Vertex
-        self.connectVertex(len(street_data))
+        self.connectVertices(len(street_data))
         #?Show the Mesh
         #self.CreateMesh(self.vdata, self.prim)
         ##Debugprint
@@ -343,9 +343,9 @@ class Track3d(object):
 
 # -------------------------------------------------------------------------------------
 
-    def connectVertex(self, j):
-        #j = len(street_Data)
-        for i in range (self.vdata.getNumRows()-(j+1)): #-j??????  oder +-1
+    def connectVertices(self, j):
+        #param j = len(street_Data)
+        for i in xrange (self.vdata.getNumRows()-(j+1)): #-j??????  oder +-1
             if (i+1) % j != 0:
                 self.prim.addVertex(i)
                 self.prim.addVertex(i+1)
@@ -357,19 +357,72 @@ class Track3d(object):
                 self.prim.addVertex(i+j)
                 self.prim.closePrimitive()
             else: # close mesh's bottom side
-                print "langweiler", i, j
+                
                 self.prim.addVertex(i+1-j)
-                self.prim.addVertex(i+j+1-j)
-                self.prim.addVertex(i+j-1+1-j)
+                self.prim.addVertex(i+1)
+                self.prim.addVertex(i)
                 self.prim.closePrimitive()
                 
-                self.prim.addVertex(i+j-1+1-j)
-                self.prim.addVertex(i+j+1-j)
-                self.prim.addVertex(i+(2*j)-1+1-j)
+                self.prim.addVertex(i)
+                self.prim.addVertex(i+1)
+                self.prim.addVertex(i+j)
                 self.prim.closePrimitive()
-        #print self.prim
+                
+        # close start and end
+        k = self.vdata.getNumRows()-j
+        for i in xrange (j):
+            if (i+1) % j != 0:
+                self.prim.addVertex(i)
+                self.prim.addVertex(i+k+1)
+                self.prim.addVertex(i+1)                
+                self.prim.closePrimitive()
+                
+                self.prim.addVertex(i)
+                self.prim.addVertex(i+k)
+                self.prim.addVertex(i+k+1)
+                self.prim.closePrimitive()
+                
+            else: # close mesh's bottom side
+                self.prim.addVertex(i)
+                self.prim.addVertex(i+k-j+1)
+                self.prim.addVertex(i-j+1)                
+                self.prim.closePrimitive()
+                
+                self.prim.addVertex(i)
+                self.prim.addVertex(i+k)
+                self.prim.addVertex(i+k-j+1)
+                self.prim.closePrimitive()
+            
         
 # -------------------------------------------------------------------------------------
+    
+##    def connectVertex(self, i, j):
+##        '''
+##        '''
+##        if (i+1) % j != 0:
+##            self.prim.addVertex(i)
+##            self.prim.addVertex(i+1)
+##            self.prim.addVertex(i+j+1)
+##            self.prim.closePrimitive()
+##            
+##            self.prim.addVertex(i)
+##            self.prim.addVertex(i+j+1)
+##            self.prim.addVertex(i+j)
+##            self.prim.closePrimitive()
+##        else: # close mesh's bottom side
+##            
+##            self.prim.addVertex(i+1-j)
+##            self.prim.addVertex(i+1)
+##            self.prim.addVertex(i)
+##            self.prim.closePrimitive()
+##            
+##            self.prim.addVertex(i)
+##            self.prim.addVertex(i+1)
+##            self.prim.addVertex(i+j)
+##            self.prim.closePrimitive()
+
+# -------------------------------------------------------------------------------------
+
 
     def createMesh(self):
         geom = Geom(self.vdata)
