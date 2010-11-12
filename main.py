@@ -158,6 +158,15 @@ class Game(ShowBase):
             self.players[counter].vehicle.physics_model.setQuaternion(self.players[counter].vehicle.model.getQuat(render))
             counter+=1
         
+        #Add the Skybox
+        self.skybox = self.loader.loadModel("data/models/skybox.egg")
+        self.skybox.setBin("background", 1)
+        self.skybox.setDepthWrite(0)
+        self.skybox.setDepthTest(0)
+        self.skybox.setLightOff()
+        self.skybox.setScale(10000)
+        self.skybox.reparentTo(render)
+        
         #Create the Track
         self.track = track
         self.track.reparentTo(render)
@@ -168,9 +177,9 @@ class Game(ShowBase):
         self.groundGeom.setCategoryBits(1)
         
         #Create the Plane that you get hit by if you fall down
-        self.plane = OdePlaneGeom(self.space,0,0,1,-50)
+        self.plane = OdePlaneGeom(self.space,0,0,1,-250)
         self.plane.setCollideBits(0)
-        self.plane.setCategoryBits(3)
+        self.plane.setCategoryBits(4)
 
         self.arrows = loader.loadModel("data/models/arrows.egg")
         self.arrows.reparentTo(render)
@@ -294,13 +303,10 @@ class Game(ShowBase):
                 #calculate airresistance to get energy out of the ode-system
                 player.vehicle.physics_model.addForce(linear_velocity*-self.LINEAR_FRICTION*mass)
                 player.vehicle.physics_model.addTorque(angular_velocity*-self.ANGULAR_FRICTION*mass)
-            
-            ##This crashes the game when a different vehicle gets selected!
             self.space.autoCollide() # Setup the contact joints
             self.deltaTimeAccumulator -= self.stepSize # Remove a stepSize from the accumulator until the accumulated time is less than the stepsize
             self.world.quickStep(self.stepSize)
             self.contactgroup.empty() # Clear the contact joints
-            player.vehicle.hit_ground = False
         for player in self.players: # set new positions
             player.updatePlayer()
         return task.cont

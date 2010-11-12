@@ -297,13 +297,23 @@ class Track3d(object):
             
             j = 0    
             for shapedot in street_data:
-                point = Vec3(shapedot[0], 0, shapedot[1])
+                ##point = Vec3(shapedot[0], 0, shapedot[1])
 
-                point[0] *= vec[0]
-                point[1] *= vec[1]
-                point[0] += track_points[i][0]
-                point[1] += track_points[i][1]
-                point[2] += track_points[i][2]
+                ##point[0] *= vec[0]
+                ##point[1] *= vec[1]
+                ##point[0] += track_points[i][0]
+                ##point[1] += track_points[i][1]
+                ##point[2] += track_points[i][2]
+                
+                point = Vec3(0,0,0)
+                # calculate the point via line term: x = a+ r*b
+                # Variables: a = track_points[i]; r = shapedot[0]; b = vec
+                point[0] = track_points[i][0]+(shapedot[0]*vec[0])
+                point[1] = track_points[i][1]+(shapedot[0]*vec[1])
+                point[2] = track_points[i][2]+(shapedot[0]*vec[2])
+                
+                # add the height
+                point[2] += shapedot[1]
             
                 ##self.vertex.addData3f((track_points[i][0] + (self.varthickness[i][0]*street_data[j][0]), track_points[i][1] + (self.varthickness[i][1]*street_data[j][0]), track_points[i][2] + (self.varthickness[i][2]+street_data[j][1])))
                 self.vertex.addData3f(point[0], point[1], point[2])
@@ -369,8 +379,9 @@ class Track3d(object):
 
 if __name__ == "__main__":
     #import main
-    Track3d(200,800,600)
+    #Track3d(200,800,600)
     #Test
+    import trackgentest
 ##    tuple1 = ((1.0,1.0,0.0),(1.0,4.0,0.0),(1.0,10.0,0.0))
 ##    tuple2 = ((-2.0, -3.0, 0.0),(1.0, -5.0, 0.0),(4.0, -4.0, 0.0),(6.0, 0.0, 0.0),(3.0, 4.0, 0.0),(-2.0, 6.0, 0.0),(-7.0, 3.0, 0.0),(-8.0, -2.0, 0.0))
 ##    tuple3 = ((10.0,10.0,0.0),(10.0,-10.0,0.0),(-10.0,-10.0,0.0),(-10.0,10.0,0.0))
