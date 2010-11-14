@@ -45,6 +45,7 @@ class Vehicle(object):
         self._hit_ground = True
         self._model_loading = False
         self._blowout = []
+        self._blowout_on = False
         
         #set up the propertys of the vehicle that schould be loaded
         #the methods get called because the data is immutable and 
@@ -88,7 +89,7 @@ class Vehicle(object):
             for node in blowout.getChildren():
                 particle = ParticleEffect()
                 self._blowout.append(particle)
-                particle.loadConfig('./data/particles/blowout.ptf')
+                particle.loadConfig('./data/particles/blowout_test.ptf')
                 particle.start(node)
                 particle.softStop()
         else: self._notify.warning("No Blowout-Node found")
@@ -156,10 +157,10 @@ class Vehicle(object):
         ##for fast collisions
         except:
             self._notify.warning("Could not load collision-file. Using standard collision-box")
-            self.collision_model = OdeTriMeshGeom(self._ode_space, OdeTriMeshData(model, False))
-            #self._collision_model = OdeBoxGeom(self._ode_space, 3,3,2)
+            #self.collision_model = OdeTriMeshGeom(self._ode_space, OdeTriMeshData(model, False))
+            self._collision_model = OdeBoxGeom(self._ode_space, 3,3,2)
         self._collision_model.setBody(self._physics_model)
-        self._collision_model.setCollideBits(3)
+        self._collision_model.setCollideBits(7)
         self._collision_model.setCategoryBits(2)
 
         #Add collision-rays for the floating effect
@@ -168,6 +169,8 @@ class Vehicle(object):
         ##Overwrite variables for testing purposes
         self._grip_strength = 0.99
         self._track_grip = 0.99
+        
+        #Loading finished
         self._model_loading = False
         
     def toggleGlow(self):
@@ -201,14 +204,18 @@ class Vehicle(object):
     def startBlowout(self):
         '''
         '''
-        for particle in self._blowout:
-            particle.softStart()
+        if not self._blowout_on:
+            self._blowout_on = True
+            for particle in self._blowout:
+                particle.softStart()
 
     def stopBlowout(self):
         '''
         '''
-        for particle in self._blowout:
-            particle.softStop()
+        if self._blowout_on:
+            self._blowout_on = False
+            for particle in self._blowout:
+                particle.softStop()
 
     # ---------------------------------------------------------
     
@@ -347,6 +354,8 @@ class Vehicle(object):
         
         #refresh the positions of the collisionrays
         self._ray.doStep()
+        self._physics_model.setGravityMode(1)
+        self._hit_ground = False
         
     
     # ---------------------------------------------------------

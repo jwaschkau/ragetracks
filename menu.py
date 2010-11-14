@@ -243,6 +243,7 @@ class Menu(object):
         '''
         self._notify.info("Initializing StartScreen")
         
+        
         #StartScreen Node
         self.startNode = NodePath("StartNode")
         self.startNode.reparentTo(render)
@@ -417,12 +418,12 @@ class Menu(object):
                 self._notify.debug("Loading vehicle: %s" %(loading))
                 if not loading:
                     taskMgr.remove("selectVehicle")
-                    #nodePath = render.attachNewNode(trackgen3d.Track3d(1000, 800, 600, 200, len(self._players)).createMesh())
-                    #tex = loader.loadTexture('data/textures/street.png')
-                    #nodePath.setTexture(tex)
-                    #nodePath.setTwoSided(True)
+                    self.streetPath = render.attachNewNode(trackgen3d.Track3d(1000, 800, 600, 200, len(self._players)).createMesh())
+                    tex = loader.loadTexture('data/textures/street.png')
+                    self.streetPath.setTexture(tex)
+                    self.streetPath.setTwoSided(True)
                     
-                    self.streetPath = loader.loadModel('data/models/Street.egg')
+                    #self.streetPath = loader.loadModel('data/models/Street.egg')
                     
                     #tex = loader.loadTexture('data/models/StreetTex.png')
                     #self.nodePath.setTexture(tex)

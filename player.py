@@ -101,7 +101,6 @@ class Player(object):
         Needs to get executed every Ode-Step
         '''
         self._vehicle.model.setPosQuat(render, self._vehicle.physics_model.getPosition(), Quat(self._vehicle.physics_model.getQuaternion())) #set new position
-        self._vehicle.physics_model.setGravityMode(1) #enable gravity
         self._camera.updateCam()
         
     
