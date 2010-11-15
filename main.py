@@ -7,6 +7,8 @@ from direct.showbase.ShowBase import ShowBase
 from direct.directnotify.DirectNotify import DirectNotify
 from pandac.PandaModules import * #Load all PandaModules
 from panda3d.core import loadPrcFileData
+from direct.particles.ParticleEffect import ParticleEffect
+from direct.interval.ParticleInterval import ParticleInterval 
 import settings
 import inputdevice
 import player
@@ -41,7 +43,7 @@ class Game(ShowBase):
         base.camNode.setActive(False) #disable default cam
         self.disableMouse() #disable manual camera-control
         render.setShaderAuto()
-        base.enableParticles()
+        
 
         # load the settings
         self.settings = settings.Settings()
@@ -147,6 +149,9 @@ class Game(ShowBase):
         '''
         self._notify = DirectNotify().newCategory("Game")
         self._notify.info("Initializing start game")
+        #Initialize needed variables
+        self.sparks = []
+        
         counter = 0
         for player in self.players:
             player.activateGameCam()
@@ -225,8 +230,18 @@ class Game(ShowBase):
         body2 = entry.getBody2()
                      
         for player in self.players:
+            #create Particles when a crash happens
+##            if geom1.compareTo(player.vehicle.collision_model) == 0 or geom2.compareTo(player.vehicle.collision_model) == 0:
+##                for point in entry.getContactPoints():
+##                    #emit sparks
+##                    pass
+##                    #particle = ParticleEffect()
+##                    #particle.loadConfig('./data/particles/blowout_fire.ptf') ##Here we should load the proper Particles
+##                    #particle.setPos(point)
+##                    #ParticleInterval(particle, player.vehicle.model , duration = 2, cleanup = True)
+            
             #workaround until panda 1.7.1
-            #if the player collides with the ground plane he will get reset to the starting position   
+            #if the player collides with the ground plane he will get reset to the starting position
             if geom1.compareTo(self.plane) == 0 and player.vehicle.physics_model.compareTo(body2) == 0:
                 player.vehicle.physics_model.setPosition(0,0,20)
                 player.vehicle.physics_model.setLinearVel(0,0,0)
@@ -239,6 +254,7 @@ class Game(ShowBase):
             #Decrease energy on collision
             elif player.vehicle.physics_model.compareTo(body1) == 0 or player.vehicle.physics_model.compareTo(body2) == 0:
                 player.vehicle.energy -= 0.1
+    
     # -----------------------------------------------------------------
 
     def onRayCollision(self, entry):
@@ -282,7 +298,6 @@ class Game(ShowBase):
                     player.vehicle.physics_model.addForce(force_dir*mass)
                 player.vehicle.physics_model.addForce(normal[0]*player.vehicle.boost_direction[0]*-0.9*mass, normal[1]*player.vehicle.boost_direction[1]*-0.9*mass, normal[2]*player.vehicle.boost_direction[2]*-0.9*mass)
                 return
-        
         
         
  # -----------------------------------------------------------------
