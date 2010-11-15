@@ -345,7 +345,7 @@ class Track3d(object):
 
     def connectVertices(self, j):
         #param j = len(street_Data)
-        for i in xrange (self.vdata.getNumRows()-(j+1)): #-j??????  oder +-1
+        for i in xrange (self.vdata.getNumRows()-(j)): #-j??????  oder +-1
             if (i+1) % j != 0:
                 self.prim.addVertex(i)
                 self.prim.addVertex(i+1)
