@@ -263,14 +263,14 @@ class Game(ShowBase):
                 force_pos = ray.getPosition()
                 contact = entry.getContactPoint(0)
                 force_dir = force_pos - contact
-                acceleration = ((ray.getLength()/2)-force_dir.length())*20#calculate the direction
+                acceleration = ((ray.getLength()/2)-force_dir.length())*30#calculate the direction
                 player.vehicle.hit_ground = True
                 
                 force_dir.normalize()
                 #rigidbody.AddTorque(Vector3.Cross(transform.forward, Vector3.up) - rigidbody.angularVelocity * 0.5f);
                 
                 #Change the angle of the vehicle so it matches the street
-                player.vehicle.physics_model.addTorque(player.vehicle.collision_model.getQuaternion().xform(Vec3(0,0,1)).cross(normal)*mass*20)# - player.vehicle.physics_model.getAngularVel() * 0.5)
+                player.vehicle.physics_model.addTorque(player.vehicle.collision_model.getQuaternion().xform(Vec3(0,0,1)).cross(normal)*mass*30)# - player.vehicle.physics_model.getAngularVel() * 0.5)
 
                 #push the vehicle
                 if acceleration > 0:
@@ -318,9 +318,9 @@ class Game(ShowBase):
                 col = OdeUtil.collide(player.vehicle.ray.getRay(), self.groundGeom)
                 if not col.isEmpty():
                     self.onRayCollision(col)#handles collisions from the ray with the street
-                
-            self.space.autoCollide() # Setup the contact joints
+
             self.deltaTimeAccumulator -= self.stepSize # Remove a stepSize from the accumulator until the accumulated time is less than the stepsize
+            self.space.autoCollide() # Setup the contact joints
             self.world.quickStep(self.stepSize)
             self.contactgroup.empty() # Clear the contact joints
         for player in self.players: # set new positions

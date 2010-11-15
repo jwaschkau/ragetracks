@@ -169,6 +169,7 @@ class Vehicle(object):
         ##Overwrite variables for testing purposes
         self._grip_strength = 0.99
         self._track_grip = 0.99
+        self._boost_strength = 20
         
         #Loading finished
         self._model_loading = False
@@ -269,6 +270,7 @@ class Vehicle(object):
         if self._hit_ground:
             direction = self._collision_model.getQuaternion().xform(Vec3(0,1,0))
             self._physics_model.addForce(direction*self._boost_strength*self.physics_model.getMass().getMagnitude())
+            self._hit_ground = False
         else:
             direction = self._collision_model.getQuaternion().xform(Vec3(0,1,0))
             self._physics_model.addForce(direction*self._boost_strength*0.2*self.physics_model.getMass().getMagnitude())
@@ -355,8 +357,6 @@ class Vehicle(object):
         #refresh the positions of the collisionrays
         self._ray.doStep()
         self._physics_model.setGravityMode(1)
-        self._hit_ground = False
-        
     
     # ---------------------------------------------------------
     
