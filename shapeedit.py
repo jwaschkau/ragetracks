@@ -103,7 +103,7 @@ class Editor(wx.Frame):
     def onSave(self, evt):
         '''
         '''
-        dlg = wx.FileDialog(self, "save the current shape", wildcard="Road Shapes (*.xml) | *.xml", style=wx.FD_SAVE)
+        dlg = wx.FileDialog(self, "save the current shape", style=wx.FD_SAVE)
         if dlg.ShowModal() == wx.ID_OK:
             path = dlg.GetPath()
             
@@ -248,9 +248,9 @@ class Canvas(wx.Window):
         '''
         '''
         val = evt.GetWheelRotation()
-        if val < 0 and self.max_value < 50:
+        if val < 0 and self.max_value < 80:
             self.max_value += 1
-        if val > 0 and self.max_value > 1:
+        if val > 0 and self.max_value > 10:
             self.max_value -= 1
         self.Refresh()
         evt.Skip()

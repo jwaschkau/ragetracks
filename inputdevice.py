@@ -8,6 +8,7 @@ from direct.directnotify.DirectNotify import DirectNotify
 import pygame
 import keyboarddevice
 import joystickdevice
+import sys
 
 # ---------------------------------------------------------
 # ---------------------------------------------------------
@@ -26,6 +27,7 @@ class InputDevice(object):
         self.directions = [0,0]  # x and y movement
         self.boost = False       # Button for boosting
         self.use_item = False    # Button for using items
+        self.escape = False
 
         # if this is a Joystick, look if there are Settings for Joysticks with this name
         if type(self.device) == joystickdevice.JoystickDevice:
@@ -45,6 +47,7 @@ class InputDevice(object):
             self.settings["down"]       = "arrow_down"
             self.settings["left"]       = "arrow_left"
             self.settings["right"]      = "arrow_right"
+            self.settings["escape"]      = "escape"
 
 
             self.device.keys[self.settings["up"]] = False
@@ -53,6 +56,7 @@ class InputDevice(object):
             self.device.keys[self.settings["right"]] = False
             self.device.keys[self.settings["boost"]] = False
             self.device.keys[self.settings["use_item"]] = False
+            self.device.keys[self.settings["escape"]] = False
 
     # ---------------------------------------------------------
 
@@ -157,6 +161,9 @@ class InputDevice(object):
 
             self.boost = self.device.keys[self.settings["boost"]]
             self.use_item = self.device.keys[self.settings["use_item"]]
+            
+            if self.device.keys[self.settings["escape"]]:
+                sys.exit()
 
     # ---------------------------------------------------------
 
