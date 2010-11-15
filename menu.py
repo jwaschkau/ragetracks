@@ -42,7 +42,6 @@ class MainMenu(object):
         self.menuNode = NodePath("menuNode")
         self.menuNode.reparentTo(render)
         self.menuNode.setPos(-5,15,3)
-        self.menuNode.setTwoSided(True)
         
         self.colorA = Vec4(1,1,0,0)
         self.colorB = Vec4(0,1,1,0)
@@ -180,7 +179,6 @@ class MainMenu(object):
         #Cam
         if self.camera is None: 
             self.camera = base.makeCamera(base.win)
-            #self.camera.setPos(5,-15,-3)
         else:
             self.camera.node().setActive(True)
 
@@ -291,7 +289,7 @@ class Menu(object):
         Return the first device with the first key stroke
         '''
         for i in xrange(len(self._devices.devices)):
-            if self._devices.devices[i].boost == True:
+            if self._devices.devices[i].boost:
                 #Kill Cam
                 self.camera.node().setActive(False)
                 #Kill Node
@@ -312,6 +310,7 @@ class Menu(object):
         '''
         the new game menu
         '''
+        base.enableParticles()
         self.countdown = 5 #the countdown, when its over the game can be started
         self._notify.info("Initializing new game")
         #GlobPattern if we need a Panda Class
@@ -418,12 +417,13 @@ class Menu(object):
                 self._notify.debug("Loading vehicle: %s" %(loading))
                 if not loading:
                     taskMgr.remove("selectVehicle")
-                    self.streetPath = render.attachNewNode(trackgen3d.Track3d(1000, 800, 600, 200, len(self._players)).createMesh())
+                    self.streetPath = render.attachNewNode(trackgen3d.Track3d(1000, 1800, 1600, 200, len(self._players)).createMesh())
                     tex = loader.loadTexture('data/textures/street.png')
                     self.streetPath.setTexture(tex)
-                    self.streetPath.setTwoSided(True)
-                    
+
+                    #self.streetPath.setTwoSided(True)
                     #self.streetPath = loader.loadModel('data/models/Street.egg')
+                    ##self.streetPath = loader.loadModel('data/models/Street.egg')
                     
                     #tex = loader.loadTexture('data/models/StreetTex.png')
                     #self.nodePath.setTexture(tex)
