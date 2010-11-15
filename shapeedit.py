@@ -154,7 +154,7 @@ class Canvas(wx.Window):
         
         self.active_point = None
         
-        self.max_value= 5
+        self.max_value= 50
     
     # -----------------------------------------------------------------
     
@@ -248,7 +248,7 @@ class Canvas(wx.Window):
         '''
         '''
         val = evt.GetWheelRotation()
-        if val < 0 and self.max_value < 20:
+        if val < 0 and self.max_value < 50:
             self.max_value += 1
         if val > 0 and self.max_value > 1:
             self.max_value -= 1

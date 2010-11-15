@@ -11,7 +11,6 @@ import settings
 import inputdevice
 import player
 import splitscreen
-import trackgen3d
 from playercam import PlayerCam
 import gettext
 import sys
@@ -208,7 +207,7 @@ class Game(ShowBase):
         #start the gametask
         self._notify.debug("Starting gameTask")
         taskMgr.add(self.gameTask, "gameTask")
-        self.world.setGravity(0, 0, -9.81)
+        self.world.setGravity(0, 0, -90.81)
         self._notify.info("Start game initialized")
         #set up the collision event
 
