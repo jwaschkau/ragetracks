@@ -23,7 +23,7 @@ class Game(ShowBase):
         base.setFrameRateMeter(True) #Show the Framerate
         self.world = OdeWorld()
         self.deltaTimeAccumulator = 0.0 #this variable is necessary to track the time for the physics
-        self.stepSize = 1.0 / 60.0 # This stepSize makes the simulation run at 300 frames per second
+        self.stepSize = 1.0 / 300.0 # This stepSize makes the simulation run at 300 frames per second
         
         #Initialize Collisions (ODE)
         self.space = OdeSimpleSpace()
@@ -119,7 +119,3 @@ class Game(ShowBase):
 
 game = Game()
 game.run()
-
-
-
-
