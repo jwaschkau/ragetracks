@@ -2,8 +2,8 @@
 
 <Comment> { "Egg laid by Chicken for Blender, version R91" }
 
-<Texture> platform.jpg {
-  "./../textures/platform.jpg"
+<Texture> platform.png {
+  "./../textures/platform.png"
   <Scalar> saved-result { 1 }
   <Scalar> envtype { MODULATE }
   <Scalar> minfilter { LINEAR }
@@ -779,6 +779,7 @@
     }
     <Vertex> 85 {
       -1.29429912567 -3.12471151352 -2.85903263092
+
       <UV>  {
         0.043106 0.201996
         <Tangent> { -0.956940 -0.290285 0.000000 }
@@ -2894,387 +2895,387 @@
     }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 0 1 2 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 3 4 5 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 6 7 8 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 9 10 11 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 12 13 14 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 15 16 17 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 18 19 20 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 21 22 23 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 24 25 26 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 27 28 29 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 30 31 32 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 33 34 35 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 36 37 38 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 39 40 41 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 42 43 44 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 45 46 47 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 48 49 50 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 51 52 53 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 54 55 56 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 57 58 59 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 60 61 62 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 63 64 65 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 66 67 68 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 69 70 71 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 72 73 74 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 75 76 77 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 78 79 80 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 81 82 83 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 84 85 86 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 87 88 89 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 90 91 92 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 93 94 95 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 96 97 98 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 99 100 101 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 102 103 104 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 105 106 107 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 108 109 110 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 111 112 113 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 114 115 116 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 117 118 119 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 120 121 122 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 123 124 125 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 126 127 128 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 129 130 131 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 132 133 134 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 135 136 137 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 138 139 140 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 141 142 143 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 144 145 146 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 147 148 149 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 150 151 152 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 153 154 155 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 156 157 158 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 159 160 161 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 162 163 164 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 165 166 167 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 168 169 170 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 171 172 173 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 174 175 176 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 177 178 179 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 180 181 182 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 183 184 185 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 186 187 188 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 189 190 191 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 192 193 194 195 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 196 197 198 199 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 200 201 202 203 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 204 205 206 207 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 208 209 210 211 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 212 213 214 215 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 216 217 218 219 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 220 221 222 223 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 224 225 226 227 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 228 229 230 231 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 232 233 234 235 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 236 237 238 239 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 240 241 242 243 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 244 245 246 247 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 248 249 250 251 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 252 253 254 255 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 256 257 258 259 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 260 261 262 263 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 264 265 266 267 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 268 269 270 271 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 272 273 274 275 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 276 277 278 279 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 280 281 282 283 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 284 285 286 287 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 288 289 290 291 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 292 293 294 295 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 296 297 298 299 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 300 301 302 303 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 304 305 306 307 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 308 309 310 311 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 312 313 314 315 <Ref> { Cylinder } }
   }
   <Polygon> {
-    <TRef> { platform.jpg }
+    <TRef> { platform.png }
     <VertexRef> { 316 317 318 319 <Ref> { Cylinder } }
   }
 }

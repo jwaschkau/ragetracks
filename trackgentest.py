@@ -24,12 +24,18 @@ class Game(ShowBase):
         
         #PStatClient.connect() #activate to start performance measuring with pstats
         base.setFrameRateMeter(True) #Show the Framerate
-        base.toggleWireframe()
-        
+        #base.toggleWireframe()
+        self.accept("space",self.onSpace)
         self.startGame()
         # -----------------------------------------------------------------
 
-
+    # -----------------------------------------------------------------
+    
+    def onSpace(self, evt=None):
+        '''
+        '''
+        base.toggleWireframe()
+        
 
     # -----------------------------------------------------------------
 
@@ -43,7 +49,7 @@ class Game(ShowBase):
         nodePath = self.render.attachNewNode(self.track.createMesh())
         tex = loader.loadTexture('data/textures/street.png')
         nodePath.setTexture(tex)
-        nodePath.setTwoSided(True)
+        #nodePath.setTwoSided(True)
         
     
         #Load the Lights

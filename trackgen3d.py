@@ -104,7 +104,7 @@ class StreetData(object):
         '''
         pointlist = []
         for point in self.points:
-            if point.getX() >= 0:
+            if point.getX() <= 0:
                 pointlist.append(point)
                 if point.getX() != 0:
                     pointlist.insert(0,Vec2(point.getX()*-1,point.getY()))
@@ -118,7 +118,7 @@ class StreetData(object):
         '''
         pointlist = []
         for point in self.points:
-            if point.getX() >= 0:
+            if point.getX() <= 0:
                 pointlist.append(point)
         self.points = pointlist
     
@@ -248,7 +248,7 @@ class Track3d(object):
         ##self.creatingVertex(track_points, street_data)
         self.createVertices(track_points, street_data)
         #Connect the Vertex
-        self.connectVertex(len(street_data))
+        self.connectVertices(len(street_data))
         #?Show the Mesh
         #self.CreateMesh(self.vdata, self.prim)
         ##Debugprint
@@ -297,13 +297,23 @@ class Track3d(object):
             
             j = 0    
             for shapedot in street_data:
-                point = Vec3(shapedot[0], 0, shapedot[1])
+                ##point = Vec3(shapedot[0], 0, shapedot[1])
 
-                point[0] *= vec[0]
-                point[1] *= vec[1]
-                point[0] += track_points[i][0]
-                point[1] += track_points[i][1]
-                point[2] += track_points[i][2]
+                ##point[0] *= vec[0]
+                ##point[1] *= vec[1]
+                ##point[0] += track_points[i][0]
+                ##point[1] += track_points[i][1]
+                ##point[2] += track_points[i][2]
+                
+                point = Vec3(0,0,0)
+                # calculate the point via line term: x = a+ r*b
+                # Variables: a = track_points[i]; r = shapedot[0]; b = vec
+                point[0] = track_points[i][0]+(shapedot[0]*vec[0])
+                point[1] = track_points[i][1]+(shapedot[0]*vec[1])
+                point[2] = track_points[i][2]+(shapedot[0]*vec[2])
+                
+                # add the height
+                point[2] += shapedot[1]
             
                 ##self.vertex.addData3f((track_points[i][0] + (self.varthickness[i][0]*street_data[j][0]), track_points[i][1] + (self.varthickness[i][1]*street_data[j][0]), track_points[i][2] + (self.varthickness[i][2]+street_data[j][1])))
                 self.vertex.addData3f(point[0], point[1], point[2])
@@ -333,9 +343,9 @@ class Track3d(object):
 
 # -------------------------------------------------------------------------------------
 
-    def connectVertex(self, j):
-        #j = len(street_Data)
-        for i in range (self.vdata.getNumRows()-(j+1)): #-j??????  oder +-1
+    def connectVertices(self, j):
+        #param j = len(street_Data)
+        for i in xrange (self.vdata.getNumRows()-(j+1)): #-j??????  oder +-1
             if (i+1) % j != 0:
                 self.prim.addVertex(i)
                 self.prim.addVertex(i+1)
@@ -346,11 +356,73 @@ class Track3d(object):
                 self.prim.addVertex(i+j+1)
                 self.prim.addVertex(i+j)
                 self.prim.closePrimitive()
-            else:
-                pass #hier fehlt noch was das die Mesh unten schliest
-        #print self.prim
+            else: # close mesh's bottom side
+                
+                self.prim.addVertex(i+1-j)
+                self.prim.addVertex(i+1)
+                self.prim.addVertex(i)
+                self.prim.closePrimitive()
+                
+                self.prim.addVertex(i)
+                self.prim.addVertex(i+1)
+                self.prim.addVertex(i+j)
+                self.prim.closePrimitive()
+                
+        # close start and end
+        k = self.vdata.getNumRows()-j
+        for i in xrange (j):
+            if (i+1) % j != 0:
+                self.prim.addVertex(i)
+                self.prim.addVertex(i+k+1)
+                self.prim.addVertex(i+1)                
+                self.prim.closePrimitive()
+                
+                self.prim.addVertex(i)
+                self.prim.addVertex(i+k)
+                self.prim.addVertex(i+k+1)
+                self.prim.closePrimitive()
+                
+            else: # close mesh's bottom side
+                self.prim.addVertex(i)
+                self.prim.addVertex(i+k-j+1)
+                self.prim.addVertex(i-j+1)                
+                self.prim.closePrimitive()
+                
+                self.prim.addVertex(i)
+                self.prim.addVertex(i+k)
+                self.prim.addVertex(i+k-j+1)
+                self.prim.closePrimitive()
+            
         
 # -------------------------------------------------------------------------------------
+    
+##    def connectVertex(self, i, j):
+##        '''
+##        '''
+##        if (i+1) % j != 0:
+##            self.prim.addVertex(i)
+##            self.prim.addVertex(i+1)
+##            self.prim.addVertex(i+j+1)
+##            self.prim.closePrimitive()
+##            
+##            self.prim.addVertex(i)
+##            self.prim.addVertex(i+j+1)
+##            self.prim.addVertex(i+j)
+##            self.prim.closePrimitive()
+##        else: # close mesh's bottom side
+##            
+##            self.prim.addVertex(i+1-j)
+##            self.prim.addVertex(i+1)
+##            self.prim.addVertex(i)
+##            self.prim.closePrimitive()
+##            
+##            self.prim.addVertex(i)
+##            self.prim.addVertex(i+1)
+##            self.prim.addVertex(i+j)
+##            self.prim.closePrimitive()
+
+# -------------------------------------------------------------------------------------
+
 
     def createMesh(self):
         geom = Geom(self.vdata)
@@ -369,8 +441,9 @@ class Track3d(object):
 
 if __name__ == "__main__":
     #import main
-    Track3d(200,800,600)
+    #Track3d(200,800,600)
     #Test
+    import trackgentest
 ##    tuple1 = ((1.0,1.0,0.0),(1.0,4.0,0.0),(1.0,10.0,0.0))
 ##    tuple2 = ((-2.0, -3.0, 0.0),(1.0, -5.0, 0.0),(4.0, -4.0, 0.0),(6.0, 0.0, 0.0),(3.0, 4.0, 0.0),(-2.0, 6.0, 0.0),(-7.0, 3.0, 0.0),(-8.0, -2.0, 0.0))
 ##    tuple3 = ((10.0,10.0,0.0),(10.0,-10.0,0.0),(-10.0,-10.0,0.0),(-10.0,10.0,0.0))

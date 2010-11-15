@@ -73,7 +73,7 @@ class Editor(wx.Frame):
     def onOpen(self, evt):
         '''
         '''
-        dlg = wx.FileDialog(self, "open a shape", wildcard="Road Shapes (*.xml) | *.xml", style=wx.FD_OPEN)
+        dlg = wx.FileDialog(self, "open a shape", style=wx.FD_OPEN)
         if dlg.ShowModal() == wx.ID_OK:
 
             try:
