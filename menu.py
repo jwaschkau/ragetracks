@@ -243,6 +243,7 @@ class Menu(object):
         '''
         self._notify.info("Initializing StartScreen")
         
+        
         #StartScreen Node
         self.startNode = NodePath("StartNode")
         self.startNode.reparentTo(render)
