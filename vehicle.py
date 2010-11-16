@@ -168,8 +168,8 @@ class Vehicle(object):
 
         ##Overwrite variables for testing purposes
         self._grip_strength = 0.99
-        self._track_grip = 0.99
-        self._boost_strength = 20
+        self._track_grip = 0.2
+        self._boost_strength = 40
         
         #Loading finished
         self._model_loading = False
@@ -353,6 +353,9 @@ class Vehicle(object):
         
         #calculate the grip
         self._physics_model.addTorque(self._physics_model.getAngularVel()*-self._track_grip*self.physics_model.getMass().getMagnitude())
+
+        #calculate air resistance
+        self._physics_model.addForce(-linear_velocity*(self._speed*self._speed))#+linear_velocity)
         
         #refresh the positions of the collisionrays
         self._ray.doStep()
