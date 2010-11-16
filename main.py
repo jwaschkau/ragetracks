@@ -43,7 +43,7 @@ class Game(ShowBase):
         base.camNode.setActive(False) #disable default cam
         self.disableMouse() #disable manual camera-control
         render.setShaderAuto()
-        base.enableParticles()
+        
 
         # load the settings
         self.settings = settings.Settings()
@@ -285,7 +285,7 @@ class Game(ShowBase):
                 #rigidbody.AddTorque(Vector3.Cross(transform.forward, Vector3.up) - rigidbody.angularVelocity * 0.5f);
                 
                 #Change the angle of the vehicle so it matches the street
-                player.vehicle.physics_model.addTorque(player.vehicle.collision_model.getQuaternion().xform(Vec3(0,0,1)).cross(normal)*mass*30)# - player.vehicle.physics_model.getAngularVel() * 0.5)
+                player.vehicle.physics_model.addTorque(player.vehicle.collision_model.getQuaternion().xform(Vec3(0,0,1)).cross(normal)*mass*30 - player.vehicle.physics_model.getAngularVel() * 0.5 *mass)
 
                 #push the vehicle
                 if acceleration > 0:
