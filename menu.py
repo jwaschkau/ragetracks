@@ -345,7 +345,6 @@ class Menu(object):
         text.setAlign(TextProperties.ACenter)
         self.attributes = NodePath("AttributeNode")
         self.attributes.attachNewNode(text)
-        self.attributes.setPos(0,10,4)
         
         self.unusedDevices = self._devices.devices[:]
         taskMgr.add(self.collectPlayer, "collectPlayer")
