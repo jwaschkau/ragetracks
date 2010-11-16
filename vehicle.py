@@ -59,7 +59,8 @@ class Vehicle(object):
                         ["max_energy",self.setMaxEnergy,float],
                         ["max_armor",self.setMaxArmor,float],
                         ["weight",self.setWeight,float],
-                        ["brake_strength",self.setBrakeStrength,float]]
+                        ["brake_strength",self.setBrakeStrength,float],
+                        ["boost_strength",self.setBoostStrength,float]]
 
     # ---------------------------------------------------------
     
@@ -96,17 +97,27 @@ class Vehicle(object):
             
         if self._model != None: 
             heading  = self._model.getH()
-            
-            #display the attributes
-            text = self._model.getParent().find("AttributeNode")
-            if text: 
-                node = text.find("name").node()
-                node.setText(self._name)
-                node.update()
-                text.show()
             self._model.removeNode()
         else:
             heading = 160
+            
+        #display the attributes
+        text = model.getParent().find("AttributeNode")
+        if not text.isEmpty(): 
+            node = text.find("name")
+            if not node.isEmpty():
+                node = node.node()
+                node.setText(self._name)
+                node.update()
+                text.show()
+        
+            node = text.find("description")
+            if not node.isEmpty():
+                node = node.node()
+                node.setText(self._name)
+                node.update()
+                text.show()
+
         self._model = model
         self._model.setPos(0,0,2)
         self._model.setHpr(heading,0,0)
@@ -389,6 +400,16 @@ class Vehicle(object):
         self._control_strength = value
     
     control_strength = property(fget = getControlStrength, fset = setControlStrength)
+    
+    # ----------------------------------------------------------------- 
+    
+    def getBoostStrength(self):
+        return self._boost_strength
+        
+    def setBoostStrength(self, value):
+        self._boost_strength = value
+    
+    boost_strength = property(fget = getBoostStrength, fset = setBoostStrength)
     
     # ----------------------------------------------------------------- 
     
