@@ -1,3 +1,4 @@
+
 # -*- coding: utf-8 -*-
 ###################################################################
 ## this module is the main one, which contains the game class
@@ -20,7 +21,6 @@ class Game(ShowBase):
         #loadPrcFileData("", "want-pstats 1\n pstats-host 127.0.0.1\n pstats-tasks 1\n task-timer-verbose 1")
         #loadPrcFileData("", "pstatshost 192.168.220.121")
         ShowBase.__init__(self)
-
         
         #PStatClient.connect() #activate to start performance measuring with pstats
         base.setFrameRateMeter(True) #Show the Framerate

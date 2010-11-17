@@ -156,7 +156,7 @@ class Vehicle(object):
         
         #Initialize the mass of the vehicle
         physics_mass = OdeMass()
-        physics_mass.setBox(self._weight,1,1,1)
+        physics_mass.setBoxTotal(self._weight,1,1,1)
         self._physics_model.setMass(physics_mass)
         
         #Initialize the collision-model of the vehicle
