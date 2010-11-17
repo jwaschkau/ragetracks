@@ -20,9 +20,7 @@ class SplitScreen(object):
         self.regions = []   # the regions the screen is separated into
         self.cameras = []   # the cameras (empty ones are None)
         self.cameraPosPre = [] #The Position from the Cameras bevor change
-        self.steps = 100
-        self.aktuelSteps = 0
-        
+        self.steps = 10
         
         if cam_count > 0:
             self.addCameras(cam_count)
@@ -128,7 +126,6 @@ class SplitScreen(object):
         '''
         taskMgr.remove("AnimateRegion")
         self.cameraPosPre = []
-        self.aktuelSteps = 0
         for i in xrange(len(self.cameras)):
             if self.cameras[i] != None:
                 self.cameraPosPre.append((self.cameras[i].node().getDisplayRegion(0).getLeft(), self.cameras[i].node().getDisplayRegion(0).getRight(), self.cameras[i].node().getDisplayRegion(0).getBottom(), self.cameras[i].node().getDisplayRegion(0).getTop()))
@@ -148,17 +145,19 @@ class SplitScreen(object):
     
     ##TODO Use task.time instead of self.steps (Frames)
     def animateRegion(self, task):
-        if self.aktuelSteps >= self.steps:
+        if task.time >= self.steps:
+            for i in xrange(len(self.cameraPosPre)):
+                self.cameras[i].node().getDisplayRegion(0).setDimensions(self.calTheDiff( self.cameraPosPre[i][0], self.regions[i][0], self.steps), self.calTheDiff( self.cameraPosPre[i][1], self.regions[i][1], self.steps), self.calTheDiff( self.cameraPosPre[i][2], self.regions[i][2], self.steps), self.calTheDiff( self.cameraPosPre[i][3], self.regions[i][3], self.steps))
+                self.cameras[i].node().getLens().setAspectRatio(((self.regions[i][1]-self.regions[i][0])/(self.regions[i][3]-self.regions[i][2])))
             return task.done
-        self.aktuelSteps += 1
         for i in xrange(len(self.cameraPosPre)):
-            self.cameras[i].node().getDisplayRegion(0).setDimensions(self.calTheDiff( self.cameraPosPre[i][0], self.regions[i][0]), self.calTheDiff( self.cameraPosPre[i][1], self.regions[i][1]), self.calTheDiff( self.cameraPosPre[i][2], self.regions[i][2]), self.calTheDiff( self.cameraPosPre[i][3], self.regions[i][3]))
+            self.cameras[i].node().getDisplayRegion(0).setDimensions(self.calTheDiff( self.cameraPosPre[i][0], self.regions[i][0], task.time), self.calTheDiff( self.cameraPosPre[i][1], self.regions[i][1], task.time), self.calTheDiff( self.cameraPosPre[i][2], self.regions[i][2], task.time), self.calTheDiff( self.cameraPosPre[i][3], self.regions[i][3], task.time))
             self.cameras[i].node().getLens().setAspectRatio(((self.regions[i][1]-self.regions[i][0])/(self.regions[i][3]-self.regions[i][2])))
         return task.cont
     
     
-    def calTheDiff(self, alt, neu):
-        return alt + ((neu - alt) / self.steps ) * self.aktuelSteps
+    def calTheDiff(self, alt, neu, tasktime):
+        return alt + ((neu - alt) / self.steps ) * tasktime
     
     #-----------------------------------------------------------------
     
