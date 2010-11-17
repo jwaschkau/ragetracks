@@ -186,6 +186,16 @@ class Track(object):
     def generateTrack(self, player_count):
         '''
         '''
+##        y = player_count*VEHICLE_DIST
+##        points = []
+##        points.append( Vec3(0,-y/2,0) ) 
+##        points.append( Vec3(0,y/2,0) )
+##        
+##        
+        
+        
+#####################################################################
+#####################################################################        
         points = [ Vec3(0,0,0), Vec3(0, VEHICLE_DIST, 0) ]
         crossings = []
         
