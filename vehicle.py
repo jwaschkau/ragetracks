@@ -529,6 +529,9 @@ class Vehicle(object):
             self._model = None
             self._physics_model.destroy()
             self._collision_model.destroy()
+            ##temporary fix because destroy() doesnt work
+            self._physics_model.disable()
+            self._collision_model.disable()
         
         self._notify.info("Vehicle-Object deleted: %s" %(self))
     
