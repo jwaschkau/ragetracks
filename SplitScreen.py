@@ -20,7 +20,7 @@ class SplitScreen(object):
         self.regions = []   # the regions the screen is separated into
         self.cameras = []   # the cameras (empty ones are None)
         self.cameraPosPre = [] #The Position from the Cameras bevor change
-        self.steps = 10
+        self.steps = 1
         
         if cam_count > 0:
             self.addCameras(cam_count)

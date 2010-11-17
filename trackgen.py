@@ -182,7 +182,36 @@ class Track(object):
         return self.size
 
     # -------------------------------------------------------------------------------------
+    def generateTestTrack(self, player_count):
+        
+        #the track
+        #rand = random.randint(1,1)
+        rand = 0
+        if rand == 0:
+            self.trackpoints = [[0,0,0],[0,500,0],[200,500,0],[250,250,0],[300,0,200],[400,-500,0],[0,-500,0],[0,-1,0]]
+        else:
+            self.trackpoints = [[0,0,0],[0,500,100],[200,700,200],[500,600,250],[300,0,350],[-300,-300,350],[-700,-200,200],[-500,-100,100],[0,-500,-100],[100,-300,0],[0,-1,0]]
+        self.curve = HermiteCurve()
+        
+        #make the list with points
+        self.points = []
+        for point in self.trackpoints:
+            self.points.append(Vec3(point[0],point[1],point[2]))
+        
+        for point in self.points:
+            self.curve.appendCv(HCFREE, point[0],point[1], 0)
+            
+        for i in xrange(len(self.points)-1):
+##            self.curve.setCvIn(i, Vec3(self.points[i+1]-self.points[i-1]))
+##            self.curve.setCvOut(i, Vec3(self.points[i+1]-self.points[i-1]))
+            self.curve.setCvIn(i, Vec3(self.points[i+1]-self.points[i-1])*.5)
+            self.curve.setCvOut(i, Vec3(self.points[i+1]-self.points[i-1])*.5)
     
+        last = len(self.points)-1
+        self.curve.setCvIn(last, Vec3(self.points[0]-self.points[-2]))
+        self.curve.setCvOut(last, Vec3(self.points[0]-self.points[-2]))
+         
+         
     def generateTrack(self, player_count):
         '''
         '''
