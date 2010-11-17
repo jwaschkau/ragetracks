@@ -30,7 +30,7 @@ class Game(ShowBase):
         '''
         '''
         
-        #loadPrcFileData("", "fullscreen 1\n win-size 1680 1050")
+        loadPrcFileData("", "fullscreen 0\n win-size 1280 720")
         #loadPrcFileData("", "want-pstats 1\n pstats-host 127.0.0.1\n pstats-tasks 1\n task-timer-verbose 1")
         loadPrcFileData("", "sync-video #f")
         loadPrcFileData("", "default-directnotify-level debug\n notify-level-x11display fatal\n notify-level-Game debug\n notify-level-Menu debug\n notify-level-Vehicle debug")
@@ -71,7 +71,7 @@ class Game(ShowBase):
         self.world = OdeWorld()
 ##        self.world.setGravity(0, 0, -9.81)
         self.deltaTimeAccumulator = 0.0 #this variable is necessary to track the time for the physics
-        self.stepSize = 1.0 / 300.0 # This stepSize makes the simulation run at 60 frames per second
+        self.stepSize = 1.0 / 100.0 # This stepSize makes the simulation run at 60 frames per second
 
         #Initialize Collisions (ODE)
         self.space = OdeSimpleSpace()
