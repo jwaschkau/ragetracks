@@ -201,7 +201,8 @@ class Game(ShowBase):
         dlight = DirectionalLight('dlight')
         dlight.setColor(VBase4(10.0, 10.0, 10.0, 1))
         if (base.win.getGsg().getSupportsBasicShaders() != 0):
-            dlight.setShadowCaster(True, 2048, 2048) #enable shadows for this light
+            pass
+            ##dlight.setShadowCaster(True, 2048, 2048) #enable shadows for this light ##TODO wegen Linux
         dlnp = render.attachNewNode(dlight)
         dlnp.setHpr(0, -60, 0)
         render.setLight(dlnp)

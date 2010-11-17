@@ -444,7 +444,8 @@ class Menu(object):
                     plight = Spotlight('plight')
                     plight.setColor(VBase4(10.0, 10.0, 10.0, 1))
                     if (base.win.getGsg().getSupportsBasicShaders() != 0):
-                        plight.setShadowCaster(True, 2048, 2048)#enable shadows for this light
+                        pass
+                        ##plight.setShadowCaster(True, 2048, 2048)#enable shadows for this light ##TODO wegen Linux
                         
                     plight.getLens().setFov(80)
                     plnp = vehicleSelectNode.attachNewNode(plight)
