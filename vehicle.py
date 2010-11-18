@@ -178,7 +178,7 @@ class Vehicle(object):
         self._ray = CollisionRay(Vec3(0,0,0), Vec3(0,0,-1), self._ode_space, parent = self._collision_model, length = 10.0)
 
         ##Overwrite variables for testing purposes
-        self._grip_strength = 0.99
+        self._grip_strength = 0.9
         self._track_grip = 0.2
         self._boost_strength = 80
         
