@@ -368,30 +368,30 @@ class Track3d(object):
                 self.prim.addVertex(i+j)
                 self.prim.closePrimitive()
                 
-        # close start and end
-        k = self.vdata.getNumRows()-j
-        for i in xrange (j):
-            if (i+1) % j != 0:
-                self.prim.addVertex(i)
-                self.prim.addVertex(i+k+1)
-                self.prim.addVertex(i+1)                
-                self.prim.closePrimitive()
-                
-                self.prim.addVertex(i)
-                self.prim.addVertex(i+k)
-                self.prim.addVertex(i+k+1)
-                self.prim.closePrimitive()
-                
-            else: # close mesh's bottom side
-                self.prim.addVertex(i)
-                self.prim.addVertex(i+k-j+1)
-                self.prim.addVertex(i-j+1)                
-                self.prim.closePrimitive()
-                
-                self.prim.addVertex(i)
-                self.prim.addVertex(i+k)
-                self.prim.addVertex(i+k-j+1)
-                self.prim.closePrimitive()
+##        # close start and end
+##        k = self.vdata.getNumRows()-j
+##        for i in xrange (j):
+##            if (i+1) % j != 0:
+##                self.prim.addVertex(i)
+##                self.prim.addVertex(i+k+1)
+##                self.prim.addVertex(i+1)                
+##                self.prim.closePrimitive()
+##                
+##                self.prim.addVertex(i)
+##                self.prim.addVertex(i+k)
+##                self.prim.addVertex(i+k+1)
+##                self.prim.closePrimitive()
+##                
+##            else: # close mesh's bottom side
+##                self.prim.addVertex(i)
+##                self.prim.addVertex(i+k-j+1)
+##                self.prim.addVertex(i-j+1)                
+##                self.prim.closePrimitive()
+##                
+##                self.prim.addVertex(i)
+##                self.prim.addVertex(i+k)
+##                self.prim.addVertex(i+k-j+1)
+##                self.prim.closePrimitive()
             
         
 # -------------------------------------------------------------------------------------
