@@ -246,16 +246,20 @@ class Game(ShowBase):
             if geom1.compareTo(self.plane) == 0 and player.vehicle.physics_model.compareTo(body2) == 0:
                 player.vehicle.physics_model.setPosition(0,0,20)
                 player.vehicle.physics_model.setLinearVel(0,0,0)
+                player.vehicle.physics_model.setTorque (0,0,0)
+                #player.vehicle.physics_model.setRotation(Mat3())
                 return
             elif geom2.compareTo(self.plane) == 0 and player.vehicle.physics_model.compareTo(body1) == 0:
                 player.vehicle.physics_model.setPosition(0,0,20)
                 player.vehicle.physics_model.setLinearVel(0,0,0)
+                player.vehicle.physics_model.setTorque (0,0,0)
+                #player.vehicle.physics_model.setRotation(Mat3())
                 #body1.setPosition(0,0,20)
                 return
             #Decrease energy on collision
             elif player.vehicle.physics_model.compareTo(body1) == 0 or player.vehicle.physics_model.compareTo(body2) == 0:
-                player.vehicle.energy -= 0.1
-    
+                player.vehicle.energy -= player.vehicle.physics_model.getLinearVel().length() * 0.1
+                player.updateOSD()
     # -----------------------------------------------------------------
 
     def onRayCollision(self, entry, player):
@@ -290,6 +294,10 @@ class Game(ShowBase):
         #rigidbody.AddTorque(Vector3.Cross(transform.forward, Vector3.up) - rigidbody.angularVelocity * 0.5f);
         
         #Change the angle of the vehicle so it matches the street
+        
+        #angular_velocity = player.vehicle.physics_model.getAngularVel()
+        #angular_speed = player.vehicle.collision_model.getQuaternion().xform(Vec3(0,0,1)).cross(normal)
+        #needs_update = angular_velocity.compareTo(angular_speed)
         player.vehicle.physics_model.addTorque(player.vehicle.collision_model.getQuaternion().xform(Vec3(0,0,1)).cross(normal)*mass*30 - player.vehicle.physics_model.getAngularVel() * 0.5 *mass)
 
         #push the vehicle
