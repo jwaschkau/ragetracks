@@ -277,7 +277,13 @@ class Game(ShowBase):
         force_pos = ray.getPosition()
         contact = entry.getContactPoint(0)
         force_dir = force_pos - contact
-        acceleration = ((ray.getLength()/2)-force_dir.length())*30#calculate the direction
+        
+        linear_velocity = player.vehicle.physics_model.getLinearVel() 
+        z_direction = player.vehicle.collision_model.getQuaternion().xform(Vec3(0,0,1)) 
+        actual_speed = Vec3(linear_velocity[0]*z_direction[0],linear_velocity[1]*z_direction[1],linear_velocity[2]*z_direction[2])
+        goes_up = actual_speed.almostEqual(z_direction, 1)
+        
+        acceleration = ((ray.getLength()/2)-force_dir.length())*30*actual_speed.length()#calculate the direction
         player.vehicle.hit_ground = True
         
         force_dir.normalize()
@@ -287,12 +293,12 @@ class Game(ShowBase):
         player.vehicle.physics_model.addTorque(player.vehicle.collision_model.getQuaternion().xform(Vec3(0,0,1)).cross(normal)*mass*30 - player.vehicle.physics_model.getAngularVel() * 0.5 *mass)
 
         #push the vehicle
-        if acceleration > 0:
+        if acceleration > 0 and not goes_up:
             force_dir = Vec3(normal[0]*acceleration,normal[1]*acceleration,normal[2]*acceleration)
             player.vehicle.physics_model.addForce(force_dir*mass)
         
         #pull the vehicle
-        else:
+        elif goes_up:
             force_dir = Vec3(normal[0]*acceleration,normal[1]*acceleration,normal[2]*acceleration)
             player.vehicle.physics_model.addForce(force_dir*mass)
         player.vehicle.physics_model.addForce(normal[0]*player.vehicle.boost_direction[0]*-0.9*mass, normal[1]*player.vehicle.boost_direction[1]*-0.9*mass, normal[2]*player.vehicle.boost_direction[2]*-0.9*mass)
