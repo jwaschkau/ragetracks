@@ -47,7 +47,7 @@ class Looping(object):
         if "name" in kwds.keys():
             self.name = str(kwds["name"])
             
-        self._notify.info("New Looping-Object created: %s" %(self))
+        ##self._notify.info("New Looping-Object created: %s" %(self))
     # -------------------------------------------------------------------------------------
 
     def addPoint(self, x, y, z):
@@ -310,26 +310,56 @@ class Track(object):
         return self.size
 
     # -------------------------------------------------------------------------------------
+    def generateTestTrack(self, player_count):
+        
+        #the track
+        #rand = random.randint(1,1)
+        rand = 0
+        if rand == 0:
+            self.trackpoints = [[0,0,0],[0,500,0],[200,500,0],[250,250,0],[300,0,200],[400,-500,0],[0,-500,0],[0,-1,0]]
+        else:
+            self.trackpoints = [[0,0,0],[0,500,100],[200,700,200],[500,600,250],[300,0,350],[-300,-300,350],[-700,-200,200],[-500,-100,100],[0,-500,-100],[100,-300,0],[0,-1,0]]
+        self.curve = HermiteCurve()
+        
+        #make the list with points
+        self.points = []
+        for point in self.trackpoints:
+            self.points.append(Vec3(point[0],point[1],point[2]))
+        
+        for point in self.points:
+            self.curve.appendCv(HCFREE, point[0],point[1], point[2])
+            
+        for i in xrange(len(self.points)-1):
+##            self.curve.setCvIn(i, Vec3(self.points[i+1]-self.points[i-1]))
+##            self.curve.setCvOut(i, Vec3(self.points[i+1]-self.points[i-1]))
+            self.curve.setCvIn(i, Vec3(self.points[i+1]-self.points[i-1])*.5)
+            self.curve.setCvOut(i, Vec3(self.points[i+1]-self.points[i-1])*.5)
     
+        last = len(self.points)-1
+        self.curve.setCvIn(last, Vec3(self.points[0]-self.points[-2]))
+        self.curve.setCvOut(last, Vec3(self.points[0]-self.points[-2]))
+         
+         
     def generateTrack(self, player_count):
         '''
         '''
         y = player_count*VEHICLE_DIST
         points = []
-        points.append( Vec3(0,-y/2,0) ) 
-        points.append( Vec3(0,y/2,0) )
+        ##points.append( Vec3(0,-y/2,0) ) 
+        ##points.append( Vec3(0,y/2,0) )
         
         looping = Looping(filename="data/road/parts/looping01.xml")
         
-        looping *= 1000
-        print looping
+        looping *= 100
+        #print looping
         print
-        
+        print "###"
         
         for point in looping:
+            print point
             points.append(point)
         
-        print points
+        print "###"
         
         
 #####################################################################
@@ -406,7 +436,7 @@ class Track(object):
         #HCSMOOTH
         
         for point in self.points:
-            self.curve.appendCv(HCFREE, point[0],point[1], 0)
+            self.curve.appendCv(HCFREE, point[0],point[1], point[2])
             
         for i in xrange(len(self.points)-1):
 ##            self.curve.setCvIn(i, Vec3(self.points[i+1]-self.points[i-1]))
@@ -414,75 +444,9 @@ class Track(object):
             self.curve.setCvIn(i, Vec3(self.points[i+1]-self.points[i-1])*.5)
             self.curve.setCvOut(i, Vec3(self.points[i+1]-self.points[i-1])*.5)
     
-        last = len(self.points)-1
-        self.curve.setCvIn(last, Vec3(self.points[0]-self.points[-2]))
-        self.curve.setCvOut(last, Vec3(self.points[0]-self.points[-2]))
-        
-        
-        
-        if __name__ == "__main__":
-            # ================= TEST ================
-            # === Strecke in Bitmap visualisieren ===
-            # =======================================
-            bmp = bitmap24.Bitmap24("", int(self.size[0]+1), int(self.size[1]+1))
-
-            last = None
-            for i in(self.points):
-                if last == None:
-                    last = i
-                    continue
-
-                #if i[2] != 0:
-                #    rgb = int((float(i[2])/self.size[2])*200)
-
-                bmp.drawLine(last[0], last[1], i[0], i[1], (0,0,0) )
-
-                last = i
-            
-            count = 0
-            for i in(self.points):
-                if count < 10:
-                    bmp.drawDigit(count, i[0],i[1],(0,0,255))
-                bmp.drawPixel(i[0], i[1], (255,0,0) )
-                count += 1
-
-            #bmp.drawLine(self.points[0][0], self.points[0][1], self.points[-1][0], self.points[-1][1])
-            bmp.drawDigit(0, self.points[0][0], self.points[0][1], (255,0,0))
-            bmp.drawPixel(self.points[-2][0], self.points[-2][1], (0,255,0))
-            bmp.writeBitmap("test1.bmp")
-            # =======================================
-            
-            
-            
-            
-            # ================= TEST ================
-            # === Strecke in Bitmap visualisieren ===
-            # =======================================
-            bmp = bitmap24.Bitmap24("", int(self.size[0]+1), int(self.size[1]+1))
-
-            last = None
-
-            resolution = 100
-            
-            point = Vec3(0,0,0)
-            length = self.curve.getMaxT()
-
-            for i in xrange(0,resolution):
-                self.curve.getPoint(i*(length/resolution), point)
-
-                if last == None:
-                    last = copy.deepcopy(point)
-                    continue
-
-                bmp.drawLine(last.getX(), last.getY(), point.getX(), point.getY(), (0,0,0) )
-                #bmp.writeBitmap("test/"+str(i)+".bmp")
-
-                last = copy.deepcopy(point)
-
-            bmp.drawDigit(0, self.points[0][0], self.points[0][1], (255,0,0))
-            bmp.drawPixel(self.points[-2][0], self.points[-2][1], (0,255,0))
-
-            bmp.writeBitmap("test2.bmp")
+##        last = len(self.points)-1
+##        self.curve.setCvIn(last, Vec3(self.points[0]-self.points[-2]))
+##        self.curve.setCvOut(last, Vec3(self.points[0]-self.points[-2]))
     
     # -------------------------------------------------------------------------------------
 
@@ -498,6 +462,7 @@ class Track(object):
         xres = length/resolution
         for i in xrange(0,resolution):
             self.curve.getPoint(i*xres, point)
+            print point
             pointlist.append(Vec3(point))
             
         return pointlist

@@ -212,7 +212,7 @@ class Track3d(object):
         #street_data = (Vec2(4.0,4.0), Vec2(10.0,10.0), Vec2(10.0,0.0), Vec2(4.0,0.0), Vec2(0.0,-1.0))
         #street_data = StreetData(Vec2(15.0,1.0), Vec2(15.0,-5.0), Vec2(0.0,-5.0), mirrored=True) #, Vec2(15.0,0.0)
         street_data = StreetData()
-        street_data.readFile("data/road/road01.xml")
+        street_data.readFile("data/road/road_test.xml")
         
         self.vdata = GeomVertexData('street', GeomVertexFormat.getV3n3c4t2(), Geom.UHStatic) 
         #self.vdata = GeomVertexData('name', GeomVertexFormat.getV3c4t2(), Geom.UHStatic) 
@@ -225,6 +225,7 @@ class Track3d(object):
         
         
         m = Track(x, y, z)
+        ##m.generateTestTrack(player_count)
         m.generateTrack(player_count)
         #m.genStart(5)
         track_points = m.getInterpolatedPoints(res)
@@ -281,8 +282,10 @@ class Track3d(object):
         for i in xrange(len(track_points)):
             if i+1 == len(track_points):
                 vec = track_points[i-1]-track_points[0]
+                c = track_points[i-1]+track_points[0]
             else:
                 vec = track_points[i-1]-track_points[i+1]
+                c = track_points[i-1]+track_points[i+1]
         
 ##            h = Vec3(1,0,0).angleDeg(Vec3(vec[0],0,0))
 ##            p = Vec3(0,1,0).angleDeg(Vec3(0,vec[1],0))
@@ -291,7 +294,8 @@ class Track3d(object):
             #hpr = heading, pitch, roll
                 
             mat = Mat3()
-            mat.setRotateMat(-90, Vec3(0,0,1))
+            #mat.setRotateMat(90, Vec3(0,0,1))
+            mat.setRotateMat(-90, c)
             vec = mat.xform(vec)
             vec.normalize()
             
@@ -356,17 +360,17 @@ class Track3d(object):
                 self.prim.addVertex(i+j+1)
                 self.prim.addVertex(i+j)
                 self.prim.closePrimitive()
-            else: # close mesh's bottom side
-                
-                self.prim.addVertex(i+1-j)
-                self.prim.addVertex(i+1)
-                self.prim.addVertex(i)
-                self.prim.closePrimitive()
-                
-                self.prim.addVertex(i)
-                self.prim.addVertex(i+1)
-                self.prim.addVertex(i+j)
-                self.prim.closePrimitive()
+##            else: # close mesh's bottom side
+##                
+##                self.prim.addVertex(i+1-j)
+##                self.prim.addVertex(i+1)
+##                self.prim.addVertex(i)
+##                self.prim.closePrimitive()
+##                
+##                self.prim.addVertex(i)
+##                self.prim.addVertex(i+1)
+##                self.prim.addVertex(i+j)
+##                self.prim.closePrimitive()
                 
 ##        # close start and end
 ##        k = self.vdata.getNumRows()-j

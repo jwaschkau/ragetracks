@@ -20,9 +20,7 @@ class SplitScreen(object):
         self.regions = []   # the regions the screen is separated into
         self.cameras = []   # the cameras (empty ones are None)
         self.cameraPosPre = [] #The Position from the Cameras bevor change
-        self.steps = 100
-        self.aktuelSteps = 0
-        
+        self.steps = 1
         
         if cam_count > 0:
             self.addCameras(cam_count)
@@ -128,10 +126,14 @@ class SplitScreen(object):
         '''
         taskMgr.remove("AnimateRegion")
         self.cameraPosPre = []
-        self.aktuelSteps = 0
         for i in xrange(len(self.cameras)):
             if self.cameras[i] != None:
                 self.cameraPosPre.append((self.cameras[i].node().getDisplayRegion(0).getLeft(), self.cameras[i].node().getDisplayRegion(0).getRight(), self.cameras[i].node().getDisplayRegion(0).getBottom(), self.cameras[i].node().getDisplayRegion(0).getTop()))
+                self.cameras[i].node().getLens().setAspectRatio(((self.regions[i][1]-self.regions[i][0])/(self.regions[i][3]-self.regions[i][2])))
+                height =  self.cameras[i].node().getDisplayRegion(0).getPixelHeight()
+                width =  self.cameras[i].node().getDisplayRegion(0).getPixelWidth()
+                ratio = float(width)/float(height)
+                self.cameras[i].node().getLens().setFov(45*ratio)
         taskMgr.add(self.animateRegion, "AnimateRegion")
         
 #        #Old Code without animation  
@@ -148,17 +150,27 @@ class SplitScreen(object):
     
     ##TODO Use task.time instead of self.steps (Frames)
     def animateRegion(self, task):
-        if self.aktuelSteps >= self.steps:
+        if task.time >= self.steps:
+            for i in xrange(len(self.cameraPosPre)):
+                self.cameras[i].node().getDisplayRegion(0).setDimensions(self.calTheDiff( self.cameraPosPre[i][0], self.regions[i][0], self.steps), self.calTheDiff( self.cameraPosPre[i][1], self.regions[i][1], self.steps), self.calTheDiff( self.cameraPosPre[i][2], self.regions[i][2], self.steps), self.calTheDiff( self.cameraPosPre[i][3], self.regions[i][3], self.steps))
+                self.cameras[i].node().getLens().setAspectRatio(((self.regions[i][1]-self.regions[i][0])/(self.regions[i][3]-self.regions[i][2])))
+                height =  self.cameras[i].node().getDisplayRegion(0).getPixelHeight()
+                width =  self.cameras[i].node().getDisplayRegion(0).getPixelWidth()
+                ratio = float(width)/float(height)
+                self.cameras[i].node().getLens().setFov(45*ratio)
             return task.done
-        self.aktuelSteps += 1
         for i in xrange(len(self.cameraPosPre)):
-            self.cameras[i].node().getDisplayRegion(0).setDimensions(self.calTheDiff( self.cameraPosPre[i][0], self.regions[i][0]), self.calTheDiff( self.cameraPosPre[i][1], self.regions[i][1]), self.calTheDiff( self.cameraPosPre[i][2], self.regions[i][2]), self.calTheDiff( self.cameraPosPre[i][3], self.regions[i][3]))
+            self.cameras[i].node().getDisplayRegion(0).setDimensions(self.calTheDiff( self.cameraPosPre[i][0], self.regions[i][0], task.time), self.calTheDiff( self.cameraPosPre[i][1], self.regions[i][1], task.time), self.calTheDiff( self.cameraPosPre[i][2], self.regions[i][2], task.time), self.calTheDiff( self.cameraPosPre[i][3], self.regions[i][3], task.time))
             self.cameras[i].node().getLens().setAspectRatio(((self.regions[i][1]-self.regions[i][0])/(self.regions[i][3]-self.regions[i][2])))
+            height =  self.cameras[i].node().getDisplayRegion(0).getPixelHeight()
+            width =  self.cameras[i].node().getDisplayRegion(0).getPixelWidth()
+            ratio = float(width)/float(height)
+            self.cameras[i].node().getLens().setFov(45*ratio)
         return task.cont
     
     
-    def calTheDiff(self, alt, neu):
-        return alt + ((neu - alt) / self.steps ) * self.aktuelSteps
+    def calTheDiff(self, alt, neu, tasktime):
+        return alt + ((neu - alt) / self.steps ) * tasktime
     
     #-----------------------------------------------------------------
     
@@ -195,8 +207,12 @@ class SplitScreen(object):
         Create one Camera for a new Player
         '''
         camera=base.makeCamera(base.win,displayRegion=region)
-        camera.node().getLens().setAspectRatio(3.0/4.0)
-        camera.node().getLens().setFov(45) #optional.
+        camera.node().getLens().setAspectRatio(((region[1]-region[0])/(region[3]-region[2])))
+        height =  camera.node().getDisplayRegion(0).getPixelHeight()
+        width =  camera.node().getDisplayRegion(0).getPixelWidth()
+        ratio = float(width)/float(height)
+        camera.node().getLens().setFov(45*ratio)
+        
         camera.setPos(0,-8,3) #set its position.
         return camera
 

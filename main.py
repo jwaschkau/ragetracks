@@ -30,7 +30,7 @@ class Game(ShowBase):
         '''
         '''
         
-        #loadPrcFileData("", "fullscreen 1\n win-size 1680 1050")
+        loadPrcFileData("", "fullscreen 0\n win-size 1280 720")
         #loadPrcFileData("", "want-pstats 1\n pstats-host 127.0.0.1\n pstats-tasks 1\n task-timer-verbose 1")
         loadPrcFileData("", "sync-video #f")
         loadPrcFileData("", "default-directnotify-level debug\n notify-level-x11display fatal\n notify-level-Game debug\n notify-level-Menu debug\n notify-level-Vehicle debug")
@@ -71,7 +71,7 @@ class Game(ShowBase):
         self.world = OdeWorld()
 ##        self.world.setGravity(0, 0, -9.81)
         self.deltaTimeAccumulator = 0.0 #this variable is necessary to track the time for the physics
-        self.stepSize = 1.0 / 300.0 # This stepSize makes the simulation run at 60 frames per second
+        self.stepSize = 1.0 / 100.0 # This stepSize makes the simulation run at 60 frames per second
 
         #Initialize Collisions (ODE)
         self.space = OdeSimpleSpace()
@@ -201,7 +201,8 @@ class Game(ShowBase):
         dlight = DirectionalLight('dlight')
         dlight.setColor(VBase4(10.0, 10.0, 10.0, 1))
         if (base.win.getGsg().getSupportsBasicShaders() != 0):
-            dlight.setShadowCaster(True, 2048, 2048) #enable shadows for this light
+            pass
+            ##dlight.setShadowCaster(True, 2048, 2048) #enable shadows for this light ##TODO wegen Linux
         dlnp = render.attachNewNode(dlight)
         dlnp.setHpr(0, -60, 0)
         render.setLight(dlnp)
@@ -245,19 +246,23 @@ class Game(ShowBase):
             if geom1.compareTo(self.plane) == 0 and player.vehicle.physics_model.compareTo(body2) == 0:
                 player.vehicle.physics_model.setPosition(0,0,20)
                 player.vehicle.physics_model.setLinearVel(0,0,0)
+                player.vehicle.physics_model.setTorque (0,0,0)
+                #player.vehicle.physics_model.setRotation(Mat3())
                 return
             elif geom2.compareTo(self.plane) == 0 and player.vehicle.physics_model.compareTo(body1) == 0:
                 player.vehicle.physics_model.setPosition(0,0,20)
                 player.vehicle.physics_model.setLinearVel(0,0,0)
+                player.vehicle.physics_model.setTorque (0,0,0)
+                #player.vehicle.physics_model.setRotation(Mat3())
                 #body1.setPosition(0,0,20)
                 return
             #Decrease energy on collision
             elif player.vehicle.physics_model.compareTo(body1) == 0 or player.vehicle.physics_model.compareTo(body2) == 0:
-                player.vehicle.energy -= 0.1
-    
+                player.vehicle.energy -= player.vehicle.physics_model.getLinearVel().length() * 0.1
+                player.updateOSD()
     # -----------------------------------------------------------------
 
-    def onRayCollision(self, entry):
+    def onRayCollision(self, entry, player):
         '''
         Handles Collision-Events with the street
         '''
@@ -265,39 +270,47 @@ class Game(ShowBase):
         geom2 = entry.getGeom2()
         body1 = entry.getBody1()
         body2 = entry.getBody2()
-         #Handles the collision-rays from the players
-        for player in self.players:
-            ray = player.vehicle.ray.getRay()
-            #print geom1.compareTo(ray)
-            #print geom2.compareTo(ray)
-            if geom1 == ray or geom2 == ray:
-                normal = entry.getContactGeom(0).getNormal()
-                normal.normalize()
-                player.vehicle.physics_model.setGravityMode(0) #disable gravity if on the track
-                mass = player.vehicle.physics_model.getMass().getMagnitude()                    
-                force_pos = ray.getPosition()
-                contact = entry.getContactPoint(0)
-                force_dir = force_pos - contact
-                acceleration = ((ray.getLength()/2)-force_dir.length())*30#calculate the direction
-                player.vehicle.hit_ground = True
-                
-                force_dir.normalize()
-                #rigidbody.AddTorque(Vector3.Cross(transform.forward, Vector3.up) - rigidbody.angularVelocity * 0.5f);
-                
-                #Change the angle of the vehicle so it matches the street
-                player.vehicle.physics_model.addTorque(player.vehicle.collision_model.getQuaternion().xform(Vec3(0,0,1)).cross(normal)*mass*30 - player.vehicle.physics_model.getAngularVel() * 0.5 *mass)
+        #Handles the collision-rays from the players
+        ray = player.vehicle.ray.getRay()
+        #print geom1.compareTo(ray)
+        #print geom2.compareTo(ray)
+        normal = entry.getContactGeom(0).getNormal()
+        normal.normalize()
+        player.vehicle.physics_model.setGravityMode(0) #disable gravity if on the track
+        mass = player.vehicle.physics_model.getMass().getMagnitude()                    
+        force_pos = ray.getPosition()
+        contact = entry.getContactPoint(0)
+        force_dir = force_pos - contact
+        
+        linear_velocity = player.vehicle.physics_model.getLinearVel() 
+        z_direction = player.vehicle.collision_model.getQuaternion().xform(Vec3(0,0,1)) 
+        actual_speed = Vec3(linear_velocity[0]*z_direction[0],linear_velocity[1]*z_direction[1],linear_velocity[2]*z_direction[2])
+        goes_up = actual_speed.almostEqual(z_direction, 1)
+        
+        acceleration = ((ray.getLength()/2)-force_dir.length())*30*actual_speed.length()#calculate the direction
+        player.vehicle.hit_ground = True
+        
+        force_dir.normalize()
+        #rigidbody.AddTorque(Vector3.Cross(transform.forward, Vector3.up) - rigidbody.angularVelocity * 0.5f);
+        
+        #Change the angle of the vehicle so it matches the street
+        
+        #angular_velocity = player.vehicle.physics_model.getAngularVel()
+        #angular_speed = player.vehicle.collision_model.getQuaternion().xform(Vec3(0,0,1)).cross(normal)
+        #needs_update = angular_velocity.compareTo(angular_speed)
+        player.vehicle.physics_model.addTorque(player.vehicle.collision_model.getQuaternion().xform(Vec3(0,0,1)).cross(normal)*mass*30 - player.vehicle.physics_model.getAngularVel() * 0.5 *mass)
 
-                #push the vehicle
-                if acceleration > 0:
-                    force_dir = Vec3(normal[0]*acceleration,normal[1]*acceleration,normal[2]*acceleration)
-                    player.vehicle.physics_model.addForce(force_dir*mass)
-                
-                #pull the vehicle
-                else:
-                    force_dir = Vec3(normal[0]*acceleration,normal[1]*acceleration,normal[2]*acceleration)
-                    player.vehicle.physics_model.addForce(force_dir*mass)
-                player.vehicle.physics_model.addForce(normal[0]*player.vehicle.boost_direction[0]*-0.9*mass, normal[1]*player.vehicle.boost_direction[1]*-0.9*mass, normal[2]*player.vehicle.boost_direction[2]*-0.9*mass)
-                return
+        #push the vehicle
+        if acceleration > 0 and not goes_up:
+            force_dir = Vec3(normal[0]*acceleration,normal[1]*acceleration,normal[2]*acceleration)
+            player.vehicle.physics_model.addForce(force_dir*mass)
+        
+        #pull the vehicle
+        elif goes_up:
+            force_dir = Vec3(normal[0]*acceleration,normal[1]*acceleration,normal[2]*acceleration)
+            player.vehicle.physics_model.addForce(force_dir*mass)
+        player.vehicle.physics_model.addForce(normal[0]*player.vehicle.boost_direction[0]*-0.9*mass, normal[1]*player.vehicle.boost_direction[1]*-0.9*mass, normal[2]*player.vehicle.boost_direction[2]*-0.9*mass)
+        return
         
         
  # -----------------------------------------------------------------
@@ -331,7 +344,7 @@ class Game(ShowBase):
                 
                 col = OdeUtil.collide(player.vehicle.ray.getRay(), self.groundGeom)
                 if not col.isEmpty():
-                    self.onRayCollision(col)#handles collisions from the ray with the street
+                    self.onRayCollision(col, player)#handles collisions from the ray with the street
 
             self.deltaTimeAccumulator -= self.stepSize # Remove a stepSize from the accumulator until the accumulated time is less than the stepsize
             self.space.autoCollide() # Setup the contact joints
