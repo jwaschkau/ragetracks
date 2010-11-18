@@ -5,6 +5,7 @@
 import vehicle
 from pandac.PandaModules import Vec3,Quat #Load all PandaModules
 from direct.directnotify.DirectNotify import DirectNotify
+from direct.gui.OnscreenText import OnscreenText
 
 class Player(object):
     '''
@@ -20,6 +21,8 @@ class Player(object):
         self._camera = camera
         self._vehicle = vehicle.Vehicle(self._ode_world, self._ode_space) #the properties of the vehicle
         self._device = device #The inputdevice
+        self._osd_health = OnscreenText(text = "100", pos = ((self._number*0.2)-1,0.9))
+        #self._osd_health.reparentTo()
         
         #self._camera.followVehicle(self._vehicle.boost_direction, self._vehicle.model)
         #self._camera.setPos(0,-40,5)
@@ -52,7 +55,20 @@ class Player(object):
     camera = property(fget = getCamera, fset = setCamera)
         
     # ---------------------------------------------------------
-            
+    
+    def updateOSD(self):
+        '''
+        update the osd-information
+        '''
+        self._osd_health.setText(str(round(self._vehicle.energy)))
+        
+    def recalculateOSD(self):
+        '''
+        recalculate positions of the osd
+        '''
+        pass
+        
+    # ---------------------------------------------------------      
     def setVehicle(self, vehicle):
         '''
         '''

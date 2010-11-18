@@ -180,7 +180,7 @@ class Vehicle(object):
         ##Overwrite variables for testing purposes
         self._grip_strength = 0.99
         self._track_grip = 0.2
-        self._boost_strength = 40
+        self._boost_strength = 80
         
         #Loading finished
         self._model_loading = False
