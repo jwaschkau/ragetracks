@@ -30,7 +30,7 @@ class Game(ShowBase):
         '''
         '''
         
-        loadPrcFileData("", "fullscreen 0\n win-size 1280 720")
+        #loadPrcFileData("", "fullscreen 0\n win-size 1280 720")
         #loadPrcFileData("", "want-pstats 1\n pstats-host 127.0.0.1\n pstats-tasks 1\n task-timer-verbose 1")
         loadPrcFileData("", "sync-video #f")
         loadPrcFileData("", "default-directnotify-level debug\n notify-level-x11display fatal\n notify-level-Game debug\n notify-level-Menu debug\n notify-level-Vehicle debug")
@@ -298,7 +298,7 @@ class Game(ShowBase):
         #angular_velocity = player.vehicle.physics_model.getAngularVel()
         #angular_speed = player.vehicle.collision_model.getQuaternion().xform(Vec3(0,0,1)).cross(normal)
         #needs_update = angular_velocity.compareTo(angular_speed)
-        player.vehicle.physics_model.addTorque(player.vehicle.collision_model.getQuaternion().xform(Vec3(0,0,1)).cross(normal)*mass*30 - player.vehicle.physics_model.getAngularVel() * 0.5 *mass)
+        player.vehicle.physics_model.addTorque(player.vehicle.collision_model.getQuaternion().xform(Vec3(0,0,1)).cross(normal)*mass*30 - player.vehicle.physics_model.getAngularVel() * 0.8 * mass)
 
         #push the vehicle
         if acceleration > 0 and not goes_up:
