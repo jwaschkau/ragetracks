@@ -351,15 +351,10 @@ class Track(object):
         looping = Looping(filename="data/road/parts/looping01.xml")
         
         looping *= 100
-        #print looping
-        print
-        print "###"
         
         for point in looping:
-            print point
             points.append(point)
         
-        print "###"
         
         
 #####################################################################
