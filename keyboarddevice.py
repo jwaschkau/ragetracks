@@ -12,7 +12,7 @@ from direct.directnotify.DirectNotify import DirectNotify
 # ---------------------------------------------------------
 # ---------------------------------------------------------
 
-class KeyboardDevice():
+class KeyboardDevice(object):
     '''
     This class holds data about the keyboard
     '''

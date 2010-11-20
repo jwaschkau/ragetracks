@@ -8,19 +8,24 @@ from direct.directnotify.DirectNotify import DirectNotify
 import trackgen3d
 import glob
 import settings
+import pywii
+from compiler.ast import TryExcept
 
 FONT = 'data/fonts/Orbitron/TTF/orbitron-black.ttf'
 class MainMenu(object):
 
-    def __init__(self, newGame, device):
+    def __init__(self, newGame, device, devices):
         self._notify = DirectNotify().newCategory("Menu")
         self._notify.info("New Menu-Object created: %s" %(self))
         self.device = device #The keybord
+        self.devices = devices #For Wii
         
-        time.sleep(1)               #Bad Hack to make sure that the Key isn't pressed.
-        self.device.boost = False   #Bad Hack to make sure that the Key isn't ￼.setColor(self.colorA)pressed.
+        #time.sleep(1)               #Bad Hack to make sure that the Key isn't pressed.
+        #self.device.boost = False   #Bad Hack to make sure that the Key isn't ￼.setColor(self.colorA)pressed.
         
         self.newGame = newGame
+        
+        self.wiimoteX = []#Wiimodes
         
         #Font
         self.font = DynamicTextFont(FONT)
@@ -61,7 +66,7 @@ class MainMenu(object):
         #self.selected = 0
         self.addOption(_("New Game"), self.newGame)
         self.addOption(_("Options"), self.option)
-        self.addOption(_("Hall Of Fame"), self.newGame)
+        self.addOption(_("Wiimode"), self.addWii)
         self.addOption(_("Credits"), self.newGame)
         self.addOption(_("Exit"), self.exit)
         #self.text = Text3D(_("NewGame"))
@@ -103,6 +108,20 @@ class MainMenu(object):
 
     # -----------------------------------------------------------------
     
+    def addWii(self):
+        self.devices.wiis.getWiimodes()
+        #=======================================================================
+        # try:
+        #    print 'Put Wiimote in discoverable mode now (press 1+2)...'
+        #    wiimote = cwiid.Wiimote()
+        #    self.wiimoteX.append(wiimote)
+        #    print "Wii", len(self.wiimoteX)
+        # except:
+        #    pass
+        #=======================================================================
+        self.menuMain()
+        taskMgr.add(self.input, 'input')
+        
     def fullscreen(self):
         self._conf.fullscreen = not self._conf.fullscreen
         wp = WindowProperties()
@@ -241,6 +260,7 @@ class Menu(object):
         '''
         self._notify.info("Initializing StartScreen")
         
+        self.wii = []
         
         #StartScreen Node
         self.startNode = NodePath("StartNode")
@@ -288,6 +308,7 @@ class Menu(object):
         '''
         Return the first device with the first key stroke
         '''
+        
         for i in xrange(len(self._devices.devices)):
             if self._devices.devices[i].boost:
                 #Kill Cam
@@ -297,7 +318,7 @@ class Menu(object):
                 
                 #Start the Game for testing purpose
                 #self.menu = Menu(self.newGame, self.players[0].getDevice())    #if one player exist
-                self.menu = MainMenu(self.newGame, self._devices.devices[i])         #if no player exist
+                self.menu = MainMenu(self.newGame, self._devices.devices[i], self._devices)         #if no player exist
                 self.menu.menuMain()
                 return task.done
         return task.cont
@@ -348,6 +369,7 @@ class Menu(object):
         
         self.unusedDevices = self._devices.devices[:]
         taskMgr.add(self.collectPlayer, "collectPlayer")
+        #taskMgr.add(self.collectWii, "collectWii")
         self.screens = []
         taskMgr.add(self.selectVehicle, "selectVehicle")
         
@@ -402,6 +424,17 @@ class Menu(object):
     
     # -----------------------------------------------------------------
 
+    def collectWii(self, task):
+        try:
+            print 'Put Wiimote in discoverable mode now (press 1+2)...'
+            wiimote = cwiid.Wiimote()
+            self.wiimoteX.append(wiimote)
+            print len(self.wiimoteX)
+        except:
+            pass
+        return task.cont
+        
+    
     def collectPlayer(self, task):
         '''
         Wait until all players are ready
@@ -427,6 +460,7 @@ class Menu(object):
                     #tex = loader.loadTexture('data/models/StreetTex.png')
                     #self.nodePath.setTexture(tex)
                     #self.nodePath.setTwoSided(True)
+                    taskMgr.remove('collectWii')
                     self._parent.startGame(self.streetPath)
                     return task.done
 
@@ -468,7 +502,7 @@ class Menu(object):
                     #start loading the model
                     loader.loadModel(self.vehicle_list[0], callback = self._players[-1].setVehicle)
                     self._notify.debug("Loading initial vehicle: %s" %(self.vehicle_list[0]))
-                    #self.unusedDevices.remove(device) 
+                    self.unusedDevices.remove(device) 
                     self.player_buttonpressed[-1] = task.time + self.KEY_DELAY
 
         for player in self._players:

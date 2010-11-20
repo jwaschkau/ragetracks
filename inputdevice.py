@@ -8,6 +8,7 @@ from direct.directnotify.DirectNotify import DirectNotify
 import pygame
 import keyboarddevice
 import joystickdevice
+import wiidevice
 import sys
 
 # ---------------------------------------------------------
@@ -186,6 +187,7 @@ class InputDevices(object):
 
         self.keyboard = keyboarddevice.KeyboardDevice()
         self.joysticks = joystickdevice.JoystickDevices()
+        self.wiis = wiidevice.WiiDevices()
 
         self.devices = [InputDevice(self.keyboard, settings)]
 

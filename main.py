@@ -85,6 +85,7 @@ class Game(ShowBase):
         # initialize the input devices
         self.devices = inputdevice.InputDevices(self.settings.getInputSettings())
 
+        self.wii = []
         startgame = True
         #Start the Game
         for arg in sys.argv:
@@ -108,6 +109,11 @@ class Game(ShowBase):
                 PStatClient.connect() #activate to start performance measuring with pstats
             if  arg == "--wire":    
                 base.toggleWireframe()
+            if arg == "--wii":
+                wiimote = cwiid.Wiimote()
+                self.wii.append(wiimote)
+        
+                
         if startgame:   
             myMenu = Menu(self)
             taskMgr.add(self.devices.fetchEvents, "fetchEvents")
@@ -298,7 +304,7 @@ class Game(ShowBase):
         #angular_velocity = player.vehicle.physics_model.getAngularVel()
         #angular_speed = player.vehicle.collision_model.getQuaternion().xform(Vec3(0,0,1)).cross(normal)
         #needs_update = angular_velocity.compareTo(angular_speed)
-        player.vehicle.physics_model.addTorque(player.vehicle.collision_model.getQuaternion().xform(Vec3(0,0,1)).cross(normal)*mass*30 - player.vehicle.physics_model.getAngularVel() * 0.5 *mass)
+        player.vehicle.physics_model.addTorque(player.vehicle.collision_model.getQuaternion().xform(Vec3(0,0,1)).cross(normal)*mass*30 - player.vehicle.physics_model.getAngularVel() * 0.8 * mass)
 
         #push the vehicle
         if acceleration > 0 and not goes_up:
