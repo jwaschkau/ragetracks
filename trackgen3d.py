@@ -226,7 +226,9 @@ class Track3d(object):
         
         m = Track(x, y, z)
         m.generateTestTrack(player_count)
+        ##m.generateTrack(player_count)
         #m.genStart(5)
+        ##res = 20
         track_points = m.getInterpolatedPoints(res)
         #track_points = (Vec3(-5, 0, 0), Vec3(-5, 10, 0), Vec3(-5, 20, 0), Vec3(-5, 30, 0), Vec3(-5, 40, 0), Vec3(-5, 43, 0), Vec3(-5, 53, 0), Vec3(-5, 63, 0))
         #print "Imput Centers:", track_points
@@ -278,22 +280,29 @@ class Track3d(object):
         for i in xrange(street_data_length):
             texcoordinates.append((i+1.0)/street_data_length)
             
+        print "\n\n\n#-#-#-#-#-#-#-##-#-#-#-#-#-#####################-#-#-#-\n\n"
+        
+        last_normal = Vec3(0,0,1)
         for i in xrange(len(track_points)):
             if i+1 == len(track_points):
-                vec = track_points[i-1]-track_points[0]
+                #vec = track_points[i-1]-track_points[0]
+                vec = Vec3(0,-1,0)
+            elif i == 0:
+                vec = Vec3(0,-1,0)
             else:
                 vec = track_points[i-1]-track_points[i+1]
-        
-##            h = Vec3(1,0,0).angleDeg(Vec3(vec[0],0,0))
-##            p = Vec3(0,1,0).angleDeg(Vec3(0,vec[1],0))
-##            r = Vec3(0,0,1).angleDeg(Vec3(0,0,vec[2]))
-            
-            #hpr = heading, pitch, roll
                 
-            mat = Mat3()
-            mat.setRotateMat(-90, Vec3(0,0,1))
-            vec = mat.xform(vec)
+                
+            last_normal.normalize()
             vec.normalize()
+            mat = Mat3()
+            mat.setRotateMat(-90, last_normal)
+            turned_vec = mat.xform(vec)
+            turned_vec.normalize()
+            last_normal = turned_vec.cross(vec)
+            
+            turned_vec.normalize()
+            print last_normal
             
             j = 0    
             for shapedot in street_data:
@@ -308,9 +317,9 @@ class Track3d(object):
                 point = Vec3(0,0,0)
                 # calculate the point via line term: x = a+ r*b
                 # Variables: a = track_points[i]; r = shapedot[0]; b = vec
-                point[0] = track_points[i][0]+(shapedot[0]*vec[0])
-                point[1] = track_points[i][1]+(shapedot[0]*vec[1])
-                point[2] = track_points[i][2]+(shapedot[0]*vec[2])
+                point[0] = track_points[i][0]+(shapedot[0]*turned_vec[0])
+                point[1] = track_points[i][1]+(shapedot[0]*turned_vec[1])
+                point[2] = track_points[i][2]+(shapedot[0]*turned_vec[2])
                 
                 # add the height
                 point[2] += shapedot[1]
