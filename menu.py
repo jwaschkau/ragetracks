@@ -20,8 +20,13 @@ class MainMenu(object):
         self.device = device #The keybord
         self.devices = devices #For Wii
         
-        #time.sleep(1)               #Bad Hack to make sure that the Key isn't pressed.
-        #self.device.boost = False   #Bad Hack to make sure that the Key isn't ￼.setColor(self.colorA)pressed.
+        time.sleep(1)               #Bad Hack to make sure that the Key isn't pressed.
+        self.device.boost = False   #Bad Hack to make sure that the Key isn't ￼.setColor(self.colorA)pressed.
+        
+        #while self.device.boost:    #Hier wäre aktives Warten cool das guckt ob die Taste wieder los gelassen wurde
+        #    print "test"
+        #    self.devices.noticeAction()
+        
         
         self.newGame = newGame
         
@@ -97,6 +102,8 @@ class MainMenu(object):
     # -----------------------------------------------------------------
     
     def backToMain(self):
+        time.sleep(1)               #Bad Hack to make sure that the Key isn't pressed.
+        self.device.boost = False   #Bad Hack to make sure that the Key isn't ￼.setColor(self.colorA)pressed.
         self.menuMain()
         taskMgr.doMethodLater(0.5, self.input, 'input')
 
@@ -110,17 +117,14 @@ class MainMenu(object):
     
     def addWii(self):
         self.devices.wiis.getWiimodes()
-        #=======================================================================
-        # try:
-        #    print 'Put Wiimote in discoverable mode now (press 1+2)...'
-        #    wiimote = cwiid.Wiimote()
-        #    self.wiimoteX.append(wiimote)
-        #    print "Wii", len(self.wiimoteX)
-        # except:
-        #    pass
-        #=======================================================================
-        self.menuMain()
-        taskMgr.add(self.input, 'input')
+#        try:
+#            print 'Put Wiimote in discoverable mode now (press 1+2)...'
+#            wiimote = cwiid.Wiimote()
+#            self.wiimoteX.append(wiimote)
+#            print "Wii", len(self.wiimoteX)
+#        except:
+#            pass
+        self.backToMain()
         
     def fullscreen(self):
         self._conf.fullscreen = not self._conf.fullscreen

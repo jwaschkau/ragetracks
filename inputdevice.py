@@ -10,6 +10,7 @@ import keyboarddevice
 import joystickdevice
 import wiidevice
 import sys
+import pywii
 
 # ---------------------------------------------------------
 # ---------------------------------------------------------
@@ -19,7 +20,7 @@ import sys
 class InputDevice(object):
     '''
     '''
-    def __init__(self, device, settings):
+    def __init__(self, device, settings, wii):
         '''
         '''
         self._notify = DirectNotify().newCategory("Input")
@@ -29,6 +30,7 @@ class InputDevice(object):
         self.boost = False       # Button for boosting
         self.use_item = False    # Button for using items
         self.escape = False
+        self.wii = wii
 
         # if this is a Joystick, look if there are Settings for Joysticks with this name
         if type(self.device) == joystickdevice.JoystickDevice:
@@ -39,7 +41,7 @@ class InputDevice(object):
                 self._setStandardSettings()
 
         # Keyboard settings are always available
-        else:
+        elif type(self.device) == keyboarddevice.KeyboardDevice:
             #self.settings = settings["keyboard"]
             self.settings = {}
             self.settings["boost"]      = "space"
@@ -50,7 +52,6 @@ class InputDevice(object):
             self.settings["right"]      = "arrow_right"
             self.settings["escape"]      = "escape"
 
-
             self.device.keys[self.settings["up"]] = False
             self.device.keys[self.settings["down"]] = False
             self.device.keys[self.settings["left"]] = False
@@ -58,6 +59,8 @@ class InputDevice(object):
             self.device.keys[self.settings["boost"]] = False
             self.device.keys[self.settings["use_item"]] = False
             self.device.keys[self.settings["escape"]] = False
+        elif type(self.device) == wiidevice.WiiDevice:
+            pass #Think isn't necessary by Wiimotes
 
     # ---------------------------------------------------------
 
@@ -144,7 +147,7 @@ class InputDevice(object):
             # then get boost and item button values
             self.boost = self.device.buttons[self.settings["boost"][1]]
             self.use_item = self.device.buttons[self.settings["use_item"][1]]
-        else:
+        elif type(self.device) == keyboarddevice.KeyboardDevice:
             acceleration = 0
             direction = 0
             if self.device.keys[self.settings["up"]]:
@@ -165,7 +168,27 @@ class InputDevice(object):
             
             if self.device.keys[self.settings["escape"]]:
                 sys.exit()
-
+        elif type(self.device) == wiidevice.WiiDevice:
+            wiimotes = self.device.wiimode 
+            reloadWiimotes = False
+        
+            #while wiimotes: # Go so long as there are wiimotes left to poll
+            if reloadWiimotes:
+                # Regenerate the list of wiimotes
+                wiimotes = wii.GetWiimotes()
+                reloadWiimotes = False;
+    
+            # Poll the wiimotes to get the status like pitch or roll
+            if(self.wii.Poll()):
+                for wiimote in wiimotes:
+                    event = wiimote.GetEvent()
+                    
+                    if wiimote.Buttons.isPressed(wiimote.Buttons.BUTTON_A): 
+                        self.boost = True
+                    else:
+                        self.boost = False
+                    
+                            
     # ---------------------------------------------------------
 
 # ---------------------------------------------------------
@@ -181,19 +204,19 @@ class InputDevices(object):
         @param keyboard: = (KeyboardDevice) keyboard
         @param joysticks: = (JoystickDevices) joysicks
         '''
-
         pygame.init()
         pygame.joystick.init()
-
+        self.wii = pywii.Wii()
+        
         self.keyboard = keyboarddevice.KeyboardDevice()
         self.joysticks = joystickdevice.JoystickDevices()
-        self.wiis = wiidevice.WiiDevices()
+        self.wiis = wiidevice.WiiDevices(self, self.wii)
 
-        self.devices = [InputDevice(self.keyboard, settings)]
+        self.devices = [InputDevice(self.keyboard, settings, self.wii)]
 
         for joystick in self.joysticks.getJoysticks():
             try:
-                dev = InputDevice(joystick, settings)
+                dev = InputDevice(joystick, settings, self.wii)
             except:
                 continue
             self.devices.append(dev)
@@ -223,6 +246,12 @@ class InputDevices(object):
         '''
         '''
         return pygame.joystick.get_count()
+    
+    def addWii(self, wiimote):
+        '''
+        '''
+        
+        self.devices.append(InputDevice(wiimote, {'wii':{}}, self.wii))
 
 # ---------------------------------------------------------
 # ---------------------------------------------------------
@@ -231,19 +260,19 @@ class InputDevices(object):
 
 if __name__ == "__main__":
 
-    from direct.showbase.ShowBase import ShowBase
-    sb = ShowBase()
-
-    import time
-    import settings
-
-    conf = settings.Settings()
-    conf.loadSettings("user/config.ini")
-
-
-    i = InputDevices(conf.getInputSettings())
-
-    taskMgr.add(i.fetchEvents, "fetchEvents")
-    run()
-
+#    from direct.showbase.ShowBase import ShowBase
+#    sb = ShowBase()
+#
+#    import time
+#    import settings
+#
+#    conf = settings.Settings()
+#    conf.loadSettings("user/config.ini")
+#
+#
+#    i = InputDevices(conf.getInputSettings())
+#
+#    taskMgr.add(i.fetchEvents, "fetchEvents")
+#    run()
+    import main
 

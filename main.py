@@ -109,10 +109,6 @@ class Game(ShowBase):
                 PStatClient.connect() #activate to start performance measuring with pstats
             if  arg == "--wire":    
                 base.toggleWireframe()
-            if arg == "--wii":
-                wiimote = cwiid.Wiimote()
-                self.wii.append(wiimote)
-        
                 
         if startgame:   
             myMenu = Menu(self)
