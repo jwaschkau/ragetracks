@@ -207,7 +207,7 @@ class Vehicle(object):
     def getPos(self):
         '''
         '''
-        return self._model.setPos(x,y,z)
+        return self._model.getPos()
         
     position = property(fget = getPos, fset = setPos)
         

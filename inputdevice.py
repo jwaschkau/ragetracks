@@ -180,7 +180,7 @@ class InputDevice(object):
     
             # Poll the wiimotes to get the status like pitch or roll
             if(self.wii.Poll()):
-                for wiimote in wiimotes:
+                for wiimote in wiimotes: #how to do this only for one device?
                     event = wiimote.GetEvent()
                     
                     if wiimote.Buttons.isPressed(wiimote.Buttons.BUTTON_A): 
