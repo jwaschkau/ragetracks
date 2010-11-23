@@ -85,7 +85,6 @@ class Game(ShowBase):
         # initialize the input devices
         self.devices = inputdevice.InputDevices(self.settings.getInputSettings())
 
-        self.wii = []
         startgame = True
         #Start the Game
         for arg in sys.argv:

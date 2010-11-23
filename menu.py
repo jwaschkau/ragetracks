@@ -9,7 +9,6 @@ import trackgen3d
 import glob
 import settings
 import pywii
-from compiler.ast import TryExcept
 
 FONT = 'data/fonts/Orbitron/TTF/orbitron-black.ttf'
 class MainMenu(object):
