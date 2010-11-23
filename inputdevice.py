@@ -10,7 +10,6 @@ import keyboarddevice
 import joystickdevice
 import wiidevice
 import sys
-import pywii
 
 # ---------------------------------------------------------
 # ---------------------------------------------------------
@@ -206,11 +205,15 @@ class InputDevices(object):
         '''
         pygame.init()
         pygame.joystick.init()
-        self.wii = pywii.Wii()
+        try:
+            import pywii
+            self.wii = pywii.Wii()
+            self.wiis = wiidevice.WiiDevices(self, self.wii)
+        except: self.wii = []
+
         
         self.keyboard = keyboarddevice.KeyboardDevice()
         self.joysticks = joystickdevice.JoystickDevices()
-        self.wiis = wiidevice.WiiDevices(self, self.wii)
 
         self.devices = [InputDevice(self.keyboard, settings, self.wii)]
 
