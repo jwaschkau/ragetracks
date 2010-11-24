@@ -8,7 +8,6 @@ from direct.directnotify.DirectNotify import DirectNotify
 import trackgen3d
 import glob
 import settings
-import pywii
 
 FONT = 'data/fonts/Orbitron/TTF/orbitron-black.ttf'
 class MainMenu(object):
