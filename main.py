@@ -375,6 +375,7 @@ class Game(ShowBase):
             self.contactgroup.empty() # Clear the contact joints
         for player in self.players: # set new positions
             player.updatePlayer()
+        
         return task.cont
     # -----------------------------------------------------------------
 

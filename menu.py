@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+###################################################################
+## this module represents the menu
+###################################################################
+
 from panda3d.core import NodePath
 #from pandac.PandaModules import Vec3, Vec4, PointLight #Temp for Testing need VBase4
 from pandac.PandaModules import *
@@ -27,6 +31,7 @@ class MainMenu(object):
         
         
         self.newGame = newGame
+        self.track = []
         
         self.wiimoteX = []#Wiimodes
         
@@ -457,9 +462,12 @@ class Menu(object):
                 self._notify.debug("Loading vehicle: %s" %(loading))
                 if not loading:
                     taskMgr.remove("selectVehicle")
-                    self.streetPath = render.attachNewNode(trackgen3d.Track3d(1000, 1800, 1600, 1200, len(self._players)).createMesh())
+                    self.track =  trackgen3d.Track3d(1000, 1800, 1600, 1200, len(self._players))
+                    self.streetPath = render.attachNewNode(self.track.createMesh())
                     tex = loader.loadTexture('data/textures/street.png')
                     self.streetPath.setTexture(tex)
+
+                    print self.track.trackpoints
 
                     #self.streetPath.setTwoSided(True)
                     #self.streetPath = loader.loadModel('data/models/Street.egg')
