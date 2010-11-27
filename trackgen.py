@@ -314,7 +314,7 @@ class Track(object):
         
         #the track
         #rand = random.randint(1,1)
-        rand = 0
+        rand = 1
         if rand == 0:
             self.trackpoints = [[0,0,0],[0,500,0],[200,500,0],[250,250,0],[300,0,200],[400,-500,0],[0,-500,0],[0,-1,0]]
         elif rand == 1:
@@ -460,7 +460,7 @@ class Track(object):
         xres = length/resolution
         for i in xrange(0,resolution):
             self.curve.getPoint(i*xres, point)
-            print point
+##            print point
             pointlist.append(Vec3(point))
             
         return pointlist

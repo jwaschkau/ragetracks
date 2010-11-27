@@ -225,11 +225,12 @@ class Track3d(object):
         
         
         m = Track(x, y, z)
-        m.generateTestTrack(player_count)
+        m.generateTrack(player_count)
         ##m.generateTrack(player_count)
         #m.genStart(5)
         ##res = 20
         self.track_points = m.getInterpolatedPoints(res)
+        print self.track_points
         #track_points = (Vec3(-5, 0, 0), Vec3(-5, 10, 0), Vec3(-5, 20, 0), Vec3(-5, 30, 0), Vec3(-5, 40, 0), Vec3(-5, 43, 0), Vec3(-5, 53, 0), Vec3(-5, 63, 0))
         #print "Imput Centers:", track_points
         self.varthickness = []  #Generate the Vector for thickness of the road
@@ -246,6 +247,12 @@ class Track3d(object):
         #Normalizing the Vector
         for i in self.varthickness:
             i.normalize()
+            
+        for i in range(len(self.varthickness)):
+            if self.varthickness[i-1].almostEqual(self.varthickness[i], 0.3):
+                pass
+            else:
+                print self.varthickness[i-1], self.varthickness[i]
         #Creating the Vertex
         ##self.creatingVertex(track_points, street_data)
         self.createVertices(self.track_points, street_data)
