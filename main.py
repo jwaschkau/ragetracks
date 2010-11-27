@@ -145,13 +145,11 @@ class Game(ShowBase):
     # -----------------------------------------------------------------
     
     def createTrackpointTree(self, trackpoints):
-        track_tupel_list = [] 
-        for point in trackpoints:
-            track_tupel_list.append((
-            point.getX(),
-            point.getY(),
-            point.getZ()))
-        return KDTree.construct_from_data(track_tupel_list)
+        self.track_tupel_list = []
+        for point in self.trackpoints:
+            self.track_tupel_list.append((point.getX(), point.getY(), point.getZ()))
+        self.list4tree = self.track_tupel_list[:]
+        return KDTree.construct_from_data(self.list4tree)
     #nearest = tree.query(query_point=(5,4,3), t=1)
             
     
@@ -161,7 +159,8 @@ class Game(ShowBase):
         '''
         Start the game
         '''
-        self.TrackpointTree = self.createTrackpointTree(trackpoints) #trackpoints = The mid points of the street for position calculation
+        self.trackpoints = trackpoints #The mid points of the street for position calculation
+        self.TrackpointTree = self.createTrackpointTree(self.trackpoints) 
         
         
         self._notify = DirectNotify().newCategory("Game")
@@ -339,9 +338,13 @@ class Game(ShowBase):
     # -----------------------------------------------------------------
 
     def calculatePos(self, task):
+        task.delayTime = 2
         self.pos_vehicle = (self.pos_vehicle + 1) % len(self.players)
-        self.TrackpointTree.query(query_point=(self.players[self.pos_vehicle].getVehicle().getPos()), t=1)
-        return task.cont
+        pos = self.TrackpointTree.query(query_point=(self.players[self.pos_vehicle].getVehicle().getPos()), t=1)
+        print "Player", self.pos_vehicle,":", self.track_tupel_list.index(pos[0])
+        print self.players[self.pos_vehicle].getVehicle().getPos()
+        print pos[0]
+        return task.again
     
     # -----------------------------------------------------------------
     

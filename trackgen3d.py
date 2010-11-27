@@ -230,7 +230,6 @@ class Track3d(object):
         #m.genStart(5)
         ##res = 20
         self.track_points = m.getInterpolatedPoints(res)
-        print self.track_points
         #track_points = (Vec3(-5, 0, 0), Vec3(-5, 10, 0), Vec3(-5, 20, 0), Vec3(-5, 30, 0), Vec3(-5, 40, 0), Vec3(-5, 43, 0), Vec3(-5, 53, 0), Vec3(-5, 63, 0))
         #print "Imput Centers:", track_points
         self.varthickness = []  #Generate the Vector for thickness of the road
@@ -339,7 +338,7 @@ class Track3d(object):
             last_normal = turned_vec.cross(vec)
             
             turned_vec.normalize()
-            print last_normal
+            #print last_normal
 ##            turned_vec = vec.cross(last_vec)
 ##            last_vec = vec
 ##            turned_vec.normalize()
