@@ -253,7 +253,8 @@ class Game(ShowBase):
             
             if geom1.compareTo(player.vehicle.getFrontRay().getRay()) or geom2.compareTo(player.vehicle.getFrontRay().getRay()):
                 #slipstream
-                player.vehicle.setBoost(player.vehicle.getBoostStrength()*0.2)
+                if player.device.boost:
+                    player.vehicle.setBoost(player.vehicle.getBoostStrength()*0.2)
             
             #workaround until panda 1.7.1
             #if the player collides with the ground plane he will get reset to the starting position
