@@ -317,8 +317,11 @@ class Track(object):
         rand = 0
         if rand == 0:
             self.trackpoints = [[0,0,0],[0,500,0],[200,500,0],[250,250,0],[300,0,200],[400,-500,0],[0,-500,0],[0,-1,0]]
-        else:
+        elif rand == 1:
             self.trackpoints = [[0,0,0],[0,500,100],[200,700,200],[500,600,250],[300,0,350],[-300,-300,350],[-700,-200,200],[-500,-100,100],[0,-500,-100],[100,-300,0],[0,-1,0]]
+        elif rand == 2:
+            self.trackpoints = [[0,0,0],[0,500,0],[0,500,100],[0,0,100]]
+        
         self.curve = HermiteCurve()
         
         #make the list with points
@@ -469,13 +472,14 @@ class Track(object):
 # -------------------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    import sys
-    if len(sys.argv) > 1:
-        if sys.argv[1] == "3d":
-            import trackgentest
-    else:
-        m = Track(800,600)
-        m.generateTrack(9)
+    import trackgentest
+#    import sys
+#    if len(sys.argv) > 1:
+#        if sys.argv[1] == "3d":
+#            import trackgentest
+#    else:
+#        m = Track(800,600)
+#        m.generateTrack(9)
         #a = m.getInterpolatedPoints(200)
     
 ##    import main

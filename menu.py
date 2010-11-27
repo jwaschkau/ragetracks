@@ -33,7 +33,7 @@ class MainMenu(object):
         self.newGame = newGame
         self.track = []
         
-        self.wiimoteX = []#Wiimodes
+        self.wiimoteX = []#Wiimotes
         
         #Font
         self.font = DynamicTextFont(FONT)
@@ -74,7 +74,7 @@ class MainMenu(object):
         #self.selected = 0
         self.addOption(_("New Game"), self.newGame)
         self.addOption(_("Options"), self.option)
-        self.addOption(_("Wiimode"), self.addWii)
+        self.addOption(_("Wiimote"), self.addWii)
         self.addOption(_("Credits"), self.newGame)
         self.addOption(_("Exit"), self.exit)
         #self.text = Text3D(_("NewGame"))
@@ -119,7 +119,7 @@ class MainMenu(object):
     # -----------------------------------------------------------------
     
     def addWii(self):
-        self.devices.wiis.getWiimodes()
+        self.devices.wiis.getWiimotes()
 #        try:
 #            print 'Put Wiimote in discoverable mode now (press 1+2)...'
 #            wiimote = cwiid.Wiimote()

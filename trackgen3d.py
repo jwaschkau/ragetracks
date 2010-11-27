@@ -297,6 +297,7 @@ class Track3d(object):
         print "\n\n\n#-#-#-#-#-#-#-##-#-#-#-#-#-#####################-#-#-#-\n\n"
         
         last_normal = Vec3(0,0,1)
+        last_vec = Vec3(0,1,0)
         for i in xrange(len(track_points)):
             if i+1 == len(track_points):
                 #vec = track_points[i-1]-track_points[0]
@@ -307,16 +308,19 @@ class Track3d(object):
                 vec = track_points[i-1]-track_points[i+1]
                 
                 
-            last_normal.normalize()
-            vec.normalize()
-            mat = Mat3()
-            mat.setRotateMat(-90, last_normal)
-            turned_vec = mat.xform(vec)
+#            last_normal.normalize()
+#            vec.normalize()
+#            mat = Mat3()
+#            mat.setRotateMat(-90, last_normal)
+#            turned_vec = mat.xform(vec)
+#            turned_vec.normalize()
+#            last_normal = turned_vec.cross(vec)
+#            
+#            turned_vec.normalize()
+#            print last_normal
+            turned_vec = vec.cross(last_vec)
+            last_vec = vec
             turned_vec.normalize()
-            last_normal = turned_vec.cross(vec)
-            
-            turned_vec.normalize()
-            print last_normal
             
             j = 0    
             for shapedot in street_data:

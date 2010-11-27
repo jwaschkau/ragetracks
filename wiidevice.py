@@ -20,18 +20,18 @@ class WiiDevice(object):
         
         self.parent.addWii(self)
        
-    def setWiimode(self, wii):
+    def setWiimote(self, wii):
         '''
         '''
         self.wii = wii
         
-    def getWiimode(self):
+    def getWiimote(self):
         '''
         '''
         if self.wii == False: print "ERROR using Get before set"
         return self.wii
     
-    wiimode = property(fget = getWiimode, fset = setWiimode)
+    wiimote = property(fget = getWiimote, fset = setWiimote)
    
 class WiiDevices(object):
     '''
@@ -41,27 +41,27 @@ class WiiDevices(object):
         self.parent = parent
         self.wii = wii
         # Find the wiimote
-        self.wiimodeslist = []
+        self.wiimoteslist = []
         
         
-    def setWiimodes(self, wiimodes):
+    def setWiimotes(self, wiimotes):
         '''
         '''
     
         
-    def getWiimodes(self):
+    def getWiimotes(self):
         '''
         '''
         print 'Put Wiimote in discoverable mode now (press 1+2)...'
         numFound = self.wii.Find(5) # Search for up to one seconds
         #print numFound
         #if numFound:
-        wiimodesI = self.wii.Connect()
-        self.wiimodeslist.append( WiiDevice(self.parent).setWiimode(wiimodesI) )
+        wiimotesI = self.wii.Connect()
+        self.wiimoteslist.append( WiiDevice(self.parent).setWiimote(wiimotesI) )
         
-        #print len(self.wiimodes)
+        #print len(self.wiimotes)
         
-    wiimodes = property(fget = getWiimodes, fset = setWiimodes)
+    wiimotes = property(fget = getWiimotes, fset = setWiimotes)
 
 if __name__ == "__main__":
     import main

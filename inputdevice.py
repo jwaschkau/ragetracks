@@ -168,7 +168,9 @@ class InputDevice(object):
             if self.device.keys[self.settings["escape"]]:
                 sys.exit()
         elif type(self.device) == wiidevice.WiiDevice:
-            wiimotes = self.device.wiimode 
+            acceleration = 0
+            direction = 0
+            wiimotes = self.device.wiimote 
             reloadWiimotes = False
         
             #while wiimotes: # Go so long as there are wiimotes left to poll
@@ -177,17 +179,31 @@ class InputDevice(object):
                 wiimotes = wii.GetWiimotes()
                 reloadWiimotes = False;
     
+            self.wii.POLL_NON_BLOCKING = 0
             # Poll the wiimotes to get the status like pitch or roll
             if(self.wii.Poll()):
                 for wiimote in wiimotes: #how to do this only for one device?
                     event = wiimote.GetEvent()
                     
-                    if wiimote.Buttons.isPressed(wiimote.Buttons.BUTTON_A): 
+                    if wiimote.Buttons.isPressed(wiimote.Buttons.BUTTON_TWO): 
                         self.boost = True
                     else:
                         self.boost = False
+                    if wiimote.Buttons.isPressed(wiimote.Buttons.BUTTON_ONE): 
+                        self.use_item = True
+                    else:
+                        self.use_item = False
                     
-                            
+                    wiimote.SetMotionSensingMode(wiimote.ON)
+                    if wiimote.isUsingACC(): 
+                        pitch, roll, yaw = wiimote.Accelerometer.GetOrientation()
+                        a_pitch, a_roll = wiimote.Accelerometer.GetRawOrientation()
+                        
+                        if pitch >= 150.0: pitch = 150.0
+                        if pitch <= -150.0: pitch = -150.0
+                        self.directions[0] = (pitch / 150.0)*-1
+                        self.directions[1] = 0
+            
     # ---------------------------------------------------------
 
 # ---------------------------------------------------------
