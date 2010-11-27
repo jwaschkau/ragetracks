@@ -177,7 +177,7 @@ class Vehicle(object):
         #Add collision-rays for the floating effect
         self._ray = CollisionRay(Vec3(0,0,0), Vec3(0,0,-1), self._ode_space, parent = self._collision_model, collide_bits = 0, length = 10.0)
         #This one is used for the floating effect but also for slipstream
-        self._frontray = CollisionRay(Vec3(0,5,0), Vec3(0,1,0), self._ode_space, parent = self._collision_model, collide_bits = 2, length = 2.0)
+        self._frontray = CollisionRay(Vec3(0,0,0), Vec3(0,1,0), self._ode_space, parent = self._collision_model, collide_bits = 0, length = 15.0)
         ##Overwrite variables for testing purposes
         self._grip_strength = 0.9
         self._track_grip = 0.2
@@ -370,6 +370,7 @@ class Vehicle(object):
         
         #refresh the positions of the collisionrays
         self._ray.doStep()
+        self._frontray.doStep()
         self._physics_model.setGravityMode(1)
     
     # ---------------------------------------------------------
