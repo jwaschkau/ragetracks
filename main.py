@@ -232,7 +232,7 @@ class Game(ShowBase):
         taskMgr.add(self.gameTask, "gameTask")
         self._notify.debug("Start Pos Calc")
         self.pos_vehicle = 0
-        taskMgr.add(self.gameTask, "calculatePos")
+        taskMgr.add(self.calculatePos, "calculatePos")
         self.world.setGravity(0, 0, -90.81)
         self._notify.info("Start game initialized")
         #set up the collision event
@@ -339,8 +339,8 @@ class Game(ShowBase):
     # -----------------------------------------------------------------
 
     def calculatePos(self, task):
-        pos_vehicle = (pos_vehicle + 1) % len(self.players)
-        self.TrackpointTree.query(query_point=(self.players[pos_vehicle].getVehicle().getPos()), t=1)
+        self.pos_vehicle = (self.pos_vehicle + 1) % len(self.players)
+        self.TrackpointTree.query(query_point=(self.players[self.pos_vehicle].getVehicle().getPos()), t=1)
         return task.cont
     
     # -----------------------------------------------------------------
