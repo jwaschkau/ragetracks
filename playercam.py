@@ -20,16 +20,20 @@ class PlayerCam(object):
         self._nodepath = None
         self._distance = 0.7
         self._cam_node = NodePath()
+        self._vehicle = None
         
         #filters = CommonFilters(base.win, self._camera)
         #filters.setBloom(blend=(0,1,0,0) ,desat=10, intensity=1, size='medium')
     
     # ---------------------------------------------------------
-    def followVehicle(self, direction, nodepath = None):
+    def followVehicle(self, direction, vehcile = None):
         '''
         Let the camera follow the node path.
         '''
-        self._nodepath = nodepath
+        if vehicle != None:
+            self._nodepath = vehicle.model
+        else: self._nodepath = None
+        self._vehilce = vehicle
         self._vehicle_direction = direction
         
     # ---------------------------------------------------------

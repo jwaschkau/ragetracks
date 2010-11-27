@@ -36,7 +36,7 @@ class Player(object):
     # ---------------------------------------------------------
     
     def activateGameCam(self):
-        self._camera.followVehicle(self._vehicle.boost_direction, self._vehicle.model)
+        self._camera.followVehicle(self._vehicle.boost_direction, self._vehicle)
         self._camera.camera.reparentTo(render)
         self._vehicle.model.reparentTo(render)
         
