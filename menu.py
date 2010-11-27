@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+###################################################################
+## this module represents the menu
+###################################################################
+
 from panda3d.core import NodePath
 #from pandac.PandaModules import Vec3, Vec4, PointLight #Temp for Testing need VBase4
 from pandac.PandaModules import *
@@ -27,8 +31,9 @@ class MainMenu(object):
         
         
         self.newGame = newGame
+        self.track = []
         
-        self.wiimoteX = []#Wiimodes
+        self.wiimoteX = []#Wiimotes
         
         #Font
         self.font = DynamicTextFont(FONT)
@@ -69,7 +74,7 @@ class MainMenu(object):
         #self.selected = 0
         self.addOption(_("New Game"), self.newGame)
         self.addOption(_("Options"), self.option)
-        self.addOption(_("Wiimode"), self.addWii)
+        self.addOption(_("Wiimote"), self.addWii)
         self.addOption(_("Credits"), self.newGame)
         self.addOption(_("Exit"), self.exit)
         #self.text = Text3D(_("NewGame"))
@@ -114,7 +119,7 @@ class MainMenu(object):
     # -----------------------------------------------------------------
     
     def addWii(self):
-        self.devices.wiis.getWiimodes()
+        self.devices.wiis.getWiimotes()
 #        try:
 #            print 'Put Wiimote in discoverable mode now (press 1+2)...'
 #            wiimote = cwiid.Wiimote()
@@ -457,9 +462,12 @@ class Menu(object):
                 self._notify.debug("Loading vehicle: %s" %(loading))
                 if not loading:
                     taskMgr.remove("selectVehicle")
-                    self.streetPath = render.attachNewNode(trackgen3d.Track3d(1000, 1800, 1600, 1200, len(self._players)).createMesh())
+                    self.track =  trackgen3d.Track3d(1000, 1800, 1600, 1200, len(self._players))
+                    self.streetPath = render.attachNewNode(self.track.createMesh())
                     tex = loader.loadTexture('data/textures/street.png')
                     self.streetPath.setTexture(tex)
+
+                    print self.track.trackpoints
 
                     #self.streetPath.setTwoSided(True)
                     #self.streetPath = loader.loadModel('data/models/Street.egg')

@@ -225,30 +225,37 @@ class Track3d(object):
         
         
         m = Track(x, y, z)
-        m.generateTestTrack(player_count)
+        m.generateTrack(player_count)
         ##m.generateTrack(player_count)
         #m.genStart(5)
         ##res = 20
-        track_points = m.getInterpolatedPoints(res)
+        self.track_points = m.getInterpolatedPoints(res)
+        print self.track_points
         #track_points = (Vec3(-5, 0, 0), Vec3(-5, 10, 0), Vec3(-5, 20, 0), Vec3(-5, 30, 0), Vec3(-5, 40, 0), Vec3(-5, 43, 0), Vec3(-5, 53, 0), Vec3(-5, 63, 0))
         #print "Imput Centers:", track_points
         self.varthickness = []  #Generate the Vector for thickness of the road
         
-        for i in range(len(track_points)-1):
+        for i in range(len(self.track_points)-1):
             if i == 0:
 ##                self.varthickness.append(self.calcTheVector(track_points[len(track_points)-1],track_points[i],track_points[i+1])) #Wieder benutzen wenn wir einen geschlossenen Kreis haben
-                self.varthickness.append(self.calcTheVector(track_points[i],track_points[i],track_points[i+1]))
+                self.varthickness.append(self.calcTheVector(self.track_points[i],self.track_points[i],self.track_points[i+1]))
                 continue
-            self.varthickness.append(self.calcTheVector(track_points[i-1],track_points[i],track_points[i+1]))
+            self.varthickness.append(self.calcTheVector(self.track_points[i-1],self.track_points[i],self.track_points[i+1]))
 ##        self.varthickness.append(self.calcTheVector(track_points[len(track_points)-2],track_points[len(track_points)-1],track_points[0])) #Wieder benutzen wenn wir einen geschlossenen Kreis haben
-        self.varthickness.append(self.calcTheVector(track_points[len(track_points)-2],track_points[len(track_points)-1],track_points[len(track_points)-1]))  
+        self.varthickness.append(self.calcTheVector(self.track_points[len(self.track_points)-2],self.track_points[len(self.track_points)-1],self.track_points[len(self.track_points)-1]))  
         
         #Normalizing the Vector
         for i in self.varthickness:
             i.normalize()
+            
+        for i in range(len(self.varthickness)):
+            if self.varthickness[i-1].almostEqual(self.varthickness[i], 0.3):
+                pass
+            else:
+                print self.varthickness[i-1], self.varthickness[i]
         #Creating the Vertex
         ##self.creatingVertex(track_points, street_data)
-        self.createVertices(track_points, street_data)
+        self.createVertices(self.track_points, street_data)
         #Connect the Vertex
         self.connectVertices(len(street_data))
         #?Show the Mesh
@@ -271,6 +278,20 @@ class Track3d(object):
     
 # -------------------------------------------------------------------------------------
 
+    def setTrackPoints(self, track_points):
+        '''
+        '''
+        self.track_points = track_points
+        
+    def getTrackPoints(self):
+        '''
+        '''
+        return self.track_points
+        
+    trackpoints = property(fget = getTrackPoints, fset = setTrackPoints)
+    
+# -------------------------------------------------------------------------------------
+
     def createVertices(self, track_points, street_data):
         '''
         '''
@@ -283,6 +304,7 @@ class Track3d(object):
         print "\n\n\n#-#-#-#-#-#-#-##-#-#-#-#-#-#####################-#-#-#-\n\n"
         
         last_normal = Vec3(0,0,1)
+        last_vec = Vec3(0,1,0)
         for i in xrange(len(track_points)):
             if i+1 == len(track_points):
                 #vec = track_points[i-1]-track_points[0]
@@ -293,16 +315,19 @@ class Track3d(object):
                 vec = track_points[i-1]-track_points[i+1]
                 
                 
-            last_normal.normalize()
-            vec.normalize()
-            mat = Mat3()
-            mat.setRotateMat(-90, last_normal)
-            turned_vec = mat.xform(vec)
+#            last_normal.normalize()
+#            vec.normalize()
+#            mat = Mat3()
+#            mat.setRotateMat(-90, last_normal)
+#            turned_vec = mat.xform(vec)
+#            turned_vec.normalize()
+#            last_normal = turned_vec.cross(vec)
+#            
+#            turned_vec.normalize()
+#            print last_normal
+            turned_vec = vec.cross(last_vec)
+            last_vec = vec
             turned_vec.normalize()
-            last_normal = turned_vec.cross(vec)
-            
-            turned_vec.normalize()
-            print last_normal
             
             j = 0    
             for shapedot in street_data:
