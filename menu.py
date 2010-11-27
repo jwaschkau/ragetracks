@@ -467,8 +467,6 @@ class Menu(object):
                     tex = loader.loadTexture('data/textures/street.png')
                     self.streetPath.setTexture(tex)
 
-                    print self.track.trackpoints
-
                     #self.streetPath.setTwoSided(True)
                     #self.streetPath = loader.loadModel('data/models/Street.egg')
                     ##self.streetPath = loader.loadModel('data/models/Street.egg')
@@ -476,8 +474,7 @@ class Menu(object):
                     #tex = loader.loadTexture('data/models/StreetTex.png')
                     #self.nodePath.setTexture(tex)
                     #self.nodePath.setTwoSided(True)
-                    taskMgr.remove('collectWii')
-                    self._parent.startGame(self.streetPath)
+                    self._parent.startGame(self.streetPath, self.track.trackpoints)
                     return task.done
 
         for device in self.unusedDevices:

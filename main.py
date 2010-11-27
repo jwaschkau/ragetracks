@@ -18,6 +18,7 @@ import gettext
 import sys
 from menu import Menu
 from menu import MainMenu
+from kdtree import KDTree
 
 # -----------------------------------------------------------------
 # -----------------------------------------------------------------
@@ -141,13 +142,29 @@ class Game(ShowBase):
         #delete the player
         self.players.remove(player) ##all objects must be deleted!
         self._notify.info("Player removed: %s" %(player))
-        
+    
+    # -----------------------------------------------------------------
+    
+    def createTrackpointTree(self, trackpoints):
+        track_tupel_list = [] 
+        for point in trackpoints:
+            track_tupel_list.append((
+            point.getX(),
+            point.getY(),
+            point.getZ()))
+        return KDTree.construct_from_data(track_tupel_list)
+    #nearest = tree.query(query_point=(5,4,3), t=1)
+            
+    
     # -----------------------------------------------------------------
 
-    def startGame(self, track):
+    def startGame(self, track, trackpoints):
         '''
         Start the game
         '''
+        self.TrackpointTree = self.createTrackpointTree(trackpoints) #trackpoints = The mid points of the street for position calculation
+        
+        
         self._notify = DirectNotify().newCategory("Game")
         self._notify.info("Initializing start game")
         #Initialize needed variables
@@ -214,6 +231,9 @@ class Game(ShowBase):
         #start the gametask
         self._notify.debug("Starting gameTask")
         taskMgr.add(self.gameTask, "gameTask")
+        self._notify.debug("Start Pos Calc")
+        self.pos_vehicle = 0
+        taskMgr.add(self.gameTask, "calculatePos")
         self.world.setGravity(0, 0, -90.81)
         self._notify.info("Start game initialized")
         #set up the collision event
@@ -338,6 +358,13 @@ class Game(ShowBase):
         
  # -----------------------------------------------------------------
 
+    def calculatePos(self, task):
+        pos_vehicle = (pos_vehicle + 1) % len(self.players)
+        self.TrackpointTree.query(query_point=(self.players[pos_vehicle].getVehicle().getPos()), t=1)
+        return task.cont
+    
+    # -----------------------------------------------------------------
+    
     def gameTask(self, task):
         '''
         this task runs once per second if the game is running
@@ -375,7 +402,6 @@ class Game(ShowBase):
             self.contactgroup.empty() # Clear the contact joints
         for player in self.players: # set new positions
             player.updatePlayer()
-        
         return task.cont
     # -----------------------------------------------------------------
 
