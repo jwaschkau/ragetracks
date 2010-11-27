@@ -225,7 +225,7 @@ class Track3d(object):
         
         
         m = Track(x, y, z)
-        m.generateTrack(player_count)
+        m.generateTestTrack(player_count)
         ##m.generateTrack(player_count)
         #m.genStart(5)
         ##res = 20
@@ -295,6 +295,24 @@ class Track3d(object):
     def createVertices(self, track_points, street_data):
         '''
         '''
+##        texcoordinates =[]
+##        street_data_length = len(street_data)
+##        for i in range(street_data_length):
+##            texcoordinates.append((i+1.0)/street_data_length)
+##            
+##        for i in range (len(track_points)):
+##            for j in range (street_data_length):
+##                    point = Vec3(street_data[j][0], street_data[j][0], street_data[j][1])
+##                    point.project(self.varthickness[i])
+####                    self.vertex.addData3f( (track_points[i][0] + (self.varthickness[i][0]*street_data[j][0]), 
+####                                            track_points[i][1] + (self.varthickness[i][1]*street_data[j][0]), 
+####                                            track_points[i][2] + (self.varthickness[i][2]+street_data[j][1])))
+##                    self.vertex.addData3f( (track_points[i][0] + point[0],
+##                                            track_points[i][1] + point[1], 
+##                                            track_points[i][2] + point[2]))
+##                    #self.normal.addData3f(0, 0, 1) #KA how to calc
+##                    #self.color.addData4f(colors[j])
+##                    self.texcoord.addData2f(texcoordinates[j], (i%2)) #
         texcoordinates =[]
         street_data_length = len(street_data)
         
@@ -307,27 +325,24 @@ class Track3d(object):
         last_vec = Vec3(0,1,0)
         for i in xrange(len(track_points)):
             if i+1 == len(track_points):
-                #vec = track_points[i-1]-track_points[0]
-                vec = Vec3(0,-1,0)
-            elif i == 0:
-                vec = Vec3(0,-1,0)
+                vec = track_points[i-1]-track_points[0]
             else:
                 vec = track_points[i-1]-track_points[i+1]
                 
                 
-#            last_normal.normalize()
-#            vec.normalize()
-#            mat = Mat3()
-#            mat.setRotateMat(-90, last_normal)
-#            turned_vec = mat.xform(vec)
-#            turned_vec.normalize()
-#            last_normal = turned_vec.cross(vec)
-#            
-#            turned_vec.normalize()
-#            print last_normal
-            turned_vec = vec.cross(last_vec)
-            last_vec = vec
+            last_normal.normalize()
+            vec.normalize()
+            mat = Mat3()
+            mat.setRotateMat(-90, last_normal)
+            turned_vec = mat.xform(vec)
             turned_vec.normalize()
+            last_normal = turned_vec.cross(vec)
+            
+            turned_vec.normalize()
+            print last_normal
+##            turned_vec = vec.cross(last_vec)
+##            last_vec = vec
+##            turned_vec.normalize()
             
             j = 0    
             for shapedot in street_data:
