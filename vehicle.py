@@ -175,8 +175,9 @@ class Vehicle(object):
         self._collision_model.setCategoryBits(2)
 
         #Add collision-rays for the floating effect
-        self._ray = CollisionRay(Vec3(0,0,0), Vec3(0,0,-1), self._ode_space, parent = self._collision_model, length = 10.0)
-
+        self._ray = CollisionRay(Vec3(0,0,0), Vec3(0,0,-1), self._ode_space, parent = self._collision_model, collide_bits = 0, length = 10.0)
+        #This one is used for the floating effect but also for slipstream
+        self._frontray = CollisionRay(Vec3(0,5,0), Vec3(0,1,0), self._ode_space, parent = self._collision_model, collide_bits = 2, length = 2.0)
         ##Overwrite variables for testing purposes
         self._grip_strength = 0.9
         self._track_grip = 0.2
@@ -273,18 +274,18 @@ class Vehicle(object):
         
     # ---------------------------------------------------------
     
-    def setBoost(self):
+    def setBoost(self, strength = 1):
         '''
         Boosts the vehicle by indicated strength
         '''
         self.startBlowout()
         if self._hit_ground:
             direction = self._collision_model.getQuaternion().xform(Vec3(0,1,0))
-            self._physics_model.addForce(direction*self._boost_strength*self.physics_model.getMass().getMagnitude())
+            self._physics_model.addForce(direction*self._boost_strength*self.physics_model.getMass().getMagnitude()*strength)
             self._hit_ground = False
         else:
             direction = self._collision_model.getQuaternion().xform(Vec3(0,1,0))
-            self._physics_model.addForce(direction*self._boost_strength*0.2*self.physics_model.getMass().getMagnitude())
+            self._physics_model.addForce(direction*self._boost_strength*0.2*self.physics_model.getMass().getMagnitude()*strength)
     # ---------------------------------------------------------
         
     def setDirection(self, dir):
@@ -378,6 +379,13 @@ class Vehicle(object):
         return self._ray
     
     ray = property(fget = getRay)    
+    
+    # ---------------------------------------------------------
+    
+    def getFrontRay(self):
+        return self._frontray
+    
+    frontray = property(fget = getFrontRay)    
     
     # ----------------------------------------------------------------- 
         
