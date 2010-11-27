@@ -26,14 +26,14 @@ class PlayerCam(object):
         #filters.setBloom(blend=(0,1,0,0) ,desat=10, intensity=1, size='medium')
     
     # ---------------------------------------------------------
-    def followVehicle(self, direction, vehcile = None):
+    def followVehicle(self, direction, vehicle = None):
         '''
         Let the camera follow the node path.
         '''
         if vehicle != None:
             self._nodepath = vehicle.model
         else: self._nodepath = None
-        self._vehilce = vehicle
+        self._vehicle = vehicle
         self._vehicle_direction = direction
         
     # ---------------------------------------------------------
@@ -53,7 +53,6 @@ class PlayerCam(object):
     
     def getCamera(self):
         return self._camera
-
 
     def setCamera(self, value):
         self._camera = value

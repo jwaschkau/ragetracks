@@ -69,7 +69,6 @@ class Game(ShowBase):
 
         #Initialize Physics (ODE)
         self.world = OdeWorld()
-##        self.world.setGravity(0, 0, -9.81)
         self.deltaTimeAccumulator = 0.0 #this variable is necessary to track the time for the physics
         self.stepSize = 1.0 / 100.0 # This stepSize makes the simulation run at 60 frames per second
 
@@ -218,7 +217,6 @@ class Game(ShowBase):
         self._notify.info("Start game initialized")
         #set up the collision event
 
-
     # -----------------------------------------------------------------
 
     def onCollision(self, entry):
@@ -236,19 +234,9 @@ class Game(ShowBase):
             if geom1.compareTo(player.vehicle.getFrontRay().getRay()) or geom2.compareTo(player.vehicle.getFrontRay().getRay()):
                 #slipstream
                 player.vehicle.setBoost(player.vehicle.getBoostStrength()*0.2)
-            #create Particles when a crash happens
-##            if geom1.compareTo(player.vehicle.collision_model) == 0 or geom2.compareTo(player.vehicle.collision_model) == 0:
-##                for point in entry.getContactPoints():
-##                    #emit sparks
-##                    pass
-##                    #particle = ParticleEffect()
-##                    #particle.loadConfig('./data/particles/blowout_fire.ptf') ##Here we should load the proper Particles
-##                    #particle.setPos(point)
-##                    #ParticleInterval(particle, player.vehicle.model , duration = 2, cleanup = True)
             
             #workaround until panda 1.7.1
             #if the player collides with the ground plane he will get reset to the starting position
-            
             if geom1.compareTo(self.plane) == 0 and player.vehicle.physics_model.compareTo(body2) == 0 or geom2.compareTo(self.plane) == 0 and player.vehicle.physics_model.compareTo(body1) == 0:
                 player.vehicle.physics_model.setPosition(0,0,20)
                 player.vehicle.physics_model.setLinearVel(0,0,0)
@@ -270,10 +258,7 @@ class Game(ShowBase):
         geom2 = entry.getGeom2()
         body1 = entry.getBody1()
         body2 = entry.getBody2()
-        #Handles the collision-rays from the players
         ray = player.vehicle.ray.getRay()
-        #print geom1.compareTo(ray)
-        #print geom2.compareTo(ray)
         normal = entry.getContactGeom(0).getNormal()
         normal.normalize()
         player.vehicle.physics_model.setGravityMode(0) #disable gravity if on the track
@@ -288,15 +273,9 @@ class Game(ShowBase):
         
         acceleration = ((ray.getLength()/2)-force_dir.length())*3*actual_speed.length()#calculate the direction
         player.vehicle.hit_ground = True
-        
         force_dir.normalize()
-        #rigidbody.AddTorque(Vector3.Cross(transform.forward, Vector3.up) - rigidbody.angularVelocity * 0.5f);
-        
+
         #Change the angle of the vehicle so it matches the street
-        
-        #angular_velocity = player.vehicle.physics_model.getAngularVel()
-        #angular_speed = player.vehicle.collision_model.getQuaternion().xform(Vec3(0,0,1)).cross(normal)
-        #needs_update = angular_velocity.compareTo(angular_speed)
         player.vehicle.physics_model.addTorque(player.vehicle.collision_model.getQuaternion().xform(Vec3(0,0,1)).cross(normal)*mass*30 - player.vehicle.physics_model.getAngularVel() * 0.8 * mass)
         
         #checks if the vehicle is moving to or away from the road
@@ -315,8 +294,7 @@ class Game(ShowBase):
                 needs_boost = acceleration + actual_speed.length()
             else:
                 needs_boost = acceleration - actual_speed.length()
-                
-                
+
         #push the vehicle
         if needs_boost > 0:
             force_dir = Vec3(normal[0]*acceleration,normal[1]*acceleration,normal[2]*acceleration)
@@ -326,7 +304,6 @@ class Game(ShowBase):
         elif needs_boost:
             force_dir = Vec3(normal[0]*acceleration,normal[1]*acceleration,normal[2]*acceleration)
             player.vehicle.physics_model.addForce(force_dir*mass)
-        #player.vehicle.physics_model.addForce(normal[0]*player.vehicle.boost_direction[0]*-0.9*mass, normal[1]*player.vehicle.boost_direction[1]*-0.9*mass, normal[2]*player.vehicle.boost_direction[2]*-0.9*mass)
         return
     # -----------------------------------------------------------------       
 
@@ -375,7 +352,8 @@ class Game(ShowBase):
                 
                 col = OdeUtil.collide(player.vehicle.frontray.getRay(), self.groundGeom)
                 if not col.isEmpty():
-                    self.onFrontRayCollision(col, player)                    
+                    self.onFrontRayCollision(col, player)    
+
             self.deltaTimeAccumulator -= self.stepSize # Remove a stepSize from the accumulator until the accumulated time is less than the stepsize
             self.space.autoCollide() # Setup the contact joints
             self.world.quickStep(self.stepSize)

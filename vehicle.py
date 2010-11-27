@@ -273,7 +273,6 @@ class Vehicle(object):
     physics_model = property(fget = getPhysicsModel, fset = setPhysicsModel)
         
     # ---------------------------------------------------------
-    
     def setBoost(self, strength = 1):
         '''
         Boosts the vehicle by indicated strength

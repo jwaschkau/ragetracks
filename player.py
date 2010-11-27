@@ -22,16 +22,6 @@ class Player(object):
         self._vehicle = vehicle.Vehicle(self._ode_world, self._ode_space) #the properties of the vehicle
         self._device = device #The inputdevice
         self._osd_health = OnscreenText(text = "100", pos = ((self._number*0.2)-1,0.9))
-        #self._osd_health.reparentTo()
-        
-        #self._camera.followVehicle(self._vehicle.boost_direction, self._vehicle.model)
-        #self._camera.setPos(0,-40,5)
-        #self._camera.lookAt(self._vehicle.getModel())
-        
-        #Initialize the camera
-        #self._camera.reparentTo(self._vehicle.getModel())
-        #self._camera.setPos(0,-30,10)
-        #self._camera.lookAt(self._vehicle.getModel()) 
     
     # ---------------------------------------------------------
     
@@ -128,7 +118,6 @@ class Player(object):
         destroys all objects of the player-object
         '''
         #Del one Camera 
-        #print dir(self._camera.camera.node())
         self._camera.camera.removeNode()#node()
         self._notify.info("Player-Object deleted: %s" %(self))
         
