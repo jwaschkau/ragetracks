@@ -23,7 +23,9 @@ class Player(object):
         self._device = device #The inputdevice
         self._osd_health = OnscreenText(text = "100", pos = ((self._number*0.2)-1,0.9))
         self._position = 0
+        self._pre_position = 0
         self._rank = 0
+        self._lap = 1
     
     # ---------------------------------------------------------
     
@@ -45,6 +47,34 @@ class Player(object):
         return self._position
         
     position = property(fget = getPosition, fset = setPosition)
+        
+    # ---------------------------------------------------------
+        
+    def setPrePosition(self, pre_position):
+        '''
+        '''
+        self._pre_position = pre_position
+        
+    def getPrePosition(self):
+        '''
+        '''
+        return self._pre_position
+        
+    pre_position = property(fget = getPrePosition, fset = setPrePosition)
+        
+    # ---------------------------------------------------------
+        
+    def setLap(self, lap):
+        '''
+        '''
+        self._lap = lap
+        
+    def getLap(self):
+        '''
+        '''
+        return self._lap
+        
+    lap = property(fget = getLap, fset = setLap)
         
     # ---------------------------------------------------------
     

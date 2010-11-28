@@ -344,9 +344,19 @@ class Game(ShowBase):
 
     def calculatePos(self, task):
         task.delayTime = 0.5
+        self.players[self.pos_vehicle].pre_position = self.players[self.pos_vehicle].position
         self.pos_vehicle = (self.pos_vehicle + 1) % len(self.players)
         pos = self.TrackpointTree.query(query_point=(self.players[self.pos_vehicle].getVehicle().getPos()), t=1)
-        self.players[self.pos_vehicle].position = pos
+        self.players[self.pos_vehicle].position = self.track_tupel_list.index(pos[0])
+        #print (self.players[self.pos_vehicle].position - self.players[self.pos_vehicle].pre_position)
+
+        #updateLaps
+        if ((self.players[self.pos_vehicle].position - self.players[self.pos_vehicle].pre_position) <= -800):
+            self.players[self.pos_vehicle].lap += 1
+            print self.players[self.pos_vehicle].lap
+        if ((self.players[self.pos_vehicle].position - self.players[self.pos_vehicle].pre_position) >= 800):
+            self.players[self.pos_vehicle].lap -= 1
+            print self.players[self.pos_vehicle].lap
         #print "Player", self.pos_vehicle,":", self.track_tupel_list.index(pos[0])
         #print self.players[self.pos_vehicle].getVehicle().getPos()
         #print pos[0]
@@ -362,7 +372,7 @@ class Game(ShowBase):
         positionen.sort()
         for player in self.players:
             player.rank = positionen.index(player.position)
-        print self.players[0].rank
+        #print self.players[0].rank
         return task.again
     
     # -----------------------------------------------------------------
