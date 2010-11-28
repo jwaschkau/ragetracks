@@ -314,7 +314,7 @@ class Track(object):
         
         #the track
         #rand = random.randint(1,1)
-        rand = 3
+        rand = 0
         if rand == 0:
             self.trackpoints = [[0,0,0],[0,500,0],[200,500,0],[250,250,0],[300,0,200],[400,-500,0],[0,-500,0],[0,-1,0]]
         elif rand == 1:
@@ -323,6 +323,11 @@ class Track(object):
             self.trackpoints = [[0,0,0],[0,500,0],[0,500,100],[0,0,100]]
         elif rand == 3:
             self.trackpoints = [[0,0,0],[0,500,0],[200,500,0],[200,-500,0],[0,-500,0],[0,-1,0]]
+        elif rand == 4:
+            looping = Looping(filename="data/road/parts/looping01.xml") # load the looping from file
+            looping *= 100      # scale it by 100
+            for point in looping:   # add them to the list
+                self.trackpoints.append(point)
         
         self.curve = HermiteCurve()
         
@@ -353,78 +358,73 @@ class Track(object):
         ##points.append( Vec3(0,-y/2,0) ) 
         ##points.append( Vec3(0,y/2,0) )
         
-        looping = Looping(filename="data/road/parts/looping01.xml")
-        
-        looping *= 100
-        
-        for point in looping:
-            points.append(point)
         
         
         
-#####################################################################
-#####################################################################        
-##        points = [ Vec3(0,0,0), Vec3(0, VEHICLE_DIST, 0) ]
-##        crossings = []
-##        
-##        # we define 4 quadrants to ensure that the track does run through the whole map
-##        quadrants = []
-##        quadrants.append( (Vec2(0, 0), Vec2(self.size.getX()/2, self.size.getY()/2)) )
-##        quadrants.append( (Vec2(self.size.getX()/2, self.size.getY()/2), Vec2(self.size.getX(), self.size.getY())) )
-##        quadrants.append( (Vec2(self.size.getX()/2, 0), Vec2(self.size.getX(), self.size.getY()/2)) )
-##        quadrants.append( (Vec2(0, self.size.getY()/2), Vec2(self.size.getX()/2, self.size.getY())) )
-##        random.shuffle(quadrants) # the order of the quadrants is randomly chosen
-##
-##        # generate points quadrant per quadrant
-##        for quadrant in quadrants:
-##            # generate 3 points per quadrant
-##            for i in xrange(3):
-##                point_ok = False
-##                points_not_ok = 0
-##                
-##                # as long as the point isn't ok, look for another one
-##                while not point_ok:
-##                    # if more than 10 points are thrown away, recalculate the last one                    
-##                    if points_not_ok > 10:
-##                        del points[-1]
-##
-##                    # get a point
-##                    point = Vec3(random.randint(quadrant[0].getX(), quadrant[1].getX()), random.randint(quadrant[0].getY(), quadrant[1].getY()), 0)
-##                    
-##                    # define a line for cheching its angle to the last line and for crossing points with other Lines
-##                    line = Line(point, points[-1])
-##
-##                    if line.getAngle(Line(points[-2], points[-1])) > MIN_ANGLE and (point-points[-1]).length() > MIN_DIST: # check for length
-##                        point_ok = True
-##                    
-##                    points_not_ok += 1
-##                
-##                # check for intersection 
-##                ## this seems to work, but not for the last points, which are added after this loop
-##                for j in xrange(len(points)-1):
-##                    if line.crossesLine(Line(points[j], points[j+1])):
-##                        crossings.append( (j, len(points)-1) )
-##                    
-##                points.append(point)
-##                self._notify = DirectNotify().newCategory("SplitScreen")
-##        self._notify.debug("Crossings: %s" %(crossings))
-##
-##        points.append(Vec3(0,(((player_count-1)/4)+2)*-VEHICLE_DIST, 0))
-##        points.append(Vec3(0,-VEHICLE_DIST, 0))
-##        
-##        
-##        # add some height
-##        for i in xrange(2,len(points)-2):
-##            points[i][2] = random.randint(points[i-1][2]-MAX_Z_DIST, points[i-1][2]+MAX_Z_DIST)
-##            
-##        # adjust the height
-##        for cross in crossings:
-##            absdist = abs(points[cross[1]][2] - points[cross[0]][2])
-##            dist = points[cross[1]][2] - points[cross[0]][2]
-##            sign = absdist / dist
-##            if absdist < MIN_Z_DIST:
-##                points[cross[1]][2] += (MIN_Z_DIST-absdist)*sign
-##                points[cross[1]+1][2] += (MIN_Z_DIST-absdist)*sign
+        
+###################################################################
+###################################################################        
+        points = [ Vec3(0,0,0), Vec3(0, VEHICLE_DIST, 0) ]
+        crossings = []
+        
+        # we define 4 quadrants to ensure that the track does run through the whole map
+        quadrants = []
+        quadrants.append( (Vec2(0, 0), Vec2(self.size.getX()/2, self.size.getY()/2)) )
+        quadrants.append( (Vec2(self.size.getX()/2, self.size.getY()/2), Vec2(self.size.getX(), self.size.getY())) )
+        quadrants.append( (Vec2(self.size.getX()/2, 0), Vec2(self.size.getX(), self.size.getY()/2)) )
+        quadrants.append( (Vec2(0, self.size.getY()/2), Vec2(self.size.getX()/2, self.size.getY())) )
+        random.shuffle(quadrants) # the order of the quadrants is randomly chosen
+
+        # generate points quadrant per quadrant
+        for quadrant in quadrants:
+            # generate 3 points per quadrant
+            for i in xrange(3):
+                point_ok = False
+                points_not_ok = 0
+                
+                # as long as the point isn't ok, look for another one
+                while not point_ok:
+                    # if more than 10 points are thrown away, recalculate the last one                    
+                    if points_not_ok > 10:
+                        del points[-1]
+
+                    # get a point
+                    point = Vec3(random.randint(quadrant[0].getX(), quadrant[1].getX()), random.randint(quadrant[0].getY(), quadrant[1].getY()), 0)
+                    
+                    # define a line for cheching its angle to the last line and for crossing points with other Lines
+                    line = Line(point, points[-1])
+
+                    if line.getAngle(Line(points[-2], points[-1])) > MIN_ANGLE and (point-points[-1]).length() > MIN_DIST: # check for length
+                        point_ok = True
+                    
+                    points_not_ok += 1
+                
+                # check for intersection 
+                ## this seems to work, but not for the last points, which are added after this loop
+                for j in xrange(len(points)-1):
+                    if line.crossesLine(Line(points[j], points[j+1])):
+                        crossings.append( (j, len(points)-1) )
+                    
+                points.append(point)
+                self._notify = DirectNotify().newCategory("SplitScreen")
+        self._notify.debug("Crossings: %s" %(crossings))
+
+        points.append(Vec3(0,(((player_count-1)/4)+2)*-VEHICLE_DIST, 0))
+        points.append(Vec3(0,-VEHICLE_DIST, 0))
+        
+        
+        # add some height
+        for i in xrange(2,len(points)-2):
+            points[i][2] = random.randint(points[i-1][2]-MAX_Z_DIST, points[i-1][2]+MAX_Z_DIST)
+            
+        # adjust the height
+        for cross in crossings:
+            absdist = abs(points[cross[1]][2] - points[cross[0]][2])
+            dist = points[cross[1]][2] - points[cross[0]][2]
+            sign = absdist / dist
+            if absdist < MIN_Z_DIST:
+                points[cross[1]][2] += (MIN_Z_DIST-absdist)*sign
+                points[cross[1]+1][2] += (MIN_Z_DIST-absdist)*sign
             
         
         self.points = points
