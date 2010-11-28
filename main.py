@@ -297,8 +297,9 @@ class Game(ShowBase):
         force_dir.normalize()
 
         #Change the angle of the vehicle so it matches the street
-        player.vehicle.physics_model.addTorque(player.vehicle.collision_model.getQuaternion().xform(Vec3(0,0,1)).cross(normal)*mass*30 - player.vehicle.physics_model.getAngularVel() * 0.8 * mass)
-        
+        upvec = Vec3(player.vehicle.collision_model.getQuaternion().xform(Vec3(0,0,1)))
+        player.vehicle.physics_model.addTorque(upvec.cross(normal)*mass*3*upvec.angleDeg(Vec3(normal)) - player.vehicle.physics_model.getAngularVel() * mass)
+
         #checks if the vehicle is moving to or away from the road
         if (z_direction + actual_speed).length() < actual_speed.length():goes_up = True
         else: goes_up = False
@@ -336,12 +337,13 @@ class Game(ShowBase):
         mass = player.vehicle.physics_model.getMass().getMagnitude()
         speed = player.vehicle.speed
         #if speed > 5: speed = 1
-        player.vehicle.physics_model.addTorque(player.vehicle.collision_model.getQuaternion().xform(Vec3(0,0,1)).cross(normal)*mass*30)
+        upvec = Vec3(player.vehicle.collision_model.getQuaternion().xform(Vec3(0,0,1)))
+        player.vehicle.physics_model.addTorque(upvec.cross(normal)*mass*3*upvec.angleDeg(Vec3(normal)) - player.vehicle.physics_model.getAngularVel() * mass)
         
     # -----------------------------------------------------------------
 
     def calculatePos(self, task):
-        task.delayTime = 2
+        task.delayTime = 0.5
         self.pos_vehicle = (self.pos_vehicle + 1) % len(self.players)
         pos = self.TrackpointTree.query(query_point=(self.players[self.pos_vehicle].getVehicle().getPos()), t=1)
         self.players[self.pos_vehicle].position = pos
@@ -349,6 +351,8 @@ class Game(ShowBase):
         #print self.players[self.pos_vehicle].getVehicle().getPos()
         #print pos[0]
         return task.again
+    
+    # -----------------------------------------------------------------
     
     def updatePos(self, task):
         task.delayTime = 0.5
@@ -395,9 +399,9 @@ class Game(ShowBase):
                 if not col.isEmpty():
                     self.onRayCollision(col, player)#handles collisions from the ray with the street
                 
-                col = OdeUtil.collide(player.vehicle.frontray.getRay(), self.groundGeom)
-                if not col.isEmpty():
-                    self.onFrontRayCollision(col, player)    
+                #col = OdeUtil.collide(player.vehicle.frontray.getRay(), self.groundGeom)
+                #if not col.isEmpty():
+                #    self.onFrontRayCollision(col, player)    
 
             self.deltaTimeAccumulator -= self.stepSize # Remove a stepSize from the accumulator until the accumulated time is less than the stepsize
             self.space.autoCollide() # Setup the contact joints
