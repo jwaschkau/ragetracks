@@ -232,6 +232,7 @@ class Game(ShowBase):
         self._notify.debug("Start Pos Calc")
         self.pos_vehicle = 0
         taskMgr.add(self.calculatePos, "calculatePos")
+        taskMgr.add(self.updatePos, "updatePos")
         self.world.setGravity(0, 0, -90.81)
         self._notify.info("Start game initialized")
         #set up the collision event
@@ -250,10 +251,11 @@ class Game(ShowBase):
                      
         for player in self.players:
             
-            if geom1.compareTo(player.vehicle.getFrontRay().getRay()) or geom2.compareTo(player.vehicle.getFrontRay().getRay()):
-                #slipstream
-                player.vehicle.setBoost(player.vehicle.getBoostStrength()*0.2)
-            
+##            if geom1.compareTo(player.vehicle.getFrontRay().getRay()) or geom2.compareTo(player.vehicle.getFrontRay().getRay()):
+##                ###slipstream doesnt work but why?
+##                #if player.device.boost:
+##                player.vehicle.setBoost(player.vehicle.getBoostStrength()*0.2)
+
             #workaround until panda 1.7.1
             #if the player collides with the ground plane he will get reset to the starting position
             if geom1.compareTo(self.plane) == 0 and player.vehicle.physics_model.compareTo(body2) == 0 or geom2.compareTo(self.plane) == 0 and player.vehicle.physics_model.compareTo(body1) == 0:
@@ -333,17 +335,30 @@ class Game(ShowBase):
         normal = entry.getContactGeom(0).getNormal()
         mass = player.vehicle.physics_model.getMass().getMagnitude()
         speed = player.vehicle.speed
-        player.vehicle.physics_model.addTorque(player.vehicle.collision_model.getQuaternion().xform(Vec3(0,0,1)).cross(normal)*mass*speed*0.005)
-    
+        #if speed > 5: speed = 1
+        player.vehicle.physics_model.addTorque(player.vehicle.collision_model.getQuaternion().xform(Vec3(0,0,1)).cross(normal)*mass*30)
+        
     # -----------------------------------------------------------------
 
     def calculatePos(self, task):
         task.delayTime = 2
         self.pos_vehicle = (self.pos_vehicle + 1) % len(self.players)
         pos = self.TrackpointTree.query(query_point=(self.players[self.pos_vehicle].getVehicle().getPos()), t=1)
-        print "Player", self.pos_vehicle,":", self.track_tupel_list.index(pos[0])
-        print self.players[self.pos_vehicle].getVehicle().getPos()
-        print pos[0]
+        self.players[self.pos_vehicle].position = pos
+        #print "Player", self.pos_vehicle,":", self.track_tupel_list.index(pos[0])
+        #print self.players[self.pos_vehicle].getVehicle().getPos()
+        #print pos[0]
+        return task.again
+    
+    def updatePos(self, task):
+        task.delayTime = 0.5
+        positionen = []
+        for player in self.players:
+            positionen.append(player.position)
+        positionen.sort()
+        for player in self.players:
+            player.rank = positionen.index(player.position)
+        print self.players[0].rank
         return task.again
     
     # -----------------------------------------------------------------

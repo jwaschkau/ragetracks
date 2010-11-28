@@ -22,6 +22,8 @@ class Player(object):
         self._vehicle = vehicle.Vehicle(self._ode_world, self._ode_space) #the properties of the vehicle
         self._device = device #The inputdevice
         self._osd_health = OnscreenText(text = "100", pos = ((self._number*0.2)-1,0.9))
+        self._position = 0
+        self._rank = 0
     
     # ---------------------------------------------------------
     
@@ -32,6 +34,34 @@ class Player(object):
         
     # ---------------------------------------------------------
     
+    def setPosition(self, position):
+        '''
+        '''
+        self._position = position
+        
+    def getPosition(self):
+        '''
+        '''
+        return self._position
+        
+    position = property(fget = getPosition, fset = setPosition)
+        
+    # ---------------------------------------------------------
+    
+    def setRank(self, rank):
+        '''
+        '''
+        self._rank = rank
+        
+    def getRank(self):
+        '''
+        '''
+        return self._rank
+        
+    rank = property(fget = getRank, fset = setRank)
+        
+    # ---------------------------------------------------------
+      
     def setCamera(self, camera):
         '''
         '''
