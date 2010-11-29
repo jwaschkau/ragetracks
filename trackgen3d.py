@@ -226,7 +226,7 @@ class Track3d(object):
         
         m = Track(x, y, z)
         m.generateTestTrack(player_count)
-        ##m.generateTrack(player_count)
+##        m.generateTrack(player_count)
         #m.genStart(5)
         ##res = 20
         self.track_points = m.getInterpolatedPoints(res)
@@ -328,42 +328,27 @@ class Track3d(object):
             else:
                 vec = track_points[i-1]-track_points[i+1]
                 
-                
+            
+            # calculate here the direction out of the street vector and the last normal
             last_normal.normalize()
             vec.normalize()
             mat = Mat3()
-            mat.setRotateMat(-90, last_normal)
+
+            mat.setRotateMat(-90, last_normal) # turn the direction around the last_normal
             turned_vec = mat.xform(vec)
-            turned_vec.normalize()
-            last_normal = turned_vec.cross(vec)
             
             turned_vec.normalize()
-            #print last_normal
-##            turned_vec = vec.cross(last_vec)
-##            last_vec = vec
-##            turned_vec.normalize()
+            last_normal = turned_vec.cross(vec) # calculate the new normal
+            
+            turned_vec.normalize()
             
             j = 0    
             for shapedot in street_data:
-                ##point = Vec3(shapedot[0], 0, shapedot[1])
-
-                ##point[0] *= vec[0]
-                ##point[1] *= vec[1]
-                ##point[0] += track_points[i][0]
-                ##point[1] += track_points[i][1]
-                ##point[2] += track_points[i][2]
+                # this is like a layer in 3d [Ebenengleichung] 
+                # vec = vec + vec*scalar + vec*scalar
+                # this is used to transform the 2d-Streetshape to 3d
+                point = track_points[i] + (turned_vec*shapedot[0]) + (last_normal*shapedot[1])
                 
-                point = Vec3(0,0,0)
-                # calculate the point via line term: x = a+ r*b
-                # Variables: a = track_points[i]; r = shapedot[0]; b = vec
-                point[0] = track_points[i][0]+(shapedot[0]*turned_vec[0])
-                point[1] = track_points[i][1]+(shapedot[0]*turned_vec[1])
-                point[2] = track_points[i][2]+(shapedot[0]*turned_vec[2])
-                
-                # add the height
-                point[2] += shapedot[1]
-            
-                ##self.vertex.addData3f((track_points[i][0] + (self.varthickness[i][0]*street_data[j][0]), track_points[i][1] + (self.varthickness[i][1]*street_data[j][0]), track_points[i][2] + (self.varthickness[i][2]+street_data[j][1])))
                 self.vertex.addData3f(point[0], point[1], point[2])
                 self.normal.addData3f(0, 0, 1) #KA how to calc
                 self.texcoord.addData2f(texcoordinates[j], (i%2)) #
