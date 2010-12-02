@@ -356,7 +356,7 @@ class Game(ShowBase):
         if ((self.players[self.pos_vehicle].position - self.players[self.pos_vehicle].pre_position) >= 800):
             self.players[self.pos_vehicle].lap -= 1
             print self.players[self.pos_vehicle].lap
-        self._notify.debug( "Player", self.pos_vehicle,":", self.track_tupel_list.index(pos[0]))
+        self._notify.debug( ("Player", self.pos_vehicle,":", self.track_tupel_list.index(pos[0])))
         self._notify.debug( self.players[self.pos_vehicle].getVehicle().getPos())
         return task.again
     
@@ -373,7 +373,7 @@ class Game(ShowBase):
         positionen.sort()
         for player in self.players:
             player.rank = positionen.index(player.position)
-            self._notify.debug( player.rank )
+            self._notify.debug( ("PlayerRank", player.rank ))
         return task.again
     
     # -----------------------------------------------------------------
@@ -418,7 +418,7 @@ class Game(ShowBase):
             self.space.autoCollide() # Setup the contact joints
             self.world.quickStep(self.stepSize)
             self.contactgroup.empty() # Clear the contact joints
-        for player in self.players: # set new positions
+        for player in self.players: # set new rank
             player.updatePlayer()
         return task.cont
     # -----------------------------------------------------------------
