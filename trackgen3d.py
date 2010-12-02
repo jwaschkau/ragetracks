@@ -225,8 +225,8 @@ class Track3d(object):
         
         
         m = Track(x, y, z)
-        m.generateTestTrack(player_count)
-##        m.generateTrack(player_count)
+##        m.generateTestTrack(player_count)
+        m.generateTrack(player_count)
         #m.genStart(5)
         ##res = 20
         self.track_points = m.getInterpolatedPoints(res)
@@ -305,7 +305,9 @@ class Track3d(object):
         last_normal = Vec3(0,0,1)
         last_vec = Vec3(0,1,0)
         for i in xrange(len(track_points)):
-            if i+1 == len(track_points):
+            if i == 0:
+                vec = track_points[0]-track_points[1]
+            elif i+1 == len(track_points):
                 vec = track_points[i-1]-track_points[0]
             else:
                 vec = track_points[i-1]-track_points[i+1]
@@ -333,6 +335,7 @@ class Track3d(object):
                 
                 self.vertex.addData3f(point[0], point[1], point[2])
                 self.normal.addData3f(0, 0, 1) #KA how to calc
+                ##self.texcoord.addData2f(texcoordinates[j], (i%2)) #
                 self.texcoord.addData2f(texcoordinates[j], (i%2)) #
                 j += 1
 
