@@ -43,6 +43,11 @@ class MainMenu(object):
         self._conf = settings.Settings()
         self._conf.loadSettings(self.CONF_PATH)
         
+        self.road = loader.loadModel("data/models/road01.egg")
+        self.road.reparentTo(render)
+        self.road.setPos(16,60,-7)
+        self.road.setHpr(-50,10,30)
+        
         taskMgr.add(self.input, 'input')
     
     # -----------------------------------------------------------------
@@ -54,7 +59,8 @@ class MainMenu(object):
         self.optionsModells = []
         self.menuNode = NodePath("menuNode")
         self.menuNode.reparentTo(render)
-        self.menuNode.setPos(-5,15,3)
+        self.menuNode.setPos(-4.5,15,3)
+        self.menuNode.setH(40)
         
         self.colorA = Vec4(1,1,0,0)
         self.colorB = Vec4(0,1,1,0)
@@ -63,7 +69,7 @@ class MainMenu(object):
         plight = PointLight('plight')
         plight.setColor(VBase4(10, 10, 10, 1))
         plnp = self.menuNode.attachNewNode(plight)
-        plnp.setPos(0, -10, 0)
+        plnp.setPos(-10, -800, 20)
         self.menuNode.setLight(plnp)
 
     def menuMain(self):
@@ -305,7 +311,7 @@ class Menu(object):
         plight = PointLight('plight')
         plight.setColor(VBase4(10, 10, 10, 1))
         plnp = self.startNode.attachNewNode(plight)
-        plnp.setPos(0, -10, 0)
+        plnp.setPos(20, -800, 30)
         self.startNode.setLight(plnp)
         
         #Cam
