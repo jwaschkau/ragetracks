@@ -145,12 +145,15 @@ class Game(ShowBase):
     # -----------------------------------------------------------------
     
     def createTrackpointTree(self, trackpoints):
+        '''
+        Create a tree out of the trackpoints
+        '''
         self.track_tupel_list = []
+        #Change from Vec3 to tupel
         for point in self.trackpoints:
             self.track_tupel_list.append((point.getX(), point.getY(), point.getZ()))
         self.list4tree = self.track_tupel_list[:]
         return KDTree.construct_from_data(self.list4tree)
-    #nearest = tree.query(query_point=(5,4,3), t=1)
             
     
     # -----------------------------------------------------------------
@@ -159,6 +162,7 @@ class Game(ShowBase):
         '''
         Start the game
         '''
+        #Create the KDTree for the position determination
         self.trackpoints = trackpoints #The mid points of the street for position calculation
         self.TrackpointTree = self.createTrackpointTree(self.trackpoints) 
         
@@ -201,14 +205,6 @@ class Game(ShowBase):
         self.plane.setCollideBits(0)
         self.plane.setCategoryBits(4)
 
-        self.arrows = loader.loadModel("data/models/arrows.egg")
-        self.arrows.reparentTo(render)
-        self.arrows.setPos(0,0,0)
-        
-        self.arrows2 = loader.loadModel("data/models/arrows.egg")
-        self.arrows2.reparentTo(render)
-        self.arrows2.setPos(0,60,0)
-
         #Load the Lights
         ambilight = AmbientLight('ambilight')
         ambilight.setColor(VBase4(0.2, 0.2, 0.2, 1))
@@ -243,7 +239,6 @@ class Game(ShowBase):
         '''
         Handles Collision-Events
         '''
-
         geom1 = entry.getGeom1()
         geom2 = entry.getGeom2()
         body1 = entry.getBody1()
@@ -330,9 +325,10 @@ class Game(ShowBase):
     # -----------------------------------------------------------------       
 
     def onFrontRayCollision(self, entry, player): 
-        
-        #handles extreme changes in height
-        #collision with the street the vehicle needs to get lifted
+        '''
+        handles extreme changes in height
+        collision with the street the vehicle needs to get lifted
+        '''
         normal = entry.getContactGeom(0).getNormal()
         mass = player.vehicle.physics_model.getMass().getMagnitude()
         speed = player.vehicle.speed
@@ -343,7 +339,10 @@ class Game(ShowBase):
     # -----------------------------------------------------------------
 
     def calculatePos(self, task):
-        task.delayTime = 0.5
+        '''
+        Appropriate the players position
+        '''
+        task.delayTime = 0.5    ##TODO set value to a 
         self.players[self.pos_vehicle].pre_position = self.players[self.pos_vehicle].position
         self.pos_vehicle = (self.pos_vehicle + 1) % len(self.players)
         pos = self.TrackpointTree.query(query_point=(self.players[self.pos_vehicle].getVehicle().getPos()), t=1)
@@ -357,14 +356,16 @@ class Game(ShowBase):
         if ((self.players[self.pos_vehicle].position - self.players[self.pos_vehicle].pre_position) >= 800):
             self.players[self.pos_vehicle].lap -= 1
             print self.players[self.pos_vehicle].lap
-        #print "Player", self.pos_vehicle,":", self.track_tupel_list.index(pos[0])
-        #print self.players[self.pos_vehicle].getVehicle().getPos()
-        #print pos[0]
+        self._notify.debug( ("Player", self.pos_vehicle,":", self.track_tupel_list.index(pos[0])))
+        self._notify.debug( self.players[self.pos_vehicle].getVehicle().getPos())
         return task.again
     
     # -----------------------------------------------------------------
     
     def updatePos(self, task):
+        '''
+        Set the rank for each player
+        '''
         task.delayTime = 0.5
         positionen = []
         for player in self.players:
@@ -372,16 +373,16 @@ class Game(ShowBase):
         positionen.sort()
         for player in self.players:
             player.rank = positionen.index(player.position)
-        #print self.players[0].rank
+            self._notify.debug( ("PlayerRank", player.rank ))
         return task.again
     
     # -----------------------------------------------------------------
     
     def gameTask(self, task):
         '''
-        this task runs once per second if the game is running
+        this task runs once per frame if the game is running
+        And calculate the physics
         '''
-        #calculate the physics
         #self.space.autoCollide() # Setup the contact joints
 
         self.deltaTimeAccumulator += globalClock.getDt()
@@ -417,11 +418,10 @@ class Game(ShowBase):
             self.space.autoCollide() # Setup the contact joints
             self.world.quickStep(self.stepSize)
             self.contactgroup.empty() # Clear the contact joints
-        for player in self.players: # set new positions
+        for player in self.players: # set new rank
             player.updatePlayer()
         return task.cont
     # -----------------------------------------------------------------
-
 
 # -----------------------------------------------------------------
 # -----------------------------------------------------------------
@@ -429,7 +429,3 @@ class Game(ShowBase):
 
 game = Game()
 game.run()
-
-
-
-

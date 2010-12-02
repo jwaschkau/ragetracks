@@ -4,7 +4,6 @@
 ###################################################################
 
 from panda3d.core import NodePath
-#from pandac.PandaModules import Vec3, Vec4, PointLight #Temp for Testing need VBase4
 from pandac.PandaModules import *
 import time
 import sys
@@ -27,16 +26,12 @@ class MainMenu(object):
         time.sleep(1)               #Bad Hack to make sure that the Key isn't pressed.
         self.device.boost = False   #Bad Hack to make sure that the Key isn't ￼.setColor(self.colorA)pressed.
         
-        #while self.device.boost:    #Hier wäre aktives Warten cool das guckt ob die Taste wieder los gelassen wurde
-        #    print "test"
-        #    self.devices.noticeAction()
-        
-        
         self.newGame = newGame
         self.track = []
-        
-        self.wiimoteX = []#Wiimotes
-        
+
+        #Wiimotes
+        self.wiimoteX = []
+                
         #Font
         self.font = DynamicTextFont(FONT)
         self.font.setRenderMode(TextFont.RMSolid)
@@ -50,6 +45,9 @@ class MainMenu(object):
     # -----------------------------------------------------------------
 
     def initNode(self):
+        '''
+        Create a clear menu
+        '''
         self.camera = None
         self.selected = 0
         self.options = []
@@ -70,57 +68,64 @@ class MainMenu(object):
         self.menuNode.setLight(plnp)
 
     def menuMain(self):
+        '''
+        The content for the main menu
+        '''
         self.initNode()
-        #Fill the options List
-        #self.options = []
-        #self.optionsModells = []
-        #self.selected = 0
         self.addOption(_("New Game"), self.newGame)
         self.addOption(_("Options"), self.option)
         self.addOption(_("Wiimote"), self.addWii)
         self.addOption(_("Credits"), self.newGame)
         self.addOption(_("Exit"), self.exit)
+<<<<<<< TREE
         
         self.road = loader.loadModel("data/models/road01.egg")
         self.road.reparentTo(self.menuNode)
         self.road.setPos(26,20,-7)
         self.road.setHpr(-50,10,30)
         #self.text = Text3D(_("NewGame"))
+=======
+>>>>>>> MERGE-SOURCE
         self.showMenu()
     
     # -----------------------------------------------------------------
     
     def menuOption(self):
+        '''
+        The content for the option menu
+        '''
         self.initNode()
-        #Fill the options List
-        #self.options = []
-        #self.optionsModells = []
-        #self.selected = 0
         self.addOption(_("Resolution"), self.newGame)
         self.addOption(_("Full Screen"), self.fullscreen)
         self.addOption(_("Shader"), self.newGame)
         self.addOption(_("Back"), self.backToMain)
-        #self.text = Text3D(_("NewGame"))
         self.showMenu()
 
     # -----------------------------------------------------------------
     
     def option(self):
-        
+        '''
+        Start a option menu
+        '''
         self.menuOption()
         taskMgr.doMethodLater(0.5, self.input, 'input')
         
     # -----------------------------------------------------------------
     
     def backToMain(self):
-        time.sleep(1)               #Bad Hack to make sure that the Key isn't pressed.
-        self.device.boost = False   #Bad Hack to make sure that the Key isn't ￼.setColor(self.colorA)pressed.
+        '''
+        Start a main menu
+        '''
         self.menuMain()
         taskMgr.doMethodLater(0.5, self.input, 'input')
 
     # -----------------------------------------------------------------
     
     def exit(self):
+        '''
+        Save the config
+        And Exit the Game
+        '''
         self._conf.saveSettings(self.CONF_PATH)
         sys.exit()
 
@@ -138,6 +143,9 @@ class MainMenu(object):
         self.backToMain()
         
     def fullscreen(self):
+        '''
+        Witch between Fullscreen and window mode
+        '''
         self._conf.fullscreen = not self._conf.fullscreen
         wp = WindowProperties()
         wp.setFullscreen(self._conf.fullscreen)
@@ -145,11 +153,15 @@ class MainMenu(object):
         wp.setSize(int(base.pipe.getDisplayWidth()),int(base.pipe.getDisplayHeight()))
         base.win.requestProperties(wp)
         self.option()
+        ##TODO Save the config????
 
     # -----------------------------------------------------------------
     
     def input(self, task):
-        #print self.device.directions
+        '''
+        Getting the keys from all devices
+        '''
+        #self._notify.debug( self.device.directions )
         if self.device.directions == [1,0]:
             task.delayTime = 0.2
             return task.again
@@ -173,6 +185,7 @@ class MainMenu(object):
     
     def addOption(self, name, function):
         '''
+        Add one option to the menu Node
         '''
         text = TextNode(name)
         text.setFont(self.font)
@@ -182,19 +195,12 @@ class MainMenu(object):
         self.optionsModells[-1].setColor(self.colorA)
         self.optionsModells[-1].setPos(0, 0, -len(self.optionsModells))
         self.menuNode.attachNewNode(text)
-        
-        
-        #text.setTextColor(0.3, 0.6, 0.1, 1.0)
-        #text.setText("Every day in every way I'm getting better and better.")
-        #textNodePath = NodePath("test")
-        #textNodePath.attachNewNode(text)
-        #textNodePath.reparentTo(self.menuNode)
-        
 
     # -----------------------------------------------------------------
 
     def hideMenu(self):
         '''
+        Remove the aktiv menu Node
         '''
         self.menuNode.removeNode()
         
@@ -204,13 +210,13 @@ class MainMenu(object):
     
     def showMenu(self):
         '''
+        Show the menu Node
         '''
         if len(self.optionsModells) == 0:
             return
-        #self.menuNode.show()
         self.optionsModells[self.selected].setColor(self.colorB)
         
-        #Cam
+        #Create a camera if there is none
         if self.camera is None: 
             self.camera = base.makeCamera(base.win)
         else:
@@ -219,6 +225,9 @@ class MainMenu(object):
     # -----------------------------------------------------------------
 
     def selectNext(self):
+        '''
+        Bring out the next menu option
+        '''
         old = self.selected
         self.selected += 1
         if self.selected == len(self.options):
@@ -231,6 +240,9 @@ class MainMenu(object):
     # -----------------------------------------------------------------
 
     def selectPrev(self):
+        '''
+        Bring out the previous menu option
+        '''
         old = self.selected
         self.selected -= 1
         if self.selected == -1:
@@ -255,6 +267,7 @@ class Menu(object):
         
         self._notify = DirectNotify().newCategory("Menu")
         self._notify.info("New Menu-Object created: %s" %(self))
+        
         #Font
         self.font = DynamicTextFont(FONT)
         self.font.setRenderMode(TextFont.RMSolid)
@@ -281,12 +294,8 @@ class Menu(object):
         self.startNode = NodePath("StartNode")
         self.startNode.reparentTo(render)
         self.startNode.setPos(-5,15,3)
-        
-##        headline = TextNode("RageTracks")
-##        headline.setFont(self.font)
-##        headline.setText("RageTracks")
-##        NodePath("test").attachNewNode(headline)
-##        self.startNode.attachNewNode(headline)
+
+        #Headline model
         headline = loader.loadModel("data/models/logo.egg")
         headline.setX(4.7)
         headline.setY(-4)
@@ -294,6 +303,7 @@ class Menu(object):
         headline.setP(90)
         headline.reparentTo(self.startNode)
         
+        #Press any key text
         presskey = TextNode("PressAnyKey")
         presskey.setFont(self.font)
         presskey.setText(_("Press any key!!"))
@@ -302,11 +312,7 @@ class Menu(object):
         textNodePath.setPos(0,10,-9.5)
         textNodePath.reparentTo(self.startNode)
         
-        #self.headline = Text3D("RageTracks")
-        #self.headline.reparentTo(self.startNode)
-        #self.presskey = Text3D(_("PressAnyKey"), Vec3(0,10,-9.5))
-        #self.presskey.reparentTo(self.startNode)
-        
+        #Show the start screen 
         self.startNode.show()
         
         #LICHT
@@ -316,11 +322,9 @@ class Menu(object):
         plnp.setPos(20, -800, 30)
         self.startNode.setLight(plnp)
         
-        #Cam
+        #Camera
         self.camera = base.makeCamera(base.win)
         
-        #print self.devices.getCount()
-        #print self.settings.getInputSettings()
         self._notify.info("StarScreen initialized")
         
     # -----------------------------------------------------------------
@@ -329,17 +333,15 @@ class Menu(object):
         '''
         Return the first device with the first key stroke
         '''
-        
         for i in xrange(len(self._devices.devices)):
             if self._devices.devices[i].boost:
-                #Kill Cam
+                #Kill Camera
                 self.camera.node().setActive(False)
                 #Kill Node
-                self.startNode.hide()       #Maybe there is a function to delete the Node from memory
+                self.startNode.removeNode()
                 
-                #Start the Game for testing purpose
-                #self.menu = Menu(self.newGame, self.players[0].getDevice())    #if one player exist
-                self.menu = MainMenu(self.newGame, self._devices.devices[i], self._devices)         #if no player exist
+                #Start the menu
+                self.menu = MainMenu(self.newGame, self._devices.devices[i], self._devices)
                 self.menu.menuMain()
                 return task.done
         return task.cont
@@ -350,7 +352,7 @@ class Menu(object):
 
     def newGame(self):
         '''
-        the new game menu
+        The select vehicle screen
         '''
         base.enableParticles()
         self.countdown = COUNTDOWN_START #the countdown, when its over the game can be started
@@ -402,6 +404,9 @@ class Menu(object):
     # -----------------------------------------------------------------
         
     def selectVehicle(self, task):
+        '''
+        The vehicle select and rotate task
+        '''
         #Set the countdown and hide, if > 3
         self.countdown -= globalClock.getDt()
         if self.countdown <=0:
@@ -446,6 +451,9 @@ class Menu(object):
     # -----------------------------------------------------------------
 
     def collectWii(self, task):
+        '''
+        Collect wiimotes task
+        '''
         try:
             print 'Put Wiimote in discoverable mode now (press 1+2)...'
             wiimote = cwiid.Wiimote()
@@ -455,7 +463,8 @@ class Menu(object):
             pass
         return task.cont
         
-    
+    # -----------------------------------------------------------------
+     
     def collectPlayer(self, task):
         '''
         Wait until all players are ready
@@ -475,13 +484,11 @@ class Menu(object):
                     tex = loader.loadTexture('data/textures/street.png')
                     self.streetPath.setTexture(tex)
 
-                    #self.streetPath.setTwoSided(True)
                     #self.streetPath = loader.loadModel('data/models/Street.egg')
                     ##self.streetPath = loader.loadModel('data/models/Street.egg')
-                    
                     #tex = loader.loadTexture('data/models/StreetTex.png')
                     #self.nodePath.setTexture(tex)
-                    #self.nodePath.setTwoSided(True)
+                    
                     self._parent.startGame(self.streetPath, self.track.trackpoints)
                     return task.done
 
@@ -495,13 +502,14 @@ class Menu(object):
                     vehicleSelectNode = NodePath("VehicleSelectNode")
                     self._players[-1].camera.camera.reparentTo(vehicleSelectNode)
                     
-                    #ligt, that casts shadows
+                    #Light, that casts shadows
                     plight = Spotlight('plight')
                     plight.setColor(VBase4(10.0, 10.0, 10.0, 1))
                     if (base.win.getGsg().getSupportsBasicShaders() != 0):
                         pass
                         ##plight.setShadowCaster(True, 2048, 2048)#enable shadows for this light ##TODO wegen Linux
                         
+                    #Light
                     plight.getLens().setFov(80)
                     plnp = vehicleSelectNode.attachNewNode(plight)
                     plnp.setPos(2, -10, 10)
@@ -509,6 +517,7 @@ class Menu(object):
                     vehicleSelectNode.setLight(plnp)
                     vehicleSelectNode.setShaderAuto()#enable autoshader so we can use shadows
                     
+                    #Light
                     ambilight = AmbientLight('ambilight')
                     ambilight.setColor(VBase4(0.2, 0.2, 0.2, 1))
                     vehicleSelectNode.setLight(vehicleSelectNode.attachNewNode(ambilight))
