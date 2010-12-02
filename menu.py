@@ -45,11 +45,6 @@ class MainMenu(object):
         self._conf = settings.Settings()
         self._conf.loadSettings(self.CONF_PATH)
         
-        self.road = loader.loadModel("data/models/road01.egg")
-        self.road.reparentTo(render)
-        self.road.setPos(16,60,-7)
-        self.road.setHpr(-50,10,30)
-        
         taskMgr.add(self.input, 'input')
     
     # -----------------------------------------------------------------
@@ -85,6 +80,11 @@ class MainMenu(object):
         self.addOption(_("Wiimote"), self.addWii)
         self.addOption(_("Credits"), self.newGame)
         self.addOption(_("Exit"), self.exit)
+        
+        self.road = loader.loadModel("data/models/road01.egg")
+        self.road.reparentTo(self.menuNode)
+        self.road.setPos(26,20,-7)
+        self.road.setHpr(-50,10,30)
         #self.text = Text3D(_("NewGame"))
         self.showMenu()
     
