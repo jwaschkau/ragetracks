@@ -13,6 +13,8 @@ import trackgen3d
 import glob
 import settings
 
+COUNTDOWN_START = 1
+
 FONT = 'data/fonts/Orbitron/TTF/orbitron-black.ttf'
 class MainMenu(object):
 
@@ -351,7 +353,7 @@ class Menu(object):
         the new game menu
         '''
         base.enableParticles()
-        self.countdown = 5 #the countdown, when its over the game can be started
+        self.countdown = COUNTDOWN_START #the countdown, when its over the game can be started
         self._notify.info("Initializing new game")
         #GlobPattern if we need a Panda Class
         self.vehicle_list = glob.glob("data/models/vehicles/*.egg")
@@ -373,7 +375,7 @@ class Menu(object):
         text = TextNode("Countdown")
         text.setFont(self.font)
         text.setAlign(TextProperties.ACenter)
-        text.setText(_("5"))
+        text.setText(_(str(COUNTDOWN_START)))
         self.countdown_node = NodePath("Countdown")
         self.countdown_node.attachNewNode(text)
         self.countdown_node.setPos(0,0,4)
@@ -419,7 +421,7 @@ class Menu(object):
                 
             if self.player_buttonpressed[self._players.index(player)] < task.time and not player.vehicle.model_loading:
                 if player.device.directions[0] < -0.8:
-                    self.countdown = 5
+                    self.countdown = COUNTDOWN_START
                     self.player_buttonpressed[self._players.index(player)] = task.time + self.KEY_DELAY
                     index = self.vehicle_list.index("data/models/vehicles/%s" %(player.vehicle.model.getName()))-1
                     self._notify.debug("Previous vehicle selected: %s" %(index))
@@ -429,7 +431,7 @@ class Menu(object):
                     self.loading.instanceTo(player.camera.camera.getParent())
                     loader.loadModel(self.vehicle_list[index], callback = player.setVehicle)
                 if player.device.directions[0] > 0.8:
-                    self.countdown = 5
+                    self.countdown = COUNTDOWN_START
                     self.player_buttonpressed[self._players.index(player)] = task.time + self.KEY_DELAY
                     index = self.vehicle_list.index("data/models/vehicles/%s" %(player.vehicle.model.getName()))+1
                     self._notify.debug("Next vehicle selected: %s" %(index))
@@ -485,7 +487,7 @@ class Menu(object):
 
         for device in self.unusedDevices:
                 if device.boost:
-                    self.countdown = 5
+                    self.countdown = COUNTDOWN_START
                     self.player_buttonpressed.append(0)
                     self._parent.addPlayer(device)
                     
@@ -527,7 +529,7 @@ class Menu(object):
         for player in self._players:
             if self.player_buttonpressed[self._players.index(player)] < task.time:
                 if player.device.use_item:
-                    self.countdown = 5
+                    self.countdown = COUNTDOWN_START
                     self._notify.debug("Removing player: %s" %(player))
                     self.unusedDevices.append(player.device)
                     self.player_buttonpressed.pop(self._players.index(player))

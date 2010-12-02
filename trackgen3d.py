@@ -225,8 +225,8 @@ class Track3d(object):
         
         
         m = Track(x, y, z)
-##        m.generateTestTrack(player_count)
-        m.generateTrack(player_count)
+        m.generateTestTrack(player_count)
+##        m.generateTrack(player_count)
         #m.genStart(5)
         ##res = 20
         self.track_points = m.getInterpolatedPoints(res)
