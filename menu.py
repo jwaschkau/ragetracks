@@ -77,15 +77,12 @@ class MainMenu(object):
         self.addOption(_("Wiimote"), self.addWii)
         self.addOption(_("Credits"), self.newGame)
         self.addOption(_("Exit"), self.exit)
-<<<<<<< TREE
         
         self.road = loader.loadModel("data/models/road01.egg")
         self.road.reparentTo(self.menuNode)
         self.road.setPos(26,20,-7)
         self.road.setHpr(-50,10,30)
         #self.text = Text3D(_("NewGame"))
-=======
->>>>>>> MERGE-SOURCE
         self.showMenu()
     
     # -----------------------------------------------------------------
