@@ -288,7 +288,7 @@ class Game(ShowBase):
         z_direction = player.vehicle.collision_model.getQuaternion().xform(Vec3(0,0,1)) 
         actual_speed = Vec3(linear_velocity[0]*z_direction[0],linear_velocity[1]*z_direction[1],linear_velocity[2]*z_direction[2])
         
-        acceleration = ((ray.getLength()/2)-force_dir.length())*3*actual_speed.length()#calculate the direction
+        acceleration = ((ray.getLength()/2)-force_dir.length())*actual_speed.length()#calculate the direction
         player.vehicle.hit_ground = True
         force_dir.normalize()
 
@@ -411,9 +411,9 @@ class Game(ShowBase):
                 if not col.isEmpty():
                     self.onRayCollision(col, player)#handles collisions from the ray with the street
                 
-                #col = OdeUtil.collide(player.vehicle.frontray.getRay(), self.groundGeom)
-                #if not col.isEmpty():
-                #    self.onFrontRayCollision(col, player)    
+                col = OdeUtil.collide(player.vehicle.frontray.getRay(), self.groundGeom)
+                if not col.isEmpty():
+                    self.onFrontRayCollision(col, player)    
 
             self.deltaTimeAccumulator -= self.stepSize # Remove a stepSize from the accumulator until the accumulated time is less than the stepsize
             self.space.autoCollide() # Setup the contact joints
