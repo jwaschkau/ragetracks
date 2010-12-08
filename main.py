@@ -277,6 +277,7 @@ class Game(ShowBase):
         ray = player.vehicle.ray.getRay()
         normal = entry.getContactGeom(0).getNormal()
         normal.normalize()
+        player.vehicle.streetnormal = normal
         player.vehicle.physics_model.setGravityMode(0) #disable gravity if on the track
         mass = player.vehicle.physics_model.getMass().getMagnitude()                    
         force_pos = ray.getPosition()
@@ -293,7 +294,7 @@ class Game(ShowBase):
 
         #Change the angle of the vehicle so it matches the street
         upvec = Vec3(player.vehicle.collision_model.getQuaternion().xform(Vec3(0,0,1)))
-        player.vehicle.physics_model.addTorque(upvec.cross(normal)*mass*3*upvec.angleDeg(Vec3(normal)) - player.vehicle.physics_model.getAngularVel() * mass)
+        player.vehicle.physics_model.addTorque(upvec.cross(normal)*mass*upvec.angleDeg(Vec3(normal)) - player.vehicle.physics_model.getAngularVel() * mass)
 
         #checks if the vehicle is moving to or away from the road
         if (z_direction + actual_speed).length() < actual_speed.length():goes_up = True

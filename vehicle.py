@@ -46,6 +46,7 @@ class Vehicle(object):
         self._model_loading = False
         self._blowout = []
         self._blowout_on = False
+        self._streetnormal = Vec3(0,0,1)
         
         #set up the propertys of the vehicle that schould be loaded
         #the methods get called because the data is immutable and 
@@ -279,11 +280,11 @@ class Vehicle(object):
         '''
         self.startBlowout()
         if self._hit_ground:
-            direction = self._collision_model.getQuaternion().xform(Vec3(0,1,0))
+            direction = self._streetnormal.cross(self._collision_model.getQuaternion().xform(Vec3(1,0,0)))
             self._physics_model.addForce(direction*self._boost_strength*self.physics_model.getMass().getMagnitude()*strength)
             self._hit_ground = False
         else:
-            direction = self._collision_model.getQuaternion().xform(Vec3(0,1,0))
+            direction = self._streetnormal.cross(self._collision_model.getQuaternion().xform(Vec3(1,0,0)))
             self._physics_model.addForce(direction*self._boost_strength*0.2*self.physics_model.getMass().getMagnitude()*strength)
     # ---------------------------------------------------------
         
@@ -347,7 +348,7 @@ class Vehicle(object):
         '''
         #refresh variables
         linear_velocity = self._physics_model.getLinearVel()
-        direction = self._collision_model.getQuaternion().xform(Vec3(0,1,0))
+        direction = self._streetnormal.cross(self._collision_model.getQuaternion().xform(Vec3(1,0,0)))
         self._boost_direction[0],self._boost_direction[1],self._boost_direction[2] = self.physics_model.getLinearVel()[0],self.physics_model.getLinearVel()[1],self.physics_model.getLinearVel()[2]
         
         #This needs to be done, so we dont create a new object but only change the existing one. else the camera wont update
@@ -498,6 +499,16 @@ class Vehicle(object):
         self._name = value
     
     name = property(fget = getName, fset = setName)
+    
+    # ----------------------------------------------------------------- 
+                
+    def getStreetNormal(self):
+        return self._streetnormal
+        
+    def setStreetNormal(self, value):
+        self._streetnormal = value
+    
+    streetnormal = property(fget = getStreetNormal, fset = setStreetNormal)
     
     # ----------------------------------------------------------------- 
     
