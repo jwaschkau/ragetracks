@@ -539,7 +539,7 @@ class Menu(object):
                     self._notify.debug("Removing player: %s" %(player))
                     self.unusedDevices.append(player.device)
                     self.player_buttonpressed.pop(self._players.index(player))
-                    self._parent.removePlayer(player)
+                    self._parent.removePlayer(player) 
         return task.cont
 
     # -----------------------------------------------------------------

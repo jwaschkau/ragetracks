@@ -145,10 +145,10 @@ class Vehicle(object):
 #        self.glowSize=10
 #        self.filters = CommonFilters(base.win, self._model)
 #        self.filters.setBloom(blend=(0,self.glowSize,0,0) ,desat=1, intensity=1, size='medium')
-        tex = loader.loadTexture( 'data/textures/glowmap.png' )
-        ts = TextureStage('ts')
-        ts.setMode(TextureStage.MGlow)
-        self._model.setTexture(ts, tex)
+#        tex = loader.loadTexture( 'data/textures/glowmap.png' )
+#        ts = TextureStage('ts')
+#        ts.setMode(TextureStage.MGlow)
+#        self._model.setTexture(ts, tex)
        
         #Initialize the physics-simulation for the vehicle
         self._physics_model = OdeBody(self._ode_world)
