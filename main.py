@@ -351,7 +351,7 @@ class Game(ShowBase):
         '''
         Appropriate the players position
         '''
-        task.delayTime = 1    ##TODO set value ca. 0.5
+        task.delayTime = 0.1    ##TODO set value ca. 0.5
         self.players[self.pos_vehicle].pre_position = self.players[self.pos_vehicle].position
         self.pos_vehicle = (self.pos_vehicle + 1) % len(self.players)
         pos = self.TrackpointTree.query(query_point=(self.players[self.pos_vehicle].getVehicle().getPos()), t=1)
@@ -377,7 +377,7 @@ class Game(ShowBase):
         '''
         Set the rank for each player
         '''
-        task.delayTime = 1    ##TODO set value ca. 0.5
+        task.delayTime = 0.1    ##TODO set value ca. 0.5
         positionen = []
         for player in self.players:
             positionen.append(player.position)
