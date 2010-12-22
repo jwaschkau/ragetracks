@@ -49,6 +49,20 @@ class Player(object):
     position = property(fget = getPosition, fset = setPosition)
         
     # ---------------------------------------------------------
+    
+    def setNumber(self, number):
+        '''
+        '''
+        self._number = number
+        
+    def getNumber(self):
+        '''
+        '''
+        return self._number
+        
+    number = property(fget = getNumber, fset = setNumber)
+        
+    # ---------------------------------------------------------
         
     def setPrePosition(self, pre_position):
         '''
