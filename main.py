@@ -50,6 +50,7 @@ class Game(ShowBase):
         #Laps
         self.laps = 3 #the Laps
         self.starttime = 0 #Time the Game starts
+        self.winingPlayer = 0
 
         # load the settings
         self.settings = settings.Settings()
@@ -361,8 +362,13 @@ class Game(ShowBase):
         #updateLaps
         if ((self.players[self.pos_vehicle].position - self.players[self.pos_vehicle].pre_position) <= -800):
             self.players[self.pos_vehicle].lap += 1
-            if (self.players[self.pos_vehicle].lap == self.laps + 1): #+1 becaus it starts at 1
+            #Check if one Wins
+            if (self.players[self.pos_vehicle].lap == self.laps + 1): #+1 because it starts at 1
                 print "Player", self.players[self.pos_vehicle].number, "Time:" , time.time() - self.starttime
+                self.players[self.pos_vehicle].time = time.time() - self.starttime
+                self.winingPlayer += 1
+                if self.winingPlayer >= 3 or self.winingPlayer >= len(self.players) :
+                    print "Game Finish"
             self._notify.debug(self.players[self.pos_vehicle].lap )
         if ((self.players[self.pos_vehicle].position - self.players[self.pos_vehicle].pre_position) >= 800):
             self.players[self.pos_vehicle].lap -= 1

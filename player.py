@@ -20,12 +20,13 @@ class Player(object):
         self._number = number
         self._camera = camera
         self._vehicle = vehicle.Vehicle(self._ode_world, self._ode_space) #the properties of the vehicle
-        self._device = device #The inputdevice
+        self._device = device #The input device
         self._osd_health = OnscreenText(text = "100", pos = ((self._number*0.2)-1,0.9))
         self._position = 0
         self._pre_position = 0
         self._rank = 0
         self._lap = 1
+        self._time = 0
     
     # ---------------------------------------------------------
     
@@ -47,6 +48,20 @@ class Player(object):
         return self._position
         
     position = property(fget = getPosition, fset = setPosition)
+        
+    # ---------------------------------------------------------
+    
+    def setTime(self, time):
+        '''
+        '''
+        self._time = time
+        
+    def getTime(self):
+        '''
+        '''
+        return self._time
+        
+    time = property(fget = getTime, fset = setTime)
         
     # ---------------------------------------------------------
     
