@@ -84,7 +84,7 @@ class Vehicle(object):
                 if type(tag[2](value)) == str: tag[1](_(tag[2](value)))
                 else: tag[1](tag[2](value))
             else: self._notify.warning("No value defined for tag: %s" %(tag[0]))
-        self._weight = 10
+        self._weight = 50
         blowout = model.find("**/Blowout")
         if not blowout.isEmpty():
             self._notify.debug("Loading Blowout-Particles")
@@ -182,7 +182,7 @@ class Vehicle(object):
         ##Overwrite variables for testing purposes
         self._grip_strength = 0.9
         self._track_grip = 0.2
-        self._boost_strength = 3200
+        self._boost_strength = 400
         
         #Loading finished
         self._model_loading = False
