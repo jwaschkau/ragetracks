@@ -84,7 +84,7 @@ class Vehicle(object):
                 if type(tag[2](value)) == str: tag[1](_(tag[2](value)))
                 else: tag[1](tag[2](value))
             else: self._notify.warning("No value defined for tag: %s" %(tag[0]))
-        self._weight = 50
+        self._weight = 10 #for testing purposes
         blowout = model.find("**/Blowout")
         if not blowout.isEmpty():
             self._notify.debug("Loading Blowout-Particles")
@@ -367,7 +367,7 @@ class Vehicle(object):
         self._physics_model.addTorque(self._physics_model.getAngularVel()*-self._track_grip*self.physics_model.getMass().getMagnitude())
 
         #calculate air resistance
-        self._physics_model.addForce(-linear_velocity*(self._speed*self._speed))#+linear_velocity)
+        self._physics_model.addForce(-linear_velocity*((self._speed/2)*(self._speed/2)))#+linear_velocity)
         
         #refresh the positions of the collisionrays
         self._ray.doStep()
