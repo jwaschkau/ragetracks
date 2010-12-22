@@ -83,13 +83,17 @@ class StreetData(object):
             self.mirrored = True
         
         # read out the points
-        points = xml.getElementsByTagName("point")
+        points = xml.getElementsByTagName("points")
+        points = points[0].childNodes
+
         pointcount = points.length
+
         for i in xrange(pointcount):
             point = points.item(i)
-            x = float(point.getAttribute("x"))
-            y = float(point.getAttribute("y"))
-            self.points.append(Vec2(x, y))
+            if point.nodeType == point.ELEMENT_NODE:
+                x = float(point.getAttribute("x"))
+                y = float(point.getAttribute("y"))
+                self.points.append(Vec2(x, y))
     
         # if the points should be mirrored, we'll do it
         if self.mirrored:

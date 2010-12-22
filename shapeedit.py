@@ -49,11 +49,11 @@ class Editor(wx.Frame):
         '''
         '''
         if self.mirrored.GetValue():
-            self.canvas.shape.mirrored = True
-            self.canvas.shape.mirrorPoints()
+            self.canvas.road.mirrored = True
+            self.canvas.road.mirrorPoints()
         else:
-            self.canvas.shape.mirrored = False
-            self.canvas.shape.demirrorPoints()
+            self.canvas.road.mirrored = False
+            self.canvas.road.demirrorPoints()
         self.canvas.Refresh()
     
     # -----------------------------------------------------------------    
@@ -61,7 +61,7 @@ class Editor(wx.Frame):
     def onNew(self, evt):
         '''
         '''
-        self.canvas.shape = trackgen3d.StreetData(mirrored=False)
+        self.canvas.road = trackgen3d.StreetData(mirrored=False)
         self.canvas.Refresh()
         
         self.title.SetValue("Road Part")
@@ -76,26 +76,26 @@ class Editor(wx.Frame):
         dlg = wx.FileDialog(self, "open a shape", style=wx.FD_OPEN)
         if dlg.ShowModal() == wx.ID_OK:
 
-            try:
-                success = True
-                
-                self.canvas.shape.readFile(dlg.GetPath())
+##            try:
+            success = True
+            
+            self.canvas.road.readFile(dlg.GetPath())
 
-                self.title.SetValue(self.canvas.shape.name)
-                self.author.SetValue(self.canvas.shape.author)
-                self.mirrored.SetValue(self.canvas.shape.mirrored)
+            self.title.SetValue(self.canvas.road.name)
+            self.author.SetValue(self.canvas.road.author)
+            self.mirrored.SetValue(self.canvas.road.mirrored)
 
-                self.canvas.Refresh()
+            self.canvas.Refresh()
             
-            except:
-                success = False
-            
-            if not success:
-                msg = wx.MessageDialog(self, "There was an error while reading file", "Open File", style = wx.OK | wx.ICON_ERROR)
-                self.onNew(None)
-            
-                msg.ShowModal()
-                msg.Destroy()
+##            except:
+##                success = False
+##            
+##            if not success:
+##                msg = wx.MessageDialog(self, "There was an error while reading file", "Open File", style = wx.OK | wx.ICON_ERROR)
+##                self.onNew(None)
+##            
+##                msg.ShowModal()
+##                msg.Destroy()
         dlg.Destroy()
         
     # -----------------------------------------------------------------    
@@ -107,15 +107,15 @@ class Editor(wx.Frame):
         if dlg.ShowModal() == wx.ID_OK:
             path = dlg.GetPath()
             
-            self.canvas.shape.name = self.title.GetValue()
-            self.canvas.shape.author = self.author.GetValue()
-            self.canvas.shape.mirrored = self.mirrored.GetValue()
+            self.canvas.road.name = self.title.GetValue()
+            self.canvas.road.author = self.author.GetValue()
+            self.canvas.road.mirrored = self.mirrored.GetValue()
             
             if path[:-4] != ".xml":
                 path += ".xml"
             
             try:
-                self.canvas.shape.writeFile(dlg.GetPath())
+                self.canvas.road.writeFile(dlg.GetPath())
                 success = True
             except:
                 success = False
@@ -140,7 +140,9 @@ class Canvas(wx.Window):
     '''
     def __init__(self, parent):
         wx.Window.__init__(self, parent)
-        self.shape = trackgen3d.StreetData(mirrored=False)
+        self.road = trackgen3d.StreetData(mirrored=False)
+        self.border_left = trackgen3d.StreetData(mirrored=False)
+        self.border_right= trackgen3d.StreetData(mirrored=False)
         self.SetBackgroundColour(wx.Colour(255,255,255))
         
         self.Bind(wx.EVT_PAINT, self.onPaint)
@@ -183,7 +185,7 @@ class Canvas(wx.Window):
         dc.SetBrush(wx.Brush(wx.Colour(255,0,0)))
         
         last = None
-        for i in self.shape:
+        for i in self.road:
             x = i.getX()
             y = i.getY()
             x,y = self.getRasterPosition(x,y,w,h)
@@ -264,7 +266,7 @@ class Canvas(wx.Window):
         x,y = evt.GetPositionTuple()
         x,y = self.getLogicalPosition(x,y,w,h)
 
-        self.shape.addPoint(x,y)
+        self.road.addPoint(x,y)
         self.Refresh()
         evt.Skip()
         
@@ -275,7 +277,7 @@ class Canvas(wx.Window):
         '''
         w,h = self.GetClientSizeTuple()
         
-        for point in self.shape:
+        for point in self.road:
             px, py = self.getRasterPosition(point.getX(), point.getY(), w,h)
             rect = wx.Rect(px-4,py-4,8,8)
             if rect.Contains(wx.Point(x,y)):
@@ -377,7 +379,7 @@ class Preview(ShowBase):
         '''
         '''
         ShowBase.__init__(self)
-        self.shape = trackgen3d.StreetData()
+        self.road = trackgen3d.StreetData()
         
     # -----------------------------------------------------------------
 

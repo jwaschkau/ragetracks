@@ -33,9 +33,10 @@ class Game(ShowBase):
         
         #loadPrcFileData("", "fullscreen 0\n win-size 1280 720")
         #loadPrcFileData("", "want-pstats 1\n pstats-host 127.0.0.1\n pstats-tasks 1\n task-timer-verbose 1")
-        loadPrcFileData("", "sync-video #f")
+        ##loadPrcFileData("", "sync-video #f")
         loadPrcFileData("", "default-directnotify-level debug\n notify-level-x11display fatal\n notify-level-Game debug\n notify-level-Menu debug\n notify-level-Vehicle debug")
         ShowBase.__init__(self)
+        ##base.toggleWireframe()
         
         self._notify = DirectNotify().newCategory("Game")
         self._notify.info("New Game-Object created: %s" %(self))
