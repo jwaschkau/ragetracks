@@ -478,6 +478,7 @@ class Menu(object):
                     taskMgr.remove("selectVehicle")
                     self.track =  trackgen3d.Track3d(1000, 1800, 1600, 1200, len(self._players))
                     self.streetPath = render.attachNewNode(self.track.createMesh())
+                    ##self.borderPath = render.attachNewNode(self.track.createBorderMesh())
                     tex = loader.loadTexture('data/textures/street.png')
                     self.streetPath.setTexture(tex)
 

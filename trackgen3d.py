@@ -18,7 +18,7 @@ from direct.directnotify.DirectNotify import DirectNotify
 # -------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------
 
-class StreetData(object):
+class RoadShape(object):
     '''
     describes the shape of the road e.g. |__/\__|
     '''
@@ -61,7 +61,7 @@ class StreetData(object):
     
     # -------------------------------------------------------------------------------------
 
-    def readFile(self, filename):
+    def readFile(self, filename, border=False):
         '''
         reads the shape out of a file
         @param filename: (str) the filename
@@ -204,6 +204,73 @@ class StreetData(object):
 # -------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------
 
+class StreetData(RoadShape):
+    '''
+    '''
+    def __init__(self, *args, **kwds):
+        RoadShape.__init__(self, *args, **kwds)
+        self.border = RoadShape()
+    
+    # -------------------------------------------------------------------------------------
+        
+    def readFile(self, filename, border=False):
+        '''
+        reads the shape out of a file
+        @param filename: (str) the filename
+        '''
+        self.points = []
+        # open file
+        xmlfile = dom.parse(filename)
+        
+        # create the root element
+        xml = xmlfile.getElementsByTagName("xml").item(0)
+        self.name = xml.getAttribute("name") # read name and author out of root
+        self.author = xml.getAttribute("author")
+        
+        # check if the points should be mirrored
+        mirrored = xml.getAttribute("mirrored")
+        if mirrored == "False":
+            self.mirrored = False
+        else:
+            self.mirrored = True
+        
+        # read out the points
+        points = xml.getElementsByTagName("points")
+        points = points[0].childNodes
+
+        pointcount = points.length
+
+        for i in xrange(pointcount):
+            point = points.item(i)
+            if point.nodeType == point.ELEMENT_NODE:
+                x = float(point.getAttribute("x"))
+                y = float(point.getAttribute("y"))
+                self.points.append(Vec2(x, y))
+    
+        # if the points should be mirrored, we'll do it
+        if self.mirrored:
+            self.mirrorPoints()
+                
+        # read out the border
+        border = xml.getElementsByTagName("border")
+        border = border[0].childNodes
+
+        bordercount = border.length
+
+        for i in xrange(bordercount):
+            point = border.item(i)
+            if point.nodeType == point.ELEMENT_NODE:
+                x = float(point.getAttribute("x"))
+                y = float(point.getAttribute("y"))
+                self.border.points.append(Vec2(x, y))
+
+    
+    # -------------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------
+
 class Track3d(object):
     '''
     Generate the 3d Mesh out of the StreetData and the 2dTrack
@@ -219,6 +286,7 @@ class Track3d(object):
         street_data.readFile("data/road/road01.xml")
         
         self.vdata = GeomVertexData('street', GeomVertexFormat.getV3n3c4t2(), Geom.UHStatic) 
+        self.bordervdata = GeomVertexData('border', GeomVertexFormat.getV3n3c4t2(), Geom.UHStatic) 
         #self.vdata = GeomVertexData('name', GeomVertexFormat.getV3c4t2(), Geom.UHStatic) 
         
         self.vertex = GeomVertexWriter(self.vdata, 'vertex')
@@ -260,7 +328,7 @@ class Track3d(object):
         ##self.creatingVertex(track_points, street_data)
         self.createVertices(self.track_points, street_data)
         #Connect the Vertex
-        self.connectVertices(len(street_data))
+        self.connectVertices(street_data)
         #?Show the Mesh
         #self.CreateMesh(self.vdata, self.prim)
         ##Debugprint
@@ -299,10 +367,14 @@ class Track3d(object):
         '''
         '''
         texcoordinates =[]
+        bordertexcoordinates =[]
         street_data_length = len(street_data)
         
         for i in xrange(street_data_length):
             texcoordinates.append((i+1.0)/street_data_length)
+        
+        for i in xrange(len(street_data.border)):
+            bordertexcoordinates.append((i+1.0)/street_data_length)
             
         print "\n\n\n#-#-#-#-#-#-#-##-#-#-#-#-#-#####################-#-#-#-\n\n"
         
@@ -342,6 +414,7 @@ class Track3d(object):
                 ##self.texcoord.addData2f(texcoordinates[j], (i%2)) #
                 self.texcoord.addData2f(texcoordinates[j], (i%2)) #
                 j += 1
+            
 
 ##        #####
 ##        #####
@@ -374,30 +447,31 @@ class Track3d(object):
 ##                self.texcoord.addData2f(texcoordinates[j], (i%2))
 ##                j += 1
         
+### -------------------------------------------------------------------------------------
+##
+##    def creatingVertex(self, track_points, street_data):
+##        #Math: self.varthickness are the midd points
+##        #for every Street Point create one Vertex by x*varthickness+Center and high+Center
+##        colors = ((255,255,255,255),(255,255,0,1),(255,0,0,1),(0,0,0,1),(0,255,0,1))
+##        texcoordinates =[]
+##        street_data_length = len(street_data)
+##        for i in range(street_data_length):
+##            texcoordinates.append((i+1.0)/street_data_length)
+##        for i in range (len(track_points)):
+##            for j in range (street_data_length): ###WARUM war hier -2!!!!!!!!!!!!!! wenn man den end und start punkt nicht hat ;)
+##                    self.vertex.addData3f((track_points[i][0] + (self.varthickness[i][0]*street_data[j][0]), track_points[i][1] + (self.varthickness[i][1]*street_data[j][0]), track_points[i][2] + (self.varthickness[i][2]+street_data[j][1])))
+##                    self.normal.addData3f(0, 0, 1) #KA how to calc
+##                    #self.color.addData4f(colors[j])
+##                    self.texcoord.addData2f(texcoordinates[j], (i%2)) #
+####                track_points[i][0] + (self.varthickness[i][0]*street_data[j][0])   #x
+####                track_points[i][1] + (self.varthickness[i][1]*street_data[j][0])   #y
+####                track_points[i][2] + (self.varthickness[i][2]+street_data[j][1])   #z
+
 # -------------------------------------------------------------------------------------
 
-    def creatingVertex(self, track_points, street_data):
-        #Math: self.varthickness are the midd points
-        #for every Street Point create one Vertex by x*varthickness+Center and high+Center
-        colors = ((255,255,255,255),(255,255,0,1),(255,0,0,1),(0,0,0,1),(0,255,0,1))
-        texcoordinates =[]
-        street_data_length = len(street_data)
-        for i in range(street_data_length):
-            texcoordinates.append((i+1.0)/street_data_length)
-        for i in range (len(track_points)):
-            for j in range (street_data_length): ###WARUM war hier -2!!!!!!!!!!!!!! wenn man den end und start punkt nicht hat ;)
-                    self.vertex.addData3f((track_points[i][0] + (self.varthickness[i][0]*street_data[j][0]), track_points[i][1] + (self.varthickness[i][1]*street_data[j][0]), track_points[i][2] + (self.varthickness[i][2]+street_data[j][1])))
-                    self.normal.addData3f(0, 0, 1) #KA how to calc
-                    #self.color.addData4f(colors[j])
-                    self.texcoord.addData2f(texcoordinates[j], (i%2)) #
-##                track_points[i][0] + (self.varthickness[i][0]*street_data[j][0])   #x
-##                track_points[i][1] + (self.varthickness[i][1]*street_data[j][0])   #y
-##                track_points[i][2] + (self.varthickness[i][2]+street_data[j][1])   #z
-
-# -------------------------------------------------------------------------------------
-
-    def connectVertices(self, j):
+    def connectVertices(self, street_data):
         #param j = len(street_Data)
+        j = len(street_data)
         for i in xrange (self.vdata.getNumRows()-(j)): #-j??????  oder +-1
             if (i+1) % j != 0:
                 self.prim.addVertex(i)
@@ -445,8 +519,7 @@ class Track3d(object):
                 self.prim.addVertex(i+k)
                 self.prim.addVertex(i+k-j+1)
                 self.prim.closePrimitive()
-            
-        
+
 # -------------------------------------------------------------------------------------
     
 ##    def connectVertex(self, i, j):
@@ -486,6 +559,8 @@ class Track3d(object):
         
         #nodePath = self.render.attachNewNode(node)
         return node
+    
+# -------------------------------------------------------------------------------------
 
 
 # -------------------------------------------------------------------------------------

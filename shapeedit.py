@@ -10,6 +10,10 @@ ID_PREVIEW = wx.NewId()
 ID_SAVE = wx.NewId()
 ID_OPEN = wx.NewId()
 ID_NEW = wx.NewId()
+ID_MODE = wx.NewId()
+
+MODE_ROAD = False
+MODE_BORDER = True
 
 # -----------------------------------------------------------------
 # -----------------------------------------------------------------
@@ -31,6 +35,7 @@ class Editor(wx.Frame):
         self.author = wx.TextCtrl(self.panel, -1, "RageTracks Team", wx.Point(15,80), wx.Size(150,23))
         
         self.mirrored = wx.CheckBox(self.panel, -1, " mirrored", wx.Point(15, 130))
+        self.mode = wx.CheckBox(self.panel, ID_MODE, " Border Mode", wx.Point(15, 150))
         
         ##wx.Button(self.panel, ID_PREVIEW, "Preview", wx.Point(20,180), wx.Size(150,23))
         
@@ -48,13 +53,16 @@ class Editor(wx.Frame):
     def onCheck(self, evt):
         '''
         '''
-        if self.mirrored.GetValue():
-            self.canvas.road.mirrored = True
-            self.canvas.road.mirrorPoints()
+        if evt.GetId() == ID_MODE:
+            self.canvas.mode = not self.canvas.mode
         else:
-            self.canvas.road.mirrored = False
-            self.canvas.road.demirrorPoints()
-        self.canvas.Refresh()
+            if self.mirrored.GetValue():
+                self.canvas.road.mirrored = True
+                self.canvas.road.mirrorPoints()
+            else:
+                self.canvas.road.mirrored = False
+                self.canvas.road.demirrorPoints()
+            self.canvas.Refresh()
     
     # -----------------------------------------------------------------    
     
@@ -141,8 +149,6 @@ class Canvas(wx.Window):
     def __init__(self, parent):
         wx.Window.__init__(self, parent)
         self.road = trackgen3d.StreetData(mirrored=False)
-        self.border_left = trackgen3d.StreetData(mirrored=False)
-        self.border_right= trackgen3d.StreetData(mirrored=False)
         self.SetBackgroundColour(wx.Colour(255,255,255))
         
         self.Bind(wx.EVT_PAINT, self.onPaint)
@@ -155,6 +161,7 @@ class Canvas(wx.Window):
         self.Bind(wx.EVT_MOTION, self.onMotion)
         
         self.active_point = None
+        self.mode = MODE_ROAD
         
         self.max_value= 50
     
@@ -181,11 +188,33 @@ class Canvas(wx.Window):
         dc.SetPen(wx.Pen(wx.Colour(200,0,0), 2))
         dc.DrawLine(0,h/2, w-1,h/2)
         
+        # draw road
         dc.SetPen(wx.Pen(wx.Colour(0,0,0)))
         dc.SetBrush(wx.Brush(wx.Colour(255,0,0)))
         
         last = None
         for i in self.road:
+            x = i.getX()
+            y = i.getY()
+            x,y = self.getRasterPosition(x,y,w,h)
+            
+            if last != None:
+                lx = last.getX()
+                ly = last.getY()
+                lx,ly = self.getRasterPosition(lx,ly,w,h)
+                dc.DrawLine(lx,ly,x,y)
+
+            dc.DrawRectangle(x-4,y-4,8,8)
+            last = i
+        evt.Skip()
+    
+    # draw border
+        dc.SetPen(wx.Pen(wx.Colour(0,0,0)))
+        dc.SetBrush(wx.Brush(wx.Colour(0,0,255)))
+        
+        last = None
+
+        for i in self.road.border:
             x = i.getX()
             y = i.getY()
             x,y = self.getRasterPosition(x,y,w,h)
@@ -266,7 +295,10 @@ class Canvas(wx.Window):
         x,y = evt.GetPositionTuple()
         x,y = self.getLogicalPosition(x,y,w,h)
 
-        self.road.addPoint(x,y)
+        if self.mode == MODE_ROAD:
+            self.road.addPoint(x,y)
+        else:
+            self.road.border.addPoint(x,y)
         self.Refresh()
         evt.Skip()
         
@@ -277,12 +309,18 @@ class Canvas(wx.Window):
         '''
         w,h = self.GetClientSizeTuple()
         
-        for point in self.road:
-            px, py = self.getRasterPosition(point.getX(), point.getY(), w,h)
-            rect = wx.Rect(px-4,py-4,8,8)
-            if rect.Contains(wx.Point(x,y)):
-                return point
-        
+        if self.mode == MODE_ROAD:
+            for point in self.road:
+                px, py = self.getRasterPosition(point.getX(), point.getY(), w,h)
+                rect = wx.Rect(px-4,py-4,8,8)
+                if rect.Contains(wx.Point(x,y)):
+                    return point
+        else:
+            for point in self.road.border:
+                px, py = self.getRasterPosition(point.getX(), point.getY(), w,h)
+                rect = wx.Rect(px-4,py-4,8,8)
+                if rect.Contains(wx.Point(x,y)):
+                    return point
         return None
     
     # -----------------------------------------------------------------
