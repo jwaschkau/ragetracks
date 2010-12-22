@@ -19,6 +19,8 @@ import sys
 from menu import Menu
 from menu import MainMenu
 from kdtree import KDTree
+import time
+
 
 # -----------------------------------------------------------------
 # -----------------------------------------------------------------
@@ -46,6 +48,10 @@ class Game(ShowBase):
         self.disableMouse() #disable manual camera-control
         render.setShaderAuto()
         
+        #Laps
+        self.laps = 3 #the Laps
+        self.starttime = 0 #Time the Game starts
+        self.winingPlayer = 0
 
         # load the settings
         self.settings = settings.Settings()
@@ -86,6 +92,7 @@ class Game(ShowBase):
         # initialize the input devices
         self.devices = inputdevice.InputDevices(self.settings.getInputSettings())
 
+        #render.setShaderAuto()
         startgame = True
         #Start the Game
         for arg in sys.argv:
@@ -233,6 +240,8 @@ class Game(ShowBase):
         self.world.setGravity(0, 0, -90.81)
         self._notify.info("Start game initialized")
         #set up the collision event
+        
+        self.starttime = time.time()
 
     # -----------------------------------------------------------------
 
@@ -344,7 +353,7 @@ class Game(ShowBase):
         '''
         Appropriate the players position
         '''
-        task.delayTime = 5    ##TODO set value ca. 0.5
+        task.delayTime = 0.1    ##TODO set value ca. 0.5
         self.players[self.pos_vehicle].pre_position = self.players[self.pos_vehicle].position
         self.pos_vehicle = (self.pos_vehicle + 1) % len(self.players)
         pos = self.TrackpointTree.query(query_point=(self.players[self.pos_vehicle].getVehicle().getPos()), t=1)
@@ -354,12 +363,19 @@ class Game(ShowBase):
         #updateLaps
         if ((self.players[self.pos_vehicle].position - self.players[self.pos_vehicle].pre_position) <= -800):
             self.players[self.pos_vehicle].lap += 1
-            print self.players[self.pos_vehicle].lap
+            #Check if one Wins
+            if (self.players[self.pos_vehicle].lap == self.laps + 1): #+1 because it starts at 1
+                print "Player", self.players[self.pos_vehicle].number, "Time:" , time.time() - self.starttime
+                self.players[self.pos_vehicle].time = time.time() - self.starttime
+                self.winingPlayer += 1
+                if self.winingPlayer >= 3 or self.winingPlayer >= len(self.players) :
+                    print "Game Finish"
+            self._notify.debug(self.players[self.pos_vehicle].lap )
         if ((self.players[self.pos_vehicle].position - self.players[self.pos_vehicle].pre_position) >= 800):
             self.players[self.pos_vehicle].lap -= 1
-            print self.players[self.pos_vehicle].lap
-        self._notify.debug( ("Player", self.pos_vehicle,":", self.track_tupel_list.index(pos[0])))
-        self._notify.debug( self.players[self.pos_vehicle].getVehicle().getPos())
+            #self._notify.debug( self.players[self.pos_vehicle].lap )
+        #self._notify.debug( ("Player", self.pos_vehicle,":", self.track_tupel_list.index(pos[0])))
+        #self._notify.debug( self.players[self.pos_vehicle].getVehicle().getPos())
         return task.again
     
     # -----------------------------------------------------------------
@@ -368,14 +384,14 @@ class Game(ShowBase):
         '''
         Set the rank for each player
         '''
-        task.delayTime = 5    ##TODO set value ca. 0.5
+        task.delayTime = 0.1    ##TODO set value ca. 0.5
         positionen = []
         for player in self.players:
             positionen.append(player.position)
         positionen.sort()
         for player in self.players:
             player.rank = positionen.index(player.position)
-            self._notify.debug( ("PlayerRank", player.rank ))
+            #self._notify.debug( ("PlayerRank", player.rank ))
         return task.again
     
     # -----------------------------------------------------------------
