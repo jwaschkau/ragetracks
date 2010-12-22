@@ -281,7 +281,7 @@ class Vehicle(object):
         self.startBlowout()
         if self._hit_ground:
             direction = self._streetnormal.cross(self._collision_model.getQuaternion().xform(Vec3(1,0,0)))
-            self._physics_model.addForce(direction*self._boost_strength*self.physics_model.getMass().getMagnitude()*strength)
+            self._physics_model.addForce(direction*(self._boost_strength*self.physics_model.getMass().getMagnitude()*strength-self._speed))
             self._hit_ground = False
         else:
             direction = self._streetnormal.cross(self._collision_model.getQuaternion().xform(Vec3(1,0,0)))
