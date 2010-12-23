@@ -477,10 +477,15 @@ class Menu(object):
                 if not loading:
                     taskMgr.remove("selectVehicle")
                     self.track =  trackgen3d.Track3d(1000, 1800, 1600, 1200, len(self._players))
-                    self.streetPath = render.attachNewNode(self.track.createMesh())
+                    self.streetPath = render.attachNewNode(self.track.createRoadMesh())
+                    self.borderleftPath = render.attachNewNode(self.track.createBorderLeftMesh())
+                    self.borderrightPath = render.attachNewNode(self.track.createBorderRightMesh())
                     ##self.borderPath = render.attachNewNode(self.track.createBorderMesh())
-                    tex = loader.loadTexture('data/textures/street.png')
-                    self.streetPath.setTexture(tex)
+                    roadtex = loader.loadTexture('data/textures/street.png')
+                    bordertex = loader.loadTexture('data/textures/border.png')
+                    self.streetPath.setTexture(roadtex)
+                    self.borderleftPath.setTexture(bordertex)
+                    self.borderrightPath.setTexture(bordertex)
 
                     #self.streetPath = loader.loadModel('data/models/Street.egg')
                     ##self.streetPath = loader.loadModel('data/models/Street.egg')

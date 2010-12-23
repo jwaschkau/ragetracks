@@ -46,15 +46,24 @@ class Game(ShowBase):
         #Create the Track
         
         self.track = trackgen3d.Track3d(1000, 800, 600, 200, 5)
-        nodePath = self.render.attachNewNode(self.track.createMesh())
+        
+        nodePath = self.render.attachNewNode(self.track.createRoadMesh())
         tex = loader.loadTexture('data/textures/street.png')
         nodePath.setTexture(tex)
         #nodePath.setTwoSided(True)
         
+        nodePath2 = self.render.attachNewNode(self.track.createBorderLeftMesh())
+        tex2 = loader.loadTexture('data/textures/border.png')
+        nodePath2.setTexture(tex2)
+        
+        nodePath3 = self.render.attachNewNode(self.track.createBorderRightMesh())
+        tex2 = loader.loadTexture('data/textures/border.png')
+        nodePath3.setTexture(tex2)
+        
     
         #Load the Lights
         ambilight = AmbientLight('ambilight')
-        ambilight.setColor(VBase4(0.2, 0.2, 0.2, 1))
+        ambilight.setColor(VBase4(0.8, 0.8, 0.8, 1))
         render.setLight(render.attachNewNode(ambilight))
 
     # -----------------------------------------------------------------
