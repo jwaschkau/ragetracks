@@ -9,8 +9,6 @@ from panda3d.core import ColorBlendAttrib
 from panda3d.core import AmbientLight,DirectionalLight
 from panda3d.core import TextNode,Point3,Vec4
 from direct.showbase.DirectObject import DirectObject
-from direct.gui.OnscreenText import OnscreenText
-from direct.actor.Actor import Actor
 import sys,os
 
 
@@ -49,37 +47,28 @@ class GlowDemo(DirectObject):
         #create the shader that will determime what parts of the scene will glow
         glowShader=loader.loadShader("data/shaders/glowShader.sha")
 
+
+##############################################################################
+###
         # load our model
-        self.tron=Actor()
-        self.tron.loadModel("data/models/vehicles/vehicle02")
+        self.tron = loader.loadModel("data/models/vehicles/vehicle02")
         #self.tron.loadAnims({"running":"models/tron_anim"})
         self.tron.reparentTo(render)
         
-        
         # load our model
-        self.tron2=Actor()
-        self.tron2.loadModel("data/models/vehicles/vehicle01")
+        self.tron2 = loader.loadModel("data/models/vehicles/vehicle01")
         #self.tron.loadAnims({"running":"models/tron_anim"})
         self.tron2.reparentTo(render)
         self.tron2.setX(5)
         
         # load our model
-        self.tron3=Actor()
-        self.tron3.loadModel("data/models/vehicles/vehicle03")
+        self.tron3 = loader.loadModel("data/models/vehicles/vehicle03")
         #self.tron.loadAnims({"running":"models/tron_anim"})
         self.tron3.reparentTo(render)
         self.tron3.setX(10)
+###
+##############################################################################
 
-##        #put some lighting on the tron model
-##        dlight = DirectionalLight('dlight')
-##        alight = AmbientLight('alight')
-##        dlnp = render.attachNewNode(dlight)
-##        alnp = render.attachNewNode(alight)
-##        dlight.setColor(Vec4(1.0, 1.0, 1.0, 1))
-##        alight.setColor(Vec4(0.2, 0.2, 0.2, 1))
-##        dlnp.setHpr(0, -60, 0)
-##        render.setLight(dlnp)
-##        render.setLight(alnp)
 
         # create the glow buffer. This buffer renders like a normal scene,
         # except that only the glowing materials should show up nonblack.
@@ -93,9 +82,9 @@ class GlowDemo(DirectObject):
         glowCamera=base.makeCamera(glowBuffer, lens=base.cam.node().getLens())
 
         # Tell the glow camera to use the glow shader
-        tempnode = NodePath(PandaNode("temp node"))
-        tempnode.setShader(glowShader)
-        glowCamera.node().setInitialState(tempnode.getState())
+##        tempnode = NodePath(PandaNode("temp node"))
+##        tempnode.setShader(glowShader)
+##        glowCamera.node().setInitialState(tempnode.getState())
 
         # set up the pipeline: from glow scene to blur x to blur y to main window.
         blurXBuffer=makeFilterBuffer(glowBuffer,  "Blur X", -2, "data/shaders/XBlurShader.sha")
@@ -103,8 +92,6 @@ class GlowDemo(DirectObject):
         self.finalcard = blurYBuffer.getTextureCard()
         self.finalcard.reparentTo(render2d)
         self.finalcard.setAttrib(ColorBlendAttrib.make(ColorBlendAttrib.MAdd))
-
-        self.glowOn=True;
 
 t=GlowDemo()
 

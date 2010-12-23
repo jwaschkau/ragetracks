@@ -3,9 +3,9 @@
 <Comment> { "Egg laid by Chicken for Blender, version R91" }
 
 <Material> body {
-  <Scalar> diffr {0.800000011921}
-  <Scalar> diffg {0.800000011921}
-  <Scalar> diffb {0.800000011921}
+  <Scalar> diffr {0.866590619087}
+  <Scalar> diffg {0.96675157547}
+  <Scalar> diffb {1.0}
   <Scalar> specr {0.25}
   <Scalar> specg {0.25}
   <Scalar> specb {0.25}

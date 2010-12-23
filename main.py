@@ -9,6 +9,7 @@ from pandac.PandaModules import * #Load all PandaModules
 from panda3d.core import loadPrcFileData
 from direct.particles.ParticleEffect import ParticleEffect
 from direct.interval.ParticleInterval import ParticleInterval 
+from direct.filter.CommonFilters import CommonFilters
 import settings
 import inputdevice
 import player
@@ -46,7 +47,7 @@ class Game(ShowBase):
         base.setFrameRateMeter(True) #Show the Framerate
         base.camNode.setActive(False) #disable default cam
         self.disableMouse() #disable manual camera-control
-        render.setShaderAuto()
+##        render.setShaderAuto()
         
         #Laps
         self.laps = 3 #the Laps

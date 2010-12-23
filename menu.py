@@ -24,7 +24,7 @@ class MainMenu(object):
         self.devices = devices #For Wii
         
         time.sleep(1)               #Bad Hack to make sure that the Key isn't pressed.
-        self.device.boost = False   #Bad Hack to make sure that the Key isn't ￼.setColor(self.colorA)pressed.
+        self.device.boost = False   #Bad Hack to make sure that the Key isn't .setColor(self.colorA)pressed.
         
         self.newGame = newGame
         self.track = []
@@ -397,7 +397,7 @@ class Menu(object):
         self.color_green = Vec4(0,1,0,0)
         
         self._notify.info("New game initialized")
-
+        
     # -----------------------------------------------------------------
         
     def selectVehicle(self, task):
@@ -518,7 +518,7 @@ class Menu(object):
                     plnp.setPos(2, -10, 10)
                     plnp.lookAt(0,0,0)
                     vehicleSelectNode.setLight(plnp)
-                    vehicleSelectNode.setShaderAuto()#enable autoshader so we can use shadows
+##                    vehicleSelectNode.setShaderAuto()#enable autoshader so we can use shadows
                     
                     #Light
                     ambilight = AmbientLight('ambilight')

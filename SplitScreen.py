@@ -3,6 +3,7 @@ from direct.showbase.ShowBase import ShowBase
 from pandac.PandaModules import *
 from math import sqrt, ceil
 from direct.directnotify.DirectNotify import DirectNotify
+from direct.filter.CommonFilters import CommonFilters
 
 # -----------------------------------------------------------------
 # -----------------------------------------------------------------
@@ -19,6 +20,7 @@ class SplitScreen(object):
         self._notify.info("New SplitScreen-Object created: %s" %(self))
         self.regions = []   # the regions the screen is separated into
         self.cameras = []   # the cameras (empty ones are None)
+        self.filters = []
         self.cameraPosPre = [] #The Position from the Cameras bevor change
         self.steps = 1
         
@@ -45,12 +47,18 @@ class SplitScreen(object):
         else:
             self.regions = self.calculateRegions(len(self.regions)+1)
             self.cameras.append(self.createCamera(self.regions[unused]))
+            self.filters.append(None)
             self.refreshCameras()
         
         # if there are empty slots, they're filled with None
             for i in xrange(len(self.regions)-len(self.cameras)):
                 self.cameras.append(None)
+                self.filters.append(None)
                 unused-=1
+        
+        # glow shader
+        self.filters[unused] = CommonFilters(base.win, self.cameras[unused])
+        filterok = self.filters[unused].setBloom(blend=(0,0,0,1), desat=-0.8, intensity=4.0, size="big")
                 
         
         # if there was an unused slot, the camera is now at this place
