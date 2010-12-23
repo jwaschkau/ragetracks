@@ -122,7 +122,14 @@ class Game(ShowBase):
             myMenu = Menu(self)
             taskMgr.add(self.devices.fetchEvents, "fetchEvents")
             myMenu.showStartScreen()
-            
+        
+        base.accept("tab-up", self.takeScreenshot)
+    
+    def takeScreenshot(self):
+        '''
+        '''
+        print "screenshot"
+        self.screenshot(source=base.win)
 
     # -----------------------------------------------------------------
 
