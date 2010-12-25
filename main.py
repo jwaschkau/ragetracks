@@ -33,7 +33,6 @@ class Game(ShowBase):
     def __init__(self, *args):
         '''
         '''
-        
         #loadPrcFileData("", "fullscreen 0\n win-size 1280 720")
         #loadPrcFileData("", "want-pstats 1\n pstats-host 127.0.0.1\n pstats-tasks 1\n task-timer-verbose 1")
         ##loadPrcFileData("", "sync-video #f")
@@ -44,6 +43,7 @@ class Game(ShowBase):
         self._notify = DirectNotify().newCategory("Game")
         self._notify.info("New Game-Object created: %s" %(self))
         
+        base.setBackgroundColor(0,0,0)
         base.setFrameRateMeter(True) #Show the Framerate
         base.camNode.setActive(False) #disable default cam
         self.disableMouse() #disable manual camera-control
@@ -66,6 +66,7 @@ class Game(ShowBase):
             wp = WindowProperties()
             wp.setFullscreen(self.settings.fullscreen)
             wp.setOrigin(0,0)
+            wp.setTitle("RageTracks")
             wp.setSize(int(base.pipe.getDisplayWidth()),int(base.pipe.getDisplayHeight()))
             base.win.requestProperties(wp)
         
@@ -206,6 +207,7 @@ class Game(ShowBase):
         self.skybox.setLightOff()
         self.skybox.setScale(10000)
         self.skybox.reparentTo(render)
+        print type(self.skybox)
         
         #Create the Track
         self.track = track

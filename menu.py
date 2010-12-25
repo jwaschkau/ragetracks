@@ -11,6 +11,7 @@ from direct.directnotify.DirectNotify import DirectNotify
 import trackgen3d
 import glob
 import settings
+import colorsys
 
 COUNTDOWN_START = 1
 
@@ -432,7 +433,7 @@ class Menu(object):
                     player.camera.camera.getParent().find("AttributeNode").hide()#Hide the attributes
                     self.loading.instanceTo(player.camera.camera.getParent())
                     loader.loadModel(self.vehicle_list[index], callback = player.setVehicle)
-                if player.device.directions[0] > 0.8:
+                elif player.device.directions[0] > 0.8:
                     self.countdown = COUNTDOWN_START
                     self.player_buttonpressed[self._players.index(player)] = task.time + self.KEY_DELAY
                     index = self.vehicle_list.index("data/models/vehicles/%s" %(player.vehicle.model.getName()))+1
@@ -443,7 +444,41 @@ class Menu(object):
                     player.camera.camera.getParent().find("AttributeNode").hide()#Hide the attributes
                     self.loading.instanceTo(player.camera.camera.getParent())
                     loader.loadModel(self.vehicle_list[index], callback = player.setVehicle)
+                    
+                if player.device.directions[1] > 0.8:
+                    self.countdown = COUNTDOWN_START
+                    self.player_buttonpressed[self._players.index(player)] = task.time + self.KEY_DELAY
+                 
+                    self._notify.debug("Next color selected")
+                    a = player.vehicle.model.findAllTextures()
+                    tex = a.findTexture(player.vehicle.model.getName()[:-4])
+                    self.rotateHue(tex, 0.1)
+                    
+                elif player.device.directions[1] < -0.8:
+                    self.countdown = COUNTDOWN_START
+                    self.player_buttonpressed[self._players.index(player)] = task.time + self.KEY_DELAY
+                 
+                    self._notify.debug("Next color selected")
+                    a = player.vehicle.model.findAllTextures()
+                    tex = a.findTexture(player.vehicle.model.getName()[:-4])
+                    self.rotateHue(tex, -0.1)
         return task.cont
+    
+    # -----------------------------------------------------------------
+
+    def rotateHue(self, tex, value=0.1):
+        '''
+        '''
+        img = PNMImage()
+        tex.store(img)
+        for y in xrange(img.getReadYSize()):
+            for x in xrange(img.getReadXSize()):
+                r, g, b = img.getXel(x,y)
+                h, s, v = colorsys.rgb_to_hsv(r, g, b)
+                h += value
+                r, g, b = colorsys.hsv_to_rgb(h, s, v)
+                img.setXel(x,y,r,g,b)
+        tex.load(img)
     
     # -----------------------------------------------------------------
 
