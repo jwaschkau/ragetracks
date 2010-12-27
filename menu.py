@@ -572,6 +572,18 @@ class Menu(object):
                     self._notify.debug("Loading initial vehicle: %s" %(self.vehicle_list[0]))
                     self.unusedDevices.remove(device) 
                     self.player_buttonpressed[-1] = task.time + self.KEY_DELAY
+                    
+                    #Add the Skybox
+                    skybox = loader.loadModel("data/models/skybox.egg")
+                    t = Texture()
+                    t.load(PNMImage("data/textures/skybox_hangar.png"))
+                    skybox.setTexture(t)
+                    skybox.setBin("background", 1)
+                    skybox.setDepthWrite(0)
+                    skybox.setDepthTest(0)
+                    skybox.setLightOff()
+                    skybox.setScale(10000)
+                    skybox.reparentTo(vehicleSelectNode)
 
         for player in self._players:
             if self.player_buttonpressed[self._players.index(player)] < task.time:

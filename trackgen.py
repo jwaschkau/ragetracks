@@ -324,7 +324,7 @@ class Track(object):
         elif rand == 3:
             self.trackpoints = [[0,0,0],[0,500,0],[200,500,0],[200,-500,0],[0,-500,0],[0,-1,0]]
         elif rand == 4:
-            looping = Looping(filename="data/road/parts/looping01.xml") # load the looping from file
+            looping = Looping(filename="data/road/parts/helix01.xml") # load the looping from file
             looping *= 100      # scale it by 100
             self.trackpoints = []
             for point in looping:   # add them to the list

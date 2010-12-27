@@ -126,10 +126,11 @@ class Game(ShowBase):
         
         base.accept("tab-up", self.takeScreenshot)
     
+    # -----------------------------------------------------------------
+
     def takeScreenshot(self):
         '''
         '''
-        print "screenshot"
         self.screenshot(source=base.win)
 
     # -----------------------------------------------------------------
@@ -201,13 +202,15 @@ class Game(ShowBase):
         
         #Add the Skybox
         self.skybox = self.loader.loadModel("data/models/skybox.egg")
+        t = Texture()
+        t.load(PNMImage("data/textures/skybox_space.png"))
+        self.skybox.setTexture(t)
         self.skybox.setBin("background", 1)
         self.skybox.setDepthWrite(0)
         self.skybox.setDepthTest(0)
         self.skybox.setLightOff()
         self.skybox.setScale(10000)
         self.skybox.reparentTo(render)
-        print type(self.skybox)
         
         #Create the Track
         self.track = track
