@@ -1,4 +1,4 @@
-# Turkish translation for ragetracks
+# Swedish translation for ragetracks
 # Copyright (c) 2010 Rosetta Contributors and Canonical Ltd 2010
 # This file is distributed under the same license as the ragetracks package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
@@ -8,9 +8,9 @@ msgstr ""
 "Project-Id-Version: ragetracks\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2010-10-09 19:17+0000\n"
-"PO-Revision-Date: 2010-10-24 07:56+0000\n"
+"PO-Revision-Date: 2010-12-27 22:18+0000\n"
 "Last-Translator: Carsten Pfeffer <Unknown>\n"
-"Language-Team: Turkish <tr@li.org>\n"
+"Language-Team: Swedish <sv@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -19,40 +19,40 @@ msgstr ""
 
 #: main.py:155
 msgid "Press any key!!"
-msgstr "Bir tuşa basın!"
+msgstr "trycker på en knapp"
 
 #: menu.py:50
 msgid "New Game"
-msgstr "Yeni Oyun"
+msgstr "Nytt Spel"
 
 #: menu.py:51
 msgid "Options"
-msgstr "Seçenekler"
+msgstr "Inställningar"
 
 #: menu.py:52
 msgid "Hall Of Fame"
-msgstr "Gurur Tablosu"
+msgstr "Poänglistan"
 
 #: menu.py:53
 msgid "Credits"
-msgstr "Hazırlayanlar"
+msgstr "Utvecklare"
 
 #: menu.py:54
 msgid "Exit"
-msgstr "Çıkış"
+msgstr "Slut Spel"
 
 #: menu.py:66
 msgid "Resolution"
-msgstr "Çözünürlük"
+msgstr "Upplösning"
 
 #: menu.py:67
 msgid "Full Screen"
-msgstr "Tam Ekran"
+msgstr "Fullskärmsläge"
 
 #: menu.py:68
 msgid "Shader"
-msgstr "Gölgeleme"
+msgstr "Shader"
 
 #: menu.py:69
 msgid "Back"
-msgstr "Geri"
+msgstr "Tillbaka"
