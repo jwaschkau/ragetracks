@@ -182,7 +182,7 @@ class Vehicle(object):
         ##Overwrite variables for testing purposes
         self._grip_strength = 0.9
         self._track_grip = 0.2
-        self._boost_strength = 400
+        self._boost_strength = 800
         
         #Loading finished
         self._model_loading = False
@@ -283,6 +283,7 @@ class Vehicle(object):
             direction = self._streetnormal.cross(self._collision_model.getQuaternion().xform(Vec3(1,0,0)))
             self._physics_model.addForce(direction*(self._boost_strength*self.physics_model.getMass().getMagnitude()*strength-self._speed))
             self._hit_ground = False
+            self._collision_model.setCollideBits(7)
         else:
             direction = self._streetnormal.cross(self._collision_model.getQuaternion().xform(Vec3(1,0,0)))
             self._physics_model.addForce(direction*self._boost_strength*0.2*self.physics_model.getMass().getMagnitude()*strength)

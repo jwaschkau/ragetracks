@@ -298,7 +298,7 @@ class Game(ShowBase):
         body1 = entry.getBody1()
         body2 = entry.getBody2()
         ray = player.vehicle.ray.getRay()
-        normal = entry.getContactGeom(0).getNormal()
+        normal = Vec3(entry.getContactGeom(0).getNormal())
         normal.normalize()
         player.vehicle.streetnormal = normal
         player.vehicle.physics_model.setGravityMode(0) #disable gravity if on the track
@@ -313,12 +313,18 @@ class Game(ShowBase):
         
         acceleration = ((ray.getLength()/2)-force_dir.length())*actual_speed.length()#calculate the direction
         player.vehicle.hit_ground = True
-        force_dir.normalize()
+        player.vehicle.collision_model.setCollideBits(6)
+        #force_dir.normalize()
 
         #Change the angle of the vehicle so it matches the street
         upvec = Vec3(player.vehicle.collision_model.getQuaternion().xform(Vec3(0,0,1)))
         player.vehicle.physics_model.addTorque(upvec.cross(normal)*mass*upvec.angleDeg(Vec3(normal)) - player.vehicle.physics_model.getAngularVel() * mass)
-
+##        if upvec.cross(normal).length() != 0:
+##            rotation = Mat3.rotateMat(upvec.angleDeg(normal),upvec.cross(normal))##hier liegt der fehler
+##            protation=player.vehicle.physics_model.getRotation()
+##            player.vehicle.physics_model.setRotation(rotation*protation)
+##            player.vehicle.physics_model.setPosition(contact+rotation.xform(force_dir))
+        
         #checks if the vehicle is moving to or away from the road
         if (z_direction + actual_speed).length() < actual_speed.length():goes_up = True
         else: goes_up = False
