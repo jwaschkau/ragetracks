@@ -30,6 +30,8 @@ class RoadShape(object):
         self.author = "Rage Tracks Team"
         self.mirrored = True
         
+        self.texcoords = []
+        
         for arg in args:
             if type(arg) == Vec2:
                 self.points.append(arg)
@@ -94,11 +96,43 @@ class RoadShape(object):
                 x = float(point.getAttribute("x"))
                 y = float(point.getAttribute("y"))
                 self.points.append(Vec2(x, y))
+        
     
         # if the points should be mirrored, we'll do it
         if self.mirrored:
             self.mirrorPoints()
-
+        self.calculateTexcoordinates()
+    
+    # -------------------------------------------------------------------------------------
+    
+    def calculateTexcoordinates(self):
+        '''
+        '''
+        tmp = []
+        length = 0
+        n = 0
+        # calculate the texcoords
+        for i in xrange(len(self.points)-1):
+            n = (self.points[i+1]-self.points[i]).length()
+            length += n
+            tmp.append(n)
+        n = (self.points[0]-self.points[i+1]).length()
+        tmp.append(n)
+        length += n
+        
+        n = 0
+        self.texcoords.append(n)
+        for i in tmp:
+            n += i/length
+            self.texcoords.append(n)
+            print "#", n
+            
+    # -------------------------------------------------------------------------------------
+    
+    def getTexCoordinates(self):
+        '''
+        '''
+        return self.texcoords
     
     # -------------------------------------------------------------------------------------
     
@@ -293,6 +327,10 @@ class StreetData(RoadShape):
                     x = float(point.getAttribute("x"))
                     y = float(point.getAttribute("y"))
                     self.border_r.points.append(Vec2(x, y))
+        
+        self.calculateTexcoordinates()
+        self.border_l.calculateTexcoordinates()
+        self.border_r.calculateTexcoordinates()
 
     
     # -------------------------------------------------------------------------------------
@@ -395,10 +433,11 @@ class Track3d(object):
         
         
         print street_data_length
-        for i in xrange(street_data_length):
-            texcoordinates.append((i+1.0)/street_data_length)
+##        for i in xrange(street_data_length):
+##            texcoordinates.append((i+1.0)/street_data_length)
+        texcoordinates = street_data.getTexCoordinates()
             
-        print "\n\n\n#-#-#-#-#-#-#-##-#-#-#-#-#-#####################-#-#-#-\n\n"
+        print "\n\n\n#-#-#-#-#-#-#-##-#-#-#-#-#-#####################-#-#-#-\n\n", texcoordinates
         
         last_normal = Vec3(0,0,1)
         last_vec = Vec3(0,1,0)
@@ -433,7 +472,7 @@ class Track3d(object):
                 
                 self.vertex.addData3f(point[0], point[1], point[2])
                 self.normal.addData3f(0, 0, 1) #KA how to calc
-                self.streetTextrange += 0.001
+                self.streetTextrange += 0.002
                 self.texcoord.addData2f(texcoordinates[j], self.streetTextrange)
                 j += 1
                 
