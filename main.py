@@ -176,7 +176,7 @@ class Game(ShowBase):
     
     # -----------------------------------------------------------------
 
-    def startGame(self, track, trackpoints):
+    def startGame(self, track, borderl, borderr, trackpoints):
         '''
         Start the game
         '''
@@ -216,10 +216,30 @@ class Game(ShowBase):
         self.track = track
         self.track.reparentTo(render)
         
+        self.borderl = borderl
+        self.borderl.reparentTo(render)
+        
+        self.borderr = borderr
+        self.borderr.reparentTo(render)
+        
+        roadtex = loader.loadTexture('data/textures/street.png')
+        bordertex = loader.loadTexture('data/textures/border.png')
+        self.track.setTexture(roadtex)
+        self.borderl.setTexture(bordertex)
+        self.borderr.setTexture(bordertex)
+        
         #add collision with the map
         self.groundGeom = OdeTriMeshGeom(self.space, OdeTriMeshData(self.track, True))
         self.groundGeom.setCollideBits(0)
         self.groundGeom.setCategoryBits(1)
+        
+        self.borderl = OdeTriMeshGeom(self.space, OdeTriMeshData(self.borderl, True))
+        self.borderl.setCollideBits(0)
+        self.borderl.setCategoryBits(2)
+        
+        self.borderr = OdeTriMeshGeom(self.space, OdeTriMeshData(self.borderr, True))
+        self.borderr.setCollideBits(0)
+        self.borderr.setCategoryBits(2)
         
         #Create the Plane that you get hit by if you fall down
         self.plane = OdePlaneGeom(self.space,0,0,1,-250)

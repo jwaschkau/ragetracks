@@ -513,21 +513,17 @@ class Menu(object):
                     taskMgr.remove("selectVehicle")
                     self.track =  trackgen3d.Track3d(1000, 1800, 1600, 1200, len(self._players))
                     self.streetPath = render.attachNewNode(self.track.createRoadMesh())
+                    #self.borderleftPath = render.attachNewNode(self.track.createBorderLeftMesh())
                     self.borderleftPath = render.attachNewNode(self.track.createBorderLeftMesh())
                     self.borderrightPath = render.attachNewNode(self.track.createBorderRightMesh())
                     ##self.borderPath = render.attachNewNode(self.track.createBorderMesh())
-                    roadtex = loader.loadTexture('data/textures/street.png')
-                    bordertex = loader.loadTexture('data/textures/border.png')
-                    self.streetPath.setTexture(roadtex)
-                    self.borderleftPath.setTexture(bordertex)
-                    self.borderrightPath.setTexture(bordertex)
 
                     #self.streetPath = loader.loadModel('data/models/Street.egg')
                     ##self.streetPath = loader.loadModel('data/models/Street.egg')
                     #tex = loader.loadTexture('data/models/StreetTex.png')
                     #self.nodePath.setTexture(tex)
                     
-                    self._parent.startGame(self.streetPath, self.track.trackpoints)
+                    self._parent.startGame(self.streetPath,self.borderleftPath,self.borderrightPath, self.track.trackpoints)
                     return task.done
 
         for device in self.unusedDevices:
