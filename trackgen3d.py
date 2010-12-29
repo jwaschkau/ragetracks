@@ -315,6 +315,7 @@ class Track3d(object):
         self.street_data = StreetData()
         self.street_data.readFile("data/road/road01.xml")
     
+        self.streetTextrange = 0.0
         m = Track(x, y, z)
         m.generateTestTrack(player_count)
 ##        m.generateTrack(player_count)
@@ -384,6 +385,7 @@ class Track3d(object):
 
 # -------------------------------------------------------------------------------------
 
+
     def createVertices(self, track_points, street_data):
         '''
         '''
@@ -391,6 +393,8 @@ class Track3d(object):
         texcoordinates =[]
         street_data_length = len(street_data)
         
+        
+        print street_data_length
         for i in xrange(street_data_length):
             texcoordinates.append((i+1.0)/street_data_length)
             
@@ -420,7 +424,7 @@ class Track3d(object):
             
             turned_vec.normalize()
             
-            j = 0    
+            j = 0
             for shapedot in street_data:
                 # this is like a layer in 3d [Ebenengleichung] 
                 # vec = vec + vec*scalar + vec*scalar
@@ -429,8 +433,10 @@ class Track3d(object):
                 
                 self.vertex.addData3f(point[0], point[1], point[2])
                 self.normal.addData3f(0, 0, 1) #KA how to calc
-                self.texcoord.addData2f(texcoordinates[j], (i%2))
+                self.streetTextrange += 0.001
+                self.texcoord.addData2f(texcoordinates[j], self.streetTextrange)
                 j += 1
+                
             
 
 # -------------------------------------------------------------------------------------
