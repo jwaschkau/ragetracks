@@ -52,6 +52,48 @@ class Game(ShowBase):
         nodePath.setTexture(tex)
         #nodePath.setTwoSided(True)
         
+        #LICHT
+        self.plight = PointLight('kkkplight')
+        self.plight.setColor(VBase4(21, 0, 0, 1))
+        self.plnp = NodePath(self.plight)
+        self.plnp.reparentTo(render)
+        self.plnp.setPos(0,0,2000)
+        self.plnp.node().setAttenuation(Point3(0,0,1))
+        self.plnp.setScale(.5,.5,.5)
+        
+        nodePath.setShaderAuto(True)
+        
+
+        #self.plnp.setHpr(0,-90,0)
+        #print plight.getAttenuation()
+        #plnp.setPos(-10, -800, 20)
+        render.setLight(self.plnp)
+        
+        self.accept("w", self.setA, [100])
+        self.accept("s", self.setA, [-10])
+        self.accept("e", self.setB, [10])
+        self.accept("d", self.setB, [-10])
+        self.accept("r", self.setC, [100])
+        self.accept("f", self.setC, [-100])
+        
+        self.accept("z", self.setRotation, [0, 10])
+        self.accept("h", self.setRotation, [0, -10])
+        self.accept("u", self.setRotation, [1, 10])
+        self.accept("j", self.setRotation, [1, -10])
+        self.accept("i", self.setRotation, [2, 10])
+        self.accept("k", self.setRotation, [2, -10])
+        
+        self.accept("n", self.setExponent, [-50])
+        self.accept("m", self.setExponent, [50])
+        
+        
+        # load our model
+        tron = loader.loadModel("data/models/vehicles/vehicle02")
+        self.tron = tron
+        #self.tron.loadAnims({"running":"models/tron_anim"})
+        tron.reparentTo(render)
+        tron.setPos(0,0,15)
+        tron.setHpr(0,-90,0)
         nodePath2 = self.render.attachNewNode(self.track.createBorderLeftMesh())
         tex2 = loader.loadTexture('data/textures/border.png')
         nodePath2.setTexture(tex2)
@@ -63,10 +105,58 @@ class Game(ShowBase):
     
         #Load the Lights
         ambilight = AmbientLight('ambilight')
-        ambilight.setColor(VBase4(0.8, 0.8, 0.8, 1))
+        ambilight.setColor(VBase4(0.1, 0.1, 0.1, 1))
         render.setLight(render.attachNewNode(ambilight))
 
     # -----------------------------------------------------------------
+    
+    def setA(self, val):
+        '''
+        '''
+        tpos = self.tron.getPos()
+        tpos[0] += val
+        self.tron.setPos(tpos)
+        pos = self.plnp.getPos()
+        pos[0] += val
+        print pos
+        self.plnp.setPos(pos)
+        
+    def setB(self, val):
+        '''
+        '''
+        tpos = self.tron.getPos()
+        tpos[1] += val
+        self.tron.setPos(tpos)
+        pos = self.plnp.getPos()
+        pos[1] += val
+        print pos
+        self.plnp.setPos(pos)
+        
+    def setC(self, val):
+        '''
+        '''
+        tpos = self.tron.getPos()
+        tpos[2] += val
+        self.tron.setPos(tpos)
+        pos = self.plnp.getPos()
+        pos[2] += val
+        print pos
+        self.plnp.setPos(pos)
+    
+    def setRotation(self, var, val):
+        '''
+        '''
+        hpr = self.plnp.getHpr()
+        hpr[var] += val
+        print "hpr", hpr
+        self.plnp.setHpr(hpr)
+    
+    def setExponent(self, val):
+        '''
+        '''
+        val = self.plight.getExponent()+val
+        print val
+        self.plight.setExponent(val)
 
 # -----------------------------------------------------------------
 # -----------------------------------------------------------------

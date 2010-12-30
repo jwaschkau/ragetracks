@@ -102,6 +102,7 @@ class Vehicle(object):
                 renderer.setInitialXScale(scale)
                 renderer.setInitialYScale(scale)
                 
+                particle.setLightOff()
                 particle.start(node)
                 particle.softStop()
         else: self._notify.warning("No Blowout-Node found")
