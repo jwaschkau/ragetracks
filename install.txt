@@ -1,0 +1,19 @@
+RageTracks Install Guide:
+
+Ubuntu:
+Get the RageTracks Code.
+
+sudo apt-get install bzr
+bzr branch lp:ragetracks
+
+
+Install the Panda3d Runtime and Pygame.
+
+sudo add-apt-repository ppa:panda3d/ppa
+sudo apt-get update
+sudo apt-get install panda3d-runtime panda3d python-pygame
+
+Start the Game.
+
+cd ragetracks/
+python main.py 
