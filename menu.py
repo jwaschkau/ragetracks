@@ -476,6 +476,8 @@ class Menu(object):
                 r, g, b = img.getXel(x,y)
                 h, s, v = colorsys.rgb_to_hsv(r, g, b)
                 h += value
+                if h < 0:
+                    h += 360
                 r, g, b = colorsys.hsv_to_rgb(h, s, v)
                 img.setXel(x,y,r,g,b)
         tex.load(img)
