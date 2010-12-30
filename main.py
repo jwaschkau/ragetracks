@@ -300,7 +300,7 @@ class Game(ShowBase):
                 player.vehicle.physics_model.setPosition(0,0,20)
                 player.vehicle.physics_model.setLinearVel(0,0,0)
                 player.vehicle.physics_model.setTorque (0,0,0)
-                #player.vehicle.physics_model.setRotation(Mat3())
+                player.vehicle.physics_model.setRotation(Mat3.rotateMat(0,(Vec3(0,0,1))))
                 return
             
             #Decrease energy on collision
