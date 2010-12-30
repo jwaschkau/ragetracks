@@ -195,6 +195,7 @@ class Vehicle(object):
         self._grip_strength = 0.9
         self._track_grip = 0.2
         self._boost_strength = 1400
+        self._control_strength = 2.5
         
         #Loading finished
         self._model_loading = False
@@ -298,7 +299,7 @@ class Vehicle(object):
             self._collision_model.setCollideBits(7)
         else:
             direction = self._streetnormal.cross(self._collision_model.getQuaternion().xform(Vec3(1,0,0)))
-            self._physics_model.addForce(direction*self._boost_strength*0.2*self.physics_model.getMass().getMagnitude()*strength)
+            self._physics_model.addForce(direction*self._boost_strength*0.5*self.physics_model.getMass().getMagnitude()*strength)
     # ---------------------------------------------------------
         
     def setDirection(self, dir):
@@ -370,6 +371,9 @@ class Vehicle(object):
         xy_direction = self.collision_model.getQuaternion().xform(Vec3(1,1,0)) 
         self._speed = Vec3(linear_velocity[0]*xy_direction[0],linear_velocity[1]*xy_direction[1],linear_velocity[2]*xy_direction[2]).length()
         
+        #calculate air resistance
+        self._physics_model.addForce(-linear_velocity*linear_velocity.length()/10)#*((self._speed/2)*(self._speed/2)))#+linear_velocity)        
+        
         #calculate delayed velocity changes
         linear_velocity.normalize()
         self._direction.normalize()
@@ -378,9 +382,6 @@ class Vehicle(object):
         
         #calculate the grip
         self._physics_model.addTorque(self._physics_model.getAngularVel()*-self._track_grip*self.physics_model.getMass().getMagnitude())
-
-        #calculate air resistance
-        self._physics_model.addForce(-linear_velocity*((self._speed/2)*(self._speed/2)))#+linear_velocity)
 
         #refresh the positions of the collisionrays
         self._ray.doStep()

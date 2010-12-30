@@ -72,7 +72,7 @@ class Game(ShowBase):
         
         #enable anti-aliasing
         if self.settings.antialias:
-            loadPrcFileData("", "framebuffer-multisample 1\n multisamples 8")
+            loadPrcFileData("", "framebuffer-multisample 1\n multisamples 2")
             render.setAntialias(AntialiasAttrib.MMultisample)
         
         #Initialize needed variables and objects
@@ -336,7 +336,7 @@ class Game(ShowBase):
         z_direction = player.vehicle.collision_model.getQuaternion().xform(Vec3(0,0,1)) 
         actual_speed = Vec3(linear_velocity[0]*z_direction[0],linear_velocity[1]*z_direction[1],linear_velocity[2]*z_direction[2])
         
-        acceleration = ((ray.getLength()/2)-force_dir.length())*actual_speed.length()#calculate the direction
+        acceleration = ((ray.getLength()/2)-force_dir.length())*actual_speed.length()*2.5#calculate the direction
         player.vehicle.hit_ground = True
         player.vehicle.collision_model.setCollideBits(6)
         #force_dir.normalize()
