@@ -142,6 +142,9 @@ class SplitScreen(object):
                 width =  self.cameras[i].node().getDisplayRegion(0).getPixelWidth()
                 ratio = float(width)/float(height)
                 self.cameras[i].node().getLens().setFov(45*ratio)
+        
+                if self.filters[i] != None:
+                    self.filters[i].delBloom()
         taskMgr.add(self.animateRegion, "AnimateRegion")
         
 #        #Old Code without animation  
@@ -166,6 +169,8 @@ class SplitScreen(object):
                 width =  self.cameras[i].node().getDisplayRegion(0).getPixelWidth()
                 ratio = float(width)/float(height)
                 self.cameras[i].node().getLens().setFov(45*ratio)
+                if self.filters[i] != None:
+                    self.filters[i].setBloom(blend=(0,0,0,1), desat=-0.8, intensity=4.0, size="big")
             return task.done
         for i in xrange(len(self.cameraPosPre)):
             self.cameras[i].node().getDisplayRegion(0).setDimensions(self.calTheDiff( self.cameraPosPre[i][0], self.regions[i][0], task.time), self.calTheDiff( self.cameraPosPre[i][1], self.regions[i][1], task.time), self.calTheDiff( self.cameraPosPre[i][2], self.regions[i][2], task.time), self.calTheDiff( self.cameraPosPre[i][3], self.regions[i][3], task.time))
