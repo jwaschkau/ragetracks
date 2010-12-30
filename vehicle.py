@@ -122,7 +122,7 @@ class Vehicle(object):
         self._model = model
         self._model.setPos(0,0,2)
         self._model.setHpr(heading,0,0)
-        
+
 #        #Test
 #        plightCenter = NodePath( 'plightCenter' )
 #        plightCenter.reparentTo( render )
@@ -281,7 +281,7 @@ class Vehicle(object):
         self.startBlowout()
         if self._hit_ground:
             direction = self._streetnormal.cross(self._collision_model.getQuaternion().xform(Vec3(1,0,0)))
-            self._physics_model.addForce(direction*(self._boost_strength*self.physics_model.getMass().getMagnitude()*strength-self._speed))
+            self._physics_model.addForce(direction*((self._boost_strength*self.physics_model.getMass().getMagnitude()*strength)-self._speed))
             self._hit_ground = False
             self._collision_model.setCollideBits(7)
         else:
@@ -369,7 +369,7 @@ class Vehicle(object):
 
         #calculate air resistance
         self._physics_model.addForce(-linear_velocity*((self._speed/2)*(self._speed/2)))#+linear_velocity)
-        
+
         #refresh the positions of the collisionrays
         self._ray.doStep()
         self._frontray.doStep()
