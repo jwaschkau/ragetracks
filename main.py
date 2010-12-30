@@ -339,14 +339,14 @@ class Game(ShowBase):
         #Change the angle of the vehicle so it matches the street
         upvec = Vec3(player.vehicle.collision_model.getQuaternion().xform(Vec3(0,0,1)))
         player.vehicle.physics_model.addTorque(upvec.cross(normal)*mass*upvec.angleDeg(normal) - player.vehicle.physics_model.getAngularVel() * mass)
-##        if upvec.cross(normal).length() != 0:
+        if upvec.cross(normal).length() != 0:
 ##            rotation = Mat3.rotateMat(upvec.angleDeg(normal),upvec.cross(normal))
 ##            protation=player.vehicle.physics_model.getRotation()
 ##            protation*=rotation
 ##            player.vehicle.collision_model.setRotation(protation)
 ##            
-##            upvec = Vec3(player.vehicle.collision_model.getQuaternion().xform(Vec3(0,0,1)))
-##            player.vehicle.collision_model.setPosition(contact+(upvec*force_dir.length()))
+            upvec = Vec3(player.vehicle.collision_model.getQuaternion().xform(Vec3(0,0,1)))
+            player.vehicle.collision_model.setPosition(contact+(upvec*force_dir.length()))
         
         #checks if the vehicle is moving to or away from the road
         if (z_direction + actual_speed).length() < actual_speed.length():goes_up = True
