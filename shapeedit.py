@@ -214,7 +214,7 @@ class Canvas(wx.Window):
         
         last = None
 
-        for i in self.road.border:
+        for i in self.road.border_l:
             x = i.getX()
             y = i.getY()
             x,y = self.getRasterPosition(x,y,w,h)
@@ -298,7 +298,7 @@ class Canvas(wx.Window):
         if self.mode == MODE_ROAD:
             self.road.addPoint(x,y)
         else:
-            self.road.border.addPoint(x,y)
+            self.road.border_l.addPoint(x,y)
         self.Refresh()
         evt.Skip()
         
@@ -316,7 +316,7 @@ class Canvas(wx.Window):
                 if rect.Contains(wx.Point(x,y)):
                     return point
         else:
-            for point in self.road.border:
+            for point in self.road.border_l:
                 px, py = self.getRasterPosition(point.getX(), point.getY(), w,h)
                 rect = wx.Rect(px-4,py-4,8,8)
                 if rect.Contains(wx.Point(x,y)):

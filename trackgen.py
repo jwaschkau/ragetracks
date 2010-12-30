@@ -317,6 +317,11 @@ class Track(object):
         rand = 0
         if rand == 0:
             self.trackpoints = [[0,0,0],[0,500,0],[200,500,0],[250,250,0],[300,0,200],[400,-500,0],[0,-500,0],[0,-1,0]]
+            scale = 2
+            for i in xrange(len(self.trackpoints)):
+                self.trackpoints[i][0] *= scale
+                self.trackpoints[i][1] *= scale
+                self.trackpoints[i][2] *= scale
         elif rand == 1:
             self.trackpoints = [[0,0,0],[0,500,100],[200,700,200],[500,600,250],[300,0,350],[-300,-300,350],[-700,-200,200],[-500,-100,100],[0,-500,-100],[100,-300,0],[0,-1,0]]
         elif rand == 2:

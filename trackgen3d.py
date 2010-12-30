@@ -477,7 +477,7 @@ class Track3d(object):
                 
                 self.vertex.addData3f(point[0], point[1], point[2])
                 self.normal.addData3f(0, 0, 1) #KA how to calc
-                self.streetTextrange += 0.002
+                self.streetTextrange += 0.004
                 self.texcoord.addData2f(texcoordinates[j], self.streetTextrange)
                 j += 1
                 
