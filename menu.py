@@ -13,7 +13,7 @@ import glob
 import settings
 import colorsys
 
-COUNTDOWN_START = 3
+COUNTDOWN_START = 1
 
 FONT = 'data/fonts/Orbitron/TTF/orbitron-black.ttf'
 class MainMenu(object):

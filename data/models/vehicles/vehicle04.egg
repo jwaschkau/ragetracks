@@ -107435,17 +107435,6 @@
 }
 <Group> Blowout {
   <ObjectType> { model }
-  <Group> particle03 {
-    <Transform> {
-      <Matrix4> {
-        1.000000 0.000000 0.000000 0.000000
-        0.000000 1.000000 0.000000 0.000000
-        0.000000 0.000000 1.000000 0.000000
-        -0.471800 -2.454484 0.167905 1.000000
-      }
-    }
-    <ObjectType> { model }
-  }
   <Group> particle06 {
     <Transform> {
       <Matrix4> {
@@ -107455,6 +107444,7 @@
         2.045471 -1.176852 0.141030 1.000000
       }
     }
+    <Tag> scale { 1.0 }
     <ObjectType> { model }
   }
   <Group> particle05 {
@@ -107479,6 +107469,17 @@
     }
     <ObjectType> { model }
   }
+  <Group> particle03 {
+    <Transform> {
+      <Matrix4> {
+        1.000000 0.000000 0.000000 0.000000
+        0.000000 1.000000 0.000000 0.000000
+        0.000000 0.000000 1.000000 0.000000
+        -0.471800 -2.454484 0.167905 1.000000
+      }
+    }
+    <ObjectType> { model }
+  }
   <Group> particle02 {
     <Transform> {
       <Matrix4> {
@@ -107499,6 +107500,7 @@
         -2.048455 -1.176852 0.132072 1.000000
       }
     }
+    <Tag> scale { 1.0 }
     <ObjectType> { model }
   }
 }

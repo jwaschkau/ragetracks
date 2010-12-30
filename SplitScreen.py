@@ -29,7 +29,6 @@ class SplitScreen(object):
             
         #for i in range(1,10):    
         #    print i, self.calculateRegions(i)
-        print cam_count
         
     # -----------------------------------------------------------------
     
@@ -74,11 +73,18 @@ class SplitScreen(object):
         removes a camera out of the list
         '''
         self._notify.debug("Removing camera: %s" %(camera))
-        self.regions.pop(self.cameras.index(camera))
+        i = self.cameras.index(camera)        
+        self.regions.pop(i)
         self.cameras.remove(camera)
+        self.filters[i].delBloom()
+        self.filters.pop(i)
         try: 
             while True:
                 self.cameras.remove(None)
+        except: pass
+        try: 
+            while True:
+                self.filters.remove(None)
         except: pass
         self.regions = self.calculateRegions(len(self.cameras))
         self.refreshCameras()
@@ -101,6 +107,10 @@ class SplitScreen(object):
                 self.cameras[i] = self.createCamera(self.regions[i])
                 self.cams.append(self.cameras[i])
                 
+                # glow shader  ### unused nicht nur von den cams, sondern auch filters updaten
+                self.filters[i] = CommonFilters(base.win, self.cameras[i])
+                filterok = self.filters[i].setBloom(blend=(0,0,0,1), desat=-0.8, intensity=4.0, size="big")
+                
         # if there are not enough free slots, we have to recalculate the regions
         else:
             self.regions = self.calculateRegions(len(self.cameras)-len(unused)+cam_count)
@@ -110,15 +120,21 @@ class SplitScreen(object):
                 self.cameras[i] = self.createCamera(self.regions[i])
                 self.cams.append(self.cameras[i])
                 
+                # glow shader  ### unused nicht nur von den cams, sondern auch filters updaten
+                self.filters[i] = CommonFilters(base.win, self.cameras[i])
+                
             # then add all other new cams at the end
             for i in xrange(cam_count-len(unused)):
                 cam = self.createCamera(self.regions[i])
                 self.cameras.append(cam)
                 cams.append(cam)
+                # glow shader  ### unused nicht nur von den cams, sondern auch filters updaten
+                self.filters[i] = CommonFilters(base.win, self.cameras[i])
             
             # if there are empty slots, they're filled with None
             for i in xrange(len(self.regions)-len(self.cameras)):
                 self.cameras.append(None)
+                self.filters.append(None)
                 
             # refresh all cameras
             self.refreshCameras()
