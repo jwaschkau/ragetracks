@@ -23,6 +23,7 @@ class Settings(object):
         self._notify.info("New Settings-Object created: %s" %(self))
         self.width = 800
         self.height = 600
+        self.antialias = False
 
         self.fullscreen = False
         self._input_settings = {"keyboard" : {},
@@ -41,7 +42,8 @@ class Settings(object):
         #config["application"]["resolution"] = "%dx%d"%(self.width, self.height)
         config["application"]["resolution"] = [str(self.width), str(self.height)]
         config["application"]["fullscreen"] = str(int(self.fullscreen))
-
+        config["application"]["antialias"] = str(int(self.antialias))
+    
         config["joysticks"] = {}
         config["keyboard"] = {}
         config.write()
@@ -57,6 +59,7 @@ class Settings(object):
         self.width = int(config["application"]["resolution"][0])
         self.height = int(config["application"]["resolution"][1])
         self.fullscreen = bool(int(config["application"]["fullscreen"]))
+        self.antialias = bool(int(config["application"]["antialias"]))
 
         self._input_settings = {"joysticks": config["joysticks"],
                                 "keyboard": config["keyboard"]

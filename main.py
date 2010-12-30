@@ -70,6 +70,11 @@ class Game(ShowBase):
             wp.setSize(int(base.pipe.getDisplayWidth()),int(base.pipe.getDisplayHeight()))
             base.win.requestProperties(wp)
         
+        #enable anti-aliasing
+        if self.settings.antialias:
+            loadPrcFileData("", "framebuffer-multisample 1\n multisamples 8")
+            render.setAntialias(AntialiasAttrib.MMultisample)
+        
         #Initialize needed variables and objects
         self.players = [] #holds the player objects
         self.TRACK_GRIP = 0.5

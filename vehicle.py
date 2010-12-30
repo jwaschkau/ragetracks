@@ -303,7 +303,7 @@ class Vehicle(object):
         
     def setDirection(self, dir):
         '''
-        Boosts the vehicle by indicated strength
+        Steers the vehicle into the target-direction
         '''
         rel_direction = self._collision_model.getQuaternion().xform(Vec3(dir[1],0,dir[0]))
         #rel_position = self._collision_model.getQuaternion().xform(Vec3(5,0,0))
