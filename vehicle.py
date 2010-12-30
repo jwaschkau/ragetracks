@@ -38,7 +38,7 @@ class Vehicle(object):
         self._armor = 100.0
         self._max_energy = 100.0
         self._max_armor = 100.0
-        self._weight = 400.0
+        self._weight = 10.0
         self._description = "The best vehicle ever"
         self._name = "The flying egg"
         self._brake_strength = 10.0
@@ -84,7 +84,9 @@ class Vehicle(object):
                 if type(tag[2](value)) == str: tag[1](_(tag[2](value)))
                 else: tag[1](tag[2](value))
             else: self._notify.warning("No value defined for tag: %s" %(tag[0]))
+
         self._weight = 10 #for testing purposes
+        
         blowout = model.find("**/Blowout")
         if not blowout.isEmpty():
             self._notify.debug("Loading Blowout-Particles")
@@ -189,7 +191,7 @@ class Vehicle(object):
         #Add collision-rays for the floating effect
         self._ray = CollisionRay(Vec3(0,5,0), Vec3(0,0,-1), self._ode_space, parent = self._collision_model, collide_bits = 0, length = 20.0)
         #This one is used for the floating effect but also for slipstream
-        self._frontray = CollisionRay(Vec3(0,0,0), Vec3(0,1,0), self._ode_space, parent = self._collision_model, collide_bits = 0, length = 15.0)
+        self._frontray = CollisionRay(Vec3(0,0,0), Vec3(1,0,0), self._ode_space, parent = self._collision_model, collide_bits = 0, length = 15.0)
         ##Overwrite variables for testing purposes
         self._grip_strength = 0.9
         self._track_grip = 0.2
@@ -292,7 +294,7 @@ class Vehicle(object):
         self.startBlowout()
         if self._hit_ground:
             direction = self._streetnormal.cross(self._collision_model.getQuaternion().xform(Vec3(1,0,0)))
-            self._physics_model.addForce(direction*((self._boost_strength*self.physics_model.getMass().getMagnitude()*strength)-self._speed))
+            self._physics_model.addForce(direction*((self._boost_strength*self.physics_model.getMass().getMagnitude()*strength)))
             self._hit_ground = False
             self._collision_model.setCollideBits(7)
         else:
@@ -302,7 +304,7 @@ class Vehicle(object):
         
     def setDirection(self, dir):
         '''
-        Boosts the vehicle by indicated strength
+        Steers the vehicle into the target-direction
         '''
         rel_direction = self._collision_model.getQuaternion().xform(Vec3(dir[1],0,dir[0]))
         #rel_position = self._collision_model.getQuaternion().xform(Vec3(5,0,0))
@@ -364,7 +366,7 @@ class Vehicle(object):
         self._boost_direction[0],self._boost_direction[1],self._boost_direction[2] = self.physics_model.getLinearVel()[0],self.physics_model.getLinearVel()[1],self.physics_model.getLinearVel()[2]
         
         #This needs to be done, so we dont create a new object but only change the existing one. else the camera wont update
-        self.direction[0], self.direction[1],self.direction[2] = direction[0],direction[1],direction[2]
+        self._direction[0], self._direction[1],self._direction[2] = direction[0],direction[1],direction[2]
         
         xy_direction = self.collision_model.getQuaternion().xform(Vec3(1,1,0)) 
         self._speed = Vec3(linear_velocity[0]*xy_direction[0],linear_velocity[1]*xy_direction[1],linear_velocity[2]*xy_direction[2]).length()

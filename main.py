@@ -70,6 +70,11 @@ class Game(ShowBase):
             wp.setSize(int(base.pipe.getDisplayWidth()),int(base.pipe.getDisplayHeight()))
             base.win.requestProperties(wp)
         
+        #enable anti-aliasing
+        if self.settings.antialias:
+            loadPrcFileData("", "framebuffer-multisample 1\n multisamples 8")
+            render.setAntialias(AntialiasAttrib.MMultisample)
+        
         #Initialize needed variables and objects
         self.players = [] #holds the player objects
         self.TRACK_GRIP = 0.5
@@ -300,7 +305,7 @@ class Game(ShowBase):
                 player.vehicle.physics_model.setPosition(0,0,20)
                 player.vehicle.physics_model.setLinearVel(0,0,0)
                 player.vehicle.physics_model.setTorque (0,0,0)
-                #player.vehicle.physics_model.setRotation(Mat3())
+                player.vehicle.physics_model.setRotation(Mat3.rotateMat(0,(Vec3(0,0,1))))
                 return
             
             #Decrease energy on collision
