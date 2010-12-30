@@ -288,49 +288,54 @@ class StreetData(RoadShape):
                 
             # read out the border
             border_l = xml.getElementsByTagName("border_l")
-            border_l = border_l[0].childNodes
+            if len(border_l) > 0:
+                border_l = border_l[0].childNodes
 
-            border_lcount = border_l.length
+                border_lcount = border_l.length
 
-            for i in xrange(border_lcount):
-                point = border_l.item(i)
-                if point.nodeType == point.ELEMENT_NODE:
-                    x = float(point.getAttribute("x"))
-                    y = float(point.getAttribute("y"))
-                    self.border_l.points.append(Vec2(x, y))
-                    self.border_r.points.insert(0,Vec2(x*-1,y))
+                for i in xrange(border_lcount):
+                    point = border_l.item(i)
+                    if point.nodeType == point.ELEMENT_NODE:
+                        x = float(point.getAttribute("x"))
+                        y = float(point.getAttribute("y"))
+                        self.border_l.points.append(Vec2(x, y))
+                        self.border_r.points.insert(0,Vec2(x*-1,y))
         else:
             #read out the borders separately
             
             # read out the left border
             border_l = xml.getElementsByTagName("border_l")
-            border_l = border_l[0].childNodes
+            if len(border_l) > 0:
+                border_l = border_l[0].childNodes
 
-            border_lcount = border_l.length
+                border_lcount = border_l.length
 
-            for i in xrange(border_lcount):
-                point = border_l.item(i)
-                if point.nodeType == point.ELEMENT_NODE:
-                    x = float(point.getAttribute("x"))
-                    y = float(point.getAttribute("y"))
-                    self.border_l.points.append(Vec2(x, y))
+                for i in xrange(border_lcount):
+                    point = border_l.item(i)
+                    if point.nodeType == point.ELEMENT_NODE:
+                        x = float(point.getAttribute("x"))
+                        y = float(point.getAttribute("y"))
+                        self.border_l.points.append(Vec2(x, y))
                     
             # read out the right border
             border_r = xml.getElementsByTagName("border_r")
-            border_r = border_r[0].childNodes
+            if len(border_r) > 0:
+                border_r = border_r[0].childNodes
 
-            border_rcount = border_r.length
+                border_rcount = border_r.length
 
-            for i in xrange(border_rcount):
-                point = border_r.item(i)
-                if point.nodeType == point.ELEMENT_NODE:
-                    x = float(point.getAttribute("x"))
-                    y = float(point.getAttribute("y"))
-                    self.border_r.points.append(Vec2(x, y))
+                for i in xrange(border_rcount):
+                    point = border_r.item(i)
+                    if point.nodeType == point.ELEMENT_NODE:
+                        x = float(point.getAttribute("x"))
+                        y = float(point.getAttribute("y"))
+                        self.border_r.points.append(Vec2(x, y))
         
         self.calculateTexcoordinates()
-        self.border_l.calculateTexcoordinates()
-        self.border_r.calculateTexcoordinates()
+        if len(self.border_l) > 0:
+            self.border_l.calculateTexcoordinates()
+        if len(self.border_r) > 0:
+            self.border_r.calculateTexcoordinates()
 
     
     # -------------------------------------------------------------------------------------
