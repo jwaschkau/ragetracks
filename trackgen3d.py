@@ -125,7 +125,6 @@ class RoadShape(object):
         for i in tmp:
             n += i/length
             self.texcoords.append(n)
-            print "#", n
             
     # -------------------------------------------------------------------------------------
     
@@ -437,12 +436,12 @@ class Track3d(object):
         street_data_length = len(street_data)
         
         
-        print street_data_length
+##        print street_data_length
 ##        for i in xrange(street_data_length):
 ##            texcoordinates.append((i+1.0)/street_data_length)
         texcoordinates = street_data.getTexCoordinates()
             
-        print "\n\n\n#-#-#-#-#-#-#-##-#-#-#-#-#-#####################-#-#-#-\n\n", texcoordinates
+##        print "\n\n\n#-#-#-#-#-#-#-##-#-#-#-#-#-#####################-#-#-#-\n\n", texcoordinates
         
         last_normal = Vec3(0,0,1)
         last_vec = Vec3(0,1,0)

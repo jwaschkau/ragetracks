@@ -13,7 +13,7 @@ import glob
 import settings
 import colorsys
 
-COUNTDOWN_START = 1
+COUNTDOWN_START = 3
 
 FONT = 'data/fonts/Orbitron/TTF/orbitron-black.ttf'
 class MainMenu(object):
@@ -568,7 +568,7 @@ class Menu(object):
                     #start loading the model
                     loader.loadModel(self.vehicle_list[0], callback = self._players[-1].setVehicle)
                     self._notify.debug("Loading initial vehicle: %s" %(self.vehicle_list[0]))
-                    self.unusedDevices.remove(device) 
+##                    self.unusedDevices.remove(device) 
                     self.player_buttonpressed[-1] = task.time + self.KEY_DELAY
                     
                     #Add the Skybox

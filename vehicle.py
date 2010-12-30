@@ -92,6 +92,16 @@ class Vehicle(object):
                 particle = ParticleEffect()
                 self._blowout.append(particle)
                 particle.loadConfig('./data/particles/blowout_test.ptf')
+                
+                try: # try to read out the particle scale
+                    scale = float(node.getTag("scale"))
+                except: # default is 0.5
+                    scale = .5
+                    
+                renderer = particle.getParticlesList()[0].getRenderer()
+                renderer.setInitialXScale(scale)
+                renderer.setInitialYScale(scale)
+                
                 particle.start(node)
                 particle.softStop()
         else: self._notify.warning("No Blowout-Node found")

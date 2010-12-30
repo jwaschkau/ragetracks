@@ -56,7 +56,7 @@ class SplitScreen(object):
                 self.filters.append(None)
                 unused-=1
         
-        # glow shader
+        # glow shader  ### unused nicht nur von den cams, sondern auch filters updaten
         self.filters[unused] = CommonFilters(base.win, self.cameras[unused])
         filterok = self.filters[unused].setBloom(blend=(0,0,0,1), desat=-0.8, intensity=4.0, size="big")
                 
@@ -134,6 +134,9 @@ class SplitScreen(object):
         '''
         taskMgr.remove("AnimateRegion")
         self.cameraPosPre = []
+        for filters in self.filters:
+            if filters != None:
+                    filters.delBloom()
         for i in xrange(len(self.cameras)):
             if self.cameras[i] != None:
                 self.cameraPosPre.append((self.cameras[i].node().getDisplayRegion(0).getLeft(), self.cameras[i].node().getDisplayRegion(0).getRight(), self.cameras[i].node().getDisplayRegion(0).getBottom(), self.cameras[i].node().getDisplayRegion(0).getTop()))
@@ -142,9 +145,6 @@ class SplitScreen(object):
                 width =  self.cameras[i].node().getDisplayRegion(0).getPixelWidth()
                 ratio = float(width)/float(height)
                 self.cameras[i].node().getLens().setFov(45*ratio)
-        
-                if self.filters[i] != None:
-                    self.filters[i].delBloom()
         taskMgr.add(self.animateRegion, "AnimateRegion")
         
 #        #Old Code without animation  
@@ -169,8 +169,9 @@ class SplitScreen(object):
                 width =  self.cameras[i].node().getDisplayRegion(0).getPixelWidth()
                 ratio = float(width)/float(height)
                 self.cameras[i].node().getLens().setFov(45*ratio)
-                if self.filters[i] != None:
-                    self.filters[i].setBloom(blend=(0,0,0,1), desat=-0.8, intensity=4.0, size="big")
+            for filters in self.filters:
+                if filters != None:
+                    filters.setBloom(blend=(0,0,0,1), desat=-0.8, intensity=4.0, size="big")
             return task.done
         for i in xrange(len(self.cameraPosPre)):
             self.cameras[i].node().getDisplayRegion(0).setDimensions(self.calTheDiff( self.cameraPosPre[i][0], self.regions[i][0], task.time), self.calTheDiff( self.cameraPosPre[i][1], self.regions[i][1], task.time), self.calTheDiff( self.cameraPosPre[i][2], self.regions[i][2], task.time), self.calTheDiff( self.cameraPosPre[i][3], self.regions[i][3], task.time))

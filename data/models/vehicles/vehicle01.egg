@@ -29,7 +29,7 @@
   <Scalar> wrap { REPEAT }
 }
 <Texture> head_00_headtex {
-  "./../../../../../../programmieren/ragetracks/trunk/data/textures/vehicle01_head.png"
+  "./../../textures/vehicle01_head.png"
   <Scalar> saved-result { 1 }
   <Scalar> envtype { MODULATE }
   <Scalar> minfilter { LINEAR_MIPMAP_LINEAR }
@@ -84342,6 +84342,7 @@
         0.017570 -2.908652 -0.071895 1.000000
       }
     }
+    <Tag> scale { 2.0 }
     <ObjectType> { model }
   }
 }
