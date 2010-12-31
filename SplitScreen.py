@@ -12,23 +12,23 @@ from direct.filter.CommonFilters import CommonFilters
  
 class SplitScreen(object):
     '''
+    This class manages multiple display regions and handles adding and removing them from screen.
     '''
     def __init__(self, cam_count=0):
         '''
+        @param cam_count: (int) number of cameras which should be added
         '''
         self._notify = DirectNotify().newCategory("SplitScreen")
         self._notify.info("New SplitScreen-Object created: %s" %(self))
         self.regions = []   # the regions the screen is separated into
         self.cameras = []   # the cameras (empty ones are None)
-        self.filters = []
-        self.cameraPosPre = [] #The Position from the Cameras bevor change
+        self.filters = []   # the shader filters applied to each camera
+        self.cameraPosPre = [] # the position of the cameras before change
         self.steps = 1
+        self.shaders_on = False
         
-        if cam_count > 0:
+        if cam_count > 0:   # add cameras, if needed
             self.addCameras(cam_count)
-            
-        #for i in range(1,10):    
-        #    print i, self.calculateRegions(i)
         
     # -----------------------------------------------------------------
     
@@ -41,27 +41,24 @@ class SplitScreen(object):
         unused = self.getUnusedRegion()
         # if there is an unused camera slot, use it
         if unused != -1:
+            self.setShaderOff()
             self.cameras[unused] = self.createCamera(self.regions[unused])
+            self.setShaderOn()
         # if there is no free slot, we have to recalculate the regions
         else:
-            self.regions = self.calculateRegions(len(self.regions)+1)
-            self.cameras.append(self.createCamera(self.regions[unused]))
-            self.filters.append(None)
-            self.refreshCameras()
+            self.regions = self.calculateRegions(len(self.regions)+1)      # recalc
+            self.cameras.append(self.createCamera(self.regions[unused]))   # add a cam
         
-        # if there are empty slots, they're filled with None
+            # if there are empty slots, they're filled with None
             for i in xrange(len(self.regions)-len(self.cameras)):
                 self.cameras.append(None)
-                self.filters.append(None)
-                unused-=1
+                unused -= 1
+            
+            self.refreshCameras()   # rearrange the regions
         
-        # glow shader  ### unused nicht nur von den cams, sondern auch filters updaten
-        self.filters[unused] = CommonFilters(base.win, self.cameras[unused])
-        filterok = self.filters[unused].setBloom(blend=(0,0,0,1), desat=-0.8, intensity=4.0, size="big")
-                
-        
-        # if there was an unused slot, the camera is now at this place
-        # if not, unused is -1 which points to the last element of the list (the newest cam)
+        # if there was an unused slot, the camera is now in it
+        # if not, unused is -1 which points to the last element of the list
+        # so unused points always to the newest cam
         self._notify.debug("New regions: %s , New cameras: %s" %(self.regions, self.cameras))
         self._notify.debug("New camera created")
         return self.cameras[unused]
@@ -71,21 +68,29 @@ class SplitScreen(object):
     def removeCamera(self,camera):
         '''
         removes a camera out of the list
+        @param camera: (Camera NodePath) camera to remove
         '''
         self._notify.debug("Removing camera: %s" %(camera))
+        # get the index of the camera
         i = self.cameras.index(camera)        
-        self.regions.pop(i)
-        self.cameras.remove(camera)
-        self.filters[i].delBloom()
-        self.filters.pop(i)
+        
+        self.filters[i].delBloom()  # deactivate the shader
+        self.filters.pop(i)         # delete the filter
+        self.cameras.pop(i)         # delete the camera
+        self.regions.pop(i)         # delete the region
+        
+        # delete all empty cameras
         try: 
             while True:
                 self.cameras.remove(None)
         except: pass
+        # delete all empty filters
         try: 
             while True:
                 self.filters.remove(None)
         except: pass
+        
+        # the regions have to be recalculated and the cameras have to be rearranged
         self.regions = self.calculateRegions(len(self.cameras))
         self.refreshCameras()
         self._notify.debug("New regions: %s , New cameras: %s" %(self.regions, self.cameras))
@@ -95,6 +100,7 @@ class SplitScreen(object):
     def addCameras(self, cam_count):
         '''
         adds multiple cameras
+        @param cam_count: (int) number of cams to add
         @return: (list) returns all recently added cameras
         '''
         cams = [] # this will be returned
@@ -104,12 +110,8 @@ class SplitScreen(object):
         # if there are enough unused camera slots, use it
         if len(unused) >= cam_count:
             for i in unused:
-                self.cameras[i] = self.createCamera(self.regions[i])
+                self.cameras[i] = self.createCamera(self.regions[i])        # add the cam
                 self.cams.append(self.cameras[i])
-                
-                # glow shader  ### unused nicht nur von den cams, sondern auch filters updaten
-                self.filters[i] = CommonFilters(base.win, self.cameras[i])
-                filterok = self.filters[i].setBloom(blend=(0,0,0,1), desat=-0.8, intensity=4.0, size="big")
                 
         # if there are not enough free slots, we have to recalculate the regions
         else:
@@ -117,24 +119,18 @@ class SplitScreen(object):
             
             # first fill the unused slots
             for i in unused:
-                self.cameras[i] = self.createCamera(self.regions[i])
+                self.cameras[i] = self.createCamera(self.regions[i])        # add the cam
                 self.cams.append(self.cameras[i])
-                
-                # glow shader  ### unused nicht nur von den cams, sondern auch filters updaten
-                self.filters[i] = CommonFilters(base.win, self.cameras[i])
                 
             # then add all other new cams at the end
             for i in xrange(cam_count-len(unused)):
                 cam = self.createCamera(self.regions[i])
-                self.cameras.append(cam)
+                self.cameras.append(cam)                                        # add the cam
                 cams.append(cam)
-                # glow shader  ### unused nicht nur von den cams, sondern auch filters updaten
-                self.filters[i] = CommonFilters(base.win, self.cameras[i])
             
             # if there are empty slots, they're filled with None
             for i in xrange(len(self.regions)-len(self.cameras)):
                 self.cameras.append(None)
-                self.filters.append(None)
                 
             # refresh all cameras
             self.refreshCameras()
@@ -149,34 +145,48 @@ class SplitScreen(object):
         updates the size of all cameras, when the count of the regions has changed
         '''
         taskMgr.remove("AnimateRegion")
-        self.cameraPosPre = []
-        for filters in self.filters:
-            if filters != None:
-                    filters.delBloom()
+        self.cameraPosPre = [] # those are the old positions
+        
+        # first deactivate all shaders
+        self.setShaderOff()
+        
+        # then save all old regions
         for i in xrange(len(self.cameras)):
             if self.cameras[i] != None:
-                self.cameraPosPre.append((self.cameras[i].node().getDisplayRegion(0).getLeft(), self.cameras[i].node().getDisplayRegion(0).getRight(), self.cameras[i].node().getDisplayRegion(0).getBottom(), self.cameras[i].node().getDisplayRegion(0).getTop()))
+                # add the old regions to the list
+                region = self.cameras[i].node().getDisplayRegion(0)
+                self.cameraPosPre.append((region.getLeft(), region.getRight(), region.getBottom(), region.getTop()))
+                #update the aspect of the camera
                 self.cameras[i].node().getLens().setAspectRatio(((self.regions[i][1]-self.regions[i][0])/(self.regions[i][3]-self.regions[i][2])))
                 height =  self.cameras[i].node().getDisplayRegion(0).getPixelHeight()
                 width =  self.cameras[i].node().getDisplayRegion(0).getPixelWidth()
                 ratio = float(width)/float(height)
                 self.cameras[i].node().getLens().setFov(45*ratio)
+                
+        # start the animation in a new task
         taskMgr.add(self.animateRegion, "AnimateRegion")
         
-#        #Old Code without animation  
-#        for i in xrange(len(self.cameras)):
-#            if self.cameras[i] != None:
-#                print self.cameras[i].node().getDisplayRegion(0), self.cameras[i].node().getDisplayRegions
-#                self.cameras[i].node().getDisplayRegion(0).setDimensions(self.regions[i][0], self.regions[i][1], self.regions[i][2], self.regions[i][3])
-#                self._notify.debug("Aspect Ratio: %s:%s" %(self.regions[i][1]-self.regions[i][0],self.regions[i][3]-self.regions[i][2]))
-#                
-#                #self.cameras[i].node().getLens().setFov(45*((self.regions[i][1]-self.regions[i][0])/(self.regions[i][3]-self.regions[i][2])))
-#                self.cameras[i].node().getLens().setAspectRatio(((self.regions[i][1]-self.regions[i][0])/(self.regions[i][3]-self.regions[i][2])))
+##        #Old Code without animation  
+##        for i in xrange(len(self.cameras)):
+##            if self.cameras[i] != None:
+##                print self.cameras[i].node().getDisplayRegion(0), self.cameras[i].node().getDisplayRegions
+##                self.cameras[i].node().getDisplayRegion(0).setDimensions(self.regions[i][0], self.regions[i][1], self.regions[i][2], self.regions[i][3])
+##                self._notify.debug("Aspect Ratio: %s:%s" %(self.regions[i][1]-self.regions[i][0],self.regions[i][3]-self.regions[i][2]))
+##                
+##                #self.cameras[i].node().getLens().setFov(45*((self.regions[i][1]-self.regions[i][0])/(self.regions[i][3]-self.regions[i][2])))
+##                self.cameras[i].node().getLens().setAspectRatio(((self.regions[i][1]-self.regions[i][0])/(self.regions[i][3]-self.regions[i][2])))
+##        
+##        # reactivate the shaders
+##        self.setShaderOn()
     
     #-----------------------------------------------------------------
     
     ##TODO Use task.time instead of self.steps (Frames)
     def animateRegion(self, task):
+        '''
+        animates the subwindows to their new positions and reactivates the shaders after that
+        '''
+        # if the animation is finished, we set the positions to final values
         if task.time >= self.steps:
             for i in xrange(len(self.cameraPosPre)):
                 self.cameras[i].node().getDisplayRegion(0).setDimensions(self.calTheDiff( self.cameraPosPre[i][0], self.regions[i][0], self.steps), self.calTheDiff( self.cameraPosPre[i][1], self.regions[i][1], self.steps), self.calTheDiff( self.cameraPosPre[i][2], self.regions[i][2], self.steps), self.calTheDiff( self.cameraPosPre[i][3], self.regions[i][3], self.steps))
@@ -185,10 +195,12 @@ class SplitScreen(object):
                 width =  self.cameras[i].node().getDisplayRegion(0).getPixelWidth()
                 ratio = float(width)/float(height)
                 self.cameras[i].node().getLens().setFov(45*ratio)
-            for filters in self.filters:
-                if filters != None:
-                    filters.setBloom(blend=(0,0,0,1), desat=-0.8, intensity=4.0, size="big")
+            # reactivate the shaders
+            self.setShaderOn()
+            # end the task
             return task.done
+        
+        # animate the screens
         for i in xrange(len(self.cameraPosPre)):
             self.cameras[i].node().getDisplayRegion(0).setDimensions(self.calTheDiff( self.cameraPosPre[i][0], self.regions[i][0], task.time), self.calTheDiff( self.cameraPosPre[i][1], self.regions[i][1], task.time), self.calTheDiff( self.cameraPosPre[i][2], self.regions[i][2], task.time), self.calTheDiff( self.cameraPosPre[i][3], self.regions[i][3], task.time))
             self.cameras[i].node().getLens().setAspectRatio(((self.regions[i][1]-self.regions[i][0])/(self.regions[i][3]-self.regions[i][2])))
@@ -196,6 +208,7 @@ class SplitScreen(object):
             width =  self.cameras[i].node().getDisplayRegion(0).getPixelWidth()
             ratio = float(width)/float(height)
             self.cameras[i].node().getLens().setFov(45*ratio)
+        # continue the task
         return task.cont
     
     
@@ -234,7 +247,7 @@ class SplitScreen(object):
     
     def createCamera(self,region):
         '''
-        Create one Camera for a new Player
+        Create a camera for a new player
         '''
         camera=base.makeCamera(base.win,displayRegion=region)
         camera.node().getLens().setAspectRatio(((region[1]-region[0])/(region[3]-region[2])))
@@ -269,8 +282,42 @@ class SplitScreen(object):
                 for x in range(1, int(separations+1) ,1):
                     regions.append(((x-1)/separations, x/separations, (y-1)/separations, y/separations ))
         
-        return regions  
+        return regions
+    
+    # -----------------------------------------------------------------
+    
+    def setShaderOn(self):
+        '''
+        activates all shaders
+        '''
+        # activate the shaders
+        self.filters = []
+        
+        for i in xrange(len(self.cameras)):
+            if self.cameras[i] != None:
+                self.filters.append(CommonFilters(base.win, self.cameras[i]))
+                self.filters[i].setBloom(blend=(0,0,0,1), desat=-0.8, intensity=4.0, size="big")
+            else:
+                self.filters.append(None)
+        self.shaders_on = True
+        print "!!!       SHADERS ON"
+
+    # -----------------------------------------------------------------
  
+    def setShaderOff(self):
+        '''
+        deactivates all shaders
+        '''
+        # deactivate the shaders
+        for filters in self.filters:
+            if filters != None:
+                filters.delBloom()
+                del filters
+        self.filters = []
+        self.shaders_on = False
+        print "!!!       SHADERS OFF"
+    
+    # -----------------------------------------------------------------
 
 # -----------------------------------------------------------------
 # -----------------------------------------------------------------

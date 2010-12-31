@@ -174,16 +174,17 @@ class Vehicle(object):
         self._physics_model.setMass(physics_mass)
         
         #Initialize the collision-model of the vehicle
-        ##for use with blender models
-        try:
-            col_model = loader.loadModel("data/models/vehicles/%s.collision" %(self._model.getName()))
-            self.collision_model = OdeTriMeshGeom(self._ode_space, OdeTriMeshData(col_model, True))
-            self._notify.info("Loading collision-file: %s" %("data/models/vehicles/%s.collision" %(self._model.getName())))
-        ##for fast collisions
-        except:
-            self._notify.warning("Could not load collision-file. Using standard collision-box")
-            #self.collision_model = OdeTriMeshGeom(self._ode_space, OdeTriMeshData(model, False))
-            self._collision_model = OdeBoxGeom(self._ode_space, 3,3,2)
+##        ##for use with blender models
+##        try:
+##            col_model = loader.loadModel("data/models/vehicles/%s.collision" %(self._model.getName()))
+##            self.collision_model = OdeTriMeshGeom(self._ode_space, OdeTriMeshData(col_model, True))
+##            self._notify.info("Loading collision-file: %s" %("data/models/vehicles/%s.collision" %(self._model.getName())))
+##        ##for fast collisions
+##        except:
+##            self._notify.warning("Could not load collision-file. Using standard collision-box")
+##            #self.collision_model = OdeTriMeshGeom(self._ode_space, OdeTriMeshData(model, False))
+##            self._collision_model = OdeBoxGeom(self._ode_space, 3,3,2)
+        self._collision_model = OdeBoxGeom(self._ode_space, 3,3,2)
         self._collision_model.setBody(self._physics_model)
         self._collision_model.setCollideBits(7)
         self._collision_model.setCategoryBits(2)
@@ -192,7 +193,7 @@ class Vehicle(object):
         self._ray = CollisionRay(Vec3(0,5,0), Vec3(0,0,-1), self._ode_space, parent = self._collision_model, collide_bits = 0, length = 20.0)
         #This one is used for the floating effect but also for slipstream
         self._frontray = CollisionRay(Vec3(0,0,0), Vec3(1,0,0), self._ode_space, parent = self._collision_model, collide_bits = 0, length = 15.0)
-        ##Overwrite variables for testing purposes
+        #Overwrite variables for testing purposes
         self._grip_strength = 0.9
         self._track_grip = 0.2
         self._boost_strength = 1400
