@@ -198,7 +198,8 @@ class Game(ShowBase):
         counter = 0
         for player in self.players:
             player.activateGameCam()
-            self.players[counter].vehicle.physics_model.setPosition(0, -5 * counter, 10)
+            self.players[counter].vehicle.physics_model.setPosition(0, -20 * counter, 10)
+            self.players[counter].vehicle.model.setScale(2)
             self.players[counter].vehicle.model.setH(0)
             self.players[counter].vehicle.model.setP(0)
             self.players[counter].vehicle.model.setR(0)
@@ -227,7 +228,7 @@ class Game(ShowBase):
         self.borderr = borderr
         self.borderr.reparentTo(render)
         
-        roadtex = loader.loadTexture('data/textures/tube.png')
+        roadtex = loader.loadTexture('data/textures/street.png')
         bordertex = loader.loadTexture('data/textures/border.png')
         self.track.setTexture(roadtex)
         self.borderl.setTexture(bordertex)

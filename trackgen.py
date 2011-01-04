@@ -345,8 +345,8 @@ class Track(object):
 ##                                Vec3(-795.452, -155.79, 21.062), Vec3(-794.946, -155.595, 21.1194), Vec3(572.476, 370.148, 175.959), Vec3(571.923, 370.304, 175.915), Vec3(-745.631, 741.556, 72.0065), Vec3(328, -550, 91), Vec3(0, -700, 0), Vec3(0, -10, 0)]
             self.trackpoints = [Vec3(0, 0, 0), Vec3(0, 250, 0), Vec3(-0.671355, 949.067, 0.0177116),
                                 Vec3(-795.452, -155.79, 21.062), Vec3(572.476, 370.148, 175.959), Vec3(-745.631, 741.556, 72.0065), Vec3(328, -550, 91), Vec3(0, -700, 0), Vec3(0, -100, 0)]
-##            for i in xrange(len(self.trackpoints)):
-##                self.trackpoints[i][2]*=10
+            for i in xrange(len(self.trackpoints)):
+                self.trackpoints[i][2]*=5
         
         self.curve = HermiteCurve()
         
