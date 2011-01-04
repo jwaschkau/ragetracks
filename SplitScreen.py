@@ -300,7 +300,6 @@ class SplitScreen(object):
             else:
                 self.filters.append(None)
         self.shaders_on = True
-        print "!!!       SHADERS ON"
 
     # -----------------------------------------------------------------
  
@@ -315,7 +314,6 @@ class SplitScreen(object):
                 del filters
         self.filters = []
         self.shaders_on = False
-        print "!!!       SHADERS OFF"
     
     # -----------------------------------------------------------------
 

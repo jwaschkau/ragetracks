@@ -26,7 +26,9 @@ class Game(ShowBase):
         base.setFrameRateMeter(True) #Show the Framerate
         #base.toggleWireframe()
         self.accept("space",self.onSpace)
+        self.accept("tab",self.onTab)
         self.startGame()
+        self.cam_on = True
         # -----------------------------------------------------------------
 
     # -----------------------------------------------------------------
@@ -34,7 +36,13 @@ class Game(ShowBase):
     def onSpace(self, evt=None):
         '''
         '''
-        base.toggleWireframe()
+        if self.trackmesh2.getParent() == render:
+            self.trackmesh.reparentTo(render)
+            self.trackmesh2.detachNode()
+        else:
+            self.trackmesh.detachNode()
+            self.trackmesh2.reparentTo(render)
+##        base.toggleWireframe()
         
 
     # -----------------------------------------------------------------
@@ -47,10 +55,15 @@ class Game(ShowBase):
         
         self.track = trackgen3d.Track3d(1000, 800, 600, 200, 5)
         
-        nodePath = self.render.attachNewNode(self.track.createRoadMesh())
+        self.trackmesh = NodePath(self.track.createRoadMesh())
         tex = loader.loadTexture('data/textures/street.png')
-        nodePath.setTexture(tex)
+        self.trackmesh.setTexture(tex)
+        
+        self.trackmesh2 = NodePath(self.track.createUninterpolatedRoadMesh())
+        self.trackmesh2.setTexture(tex)
         #nodePath.setTwoSided(True)
+
+        self.trackmesh.reparentTo(render)
         
         #LICHT
         self.plight = PointLight('kkkplight')
@@ -61,7 +74,6 @@ class Game(ShowBase):
         self.plnp.node().setAttenuation(Point3(0,0,1))
         self.plnp.setScale(.5,.5,.5)
         
-        nodePath.setShaderAuto(True)
         
 
         #self.plnp.setHpr(0,-90,0)
@@ -94,18 +106,18 @@ class Game(ShowBase):
         tron.reparentTo(render)
         tron.setPos(0,0,15)
         tron.setHpr(0,-90,0)
-        nodePath2 = self.render.attachNewNode(self.track.createBorderLeftMesh())
-        tex2 = loader.loadTexture('data/textures/border.png')
-        nodePath2.setTexture(tex2)
+##        nodePath2 = self.render.attachNewNode(self.track.createBorderLeftMesh())
+##        tex2 = loader.loadTexture('data/textures/border.png')
+##        nodePath2.setTexture(tex2)
+##        
+##        nodePath3 = self.render.attachNewNode(self.track.createBorderRightMesh())
+##        tex2 = loader.loadTexture('data/textures/border.png')
+##        nodePath3.setTexture(tex2)
         
-        nodePath3 = self.render.attachNewNode(self.track.createBorderRightMesh())
-        tex2 = loader.loadTexture('data/textures/border.png')
-        nodePath3.setTexture(tex2)
         
-    
         #Load the Lights
         ambilight = AmbientLight('ambilight')
-        ambilight.setColor(VBase4(0.1, 0.1, 0.1, 1))
+        ambilight.setColor(VBase4(0.8, 0.8, 0.8, 1))
         render.setLight(render.attachNewNode(ambilight))
 
     # -----------------------------------------------------------------
@@ -157,6 +169,23 @@ class Game(ShowBase):
         val = self.plight.getExponent()+val
         print val
         self.plight.setExponent(val)
+    
+    def onTab(self):
+        '''
+        '''
+        if self.cam_on:
+            base.disableMouse()
+            base.camera.setPos(-293.807, 91.2993, 3984.4)
+            base.camera.setHpr(-76.0078, -85.4581, -71.7315)
+
+            #base.camera.setPos(39.3053, -376.205, -3939.89)
+            #base.camera.setHpr(5.33686, -82.7432, 8.26239)
+
+            #print base.camera.getPos(), base.camera.getHpr()
+            self.cam_on = False
+        else:
+            base.enableMouse()
+            self.cam_on = True
 
 # -----------------------------------------------------------------
 # -----------------------------------------------------------------

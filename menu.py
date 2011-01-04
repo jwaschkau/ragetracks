@@ -513,7 +513,7 @@ class Menu(object):
                 self._notify.debug("Loading vehicle: %s" %(loading))
                 if not loading:
                     taskMgr.remove("selectVehicle")
-                    self.track =  trackgen3d.Track3d(1000, 1800, 1600, 1200, len(self._players))
+                    self.track =  trackgen3d.Track3d(1000, 1800, 1600, 1200, 5)#len(self._players))
                     self.streetPath = render.attachNewNode(self.track.createRoadMesh())
                     #self.borderleftPath = render.attachNewNode(self.track.createBorderLeftMesh())
                     self.borderleftPath = render.attachNewNode(self.track.createBorderLeftMesh())

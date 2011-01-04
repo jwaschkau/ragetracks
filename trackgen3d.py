@@ -356,13 +356,15 @@ class Track3d(object):
         #street_data = StreetData(Vec2(15.0,1.0), Vec2(15.0,-5.0), Vec2(0.0,-5.0), mirrored=True) #, Vec2(15.0,0.0)
         self.street_data = StreetData()
         self.street_data.readFile("data/road/road01.xml")
+##        self.street_data.readFile("data/road/halfpipe.xml")
+##        self.street_data.readFile("data/road/tube.xml")
     
         self.streetTextrange = 0.0
-        m = Track(x, y, z)
-        m.generateTestTrack(player_count)
-##        m.generateTrack(player_count)
+        self.track = Track(x, y, z)
+        self.track.generateTestTrack(player_count)
+##        self.track.generateTrack(player_count)
      
-        self.track_points = m.getInterpolatedPoints(res)
+        self.track_points = self.track.getInterpolatedPoints(res)
         self.varthickness = []  #Generate the Vector for thickness of the road
         
         for i in range(len(self.track_points)-1):
@@ -376,11 +378,11 @@ class Track3d(object):
         for i in self.varthickness:
             i.normalize()
             
-        for i in range(len(self.varthickness)):
-            if self.varthickness[i-1].almostEqual(self.varthickness[i], 0.3):
-                pass
-            else:
-                print self.varthickness[i-1], self.varthickness[i]
+##        for i in range(len(self.varthickness)):
+##            if self.varthickness[i-1].almostEqual(self.varthickness[i], 0.3):
+##                pass
+##            else:
+##                print "varthickness", self.varthickness[i-1], self.varthickness[i]
         
 
 # -------------------------------------------------------------------------------------
@@ -435,13 +437,8 @@ class Track3d(object):
         texcoordinates =[]
         street_data_length = len(street_data)
         
-        
-##        print street_data_length
-##        for i in xrange(street_data_length):
-##            texcoordinates.append((i+1.0)/street_data_length)
         texcoordinates = street_data.getTexCoordinates()
             
-##        print "\n\n\n#-#-#-#-#-#-#-##-#-#-#-#-#-#####################-#-#-#-\n\n", texcoordinates
         
         last_normal = Vec3(0,0,1)
         last_vec = Vec3(0,1,0)
@@ -542,6 +539,25 @@ class Track3d(object):
         '''
         #Creating the Vertex
         self.createVertices(self.track_points, self.street_data)
+        #Connect the Vertex
+        self.connectVertices(self.street_data)
+        
+        geom = Geom(self.vdata)
+        geom.addPrimitive(self.prim)
+        
+        node = GeomNode('street')
+        node.addGeom(geom)
+        
+        #nodePath = self.render.attachNewNode(node)
+        return node
+
+    # -------------------------------------------------------------------------------------
+
+    def createUninterpolatedRoadMesh(self):
+        '''
+        '''
+        #Creating the Vertex
+        self.createVertices(self.track.getPoints(), self.street_data)
         #Connect the Vertex
         self.connectVertices(self.street_data)
         

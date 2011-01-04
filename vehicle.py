@@ -190,7 +190,7 @@ class Vehicle(object):
         self._collision_model.setCategoryBits(2)
 
         #Add collision-rays for the floating effect
-        self._ray = CollisionRay(Vec3(0,5,0), Vec3(0,0,-1), self._ode_space, parent = self._collision_model, collide_bits = 0, length = 20.0)
+        self._ray = CollisionRay(Vec3(5,0,0), Vec3(0,0,-1), self._ode_space, parent = self._collision_model, collide_bits = 0, length = 20.0)
         #This one is used for the floating effect but also for slipstream
         self._frontray = CollisionRay(Vec3(0,0,0), Vec3(1,0,0), self._ode_space, parent = self._collision_model, collide_bits = 0, length = 15.0)
         #Overwrite variables for testing purposes
