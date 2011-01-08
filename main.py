@@ -229,10 +229,26 @@ class Game(ShowBase):
         self.borderr.reparentTo(render)
         
         roadtex = loader.loadTexture('data/textures/street.png')
+##        roadtex = loader.loadTexture('data/textures/tube2.png')
         bordertex = loader.loadTexture('data/textures/border.png')
         self.track.setTexture(roadtex)
         self.borderl.setTexture(bordertex)
         self.borderr.setTexture(bordertex)
+        
+        self.rings = []
+        y = 100
+        for i in xrange(4):
+            ring = loader.loadModel("data/models/ring.egg")
+            ring.setScale(34)
+            #ring.setZ(-15)
+            ring.setY(y)
+            y += 30
+            ring.setTransparency(TransparencyAttrib.MAlpha) 
+            ring.setLightOff()
+            ring.reparentTo(render)
+            self.rings.append(ring)
+
+        taskMgr.add(self.turnRings, "turnRings")
         
         #add collision with the map
         self.groundGeom = OdeTriMeshGeom(self.space, OdeTriMeshData(self.track, True))
@@ -488,6 +504,14 @@ class Game(ShowBase):
             player.updatePlayer()
         return task.cont
     # -----------------------------------------------------------------
+    
+    def turnRings(self, task):
+        '''
+        '''
+        speeds = [.2,-.5,.7,-.3]
+        for i in xrange(len(self.rings)):
+            self.rings[i].setR(self.rings[i].getR()+speeds[i])
+        return task.cont
 
 # -----------------------------------------------------------------
 # -----------------------------------------------------------------
