@@ -15,6 +15,7 @@ from pandac.PandaModules import *
 import xml.dom.minidom as dom
 from xml.dom.minidom import Document
 from direct.directnotify.DirectNotify import DirectNotify
+import glob
 
 MIN_Z_DIST = 100
 MAX_Z_DIST = 500
@@ -26,7 +27,7 @@ MIN_ANGLE = 40
 # -------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------
 
-class Looping(object):
+class Prefab(object):
     '''
     describes a special road part, e.g. a Looping
     '''
@@ -138,7 +139,7 @@ class Looping(object):
             '''
             returns a string representation e.g. for printing
             '''
-            return "Looping"+str(self.points)
+            return "Prefab"+str(self.points)
         
     # -------------------------------------------------------------------------------------
     
@@ -278,11 +279,15 @@ class Track(object):
         @param size_y: (int) maximum y-coordinates
         @param max_height: (int) maximum z-coordinates
         '''
-        self.setSize(size_x, size_y, max_height)
+        #self.setSize(size_x, size_y, max_height)
+        #self.setSize(8000, 8000, 1000)
+        self.setSize(1600, 1600, 200)
         self.points = []
         self.curve = None
         self._notify = DirectNotify().newCategory("TrackGen")
         self._notify.info("New Track-Object created: %s" %(self))
+        
+        self.prefabs = glob.glob("data/road/parts/*.xml")
 
     # -------------------------------------------------------------------------------------
 
@@ -309,12 +314,13 @@ class Track(object):
         '''
         return self.size
 
-    # -------------------------------------------------------------------------------------
+    # -------------------------------------------------------------------------
+    
     def generateTestTrack(self, player_count):
         
         #the track
         #rand = random.randint(1,1)
-        rand = 0
+        rand = 5
         if rand == 0:
             self.trackpoints = [[0,0,0],[0,500,0],[200,500,0],[250,250,0],[300,0,200],[400,-500,0],[0,-500,0],[0,-1,0]]
             scale = 2
@@ -329,11 +335,18 @@ class Track(object):
         elif rand == 3:
             self.trackpoints = [[0,0,0],[0,500,0],[200,500,0],[200,-500,0],[0,-500,0],[0,-1,0]]
         elif rand == 4:
-            looping = Looping(filename="data/road/parts/helix01.xml") # load the looping from file
-            looping *= 100      # scale it by 100
+            prefab = Prefab(filename="data/road/parts/helix01.xml") # load the looping from file
+            prefab *= 100      # scale it by 100
             self.trackpoints = []
-            for point in looping:   # add them to the list
+            for point in prefab:   # add them to the list
                 self.trackpoints.append(point)
+        elif rand == 5:
+##            self.trackpoints = [Vec3(0, 0, 0), Vec3(0, 250, 0), Vec3(0, 250.559, 0), Vec3(-0.326736, 949.546, 0.00861993), Vec3(-0.671355, 949.067, 0.0177116),
+##                                Vec3(-795.452, -155.79, 21.062), Vec3(-794.946, -155.595, 21.1194), Vec3(572.476, 370.148, 175.959), Vec3(571.923, 370.304, 175.915), Vec3(-745.631, 741.556, 72.0065), Vec3(328, -550, 91), Vec3(0, -700, 0), Vec3(0, -10, 0)]
+            self.trackpoints = [Vec3(0, 0, 0), Vec3(0, 250, 0), Vec3(-0.671355, 949.067, 0.0177116),
+                                Vec3(-795.452, -155.79, 21.062), Vec3(572.476, 370.148, 175.959), Vec3(-745.631, 741.556, 72.0065), Vec3(328, -550, 91), Vec3(0, -700, 0), Vec3(0, -100, 0)]
+            for i in xrange(len(self.trackpoints)):
+                self.trackpoints[i][2]*=5
         
         self.curve = HermiteCurve()
         
@@ -346,50 +359,87 @@ class Track(object):
             self.curve.appendCv(HCFREE, point[0],point[1], point[2])
             
         for i in xrange(len(self.points)-1):
-##            self.curve.setCvIn(i, Vec3(self.points[i+1]-self.points[i-1]))
-##            self.curve.setCvOut(i, Vec3(self.points[i+1]-self.points[i-1]))
-            self.curve.setCvIn(i, Vec3(self.points[i+1]-self.points[i-1])*.5)
-            self.curve.setCvOut(i, Vec3(self.points[i+1]-self.points[i-1])*.5)
+            self.curve.setCvIn(i, Vec3(self.points[i+1]-self.points[i-1]))
+            self.curve.setCvOut(i, Vec3(self.points[i+1]-self.points[i-1]))
+##            self.curve.setCvIn(i, Vec3(self.points[i+1]-self.points[i-1])*.5)
+##            self.curve.setCvOut(i, Vec3(self.points[i+1]-self.points[i-1])*.5)
     
         last = len(self.points)-1
         self.curve.setCvIn(last, Vec3(self.points[0]-self.points[-2]))
         self.curve.setCvOut(last, Vec3(self.points[0]-self.points[-2]))
          
+    # -------------------------------------------------------------------------
          
     def generateTrack(self, player_count):
         '''
         '''
         y = player_count*VEHICLE_DIST
-        points = []
+##        y_addition = 3500
+        y_addition = 700
+        points = [Vec3(0,0,0), Vec3(0, y, 0), Vec3(0,y+y_addition,0)]
         
-        points = [ Vec3(0,0,0), Vec3(0, VEHICLE_DIST, 0) ]
-
-        mat = Mat3()
-        for i in xrange(10):
-            vec = points[-1]-points[-2]
-            axis = Vec3(random.randint(0,10), random.randint(0,10), random.randint(0,10))
-            mat.setRotateMat(random.randint(0,10), axis)
-            vec = mat.xform(vec)
-            vec *= 2
-            print vec
+        x = self.size.getX()/2
+        y = self.size.getY()/2
+        
+        quadrants = [(-x, -y, 0, 0),
+                     (0, -y, x, 0),
+                     (-x, 0, 0, y),
+                     (0, 0, x, y)]
+        
+        random.shuffle(quadrants)
+        
+        for q in quadrants:
+            point = Vec3(random.randint(q[0],q[2]), random.randint(q[1],q[3]), random.randint(0, self.size.getZ()))
+            vec1 = points[-1]-points[-2]
+            vec2 = point-points[-1]
+            vec1.normalize()
+            vec2.normalize()
+            angle = vec1.angleDeg(vec2)
+            while angle > 150 and angle < 210:
+                point = Vec3(random.randint(q[0],q[2]), random.randint(q[1],q[3]), random.randint(0, self.size.getZ()))
+                vec1 = points[-1]-points[-2]
+                vec2 = point-points[-1]
+                vec1.normalize()
+                vec2.normalize()
+                angle = vec1.angleDeg(vec2)
             
-            point = points[-1]+vec
+            if angle > 90 and angle < 270:
+                a = 20.0/abs(angle-180)
+                
+                points.append(points[-1]+(vec2*a))
+                points[-2] = points[-3]+(vec1*a)  # its points[-1] and points[-2] but we just added a new one
             points.append(point)
-            
+        
+        points.append(Vec3(0,-y_addition,0))
+        points.append(Vec3(0,0,0))
+        
+##        mat = Mat3()
+##        for i in xrange(10):
+##            vec = points[-1]-points[-2]
+##            axis = Vec3(random.randint(0,10), random.randint(0,10), random.randint(0,10))
+##            mat.setRotateMat(random.randint(0,10), axis)
+##            vec = mat.xform(vec)
+##            vec *= 2
+##            print vec
+##            
+##            point = points[-1]+vec
+##            points.append(point)
+        
+        print points
+        
+        
+        # -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
+        
         self.points = points
         self.curve = HermiteCurve()
         
-        #HCCUT
-        #HCFREE 
-        #HCG1
-        #HCSMOOTH
-        
+        #HCCUT, #HCFREE , #HCG1, #HCSMOOTH
         for point in self.points:
             self.curve.appendCv(HCFREE, point[0],point[1], point[2])
             
         for i in xrange(len(self.points)-1):
-            self.curve.setCvIn(i, Vec3(self.points[i+1]-self.points[i-1])*.5)
-            self.curve.setCvOut(i, Vec3(self.points[i+1]-self.points[i-1])*.5)
+            self.curve.setCvIn(i, Vec3(self.points[i+1]-self.points[i-1]))#*.5)
+            self.curve.setCvOut(i, Vec3(self.points[i+1]-self.points[i-1]))#*.5)
     
     # -------------------------------------------------------------------------------------
 
@@ -405,12 +455,16 @@ class Track(object):
         xres = length/resolution
         for i in xrange(0,resolution):
             self.curve.getPoint(i*xres, point)
-##            print point
             pointlist.append(Vec3(point))
-            
+    
         return pointlist
 
     # -------------------------------------------------------------------------------------
+    
+    def getPoints(self):
+        '''
+        '''
+        return self.points
 
 # -------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------

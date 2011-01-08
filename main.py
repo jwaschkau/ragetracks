@@ -57,8 +57,8 @@ class Game(ShowBase):
         # load the settings
         self.settings = settings.Settings()
         self.settings.loadSettings("user/config.ini")
-        gettext.install("ragetrack", "data/language")#, unicode=True) #installs the system language
-        #trans = gettext.translation("ragetrack", "data/language", ["de"]) #installs choosen language
+        gettext.install("ragetracks", "data/language")#, unicode=True) #installs the system language
+        #trans = gettext.translation("ragetracks", "data/language", ["de"]) #installs choosen language
         #trans.install() #usage: print _("Hallo Welt")
 
         #Fullscreen
@@ -198,7 +198,8 @@ class Game(ShowBase):
         counter = 0
         for player in self.players:
             player.activateGameCam()
-            self.players[counter].vehicle.physics_model.setPosition(0, -5 * counter, 10)
+            self.players[counter].vehicle.physics_model.setPosition(0, -20 * counter, 10)
+            self.players[counter].vehicle.model.setScale(2)
             self.players[counter].vehicle.model.setH(0)
             self.players[counter].vehicle.model.setP(0)
             self.players[counter].vehicle.model.setR(0)
