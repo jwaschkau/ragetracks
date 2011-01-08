@@ -357,12 +357,12 @@ class Track3d(object):
         self.street_data = StreetData()
         self.street_data.readFile("data/road/road01.xml")
 ##        self.street_data.readFile("data/road/halfpipe.xml")
-##        self.street_data.readFile("data/road/tube.xml")
+##        self.street_data.readFile("data/road/tube2.xml")
     
         self.streetTextrange = 0.0
         self.track = Track(x, y, z)
-        self.track.generateTestTrack(player_count)
-##        self.track.generateTrack(player_count)
+##        self.track.generateTestTrack(player_count)
+        self.track.generateTrack(player_count)
      
         self.track_points = self.track.getInterpolatedPoints(res)
         self.varthickness = []  #Generate the Vector for thickness of the road

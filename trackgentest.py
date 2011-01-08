@@ -113,7 +113,12 @@ class Game(ShowBase):
 ##        nodePath3 = self.render.attachNewNode(self.track.createBorderRightMesh())
 ##        tex2 = loader.loadTexture('data/textures/border.png')
 ##        nodePath3.setTexture(tex2)
-        
+        ring = loader.loadModel("data/models/ring.egg")
+        ring.setScale(24)
+        ring.setZ(-25)
+        ring.setY(100)
+        ring.setTransparency(TransparencyAttrib.MAlpha) 
+        ring.reparentTo(render)
         
         #Load the Lights
         ambilight = AmbientLight('ambilight')

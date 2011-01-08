@@ -281,7 +281,7 @@ class Track(object):
         '''
         #self.setSize(size_x, size_y, max_height)
         #self.setSize(8000, 8000, 1000)
-        self.setSize(1600, 1600, 200)
+        self.setSize(1600, 1600, 800)
         self.points = []
         self.curve = None
         self._notify = DirectNotify().newCategory("TrackGen")
@@ -320,7 +320,7 @@ class Track(object):
         
         #the track
         #rand = random.randint(1,1)
-        rand = 5
+        rand = 0
         if rand == 0:
             self.trackpoints = [[0,0,0],[0,500,0],[200,500,0],[250,250,0],[300,0,200],[400,-500,0],[0,-500,0],[0,-1,0]]
             scale = 2
@@ -403,15 +403,15 @@ class Track(object):
                 vec2.normalize()
                 angle = vec1.angleDeg(vec2)
             
-            if angle > 90 and angle < 270:
-                a = 20.0/abs(angle-180)
-                
-                points.append(points[-1]+(vec2*a))
-                points[-2] = points[-3]+(vec1*a)  # its points[-1] and points[-2] but we just added a new one
+##            if angle > 90 and angle < 270:
+##                a = 20.0/abs(angle-180)
+##                
+##                points.append(points[-1]+(vec2*a))
+##                points[-2] = points[-3]+(vec1*a)  # its points[-1] and points[-2] but we just added a new one
             points.append(point)
         
         points.append(Vec3(0,-y_addition,0))
-        points.append(Vec3(0,0,0))
+        points.append(Vec3(0,-100,0))
         
 ##        mat = Mat3()
 ##        for i in xrange(10):
