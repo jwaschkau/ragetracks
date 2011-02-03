@@ -130,7 +130,7 @@ class MainMenu(object):
     # -----------------------------------------------------------------
     
     def addWii(self):
-        self.devices.wiis.getWiimotes()
+        pass#self.devices.wiis.getWiimotes()
 #        try:
 #            print 'Put Wiimote in discoverable mode now (press 1+2)...'
 #            wiimote = cwiid.Wiimote()
