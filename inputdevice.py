@@ -19,7 +19,7 @@ import sys
 class InputDevice(object):
     '''
     '''
-    def __init__(self, device, settings, wii):
+    def __init__(self, device, settings):
         '''
         '''
         self._notify = DirectNotify().newCategory("Input")
@@ -29,7 +29,6 @@ class InputDevice(object):
         self.boost = False       # Button for boosting
         self.use_item = False    # Button for using items
         self.escape = False
-        self.wii = wii
 
         # if this is a Joystick, look if there are Settings for Joysticks with this name
         if type(self.device) == joystickdevice.JoystickDevice:
@@ -58,8 +57,10 @@ class InputDevice(object):
             self.device.keys[self.settings["boost"]] = False
             self.device.keys[self.settings["use_item"]] = False
             self.device.keys[self.settings["escape"]] = False
+        
         elif type(self.device) == wiidevice.WiiDevice:
             pass #Think isn't necessary by Wiimotes
+            # maybe load settings here
 
     # ---------------------------------------------------------
 
@@ -146,6 +147,8 @@ class InputDevice(object):
             # then get boost and item button values
             self.boost = self.device.buttons[self.settings["boost"][1]]
             self.use_item = self.device.buttons[self.settings["use_item"][1]]
+            
+            
         elif type(self.device) == keyboarddevice.KeyboardDevice:
             acceleration = 0
             direction = 0
@@ -167,42 +170,10 @@ class InputDevice(object):
             
             if self.device.keys[self.settings["escape"]]:
                 sys.exit()
-        elif type(self.device) == wiidevice.WiiDevice:
-            acceleration = 0
-            direction = 0
-            wiimotes = self.device.wiimote 
-            reloadWiimotes = False
         
-            #while wiimotes: # Go so long as there are wiimotes left to poll
-            if reloadWiimotes:
-                # Regenerate the list of wiimotes
-                wiimotes = wii.GetWiimotes()
-                reloadWiimotes = False;
-    
-            self.wii.POLL_NON_BLOCKING = 0
-            # Poll the wiimotes to get the status like pitch or roll
-            if(self.wii.Poll()):
-                for wiimote in wiimotes: #how to do this only for one device?
-                    event = wiimote.GetEvent()
-                    
-                    if wiimote.Buttons.isPressed(wiimote.Buttons.BUTTON_TWO): 
-                        self.boost = True
-                    else:
-                        self.boost = False
-                    if wiimote.Buttons.isPressed(wiimote.Buttons.BUTTON_ONE): 
-                        self.use_item = True
-                    else:
-                        self.use_item = False
-                    
-                    wiimote.SetMotionSensingMode(wiimote.ON)
-                    if wiimote.isUsingACC(): 
-                        pitch, roll, yaw = wiimote.Accelerometer.GetOrientation()
-                        a_pitch, a_roll = wiimote.Accelerometer.GetRawOrientation()
-                        
-                        if pitch >= 150.0: pitch = 150.0
-                        if pitch <= -150.0: pitch = -150.0
-                        self.directions[0] = (pitch / 150.0)*-1
-                        self.directions[1] = 0
+        
+        elif type(self.device) == wiidevice.WiiDevice:
+            pass
             
     # ---------------------------------------------------------
 
@@ -225,13 +196,15 @@ class InputDevices(object):
             import pywii
             self.wii = pywii.Wii()
             self.wiis = wiidevice.WiiDevices(self, self.wii)
-        except: self.wii = []
+        except:
+            self.wii = []
+            self.wiis = None
 
         
         self.keyboard = keyboarddevice.KeyboardDevice()
         self.joysticks = joystickdevice.JoystickDevices()
 
-        self.devices = [InputDevice(self.keyboard, settings, self.wii)]
+        self.devices = [InputDevice(self.keyboard, settings)]
 
         for joystick in self.joysticks.getJoysticks():
             try:

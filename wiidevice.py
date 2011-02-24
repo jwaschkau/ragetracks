@@ -15,7 +15,7 @@ class WiiDevice(object):
     def __init__(self, parent):
         '''
         '''
-        self.wii = False
+        self._wiimote = None
         self.parent = parent
         
         self.parent.addWii(self)
@@ -23,15 +23,19 @@ class WiiDevice(object):
     def setWiimote(self, wii):
         '''
         '''
-        self.wii = wii
+        self._wiimote = wii
         
     def getWiimote(self):
         '''
         '''
-        if self.wii == False: print "ERROR using Get before set"
-        return self.wii
+        if self._wiimote == None: print "ERROR using Get before set"
+        return self._wiimote
     
     wiimote = property(fget = getWiimote, fset = setWiimote)
+
+# ---------------------------------------------------------
+# ---------------------------------------------------------
+# ---------------------------------------------------------
    
 class WiiDevices(object):
     '''
@@ -47,7 +51,7 @@ class WiiDevices(object):
     def setWiimotes(self, wiimotes):
         '''
         '''
-    
+        pass
         
     def getWiimotes(self):
         '''

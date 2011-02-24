@@ -229,7 +229,7 @@ class Game(ShowBase):
         self.borderr.reparentTo(render)
         
         roadtex = loader.loadTexture('data/textures/street.png')
-##        roadtex = loader.loadTexture('data/textures/tube2.png')
+        roadtex = loader.loadTexture('data/textures/tube.png')
         bordertex = loader.loadTexture('data/textures/border.png')
         self.track.setTexture(roadtex)
         self.borderl.setTexture(bordertex)
