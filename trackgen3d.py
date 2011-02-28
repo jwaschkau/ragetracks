@@ -3,10 +3,6 @@
 ## this module contains a class for generating racing tracks
 ##############################################################
 
-##          TODO            
-## - Conecting the open part under the Street
-##
-
 from panda3d.core import * 
 from trackgen import Track
 from pandac.PandaModules import GeomVertexFormat, Geom, GeomVertexWriter, GeomTristrips, GeomNode
@@ -369,15 +365,32 @@ class Track3d(object):
         
         for i in range(len(self.track_points)-1):
             if i == 0:
-                self.varthickness.append(self.calcTheVector(self.track_points[i],self.track_points[i],self.track_points[i+1]))
+                self.varthickness.append(self.calcTheVector(self.track_points[i],self.track_points[i],self.track_points[i+1])) #First
                 continue
-            self.varthickness.append(self.calcTheVector(self.track_points[i-1],self.track_points[i],self.track_points[i+1]))
-        self.varthickness.append(self.calcTheVector(self.track_points[len(self.track_points)-2],self.track_points[len(self.track_points)-1],self.track_points[len(self.track_points)-1]))  
+            self.varthickness.append(self.calcTheVector(self.track_points[i-1],self.track_points[i],self.track_points[i+1])) 
+        self.varthickness.append(self.calcTheVector(self.track_points[len(self.track_points)-2],self.track_points[len(self.track_points)-1],self.track_points[len(self.track_points)-1])) #Last
         
         #Normalizing the Vector
         for i in self.varthickness:
             i.normalize()
+
+        print self.varthickness[-1]
+        print self.varthickness[0]
+        print self.varthickness[1]
+        print self.varthickness[2]
             
+        #Spin the last 100 Points a litte bit to Vec3(-1,0,0)
+        for i in xrange (-100,1):
+            #print self.varthickness[i] * (-i / 100), self.varthickness[i] , ((i* -1) / 100.0), i
+            print ((i* -1) / 100.0), self.varthickness[i], self.varthickness[i] * ((i* -1) / 100.0)
+            self.varthickness[i] = self.varthickness[i] * (((i+1) * -1) / 100.0) + Vec3(-1,0,0)
+            #print self.varthickness[i]
+            
+        print self.varthickness[-1]
+        print self.varthickness[0]
+        print self.varthickness[1]
+        print self.varthickness[2]    
+        print self.varthickness
 ##        for i in range(len(self.varthickness)):
 ##            if self.varthickness[i-1].almostEqual(self.varthickness[i], 0.3):
 ##                pass
