@@ -239,7 +239,9 @@ class StreetData(RoadShape):
     def __init__(self, *args, **kwds):
         RoadShape.__init__(self, *args, **kwds)
         self.border_l = RoadShape()
+        self.border_l_coll = RoadShape()
         self.border_r = RoadShape()
+        self.border_r_coll = RoadShape()
     
     # -------------------------------------------------------------------------------------
         
@@ -295,6 +297,21 @@ class StreetData(RoadShape):
                         y = float(point.getAttribute("y"))
                         self.border_l.points.append(Vec2(x, y))
                         self.border_r.points.insert(0,Vec2(x*-1,y))
+            
+            #read out the collision model border
+            border_l_coll = xml.getElementsByTagName("border_l_coll")
+            if len(border_l_coll) > 0:
+                border_l_coll = border_l[0].childNodes
+
+                border_l_collcount = border_l_coll.length
+
+                for i in xrange(border_l_collcount):
+                    point = border_l_coll.item(i)
+                    if point.nodeType == point.ELEMENT_NODE:
+                        x = float(point.getAttribute("x"))
+                        y = float(point.getAttribute("y"))
+                        self.border_l_coll.points.append(Vec2(x, y))
+                        self.border_r_coll.points.insert(0,Vec2(x*-1,y))
         else:
             #read out the borders separately
             
@@ -311,6 +328,19 @@ class StreetData(RoadShape):
                         x = float(point.getAttribute("x"))
                         y = float(point.getAttribute("y"))
                         self.border_l.points.append(Vec2(x, y))
+            # left collision model
+            border_l_coll = xml.getElementsByTagName("border_l_coll")
+            if len(border_l_coll) > 0:
+                border_l_coll = border_l_coll[0].childNodes
+
+                border_l_collcount = border_l_coll.length
+
+                for i in xrange(border_l_collcount):
+                    point = border_l_coll.item(i)
+                    if point.nodeType == point.ELEMENT_NODE:
+                        x = float(point.getAttribute("x"))
+                        y = float(point.getAttribute("y"))
+                        self.border_l_coll.points.append(Vec2(x, y))
                     
             # read out the right border
             border_r = xml.getElementsByTagName("border_r")
@@ -325,6 +355,20 @@ class StreetData(RoadShape):
                         x = float(point.getAttribute("x"))
                         y = float(point.getAttribute("y"))
                         self.border_r.points.append(Vec2(x, y))
+            
+            # right collision model
+            border_r_coll = xml.getElementsByTagName("border_r_coll")
+            if len(border_l_coll) > 0:
+                border_r_coll = border_r_coll[0].childNodes
+
+                border_r_collcount = border_r_coll.length
+
+                for i in xrange(border_r_collcount):
+                    point = border_r_coll.item(i)
+                    if point.nodeType == point.ELEMENT_NODE:
+                        x = float(point.getAttribute("x"))
+                        y = float(point.getAttribute("y"))
+                        self.border_r_coll.points.append(Vec2(x, y))
         
         self.calculateTexcoordinates()
         if len(self.border_l) > 0:
@@ -643,6 +687,45 @@ class Track3d(object):
     
 # -------------------------------------------------------------------------------------
 
+# -------------------------------------------------------------------------------------
+
+    def createBorderLeftCollisionMesh(self):
+        '''
+        '''
+        #Creating the Vertex
+        self.createVertices(self.track_points, self.street_data.border_l_coll)
+
+        #Connect the Vertex
+        self.connectVertices(self.street_data.border_l_coll)
+        
+        geom = Geom(self.vdata)
+        geom.addPrimitive(self.prim)
+        
+        node = GeomNode('border_l_coll')
+        node.addGeom(geom)
+        
+        #nodePath = self.render.attachNewNode(node)
+        return node
+    
+# -------------------------------------------------------------------------------------
+
+    def createBorderRightCollisionMesh(self):
+        '''
+        '''
+        #Creating the Vertex
+        self.createVertices(self.track_points, self.street_data.border_r_coll)
+        #Connect the Vertex
+        self.connectVertices(self.street_data.border_r_coll)
+        
+        geom = Geom(self.vdata)
+        geom.addPrimitive(self.prim)
+        
+        node = GeomNode('border_r_coll')
+        node.addGeom(geom)
+        
+        #nodePath = self.render.attachNewNode(node)
+        return node
+    
 
 # -------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------
