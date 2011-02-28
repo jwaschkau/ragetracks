@@ -363,34 +363,39 @@ class Track3d(object):
         self.track_points = self.track.getInterpolatedPoints(res)
         self.varthickness = []  #Generate the Vector for thickness of the road
         
-        for i in range(len(self.track_points)-1):
-            if i == 0:
-                self.varthickness.append(self.calcTheVector(self.track_points[i],self.track_points[i],self.track_points[i+1])) #First
-                continue
-            self.varthickness.append(self.calcTheVector(self.track_points[i-1],self.track_points[i],self.track_points[i+1])) 
-        self.varthickness.append(self.calcTheVector(self.track_points[len(self.track_points)-2],self.track_points[len(self.track_points)-1],self.track_points[len(self.track_points)-1])) #Last
-        
-        #Normalizing the Vector
-        for i in self.varthickness:
-            i.normalize()
-
-        print self.varthickness[-1]
-        print self.varthickness[0]
-        print self.varthickness[1]
-        print self.varthickness[2]
+        self.generateNormals()
+##        for i in range(len(self.track_points)-1):
+##            if i == 0:
+##                self.varthickness.append(self.calcTheVector(self.track_points[i],self.track_points[i],self.track_points[i+1])) #First
+##                continue
+##            self.varthickness.append(self.calcTheVector(self.track_points[i-1],self.track_points[i],self.track_points[i+1])) 
+##        self.varthickness.append(self.calcTheVector(self.track_points[len(self.track_points)-2],self.track_points[len(self.track_points)-1],self.track_points[len(self.track_points)-1])) #Last
+##        
+##        #Normalizing the Vector
+##        for i in self.varthickness:
+##            i.normalize()
+##
+##        print self.varthickness[-1]
+##        print self.varthickness[0]
+##        print self.varthickness[1]
+##        print self.varthickness[2]
             
         #Spin the last 100 Points a litte bit to Vec3(-1,0,0)
         for i in xrange (-100,1):
             #print self.varthickness[i] * (-i / 100), self.varthickness[i] , ((i* -1) / 100.0), i
-            print ((i* -1) / 100.0), self.varthickness[i], self.varthickness[i] * ((i* -1) / 100.0)
+            #print ((i* -1) / 100.0), self.varthickness[i], self.varthickness[i] * ((i* -1) / 100.0)
             self.varthickness[i] = self.varthickness[i] * (((i+1) * -1) / 100.0) + Vec3(-1,0,0)
+            self.normals[i] = self.normals[i] * (((i+1) * -1) / 100.0) + Vec3(0,0,1)
+            
+            self.varthickness[i].normalize()
+            self.normals[i].normalize()
             #print self.varthickness[i]
             
-        print self.varthickness[-1]
-        print self.varthickness[0]
-        print self.varthickness[1]
-        print self.varthickness[2]    
-        print self.varthickness
+##        print self.varthickness[-1]
+##        print self.varthickness[0]
+##        print self.varthickness[1]
+##        print self.varthickness[2]    
+##        print self.varthickness
 ##        for i in range(len(self.varthickness)):
 ##            if self.varthickness[i-1].almostEqual(self.varthickness[i], 0.3):
 ##                pass
@@ -440,28 +445,20 @@ class Track3d(object):
     
 # -------------------------------------------------------------------------------------
 
-# -------------------------------------------------------------------------------------
-
-
-    def createVertices(self, track_points, street_data):
+    def generateNormals(self):
         '''
         '''
-        self.resetWriters()
-        texcoordinates =[]
-        street_data_length = len(street_data)
-        
-        texcoordinates = street_data.getTexCoordinates()
-            
-        
+        self.varthickness = []
+        self.normals = []
         last_normal = Vec3(0,0,1)
         last_vec = Vec3(0,1,0)
-        for i in xrange(len(track_points)):
+        for i in xrange(len(self.track_points)):
             if i == 0:
-                vec = track_points[0]-track_points[1]
-            elif i+1 == len(track_points):
-                vec = track_points[i-1]-track_points[0]
+                vec = self.track_points[0]-self.track_points[1]
+            elif i+1 == len(self.track_points):
+                vec = self.track_points[i-1]-self.track_points[0]
             else:
-                vec = track_points[i-1]-track_points[i+1]
+                vec = self.track_points[i-1]-self.track_points[i+1]
                 
             
             # calculate here the direction out of the street vector and the last normal
@@ -476,7 +473,29 @@ class Track3d(object):
             last_normal = turned_vec.cross(vec) # calculate the new normal
             
             turned_vec.normalize()
+            self.varthickness.append(turned_vec)
+            self.normals.append(last_normal)
+
+# -------------------------------------------------------------------------------------
+
+
+    def createVertices(self, track_points = None, street_data = None):
+        '''
+        '''
+        if track_points == None:
+            track_points = self.track_points
+        if street_data == None:
+            street_data = self.street_data
             
+        self.resetWriters()
+        texcoordinates =[]
+        street_data_length = len(street_data)
+        
+        texcoordinates = street_data.getTexCoordinates()
+        
+        for i in xrange(len(track_points)):
+            turned_vec = self.varthickness[i]  
+            last_normal = self.normals[i]          
             j = 0
             for shapedot in street_data:
                 # this is like a layer in 3d [Ebenengleichung] 
@@ -551,7 +570,7 @@ class Track3d(object):
         '''
         '''
         #Creating the Vertex
-        self.createVertices(self.track_points, self.street_data)
+        self.createVertices()
         #Connect the Vertex
         self.connectVertices(self.street_data)
         
@@ -590,6 +609,7 @@ class Track3d(object):
         '''
         #Creating the Vertex
         self.createVertices(self.track_points, self.street_data.border_l)
+
         #Connect the Vertex
         self.connectVertices(self.street_data.border_l)
         
