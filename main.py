@@ -91,7 +91,7 @@ class Game(ShowBase):
         self.space = OdeSimpleSpace()
         #Initialize the surface-table, it defines how objects interact with each other
         self.world.initSurfaceTable(1)
-        self.world.setSurfaceEntry(0, 0, 150, 0.0, 9.1, 0.9, 0.00001, 0.0, 0.002)
+        self.world.setSurfaceEntry(0, 0, 150, 100.0, 100.1, 0.9, 0.00001, 0.0, 0.002)
         self.space.setAutoCollideWorld(self.world)
         self.contactgroup = OdeJointGroup()
         self.space.setAutoCollideJointGroup(self.contactgroup)
@@ -257,11 +257,11 @@ class Game(ShowBase):
         
         self.borderl = OdeTriMeshGeom(self.space, OdeTriMeshData(self.borderl, True))
         self.borderl.setCollideBits(0)
-        self.borderl.setCategoryBits(2)
+        self.borderl.setCategoryBits(0)
         
         self.borderr = OdeTriMeshGeom(self.space, OdeTriMeshData(self.borderr, True))
         self.borderr.setCollideBits(0)
-        self.borderr.setCategoryBits(2)
+        self.borderr.setCategoryBits(0)
         
         #Create the Plane that you get hit by if you fall down
         self.plane = OdePlaneGeom(self.space,0,0,1,-250)
@@ -407,9 +407,19 @@ class Game(ShowBase):
         normal = entry.getContactGeom(0).getNormal()
         mass = player.vehicle.physics_model.getMass().getMagnitude()
         speed = player.vehicle.speed
-        #if speed > 5: speed = 1
+        #if speed > 5: speed = 5
         upvec = Vec3(player.vehicle.collision_model.getQuaternion().xform(Vec3(0,0,1)))
         player.vehicle.physics_model.addTorque(upvec.cross(normal)*mass*3*upvec.angleDeg(Vec3(normal)) - player.vehicle.physics_model.getAngularVel() * mass)
+    
+        # -----------------------------------------------------------------       
+
+    def onBorderCollision(self, entry, player): 
+        '''
+        handles collisions with the border
+        '''
+        return
+        normal = entry.getContactGeom(0).getNormal()
+        player.vehicle.physics_model.addForce(normal*(player.vehicle.speed*player.vehicle.weight))        
         
     # -----------------------------------------------------------------
 
@@ -494,7 +504,16 @@ class Game(ShowBase):
                 
                 col = OdeUtil.collide(player.vehicle.frontray.getRay(), self.groundGeom)
                 if not col.isEmpty():
-                    self.onFrontRayCollision(col, player)    
+                    self.onFrontRayCollision(col, player)
+                
+                #Collision with the border    
+                col = OdeUtil.collide(player.vehicle.frontray.getRay(), self.borderl)
+                if not col.isEmpty():
+                    self.onBorderCollision(col, player)
+                else :
+                    col = OdeUtil.collide(player.vehicle.frontray.getRay(), self.borderr)
+                    if not col.isEmpty():
+                        self.onBorderCollision(col, player)
 
             self.deltaTimeAccumulator -= self.stepSize # Remove a stepSize from the accumulator until the accumulated time is less than the stepsize
             self.space.autoCollide() # Setup the contact joints
