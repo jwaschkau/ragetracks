@@ -301,7 +301,7 @@ class StreetData(RoadShape):
             #read out the collision model border
             border_l_coll = xml.getElementsByTagName("border_l_coll")
             if len(border_l_coll) > 0:
-                border_l_coll = border_l[0].childNodes
+                border_l_coll = border_l_coll[0].childNodes
 
                 border_l_collcount = border_l_coll.length
 
@@ -376,6 +376,10 @@ class StreetData(RoadShape):
         if len(self.border_r) > 0:
             self.border_r.calculateTexcoordinates()
 
+        if len(self.border_l_coll) > 0:
+            self.border_l_coll.calculateTexcoordinates()
+        if len(self.border_r_coll) > 0:
+            self.border_r_coll.calculateTexcoordinates()
     
     # -------------------------------------------------------------------------------------
 
@@ -397,12 +401,12 @@ class Track3d(object):
         self.street_data = StreetData()
         self.street_data.readFile("data/road/road01.xml")
 ##        self.street_data.readFile("data/road/halfpipe.xml")
-##        self.street_data.readFile("data/road/tube2.xml")
+##        self.street_data.readFile("data/road/tube.xml")
     
         self.streetTextrange = 0.0
         self.track = Track(x, y, z)
-##        self.track.generateTestTrack(player_count)
-        self.track.generateTrack(player_count)
+        self.track.generateTestTrack(player_count)
+##        self.track.generateTrack(player_count)
      
         self.track_points = self.track.getInterpolatedPoints(res)
         self.varthickness = []  #Generate the Vector for thickness of the road
@@ -660,7 +664,7 @@ class Track3d(object):
         geom = Geom(self.vdata)
         geom.addPrimitive(self.prim)
         
-        node = GeomNode('border_l_coll')
+        node = GeomNode('border_l')
         node.addGeom(geom)
         
         #nodePath = self.render.attachNewNode(node)
@@ -679,7 +683,7 @@ class Track3d(object):
         geom = Geom(self.vdata)
         geom.addPrimitive(self.prim)
         
-        node = GeomNode('border_r_coll')
+        node = GeomNode('border_r')
         node.addGeom(geom)
         
         #nodePath = self.render.attachNewNode(node)
@@ -691,10 +695,10 @@ class Track3d(object):
         '''
         '''
         #Creating the Vertex
-        self.createVertices(self.track_points, self.street_data.border_l)
+        self.createVertices(self.track_points, self.street_data.border_l_coll)
 
         #Connect the Vertex
-        self.connectVertices(self.street_data.border_l)
+        self.connectVertices(self.street_data.border_l_coll)
         
         geom = Geom(self.vdata)
         geom.addPrimitive(self.prim)
@@ -711,9 +715,9 @@ class Track3d(object):
         '''
         '''
         #Creating the Vertex
-        self.createVertices(self.track_points, self.street_data.border_r)
+        self.createVertices(self.track_points, self.street_data.border_r_coll)
         #Connect the Vertex
-        self.connectVertices(self.street_data.border_r)
+        self.connectVertices(self.street_data.border_r_coll)
         
         geom = Geom(self.vdata)
         geom.addPrimitive(self.prim)

@@ -35,7 +35,7 @@ class Game(ShowBase):
         '''
         #loadPrcFileData("", "fullscreen 0\n win-size 1280 720")
         #loadPrcFileData("", "want-pstats 1\n pstats-host 127.0.0.1\n pstats-tasks 1\n task-timer-verbose 1")
-        ##loadPrcFileData("", "sync-video #f")
+##        loadPrcFileData("", "sync-video #f")
         loadPrcFileData("", "default-directnotify-level debug\n notify-level-x11display fatal\n notify-level-Game debug\n notify-level-Menu debug\n notify-level-Vehicle debug")
         ShowBase.__init__(self)
         ##base.toggleWireframe()
@@ -204,6 +204,8 @@ class Game(ShowBase):
             self.players[counter].vehicle.model.setP(0)
             self.players[counter].vehicle.model.setR(0)
             self.players[counter].vehicle.physics_model.setQuaternion(self.players[counter].vehicle.model.getQuat(render))
+##            print "#####!!!!!####", self.players[counter].vehicle.getBoostStrength()
+            self.players[counter].vehicle.setBoostStrength(1000)
             counter+=1
         
         #Add the Skybox
@@ -229,12 +231,12 @@ class Game(ShowBase):
         self.borderr.reparentTo(render)
         
         self.borderlcoll = borderlcoll
-        self.borderlcoll.reparentTo(render)
         self.borderrcoll = borderrcoll
-        self.borderrcoll.reparentTo(render)
+##        self.borderlcoll.reparentTo(render)
+##        self.borderrcoll.reparentTo(render)
         
         roadtex = loader.loadTexture('data/textures/street.png')
-        roadtex = loader.loadTexture('data/textures/tube.png')
+##        roadtex = loader.loadTexture('data/textures/tube.png')
         bordertex = loader.loadTexture('data/textures/border.png')
         self.track.setTexture(roadtex)
         self.borderl.setTexture(bordertex)
@@ -426,11 +428,12 @@ class Game(ShowBase):
         #player.vehicle.physics_model.addForce(player.vehicle.speed*player.vehicle.weight)
         #return
         needed_rotation = 90-Vec3(normal).angleDeg(player.vehicle.direction)
+        
         rotation = Mat3.rotateMat(needed_rotation,player.vehicle.direction)
         force = rotation.xform(normal)
-        #print force
+        
         player.vehicle.physics_model.addTorque(player.vehicle.direction.cross(force)*100- player.vehicle.physics_model.getAngularVel())
-        player.vehicle.physics_model.addForce(force*player.vehicle.physics_model.getLinearVel().length()*player.vehicle.weight*10)        
+        player.vehicle.physics_model.addForce(force*player.vehicle.physics_model.getLinearVel().length()*player.vehicle.weight*100)        
         
     # -----------------------------------------------------------------
 

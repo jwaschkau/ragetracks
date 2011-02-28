@@ -518,8 +518,8 @@ class Menu(object):
                     #self.borderleftPath = render.attachNewNode(self.track.createBorderLeftMesh())
                     self.borderleftPath = render.attachNewNode(self.track.createBorderLeftMesh())
                     self.borderrightPath = render.attachNewNode(self.track.createBorderRightMesh())
-                    self.borderleftcollisionPath = render.attachNewNode(self.track.createBorderLeftCollisionMesh())
-                    self.borderrightcollisionPath = render.attachNewNode(self.track.createBorderRightCollisionMesh())
+                    self.borderleftcollisionPath = NodePath(self.track.createBorderLeftCollisionMesh())
+                    self.borderrightcollisionPath = NodePath(self.track.createBorderRightCollisionMesh())
                     ##self.borderPath = render.attachNewNode(self.track.createBorderMesh())
 
                     #self.streetPath = loader.loadModel('data/models/Street.egg')
