@@ -181,7 +181,7 @@ class Game(ShowBase):
     
     # -----------------------------------------------------------------
 
-    def startGame(self, track, borderl, borderr, trackpoints):
+    def startGame(self, track, borderl, borderr, trackpoints, borderlcoll, borderrcoll):
         '''
         Start the game
         '''
@@ -228,6 +228,11 @@ class Game(ShowBase):
         self.borderr = borderr
         self.borderr.reparentTo(render)
         
+        self.borderlcoll = borderlcoll
+        self.borderlcoll.reparentTo(render)
+        self.borderrcoll = borderrcoll
+        self.borderrcoll.reparentTo(render)
+        
         roadtex = loader.loadTexture('data/textures/street.png')
         roadtex = loader.loadTexture('data/textures/tube.png')
         bordertex = loader.loadTexture('data/textures/border.png')
@@ -255,11 +260,11 @@ class Game(ShowBase):
         self.groundGeom.setCollideBits(0)
         self.groundGeom.setCategoryBits(1)
         
-        self.borderl = OdeTriMeshGeom(self.space, OdeTriMeshData(self.borderl, True))
+        self.borderl = OdeTriMeshGeom(self.space, OdeTriMeshData(self.borderlcoll, True))
         self.borderl.setCollideBits(0)
         self.borderl.setCategoryBits(0)
         
-        self.borderr = OdeTriMeshGeom(self.space, OdeTriMeshData(self.borderr, True))
+        self.borderr = OdeTriMeshGeom(self.space, OdeTriMeshData(self.borderrcoll, True))
         self.borderr.setCollideBits(0)
         self.borderr.setCategoryBits(0)
         

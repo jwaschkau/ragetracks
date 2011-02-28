@@ -660,7 +660,7 @@ class Track3d(object):
         geom = Geom(self.vdata)
         geom.addPrimitive(self.prim)
         
-        node = GeomNode('border_l')
+        node = GeomNode('border_l_coll')
         node.addGeom(geom)
         
         #nodePath = self.render.attachNewNode(node)
@@ -679,13 +679,11 @@ class Track3d(object):
         geom = Geom(self.vdata)
         geom.addPrimitive(self.prim)
         
-        node = GeomNode('border_r')
+        node = GeomNode('border_r_coll')
         node.addGeom(geom)
         
         #nodePath = self.render.attachNewNode(node)
         return node
-    
-# -------------------------------------------------------------------------------------
 
 # -------------------------------------------------------------------------------------
 
@@ -693,10 +691,10 @@ class Track3d(object):
         '''
         '''
         #Creating the Vertex
-        self.createVertices(self.track_points, self.street_data.border_l_coll)
+        self.createVertices(self.track_points, self.street_data.border_l)
 
         #Connect the Vertex
-        self.connectVertices(self.street_data.border_l_coll)
+        self.connectVertices(self.street_data.border_l)
         
         geom = Geom(self.vdata)
         geom.addPrimitive(self.prim)
@@ -713,9 +711,9 @@ class Track3d(object):
         '''
         '''
         #Creating the Vertex
-        self.createVertices(self.track_points, self.street_data.border_r_coll)
+        self.createVertices(self.track_points, self.street_data.border_r)
         #Connect the Vertex
-        self.connectVertices(self.street_data.border_r_coll)
+        self.connectVertices(self.street_data.border_r)
         
         geom = Geom(self.vdata)
         geom.addPrimitive(self.prim)

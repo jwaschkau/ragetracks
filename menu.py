@@ -518,6 +518,8 @@ class Menu(object):
                     #self.borderleftPath = render.attachNewNode(self.track.createBorderLeftMesh())
                     self.borderleftPath = render.attachNewNode(self.track.createBorderLeftMesh())
                     self.borderrightPath = render.attachNewNode(self.track.createBorderRightMesh())
+                    self.borderleftcollisionPath = render.attachNewNode(self.track.createBorderLeftCollisionMesh())
+                    self.borderrightcollisionPath = render.attachNewNode(self.track.createBorderRightCollisionMesh())
                     ##self.borderPath = render.attachNewNode(self.track.createBorderMesh())
 
                     #self.streetPath = loader.loadModel('data/models/Street.egg')
@@ -525,7 +527,7 @@ class Menu(object):
                     #tex = loader.loadTexture('data/models/StreetTex.png')
                     #self.nodePath.setTexture(tex)
                     
-                    self._parent.startGame(self.streetPath,self.borderleftPath,self.borderrightPath, self.track.trackpoints)
+                    self._parent.startGame(self.streetPath,self.borderleftPath,self.borderrightPath, self.track.trackpoints, self.borderleftcollisionPath, self.borderrightcollisionPath)
                     return task.done
 
         for device in self.unusedDevices:
