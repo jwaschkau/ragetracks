@@ -417,7 +417,6 @@ class Game(ShowBase):
         '''
         handles collisions with the border
         '''
-
         normal = entry.getContactGeom(0).getNormal()
         #player.vehicle.physics_model.addForce(player.vehicle.speed*player.vehicle.weight)
         #return
@@ -514,11 +513,11 @@ class Game(ShowBase):
                     self.onFrontRayCollision(col, player)
                 
                 #Collision with the border    
-                col = OdeUtil.collide(player.vehicle.frontray.getRay(), self.borderl)
+                col = OdeUtil.collide(player.vehicle.collision_model, self.borderr)
                 if not col.isEmpty():
                     self.onBorderCollision(col, player)
                 else :
-                    col = OdeUtil.collide(player.vehicle.frontray.getRay(), self.borderr)
+                    col = OdeUtil.collide(player.vehicle.collision_model, self.borderl)
                     if not col.isEmpty():
                         self.onBorderCollision(col, player)
 
