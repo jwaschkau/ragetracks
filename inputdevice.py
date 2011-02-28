@@ -145,6 +145,7 @@ class InputDevice(object):
 
 
             # then get boost and item button values
+            print self.boost
             self.boost = self.device.buttons[self.settings["boost"][1]]
             self.use_item = self.device.buttons[self.settings["use_item"][1]]
             
@@ -208,8 +209,9 @@ class InputDevices(object):
 
         for joystick in self.joysticks.getJoysticks():
             try:
-                dev = InputDevice(joystick, settings, self.wii)
-            except:
+                dev = InputDevice(joystick, settings)
+            except StandardError as e:
+                print e
                 continue
             self.devices.append(dev)
 
