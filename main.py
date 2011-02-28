@@ -417,9 +417,16 @@ class Game(ShowBase):
         '''
         handles collisions with the border
         '''
-        return
+
         normal = entry.getContactGeom(0).getNormal()
-        player.vehicle.physics_model.addForce(normal*(player.vehicle.speed*player.vehicle.weight))        
+        #player.vehicle.physics_model.addForce(player.vehicle.speed*player.vehicle.weight)
+        #return
+        needed_rotation = 90-Vec3(normal).angleDeg(player.vehicle.direction)
+        rotation = Mat3.rotateMat(needed_rotation,player.vehicle.direction)
+        force = rotation.xform(normal)
+        #print force
+        player.vehicle.physics_model.addTorque(player.vehicle.direction.cross(force)*100- player.vehicle.physics_model.getAngularVel())
+        player.vehicle.physics_model.addForce(force*player.vehicle.speed*player.vehicle.weight*10)        
         
     # -----------------------------------------------------------------
 
