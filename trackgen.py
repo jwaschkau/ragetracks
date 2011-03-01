@@ -179,6 +179,13 @@ class Line(object):
         self._vec2 = vec2
     
     # -------------------------------------------------------------------------------------
+
+    def __len__(self):
+        '''
+        '''
+        return (self._vec1-self._vec2).length()
+    
+    # -------------------------------------------------------------------------------------
     
     def getVec1(self):
         '''
@@ -230,7 +237,7 @@ class Line(object):
         denominator = ((y4-y3)*(x2-x1))-((x4-x3)*(y2-y1))
         
         if denominator == 0:
-            print "StandardError" #raise StandardError()
+            print "Line Cross Exception StandardError" #raise StandardError()
         else:
             u = ((x4-x3)*(y1-y3)-(y4-y3)*(x1-x3))/denominator
             v = ((x2-x1)*(y1-y3)-(y2-y1)*(x1-x3))/denominator
@@ -258,7 +265,18 @@ class Line(object):
         angle = math.degrees(math.acos( value ))
 
         return angle
+##        vec1 = self.getVector()
+##        vec2 = other.getVector()
+##        vec1.normalize()
+##        vec2.normalize()
+##        return vec2.angleDeg(vec1)
         
+    # -------------------------------------------------------------------------------------
+    
+    def getVector(self):
+        '''
+        '''
+        return self._vec1-self._vec2
     # -------------------------------------------------------------------------------------
     
     vec1 = property(getVec1, setVec1)
@@ -319,8 +337,8 @@ class Track(object):
     def generateTestTrack(self, player_count):
         
         #the track
-        #rand = random.randint(1,1)
-        rand = 0
+        rand = random.randint(0,1)
+        #rand = 5
         if rand == 0:
             self.trackpoints = [[0,0,0],[0,500,0],[200,500,0],[250,250,0],[300,0,200],[400,-500,0],[0,-500,0],[0,-1,0]]
             scale = 2
@@ -328,7 +346,7 @@ class Track(object):
                 self.trackpoints[i][0] *= scale
                 self.trackpoints[i][1] *= scale
                 self.trackpoints[i][2] *= scale
-        elif rand == 1:
+        elif rand == 5:
             self.trackpoints = [[0,0,0],[0,500,100],[200,700,200],[500,600,250],[300,0,350],[-300,-300,350],[-700,-200,200],[-500,-100,100],[0,-500,-100],[100,-300,0],[0,-1,0]]
         elif rand == 2:
             self.trackpoints = [[0,0,0],[0,500,0],[0,500,100],[0,0,100]]
@@ -340,11 +358,11 @@ class Track(object):
             self.trackpoints = []
             for point in prefab:   # add them to the list
                 self.trackpoints.append(point)
-        elif rand == 5:
+        elif rand == 1:
 ##            self.trackpoints = [Vec3(0, 0, 0), Vec3(0, 250, 0), Vec3(0, 250.559, 0), Vec3(-0.326736, 949.546, 0.00861993), Vec3(-0.671355, 949.067, 0.0177116),
 ##                                Vec3(-795.452, -155.79, 21.062), Vec3(-794.946, -155.595, 21.1194), Vec3(572.476, 370.148, 175.959), Vec3(571.923, 370.304, 175.915), Vec3(-745.631, 741.556, 72.0065), Vec3(328, -550, 91), Vec3(0, -700, 0), Vec3(0, -10, 0)]
-            self.trackpoints = [Vec3(0, 0, 0), Vec3(0, 250, 0), Vec3(-0.671355, 949.067, 0.0177116),
-                                Vec3(-795.452, -155.79, 21.062), Vec3(572.476, 370.148, 175.959), Vec3(-745.631, 741.556, 72.0065), Vec3(328, -550, 91), Vec3(0, -700, 0), Vec3(0, -100, 0)]
+            self.trackpoints = [Vec3(0, 0, 0), Vec3(0, 250, 0), Vec3(0, 949.067, 0.0177116),Vec3(-1005.452, 500.79, 21.062),
+                                Vec3(-795.452, -210, 21.062), Vec3(572.476, 370.148, 75.959), Vec3(-745.631, 741.556, 72.0065), Vec3(328, -550, 91), Vec3(0, -700, 0), Vec3(0, -100, 0)]
             for i in xrange(len(self.trackpoints)):
                 self.trackpoints[i][2]*=5
         
@@ -374,7 +392,6 @@ class Track(object):
         '''
         '''
         y = player_count*VEHICLE_DIST
-##        y_addition = 3500
         y_addition = 700
         points = [Vec3(0,0,0), Vec3(0, y, 0), Vec3(0,y+y_addition,0)]
         
@@ -386,46 +403,43 @@ class Track(object):
                      (-x, 0, 0, y),
                      (0, 0, x, y)]
         
-        random.shuffle(quadrants)
+        #random.shuffle(quadrants)
+        pointcloud = []
         
         for q in quadrants:
-            point = Vec3(random.randint(q[0],q[2]), random.randint(q[1],q[3]), random.randint(0, self.size.getZ()))
-            vec1 = points[-1]-points[-2]
-            vec2 = point-points[-1]
-            vec1.normalize()
-            vec2.normalize()
-            angle = vec1.angleDeg(vec2)
-            while angle > 150 and angle < 210:
+            for i in xrange(20):
                 point = Vec3(random.randint(q[0],q[2]), random.randint(q[1],q[3]), random.randint(0, self.size.getZ()))
-                vec1 = points[-1]-points[-2]
-                vec2 = point-points[-1]
-                vec1.normalize()
-                vec2.normalize()
-                angle = vec1.angleDeg(vec2)
-            
-##            if angle > 90 and angle < 270:
-##                a = 20.0/abs(angle-180)
-##                
-##                points.append(points[-1]+(vec2*a))
-##                points[-2] = points[-3]+(vec1*a)  # its points[-1] and points[-2] but we just added a new one
-            points.append(point)
+                pointcloud.append(point)
+        
+        random.shuffle(pointcloud)
+
+        for num_points in xrange(4):
+            i = 0
+            while i < len(pointcloud):
+                point = pointcloud[i]
+                line1 = Line(points[-2],points[-1])
+                line2 = Line(points[-1],point)
+
+                angle = line1.getAngle(line2)
+                is_good = True
+                print "Angle:", angle
+                if angle > 90 and angle < 270:
+                    is_good = False
+                if line1.crossesLine(line2):
+                    is_good = False
+                if len(line2) < 30:
+                    is_good = False
+                
+                if is_good:
+                    points.append(point)
+                    pointcloud.remove(point)
+                    break
+                i += 1
         
         points.append(Vec3(0,-y_addition,0))
         points.append(Vec3(0,-100,0))
         
-##        mat = Mat3()
-##        for i in xrange(10):
-##            vec = points[-1]-points[-2]
-##            axis = Vec3(random.randint(0,10), random.randint(0,10), random.randint(0,10))
-##            mat.setRotateMat(random.randint(0,10), axis)
-##            vec = mat.xform(vec)
-##            vec *= 2
-##            print vec
-##            
-##            point = points[-1]+vec
-##            points.append(point)
-        
-        print points
+        #print points
         
         
         # -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -

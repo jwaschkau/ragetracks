@@ -9,6 +9,7 @@ from pandac.PandaModules import GeomVertexFormat, Geom, GeomVertexWriter, GeomTr
 import xml.dom.minidom as dom
 from xml.dom.minidom import Document
 from direct.directnotify.DirectNotify import DirectNotify
+import random
 
 # -------------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------
@@ -391,7 +392,7 @@ class Track3d(object):
     '''
     Generate the 3d Mesh out of the StreetData and the 2dTrack
     '''
-    def __init__(self, res, x, y, z = 200, player_count=1):
+    def __init__(self, res, x, y, z = 200, player_count=1, street_data=""):
         '''
         '''
         self._notify = DirectNotify().newCategory("TrackGen3D")
@@ -399,9 +400,13 @@ class Track3d(object):
         #street_data = (Vec2(4.0,4.0), Vec2(10.0,10.0), Vec2(10.0,0.0), Vec2(4.0,0.0), Vec2(0.0,-1.0))
         #street_data = StreetData(Vec2(15.0,1.0), Vec2(15.0,-5.0), Vec2(0.0,-5.0), mirrored=True) #, Vec2(15.0,0.0)
         self.street_data = StreetData()
-        self.street_data.readFile("data/road/road01.xml")
-##        self.street_data.readFile("data/road/halfpipe.xml")
+        
+##        self.street_data.readFile("data/road/road01.xml")
 ##        self.street_data.readFile("data/road/tube.xml")
+        if street_data == "":
+            datas = ["road01", "tube"]
+            street_data = datas[random.randint(0, len(datas)-1)]
+        self.street_data.readFile("data/road/"+street_data+".xml")
     
         self.streetTextrange = 0.0
         self.track = Track(x, y, z)

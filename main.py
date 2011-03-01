@@ -17,6 +17,7 @@ import splitscreen
 from playercam import PlayerCam
 import gettext
 import sys
+import random
 from menu import Menu
 from menu import MainMenu
 from kdtree import KDTree
@@ -42,10 +43,10 @@ class Game(ShowBase):
         ##base.toggleWireframe()
         
         self._notify = DirectNotify().newCategory("Game")
-        self._notify.info("New Game-Object created: %s" %(self))
+        self._notify.info("New##        base.setFrameRateMeter(True) #Show the Framerate Game-Object created: %s" %(self))
         
         base.setBackgroundColor(0,0,0)
-        base.setFrameRateMeter(True) #Show the Framerate
+##        base.setFrameRateMeter(True) #Show the Framerate
         base.camNode.setActive(False) #disable default cam
         self.disableMouse() #disable manual camera-control
 ##        render.setShaderAuto()
@@ -130,6 +131,15 @@ class Game(ShowBase):
                         borderrightPath = render.attachNewNode(track.createBorderRightMesh())
                         borderleftcollisionPath = NodePath(track.createBorderLeftCollisionMesh())
                         borderrightcollisionPath = NodePath(track.createBorderRightCollisionMesh())
+                        
+                        textures = ["tube", "tube2", "street"]
+                        tex = textures[random.randint(0, len(textures)-1)]
+                        roadtex = loader.loadTexture('data/textures/'+tex+'.png')
+                        bordertex = loader.loadTexture('data/textures/border.png')
+                        streetPath.setTexture(roadtex)
+                        borderleftPath.setTexture(bordertex)
+                        borderrightPath.setTexture(bordertex)
+                        
                         self.startGame(streetPath,borderleftPath,borderrightPath, track.trackpoints, borderleftcollisionPath, borderrightcollisionPath)
             if  arg == "--PSt":
                 PStatClient.connect() #activate to start performance measuring with pstats
@@ -223,7 +233,9 @@ class Game(ShowBase):
         #Add the Skybox
         self.skybox = self.loader.loadModel("data/models/skybox.egg")
         t = Texture()
-        t.load(PNMImage("data/textures/skybox_space.png"))
+        boxes = ["space", "city", "ocean"]
+        box = boxes[random.randint(0, len(boxes)-1)]
+        t.load(PNMImage("data/textures/skybox_"+box+".png"))
         self.skybox.setTexture(t)
         self.skybox.setBin("background", 1)
         self.skybox.setDepthWrite(0)
@@ -247,12 +259,12 @@ class Game(ShowBase):
 ##        self.borderlcoll.reparentTo(render)
 ##        self.borderrcoll.reparentTo(render)
         
-        roadtex = loader.loadTexture('data/textures/street.png')
-##        roadtex = loader.loadTexture('data/textures/tube.png')
-        bordertex = loader.loadTexture('data/textures/border.png')
-        self.track.setTexture(roadtex)
-        self.borderl.setTexture(bordertex)
-        self.borderr.setTexture(bordertex)
+##        roadtex = loader.loadTexture('data/textures/street.png')
+####        roadtex = loader.loadTexture('data/textures/tube.png')
+##        bordertex = loader.loadTexture('data/textures/border.png')
+##        self.track.setTexture(roadtex)
+##        self.borderl.setTexture(bordertex)
+##        self.borderr.setTexture(bordertex)
         
         self.rings = []
         y = 100

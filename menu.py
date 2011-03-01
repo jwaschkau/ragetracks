@@ -12,6 +12,7 @@ import trackgen3d
 import glob
 import settings
 import colorsys
+import random
 
 COUNTDOWN_START = 1
 
@@ -521,6 +522,14 @@ class Menu(object):
                     self.borderleftcollisionPath = NodePath(self.track.createBorderLeftCollisionMesh())
                     self.borderrightcollisionPath = NodePath(self.track.createBorderRightCollisionMesh())
                     ##self.borderPath = render.attachNewNode(self.track.createBorderMesh())
+                    
+                    textures = ["tube", "tube2", "street"]
+                    tex = textures[random.randint(0, len(textures)-1)]
+                    roadtex = loader.loadTexture('data/textures/'+tex+'.png')
+                    bordertex = loader.loadTexture('data/textures/border.png')
+                    self.streetPath.setTexture(roadtex)
+                    self.borderleftPath.setTexture(bordertex)
+                    self.borderrightPath.setTexture(bordertex)
 
                     #self.streetPath = loader.loadModel('data/models/Street.egg')
                     ##self.streetPath = loader.loadModel('data/models/Street.egg')

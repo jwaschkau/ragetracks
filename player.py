@@ -21,7 +21,7 @@ class Player(object):
         self._camera = camera
         self._vehicle = vehicle.Vehicle(self._ode_world, self._ode_space) #the properties of the vehicle
         self._device = device #The input device
-        self._osd_health = OnscreenText(text = "100", pos = ((self._number*0.2)-1,0.9))
+##        self._osd_health = OnscreenText(text = "100", pos = ((self._number*0.2)-1,0.9))
         self._position = 0
         self._pre_position = 0
         self._rank = 0
@@ -139,7 +139,7 @@ class Player(object):
         '''
         update the osd-information
         '''
-        self._osd_health.setText(str(round(self._vehicle.energy)))
+##        self._osd_health.setText(str(round(self._vehicle.energy)))
         
     def recalculateOSD(self):
         '''
