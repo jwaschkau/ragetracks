@@ -405,7 +405,7 @@ class Track3d(object):
 ##        self.street_data.readFile("data/road/tube.xml")
         if street_data == "":
             datas = ["road01", "tube"]
-            street_data = datas[random.randint(0, len(datas)-2)]
+            street_data = datas[random.randint(0, len(datas)-1)]
         self.street_data.readFile("data/road/"+street_data+".xml")
     
         self.streetTextrange = 0.0
@@ -546,8 +546,7 @@ class Track3d(object):
         
         texcoordinates = street_data.getTexCoordinates()
         tracklength = self.track.getLength()
-        tex_step = 0.004*(9600/tracklength)
-        
+        tex_step = 0.006*(0.0002*tracklength)
         for i in xrange(len(track_points)):
             turned_vec = self.varthickness[i]  
             last_normal = self.normals[i]          
