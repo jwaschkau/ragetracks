@@ -145,7 +145,6 @@ class InputDevice(object):
 
 
             # then get boost and item button values
-            print self.boost
             self.boost = self.device.buttons[self.settings["boost"][1]]
             self.use_item = self.device.buttons[self.settings["use_item"][1]]
             

@@ -43,10 +43,10 @@ class Game(ShowBase):
         ##base.toggleWireframe()
         
         self._notify = DirectNotify().newCategory("Game")
-        self._notify.info("New##        base.setFrameRateMeter(True) #Show the Framerate Game-Object created: %s" %(self))
+        self._notify.info("New Game-Object created: %s" %(self))
         
         base.setBackgroundColor(0,0,0)
-##        base.setFrameRateMeter(True) #Show the Framerate
+        base.setFrameRateMeter(True) #Show the Framerate
         base.camNode.setActive(False) #disable default cam
         self.disableMouse() #disable manual camera-control
 ##        render.setShaderAuto()
