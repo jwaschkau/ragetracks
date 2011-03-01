@@ -337,7 +337,7 @@ class Track(object):
     def generateTestTrack(self, player_count):
         
         #the track
-        rand = random.randint(0,1)
+        rand = random.randint(1,1)
         #rand = 5
         if rand == 0:
             self.trackpoints = [[0,0,0],[0,500,0],[200,500,0],[250,250,0],[300,0,200],[400,-500,0],[0,-500,0],[0,-1,0]]
@@ -473,6 +473,14 @@ class Track(object):
     
         return pointlist
 
+    # -------------------------------------------------------------------------------------
+    
+    def getLength(self):
+        '''
+        '''
+        a = self.curve.calcLength()
+        return a
+    
     # -------------------------------------------------------------------------------------
     
     def getPoints(self):
