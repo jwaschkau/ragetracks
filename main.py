@@ -21,6 +21,7 @@ from menu import Menu
 from menu import MainMenu
 from kdtree import KDTree
 import time
+import trackgen3d
 
 
 # -----------------------------------------------------------------
@@ -106,19 +107,30 @@ class Game(ShowBase):
             if  arg == "--ep":
                 startgame = False
                 if sys.argv[sys.argv.index(arg)+1] == "startGame":
-                    for i in xrange(len(self.devices.devices)):
-                        #myMenu = Menu(self)
-                                           
                         player = self.addPlayer(self.devices.devices[0])
                         import glob
                         self.vehicle_list = glob.glob("data/models/vehicles/*.egg")
                         #start loading the model
-                        self.players[0].setVehicle(loader.loadModel(self.vehicle_list[-1]))
+
+                        base.enableParticles()
+                        n = 0
+                        if len(sys.argv) >= sys.argv.index(arg)+3:
+                            try:
+                                n = int(sys.argv[sys.argv.index(arg)+2])
+                            except:
+                                n = 0
+                            if n >= len(self.vehicle_list):
+                                n = 0
+                        self.players[0].setVehicle(loader.loadModel(self.vehicle_list[n]))
                        
                         taskMgr.add(self.devices.fetchEvents, "fetchEvents")
-                        
-                        self.streetPath = loader.loadModel('data/models/Street.egg')    #Test Street
-                        self.startGame(self.streetPath)
+                        track =  trackgen3d.Track3d(1000, 1800, 1600, 1200, 5)#len(self._players))
+                        streetPath = render.attachNewNode(track.createRoadMesh())
+                        borderleftPath = render.attachNewNode(track.createBorderLeftMesh())
+                        borderrightPath = render.attachNewNode(track.createBorderRightMesh())
+                        borderleftcollisionPath = NodePath(track.createBorderLeftCollisionMesh())
+                        borderrightcollisionPath = NodePath(track.createBorderRightCollisionMesh())
+                        self.startGame(streetPath,borderleftPath,borderrightPath, track.trackpoints, borderleftcollisionPath, borderrightcollisionPath)
             if  arg == "--PSt":
                 PStatClient.connect() #activate to start performance measuring with pstats
             if  arg == "--wire":    
