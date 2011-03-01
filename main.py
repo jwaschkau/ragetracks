@@ -457,7 +457,8 @@ class Game(ShowBase):
         force = rotation.xform(normal)
         
         player.vehicle.physics_model.addTorque(player.vehicle.direction.cross(force)*100- player.vehicle.physics_model.getAngularVel())
-        player.vehicle.physics_model.addForce(force*player.vehicle.physics_model.getLinearVel().length()*player.vehicle.weight*100)        
+        player.vehicle.physics_model.addForce(force*player.vehicle.physics_model.getLinearVel().length()*player.vehicle.weight*50)      
+        player.vehicle.physics_model.addForce(-(player.vehicle.physics_model.getLinearVel()*player.vehicle.weight*50))          
         
     # -----------------------------------------------------------------
 
