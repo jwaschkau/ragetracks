@@ -65,8 +65,8 @@ class Game(ShowBase):
         #trans.install() #usage: print _("Hallo Welt")
 
         #Fullscreen
+        wp = WindowProperties()
         if self.settings.fullscreen:
-            wp = WindowProperties()
             wp.setFullscreen(self.settings.fullscreen)
             wp.setOrigin(0,0)
             wp.setTitle("RageTracks")
