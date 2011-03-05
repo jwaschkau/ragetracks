@@ -72,6 +72,8 @@ class Game(ShowBase):
             wp.setTitle("RageTracks")
             wp.setSize(int(base.pipe.getDisplayWidth()),int(base.pipe.getDisplayHeight()))
             base.win.requestProperties(wp)
+
+        wp.setCursorHidden(True)
         
         #enable anti-aliasing
         if self.settings.antialias:
@@ -469,6 +471,8 @@ class Game(ShowBase):
         player.vehicle.physics_model.addTorque(player.vehicle.direction.cross(force)*100- player.vehicle.physics_model.getAngularVel())
         player.vehicle.physics_model.addForce(force*player.vehicle.physics_model.getLinearVel().length()*player.vehicle.weight*50)      
         player.vehicle.physics_model.addForce(-(player.vehicle.physics_model.getLinearVel()*player.vehicle.weight*50))          
+        player.vehicle.energy -= 2
+        player.updateOSD()
         
     # -----------------------------------------------------------------
     
@@ -486,7 +490,9 @@ class Game(ShowBase):
         
         player.vehicle.physics_model.addTorque(player.vehicle.direction.cross(force)*100- player.vehicle.physics_model.getAngularVel())
         player.vehicle.physics_model.addForce(force*player.vehicle.physics_model.getLinearVel().length()*player.vehicle.weight*50)      
-        player.vehicle.physics_model.addForce(-(player.vehicle.physics_model.getLinearVel()*player.vehicle.weight*50))          
+        player.vehicle.physics_model.addForce(-(player.vehicle.physics_model.getLinearVel()*player.vehicle.weight*50))
+        player.vehicle.energy -= 2
+        player.updateOSD()
         
     # -----------------------------------------------------------------
 
