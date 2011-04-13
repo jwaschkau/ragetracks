@@ -13,3 +13,5 @@ right : right analogstick
 
 HOWTO SPLITSCREEN:
 In the vehicle select menu. The 2nd player press accelerate.
+
+
