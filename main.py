@@ -23,7 +23,6 @@ from menu import MainMenu
 from kdtree import KDTree
 import time
 import trackgen3d
-from vlc import VLC
 
 
 # -----------------------------------------------------------------
@@ -47,7 +46,7 @@ class Game(ShowBase):
         self._notify.info("New Game-Object created: %s" %(self))
         
         base.setBackgroundColor(0,0,0)
-##        base.setFrameRateMeter(True) #Show the Framerate
+        base.setFrameRateMeter(True) #Show the Framerate
         base.camNode.setActive(False) #disable default cam
         self.disableMouse() #disable manual camera-control
 ##        render.setShaderAuto()
@@ -65,15 +64,13 @@ class Game(ShowBase):
         #trans.install() #usage: print _("Hallo Welt")
 
         #Fullscreen
-        wp = WindowProperties()
         if self.settings.fullscreen:
+            wp = WindowProperties()
             wp.setFullscreen(self.settings.fullscreen)
             wp.setOrigin(0,0)
             wp.setTitle("RageTracks")
             wp.setSize(int(base.pipe.getDisplayWidth()),int(base.pipe.getDisplayHeight()))
             base.win.requestProperties(wp)
-
-        wp.setCursorHidden(True)
         
         #enable anti-aliasing
         if self.settings.antialias:
@@ -111,7 +108,7 @@ class Game(ShowBase):
             if  arg == "--ep":
                 startgame = False
                 if sys.argv[sys.argv.index(arg)+1] == "startGame":
-                        player = self.addPlayer(self.devices.devices[-1])
+                        player = self.addPlayer(self.devices.devices[0])
                         import glob
                         self.vehicle_list = glob.glob("data/models/vehicles/*.egg")
                         #start loading the model
@@ -268,15 +265,6 @@ class Game(ShowBase):
 ##        self.track.setTexture(roadtex)
 ##        self.borderl.setTexture(bordertex)
 ##        self.borderr.setTexture(bordertex)
-
-        # createVLC
-        self.vlcs = []
-        
-        for i in xrange(5):
-            vlc = VLC(self.space)
-            vlc.reparentTo(render)
-            vlc.setPosition(-30+i*10,40,5)
-            self.vlcs.append(vlc)
         
         self.rings = []
         y = 100
@@ -471,28 +459,6 @@ class Game(ShowBase):
         player.vehicle.physics_model.addTorque(player.vehicle.direction.cross(force)*100- player.vehicle.physics_model.getAngularVel())
         player.vehicle.physics_model.addForce(force*player.vehicle.physics_model.getLinearVel().length()*player.vehicle.weight*50)      
         player.vehicle.physics_model.addForce(-(player.vehicle.physics_model.getLinearVel()*player.vehicle.weight*50))          
-        player.vehicle.energy -= 2
-        player.updateOSD()
-        
-    # -----------------------------------------------------------------
-    
-    def onVlcCollision(self, entry, player): 
-        '''
-        handles collisions with vlcs
-        '''
-        normal = entry.getContactGeom(0).getNormal()
-        #player.vehicle.physics_model.addForce(player.vehicle.speed*player.vehicle.weight)
-        #return
-        needed_rotation = 90-Vec3(normal).angleDeg(player.vehicle.direction)
-        
-        rotation = Mat3.rotateMat(needed_rotation,player.vehicle.direction)
-        force = rotation.xform(normal)
-        
-        player.vehicle.physics_model.addTorque(player.vehicle.direction.cross(force)*100- player.vehicle.physics_model.getAngularVel())
-        player.vehicle.physics_model.addForce(force*player.vehicle.physics_model.getLinearVel().length()*player.vehicle.weight*50)      
-        player.vehicle.physics_model.addForce(-(player.vehicle.physics_model.getLinearVel()*player.vehicle.weight*50))
-        player.vehicle.energy -= 2
-        player.updateOSD()
         
     # -----------------------------------------------------------------
 
@@ -585,11 +551,6 @@ class Game(ShowBase):
                     self.onBorderCollision(col, player)
                 else :
                     col = OdeUtil.collide(player.vehicle.collision_model, self.borderl)
-                    if not col.isEmpty():
-                        self.onBorderCollision(col, player)
-                
-                for vlc in self.vlcs:
-                    col = OdeUtil.collide(player.vehicle.collision_model, vlc.getGeom())
                     if not col.isEmpty():
                         self.onBorderCollision(col, player)
 

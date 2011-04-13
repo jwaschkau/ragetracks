@@ -139,7 +139,6 @@ class Player(object):
         '''
         update the osd-information
         '''
-        pass
 ##        self._osd_health.setText(str(round(self._vehicle.energy)))
         
     def recalculateOSD(self):

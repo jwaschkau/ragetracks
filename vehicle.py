@@ -93,7 +93,7 @@ class Vehicle(object):
             for node in blowout.getChildren():
                 particle = ParticleEffect()
                 self._blowout.append(particle)
-                particle.loadConfig('./data/particles/blowout.ptf')
+                particle.loadConfig('./data/particles/blowout_test.ptf')
                 
                 try: # try to read out the particle scale
                     scale = float(node.getTag("scale"))
@@ -105,27 +105,9 @@ class Vehicle(object):
                 renderer.setInitialYScale(scale)
                 
                 particle.setLightOff()
-                particle.setBin('fixed', 0)
                 particle.start(node)
                 particle.softStop()
         else: self._notify.warning("No Blowout-Node found")
-        
-        # == SMOKE PARTICLES
-
-        self._notify.debug("Loading Smoke-Particles")
-        particle = ParticleEffect()
-        #self._blowout.append(particle)
-        particle.loadConfig('./data/particles/smoke.ptf')
-        
-        particle.setLightOff()
-        particle.setBin('fixed', 0)
-        particle.setDepthWrite(False)
-##        particle.start(model, render)
-        self._smoke = particle
-        model.setLightOff()
-        #particle.softStop()
-        
-        # == END SMOKE
             
         if self._model != None: 
             heading  = self._model.getH()
@@ -357,8 +339,6 @@ class Vehicle(object):
         Boosts the vehicle by indicated strength
         '''
         self._energy = energy
-        if self.energy < 40:
-            self._smoke.start(self._model, render)
     
     def getEnergy(self):
         return self._energy
