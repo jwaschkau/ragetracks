@@ -50,6 +50,8 @@ class Game(ShowBase):
         base.camNode.setActive(False) #disable default cam
         self.disableMouse() #disable manual camera-control
 ##        render.setShaderAuto()
+        self.music = base.loader.loadSfx("data/music/track1.ogg")
+        self.menuselect = base.loader.loadSfx("data/sounds/menuselect.wav")
         
         #Laps
         self.laps = 3 #the Laps
@@ -146,7 +148,8 @@ class Game(ShowBase):
             if  arg == "--wire":    
                 base.toggleWireframe()
                 
-        if startgame:   
+        if startgame:
+            self.music.play()
             myMenu = Menu(self)
             taskMgr.add(self.devices.fetchEvents, "fetchEvents")
             myMenu.showStartScreen()

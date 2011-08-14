@@ -3,6 +3,7 @@
 ## this module represents the menu
 ###################################################################
 
+from direct.showbase.ShowBase import ShowBase
 from panda3d.core import NodePath
 from pandac.PandaModules import *
 import time
@@ -19,7 +20,8 @@ COUNTDOWN_START = 1
 FONT = 'data/fonts/Orbitron/TTF/orbitron-black.ttf'
 class MainMenu(object):
 
-    def __init__(self, newGame, device, devices):
+    def __init__(self, parent, newGame, device, devices):
+        self._parent = parent
         self._notify = DirectNotify().newCategory("Menu")
         self._notify.info("New Menu-Object created: %s" %(self))
         self.device = device #The keybord
@@ -140,6 +142,7 @@ class MainMenu(object):
 #        except:
 #            pass
         self.backToMain()
+        self._parent.menuselect.play()
         
     def fullscreen(self):
         '''
@@ -227,6 +230,7 @@ class MainMenu(object):
         '''
         Bring out the next menu option
         '''
+        self._parent.menuselect.play()
         old = self.selected
         self.selected += 1
         if self.selected == len(self.options):
@@ -242,6 +246,7 @@ class MainMenu(object):
         '''
         Bring out the previous menu option
         '''
+        self._parent.menuselect.play()
         old = self.selected
         self.selected -= 1
         if self.selected == -1:
@@ -256,6 +261,7 @@ class MainMenu(object):
         '''
         call the function behind the selected option
         '''
+        self._parent.menuselect.play()
         self.hideMenu()
         self.options[self.selected][1]()
 
@@ -340,7 +346,7 @@ class Menu(object):
                 self.startNode.removeNode()
                 
                 #Start the menu
-                self.menu = MainMenu(self.newGame, self._devices.devices[i], self._devices)
+                self.menu = MainMenu(self._parent, self.newGame, self._devices.devices[i], self._devices)
                 self.menu.menuMain()
                 return task.done
         return task.cont
@@ -425,6 +431,7 @@ class Menu(object):
                 
             if self.player_buttonpressed[self._players.index(player)] < task.time and not player.vehicle.model_loading:
                 if player.device.directions[0] < -0.8:
+                    self._parent.menuselect.play()
                     self.countdown = COUNTDOWN_START
                     self.player_buttonpressed[self._players.index(player)] = task.time + self.KEY_DELAY
                     index = self.vehicle_list.index("data/models/vehicles/%s" %(player.vehicle.model.getName()))-1
@@ -435,6 +442,7 @@ class Menu(object):
                     self.loading.instanceTo(player.camera.camera.getParent())
                     loader.loadModel(self.vehicle_list[index], callback = player.setVehicle)
                 elif player.device.directions[0] > 0.8:
+                    self._parent.menuselect.play()
                     self.countdown = COUNTDOWN_START
                     self.player_buttonpressed[self._players.index(player)] = task.time + self.KEY_DELAY
                     index = self.vehicle_list.index("data/models/vehicles/%s" %(player.vehicle.model.getName()))+1
@@ -448,6 +456,7 @@ class Menu(object):
                     
                 if player.device.directions[1] > 0.8:
                     self.countdown = COUNTDOWN_START
+                    self._parent.menuselect.play()
                     self.player_buttonpressed[self._players.index(player)] = task.time + self.KEY_DELAY
                  
                     self._notify.debug("Next color selected")
@@ -456,6 +465,7 @@ class Menu(object):
                     self.rotateHue(tex, 0.1)
                     
                 elif player.device.directions[1] < -0.8:
+                    self._parent.menuselect.play()
                     self.countdown = COUNTDOWN_START
                     self.player_buttonpressed[self._players.index(player)] = task.time + self.KEY_DELAY
                  
