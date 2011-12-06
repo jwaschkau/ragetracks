@@ -1,0 +1,58 @@
+# Russian translation for ragetracks
+# Copyright (c) 2011 Rosetta Contributors and Canonical Ltd 2011
+# This file is distributed under the same license as the ragetracks package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: ragetracks\n"
+"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2010-10-09 19:17+0000\n"
+"PO-Revision-Date: 2011-12-06 04:40+0000\n"
+"Last-Translator: Aleksey Kabanov <Unknown>\n"
+"Language-Team: Russian <ru@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Launchpad-Export-Date: 2011-12-06 06:03+0000\n"
+"X-Generator: Launchpad (build 14435)\n"
+
+#: main.py:155
+msgid "Press any key!!"
+msgstr "Нажмите любую клавишу!"
+
+#: menu.py:50
+msgid "New Game"
+msgstr "Новая игра"
+
+#: menu.py:51
+msgid "Options"
+msgstr "Параметры"
+
+#: menu.py:52
+msgid "Hall Of Fame"
+msgstr "Зал славы"
+
+#: menu.py:53
+msgid "Credits"
+msgstr ""
+
+#: menu.py:54
+msgid "Exit"
+msgstr "Выход"
+
+#: menu.py:66
+msgid "Resolution"
+msgstr "Разрешение"
+
+#: menu.py:67
+msgid "Full Screen"
+msgstr "Во весь экран"
+
+#: menu.py:68
+msgid "Shader"
+msgstr ""
+
+#: menu.py:69
+msgid "Back"
+msgstr "Назад"
