@@ -17,26 +17,27 @@ class WiiDevice(object):
         '''
         self._wiimote = None
         self.parent = parent
-        
+
         self.parent.addWii(self)
-       
+
     def setWiimote(self, wii):
         '''
         '''
         self._wiimote = wii
-        
+
     def getWiimote(self):
         '''
         '''
-        if self._wiimote == None: print "ERROR using Get before set"
+        if self._wiimote == None:
+            print("ERROR using Get before set")
         return self._wiimote
-    
+
     wiimote = property(fget = getWiimote, fset = setWiimote)
 
 # ---------------------------------------------------------
 # ---------------------------------------------------------
 # ---------------------------------------------------------
-   
+
 class WiiDevices(object):
     '''
     This class holds data about the wiimote
@@ -46,32 +47,32 @@ class WiiDevices(object):
         self.wii = wii
         # Find the wiimote
         self.wiimoteslist = []
-        
-        
+
+
     def setWiimotes(self, wiimotes):
         '''
         '''
         pass
-        
+
     def getWiimotes(self):
         '''
         '''
-        print 'Put Wiimote in discoverable mode now (press 1+2)...'
+        print('Put Wiimote in discoverable mode now (press 1+2)...')
         numFound = self.wii.Find(5) # Search for up to one seconds
         #print numFound
         #if numFound:
         wiimotesI = self.wii.Connect()
         self.wiimoteslist.append( WiiDevice(self.parent).setWiimote(wiimotesI) )
-        
+
         #print len(self.wiimotes)
-        
+
     wiimotes = property(fget = getWiimotes, fset = setWiimotes)
 
 if __name__ == "__main__":
     import main
 
 
-    
+
 # ---------------------------------------------------------
 # ---------------------------------------------------------
 # ---------------------------------------------------------

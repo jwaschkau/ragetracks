@@ -93,9 +93,9 @@ class Language(object):
 
 # Test the module
 if __name__ == "__main__":
-    print "Avalilable languages:", getAvailableLanguages()
+    print("Avalilable languages:", getAvailableLanguages())
 
     lang = Language("german")
-    print "Chosen language: ", lang.getLanguageName()
-    print "\n"
-    print "new_game in this language:", lang["menu"]["new_game"]
+    print("Chosen language: ", lang.getLanguageName())
+    print("\n")
+    print("new_game in this language:", lang["menu"]["new_game"])

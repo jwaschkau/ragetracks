@@ -43,7 +43,7 @@ class Settings(object):
         config["application"]["resolution"] = [str(self.width), str(self.height)]
         config["application"]["fullscreen"] = str(int(self.fullscreen))
         config["application"]["antialias"] = str(int(self.antialias))
-    
+
         config["joysticks"] = {}
         config["keyboard"] = {}
         config.write()
@@ -89,5 +89,5 @@ if __name__ == "__main__":
     settings = Settings()
     #settings.saveSettings("user/config.ini")
     settings.loadSettings("user/config.ini")
-    print settings.fullscreen
-    print settings.width, settings.height
+    print(settings.fullscreen)
+    print(settings.width, settings.height)

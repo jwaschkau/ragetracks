@@ -18,23 +18,23 @@ class Menu(object):
         '''
         self.menuNode = render.attachNewNode("MenuNode")
         self.selection = 0
-        self.options = []     
+        self.options = []
         self.selected = 0
         self.menu = [["newGame", "settings", "cars", "exitGame"],(),(),()]
-        
+
         for i in range (len(self.menu[0])):
             self.entry = loader.loadModel("data/models/menu/" + self.menu[0][i])
             self.entry.reparentTo(self.menuNode)
-            
-        
+
+
         #print self.menuNode.ls()
-        print "##############################"
+        print("##############################")
         for child in self.menuNode.getChildren():
-            print child
-        print self.menuNode.find(self.menu[0][0] + "*")
-        print render.ls()
+            print(child)
+        print(self.menuNode.find(self.menu[0][0] + "*"))
+        print(render.ls())
         base.camera.setPosition(0,0,0)
-        
+
     # -----------------------------------------------------------------
 
     def addOption(self, name, function):
@@ -50,10 +50,10 @@ class Menu(object):
         '''
         '''
         self.menuNode.hide()
-        
+
 
     # -----------------------------------------------------------------
-    
+
     def showMenu(self):
         '''
         '''

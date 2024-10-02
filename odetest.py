@@ -19,12 +19,12 @@ class Game(ShowBase):
 
         ##This variable gets set to true when a collision-event gets fired and to false every ode-frame
         self.ode_collisiontest = False
-        
+
         base.setFrameRateMeter(True) #Show the Framerate
         self.world = OdeWorld()
         self.deltaTimeAccumulator = 0.0 #this variable is necessary to track the time for the physics
         self.stepSize = 1.0 / 300.0 # This stepSize makes the simulation run at 300 frames per second
-        
+
         #Initialize Collisions (ODE)
         self.space = OdeSimpleSpace()
         #Initialize the surface-table, it defines how objects interact with each other
@@ -33,7 +33,7 @@ class Game(ShowBase):
         self.space.setAutoCollideWorld(self.world)
         self.contactgroup = OdeJointGroup()
         self.space.setAutoCollideJointGroup(self.contactgroup)
-        
+
         self.startGame()
 
     # -----------------------------------------------------------------
@@ -51,7 +51,7 @@ class Game(ShowBase):
         self.plane = OdePlaneGeom(self.space,0,0,1,-5)
         self.plane.setCollideBits(0)
         self.plane.setCategoryBits(1)
-        
+
         self.space.setCollisionEvent("ode-collision")
         base.accept("ode-collision", self.onCollision)
         #Set up a model, that collides with the plane, i use a vector instead because it should always collide
@@ -61,13 +61,13 @@ class Game(ShowBase):
 ##        #Initialize the physics-simulation
 ##        self.physics_model = OdeBody(self.world)
 ##        self.physics_model.setPosition(self.model.getPos(render))
-##        self.physics_model.setQuaternion(self.model.getQuat(render))        
-##        
+##        self.physics_model.setQuaternion(self.model.getQuat(render))
+##
 ##        #Initialize the mass
 ##        physics_mass = OdeMass()
 ##        physics_mass.setBox(1,1,1,1)
 ##        self.physics_model.setMass(physics_mass)
-##        
+##
 ##        self.collision_model = OdeBoxGeom(self.space, 1,1,1)
 ##        self.collision_model.setBody(self.physics_model)
 ##        self.collision_model.setCollideBits(1)
@@ -83,18 +83,18 @@ class Game(ShowBase):
         #add the game task
         taskMgr.add(self.gameTask, "gameTask")
         self.world.setGravity(0, 0, -0.81)
-    
+
     # -----------------------------------------------------------------
-    
+
     def onCollision(self, entry):
         '''
         Handles Collision-Events
         '''
         #set the variable true when a collision happens
         self.ode_collisiontest = True
-    
+
     # -----------------------------------------------------------------
-    
+
     def gameTask(self, task):
         '''
         this task runs x-times per second if the game is running
@@ -107,14 +107,14 @@ class Game(ShowBase):
             self.world.quickStep(self.stepSize)
             self.contactgroup.empty() # Clear the contact joints
             ##Here we print the variable that should be True when a collision event is fired
-            print self.ode_collisiontest
+            print(self.ode_collisiontest)
             #Now we set it False again
             self.ode_collisiontest = False
-        
+
         #set the new position
-        #self.model.setPosQuat(render, self.physics_model.getPosition(), Quat(self.physics_model.getQuaternion())) 
+        #self.model.setPosQuat(render, self.physics_model.getPosition(), Quat(self.physics_model.getQuaternion()))
         return task.cont
-        
+
     # -----------------------------------------------------------------
 
 game = Game()
