@@ -4,7 +4,7 @@
 ###################################################################
 
 from direct.showbase.ShowBase import ShowBase
-from pandac.PandaModules import * #Load all PandaModules
+from panda3d.core import * #Load all PandaModules
 from direct.particles.ParticleEffect import ParticleEffect
 
 # -----------------------------------------------------------------
@@ -21,11 +21,11 @@ class Game(ShowBase):
         #loadPrcFileData("", "pstatshost 192.168.220.121")
         ShowBase.__init__(self)
         loadPrcFileData("", "default-directnotify-level debug\n notify-level-x11display fatal")
-        
+
         #PStatClient.connect() #activate to start performance measuring with pstats
         base.setFrameRateMeter(True) #Show the Framerate
         #base.toggleWireframe()
-        
+
         self.startGame()
         # -----------------------------------------------------------------
 
@@ -37,18 +37,18 @@ class Game(ShowBase):
         '''
         Start the game
         '''
-        
+
         base.enableParticles()
         #self.p = ParticleEffect()
         #self.loadParticleConfig('./data.parcticles/blowout_fire.ptf')
         #Start of the code from steam.ptf
         #self.p.cleanup()
         self.p = ParticleEffect()
-        self.p.loadConfig('./data/particles/blowout_test.ptf')        
+        self.p.loadConfig('./data/particles/blowout_test.ptf')
         #Sets particles to birth relative to the teapot, but to render at toplevel
         self.p.start(render)
         self.p.setPos(0.000, 0.000, 0)
-    
+
         #Load the Lights
         ambilight = AmbientLight('ambilight')
         ambilight.setColor(VBase4(0.2, 0.2, 0.2, 1))
@@ -62,7 +62,3 @@ class Game(ShowBase):
 
 game = Game()
 game.run()
-
-
-
-

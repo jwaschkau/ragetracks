@@ -57,7 +57,7 @@ class InputDevice(object):
             self.device.keys[self.settings["boost"]] = False
             self.device.keys[self.settings["use_item"]] = False
             self.device.keys[self.settings["escape"]] = False
-        
+
         elif type(self.device) == wiidevice.WiiDevice:
             pass #Think isn't necessary by Wiimotes
             # maybe load settings here
@@ -147,8 +147,8 @@ class InputDevice(object):
             # then get boost and item button values
             self.boost = self.device.buttons[self.settings["boost"][1]]
             self.use_item = self.device.buttons[self.settings["use_item"][1]]
-            
-            
+
+
         elif type(self.device) == keyboarddevice.KeyboardDevice:
             acceleration = 0
             direction = 0
@@ -167,14 +167,14 @@ class InputDevice(object):
 
             self.boost = self.device.keys[self.settings["boost"]]
             self.use_item = self.device.keys[self.settings["use_item"]]
-            
+
             if self.device.keys[self.settings["escape"]]:
                 sys.exit()
-        
-        
+
+
         elif type(self.device) == wiidevice.WiiDevice:
             pass
-            
+
     # ---------------------------------------------------------
 
 # ---------------------------------------------------------
@@ -200,7 +200,7 @@ class InputDevices(object):
             self.wii = []
             self.wiis = None
 
-        
+
         self.keyboard = keyboarddevice.KeyboardDevice()
         self.joysticks = joystickdevice.JoystickDevices()
 
@@ -210,7 +210,7 @@ class InputDevices(object):
             try:
                 dev = InputDevice(joystick, settings)
             except StandardError as e:
-                print e
+                print(e)
                 continue
             self.devices.append(dev)
 
@@ -232,19 +232,22 @@ class InputDevices(object):
         '''
         pygame.joystick.quit()
         pygame.quit()
-        
+
     # ---------------------------------------------------------
-        
+
     def getCount(self):
         '''
         '''
         return pygame.joystick.get_count()
-    
+
     def addWii(self, wiimote):
         '''
         '''
-        
+
         self.devices.append(InputDevice(wiimote, {'wii':{}}, self.wii))
+
+    def update(self):
+        pass
 
 # ---------------------------------------------------------
 # ---------------------------------------------------------

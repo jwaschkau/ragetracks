@@ -2,7 +2,7 @@
 ###################################################################
 ## this module contains the camera of one player
 ###################################################################
-from pandac.PandaModules import Vec3, NodePath #Load all PandaModules
+from panda3d.core import Vec3, NodePath #Load all PandaModules
 from direct.directnotify.DirectNotify import DirectNotify
 from direct.filter.CommonFilters import CommonFilters
 
@@ -21,10 +21,10 @@ class PlayerCam(object):
         self._distance = 0.7
         self._cam_node = NodePath()
         self._vehicle = None
-        
+
         #filters = CommonFilters(base.win, self._camera)
         #filters.setBloom(blend=(0,1,0,0) ,desat=10, intensity=1, size='medium')
-    
+
     # ---------------------------------------------------------
     def followVehicle(self, direction, vehicle = None):
         '''
@@ -35,7 +35,7 @@ class PlayerCam(object):
         else: self._nodepath = None
         self._vehicle = vehicle
         self._vehicle_direction = direction
-        
+
     # ---------------------------------------------------------
     def updateCam(self):
         '''
@@ -48,9 +48,9 @@ class PlayerCam(object):
             self._camera.setR(self._nodepath.getR())
         else:
             pass
-        
+
     # ---------------------------------------------------------
-    
+
     def getCamera(self):
         return self._camera
 
@@ -58,8 +58,8 @@ class PlayerCam(object):
         self._camera = value
 
     camera = property(fget = getCamera, fset = setCamera)
-        
-    
-    
+
+
+
 if __name__ == "__main__":
     import main

@@ -28,14 +28,14 @@ def writeFile(filepath):
     mesh = object.getData(mesh=1)
 
     output.write("<?xml version=\"1.0\" ?>\n<xml name=\""+object.name+"\">\n   <points>\n")
-    
+
     for vert in mesh.verts:
         output.write("      <point x=\"%f\" y=\"%f\" z=\"%f\"/>\n" % (vert.co.x, vert.co.y, vert.co.z) )
-        
+
     output.write("   </points>\n</xml>")
 
     output.close()
 
 
 Blender.Window.FileSelector(writeFile, "Export Special Road Part")
-print "-- RageTracks Exporter stopped --"
+print("-- RageTracks Exporter stopped --")

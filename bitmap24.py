@@ -727,12 +727,12 @@ if __name__ == "__main__":
     saveSpielbrett("standard.brett", name, autor, feld_weiss, feld_schwarz, stein_weiss, stein_schwarz, dame_weiss, dame_schwarz,background)
     name, autor, feld_weiss, feld_schwarz, stein_weiss, stein_schwarz, dame_weiss, dame_schwarz, background = openSpielbrett("standard.brett")
 
-    print name, "#", autor, "#",
+    print(name, "#", autor, "#",)
 
     if type(background[2]) == str:
-        print "hat ein Hintergrundbild"
-        print "Groesse: %dx%d" % (background[0],background[1])
+        print("hat ein Hintergrundbild")
+        print("Groesse: %dx%d" % (background[0],background[1]))
     else:
-        print "hat kein Hintergrundbild"
-        print "Farbe: %d,%d,%d" % background
+        print("hat kein Hintergrundbild")
+        print("Farbe: %d,%d,%d" % background)
 

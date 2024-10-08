@@ -3,7 +3,8 @@
 ## this module represents a collision ray
 ###################################################################
 
-from pandac.PandaModules import * #Load all PandaModules
+from panda3d.core import * #Load all PandaModules
+from panda3d.ode import *
 from wiregeom import WireGeom
 
 class CollisionRay(object):
@@ -45,7 +46,7 @@ class CollisionRay(object):
 
     def getRay(self):
         return self.ray
-    
+
     def __del__(self):
         self.ray.disable()
         self.ray.destroy()

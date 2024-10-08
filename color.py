@@ -13,10 +13,10 @@ class GlowDemo(ShowBase):
         ShowBase.__init__(self)
         base.setBackgroundColor(0,0,0)
         #render.setShaderAuto()
-        
+
         img = PNMImage("data/textures/vehicle01_body.png")
-        for y in xrange(img.getReadYSize()):
-            for x in xrange(img.getReadXSize()):
+        for y in range(img.getReadYSize()):
+            for x in range(img.getReadXSize()):
                 r, g, b = img.getXel(x,y)
                 h, s, v = colorsys.rgb_to_hsv(r, g, b)
                 h += 0.9
@@ -25,7 +25,7 @@ class GlowDemo(ShowBase):
                 img.setXel(x,y,r,g,b)
 ##                print "-", r,g,b
         img.write("data/textures/vehicle01_body2.png")
-        
+
 
 t=GlowDemo()
 
