@@ -5,7 +5,8 @@
 
 from direct.showbase.ShowBase import ShowBase
 from direct.directnotify.DirectNotify import DirectNotify
-from pandac.PandaModules import * #Load all PandaModules
+from panda3d.core import * #Load all PandaModules
+from panda3d.ode import *
 from panda3d.core import loadPrcFileData
 from direct.particles.ParticleEffect import ParticleEffect
 from direct.interval.ParticleInterval import ParticleInterval

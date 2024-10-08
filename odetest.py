@@ -4,7 +4,7 @@
 ###################################################################
 
 from direct.showbase.ShowBase import ShowBase
-from pandac.PandaModules import * #Load all PandaModules
+from panda3d.core import * #Load all PandaModules
 
 # -----------------------------------------------------------------
 

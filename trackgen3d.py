@@ -5,7 +5,7 @@
 
 from panda3d.core import *
 from trackgen import Track
-from pandac.PandaModules import GeomVertexFormat, Geom, GeomVertexWriter, GeomTristrips, GeomNode
+from panda3d.core import GeomVertexFormat, Geom, GeomVertexWriter, GeomTristrips, GeomNode
 import xml.dom.minidom as dom
 from xml.dom.minidom import Document
 from direct.directnotify.DirectNotify import DirectNotify
@@ -16,7 +16,7 @@ import random
 # -------------------------------------------------------------------------------------
 
 class RoadShape(object):
-    '''
+    r'''
     describes the shape of the road e.g. |__/\__|
     '''
     def __init__(self, *args, **kwds):
@@ -752,6 +752,3 @@ if __name__ == "__main__":
 ##
 ##
 ##    Track3d(100, 800, 600, 50)
-
-
-

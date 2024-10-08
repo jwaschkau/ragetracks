@@ -3,8 +3,9 @@
 ## this module represents one vehicle a player can control
 ###################################################################
 
-from pandac.PandaModules import * #Load all PandaModules
+from panda3d.core import * #Load all PandaModules
 from panda3d.core import TexGenAttrib
+from panda3d.ode import *
 from wiregeom import WireGeom
 from collisionray import CollisionRay
 from direct.directnotify.DirectNotify import DirectNotify

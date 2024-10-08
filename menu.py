@@ -5,7 +5,7 @@
 
 from direct.showbase.ShowBase import ShowBase
 from panda3d.core import NodePath
-from pandac.PandaModules import *
+from panda3d.core import *
 import time
 import sys
 from direct.directnotify.DirectNotify import DirectNotify

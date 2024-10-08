@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
 
-from pandac.PandaModules import Point3, Vec3
+from panda3d.core import Point3, Vec3
 
-from pandac.PandaModules import GeomVertexFormat, GeomVertexData, GeomVertexWriter
-from pandac.PandaModules import Geom, GeomNode, GeomPoints, NodePath, GeomLinestrips
+from panda3d.core import GeomVertexFormat, GeomVertexData, GeomVertexWriter
+from panda3d.core import Geom, GeomNode, GeomPoints, NodePath, GeomLinestrips
 
 import math
 
@@ -29,51 +29,51 @@ planeNodepath = WireGeom().generate ('plane')
 
 """
 class WireGeom:
- 
-  def __init__ (self):   
+
+  def __init__ (self):
     # GeomNode to hold our individual geoms
     self.gnode = GeomNode ('wirePrim')
-   
+
     # How many times to subdivide our spheres/cylinders resulting vertices.  Keep low
     # because this is supposed to be an approximate representation
     self.subdiv = 12
 
-  def drawLine (self, start, end): 
-   
+  def drawLine (self, start, end):
+
     # since we're doing line segments, just vertices in our geom
     format = GeomVertexFormat.getV3()
-   
+
     # build our data structure and get a handle to the vertex column
     vdata = GeomVertexData ('', format, Geom.UHStatic)
     vertices = GeomVertexWriter (vdata, 'vertex')
-       
+
     # build a linestrip vertex buffer
     lines = GeomLinestrips (Geom.UHStatic)
-   
+
     vertices.addData3f (start[0], start[1], start[2])
     vertices.addData3f (end[0], end[1], end[2])
-   
+
     lines.addVertices (0, 1)
-     
+
     lines.closePrimitive()
-   
+
     geom = Geom (vdata)
     geom.addPrimitive (lines)
     # Add our primitive to the geomnode
     self.gnode.addGeom (geom)
 
-  def drawCircle (self, radius, axis, offset): 
-   
+  def drawCircle (self, radius, axis, offset):
+
     # since we're doing line segments, just vertices in our geom
     format = GeomVertexFormat.getV3()
-   
+
     # build our data structure and get a handle to the vertex column
     vdata = GeomVertexData ('', format, Geom.UHStatic)
     vertices = GeomVertexWriter (vdata, 'vertex')
-       
+
     # build a linestrip vertex buffer
     lines = GeomLinestrips (Geom.UHStatic)
-   
+
     for i in range (0, self.subdiv):
       angle = i / float(self.subdiv) * 2.0 * math.pi
       ca = math.cos (angle)
@@ -84,30 +84,30 @@ class WireGeom:
         vertices.addData3f (radius * ca, 0, radius * sa + offset)
       if axis == "z":
         vertices.addData3f (radius * ca, radius * sa, offset)
-   
+
     for i in range (1, self.subdiv):
       lines.addVertices(i - 1, i)
     lines.addVertices (self.subdiv - 1, 0)
-     
+
     lines.closePrimitive()
-   
+
     geom = Geom (vdata)
     geom.addPrimitive (lines)
     # Add our primitive to the geomnode
     self.gnode.addGeom (geom)
 
   def drawCapsule (self, radius, length, axis):
-   
+
     # since we're doing line segments, just vertices in our geom
     format = GeomVertexFormat.getV3()
-   
+
     # build our data structure and get a handle to the vertex column
     vdata = GeomVertexData ('', format, Geom.UHStatic)
     vertices = GeomVertexWriter (vdata, 'vertex')
-       
+
     # build a linestrip vertex buffer
     lines = GeomLinestrips (Geom.UHStatic)
-   
+
     # draw upper dome
     for i in range (0, self.subdiv / 2 + 1):
       angle = i / float(self.subdiv) * 2.0 * math.pi
@@ -127,30 +127,30 @@ class WireGeom:
         vertices.addData3f (0, radius * ca, radius * sa - (length / 2))
       if axis == "y":
         vertices.addData3f (radius * ca, 0, radius * sa - (length / 2))
-   
+
     for i in range (1, self.subdiv + 1):
       lines.addVertices(i - 1, i)
     lines.addVertices (self.subdiv + 1, 0)
-     
+
     lines.closePrimitive()
-   
+
     geom = Geom (vdata)
     geom.addPrimitive (lines)
     # Add our primitive to the geomnode
     self.gnode.addGeom (geom)
 
   def drawRect (self, width, height, axis):
-   
+
     # since we're doing line segments, just vertices in our geom
     format = GeomVertexFormat.getV3()
-   
+
     # build our data structure and get a handle to the vertex column
     vdata = GeomVertexData ('', format, Geom.UHStatic)
     vertices = GeomVertexWriter (vdata, 'vertex')
-       
+
     # build a linestrip vertex buffer
     lines = GeomLinestrips (Geom.UHStatic)
-   
+
     # draw a box
     if axis == "x":
       vertices.addData3f (0, -width, -height)
@@ -171,16 +171,16 @@ class WireGeom:
     for i in range (1, 3):
       lines.addVertices(i - 1, i)
     lines.addVertices (3, 0)
-     
+
     lines.closePrimitive()
-   
+
     geom = Geom (vdata)
     geom.addPrimitive (lines)
     # Add our primitive to the geomnode
     self.gnode.addGeom (geom)
 
   def generate (self, type, radius=1.0, length=1.0, extents=Point3(1, 1, 1)):
-           
+
     if type == 'sphere':
       # generate a simple sphere
       self.drawCircle (radius, "x", 0)
@@ -208,7 +208,7 @@ class WireGeom:
       self.drawLine ((radius, 0, -length / 2), (radius, 0, length/2))
       self.drawCircle (radius, "z", -length / 2)
       self.drawCircle (radius, "z", length / 2)
-   
+
     if type == 'ray':
       # generate a ray
       self.drawCircle(length / 10, "x", 0)
@@ -224,17 +224,17 @@ class WireGeom:
       self.drawLine ((0, 0, 0), (0, 0, length))
       self.drawLine ((0, 0, length), (0, -length/10, length*0.9))
       self.drawLine((0, 0, length), (0, length/10, length*0.9))
-   
+
     # rename ourselves to wirePrimBox, etc.
     name = self.gnode.getName()
     self.gnode.setName(name + type.capitalize())
-   
+
     NP = NodePath (self.gnode)  # Finally, make a nodepath to our geom
     NP.setColor(0.0, 1.0, 0.0)   # Set default color
-   
+
     return NP
- 
- 
+
+
 # demonstration code below
 if __name__ == "__main__":
     import direct.directbase.DirectStart

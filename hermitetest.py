@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from direct.showbase.ShowBase import ShowBase
-from pandac.PandaModules import *
+from panda3d.core import *
 import wx
 
 ID_PREVIEW = wx.NewId()

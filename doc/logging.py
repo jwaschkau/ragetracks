@@ -2,7 +2,7 @@
 ###################################################################
 ## example program on how to use the logger
 ###################################################################
-from pandac.PandaModules import * 
+from panda3d.core import *
 from direct.directnotify.DirectNotify import DirectNotify
 
 loadPrcFileData("", "default-directnotify-level debug\n notify-level-Game info")

@@ -11,7 +11,7 @@ import math
 import bitmap24
 import copy
 from panda3d.core import *
-from pandac.PandaModules import *
+from panda3d.core import *
 import xml.dom.minidom as dom
 from xml.dom.minidom import Document
 from direct.directnotify.DirectNotify import DirectNotify
@@ -504,7 +504,3 @@ if __name__ == "__main__":
         #a = m.getInterpolatedPoints(200)
 
 ##    import main
-
-
-
-

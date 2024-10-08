@@ -4,7 +4,7 @@
 ###################################################################
 
 from direct.showbase.ShowBase import ShowBase
-from pandac.PandaModules import * #Load all PandaModules
+from panda3d.core import * #Load all PandaModules
 import os.path
 # -----------------------------------------------------------------
 # -----------------------------------------------------------------
@@ -17,12 +17,12 @@ class Game(ShowBase):
         '''
         '''
         ShowBase.__init__(self)
-        
+
         base.setBackgroundColor(0,0,0)
-        
+
         self.mdl = self.loader.loadModel("data/models/vehicles/vehicle01.egg")
-        self.mdl.reparentTo(render)        
-        
+        self.mdl.reparentTo(render)
+
         #Add the Skybox
         self.skybox = self.loader.loadModel("data/models/skybox.egg")
         t = Texture()
